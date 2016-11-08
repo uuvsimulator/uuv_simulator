@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version="1.5">
+  <model name="umbilical">
+    <pose>0 0 -1 0 0 0</pose>
+    <static>false</static>
+
+    <link name="base">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <inertia>
+          <ixx>1</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>1</iyy><iyz>0</iyz>
+          <izz>1</izz>
+        </inertia>
+        <mass>1.0</mass>
+      </inertial>
+
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.5 0.5 0.5</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.5 0.5 0.5</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="world_base_joint" type="fixed">
+      <pose>0 0 0 0 0 0</pose>
+      <parent>world</parent>
+      <child>base</child>
+    </joint>
+
+    <link name="segment">
+      <pose>5 0 0 0 0 0</pose>
+      <inertial>
+        <inertia>
+          <ixx>1</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>1</iyy><iyz>0</iyz>
+          <izz>1</izz>
+        </inertia>
+        <mass>1.0</mass>
+      </inertial>
+
+      <collision name="collision">
+        <pose>0 0 0 0 1.570796 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>10.0</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>0 0 0 0 1.570796 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>10.0</length>
+          </cylinder>
+        </geometry>
+      </visual>
+    </link>
+
+  <joint name="base_segment_joint" type="universal">
+    <pose>-5 0 0 0 0 0</pose>
+    <parent>base</parent>
+    <child>segment</child>
+    <axis>
+      <xyz>0 1 0</xyz>
+      <limit>
+        <lower>-100000000</lower>
+        <upper>100000000</upper>
+      </limit>
+      <dynamics>
+        <damping>5</damping>
+        <friction>5</friction>
+      </dynamics>
+    </axis>
+    <axis2>
+      <xyz>0 0 1</xyz>
+      <limit>
+        <lower>-100000000</lower>
+        <upper>100000000</upper>
+      </limit>
+      <dynamics>
+        <damping>5</damping>
+        <friction>5</friction>
+      </dynamics>
+    </axis2>
+  </joint>
+
+
+  <link name="connector">
+    <pose>10 0 0 0 0 0</pose>
+    <inertial>
+      <inertia>
+        <ixx>1</ixx><ixy>0</ixy><ixz>0</ixz>
+        <iyy>1</iyy><iyz>0</iyz>
+        <izz>1</izz>
+      </inertia>
+      <mass>1.0</mass>
+    </inertial>
+
+    <collision name="collision">
+      <pose>0 0 0 0 1.570796 0</pose>
+      <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+      </geometry>
+    </collision>
+
+    <visual name="visual">
+      <pose>0 0 0 0 1.570796 0</pose>
+      <geometry>
+        <box>
+          <size>0.5 0.5 0.5</size>
+        </box>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="segment_connector_joint" type="ball">
+    <pose>0 0 0 0 0 0</pose>
+    <parent>segment</parent>
+    <child>connector</child>
+    <axis>
+      <xyz>0 1 0</xyz>
+      <limit>
+        <lower>-100000000</lower>
+        <upper>100000000</upper>
+      </limit>
+      <dynamics>
+        <damping>5</damping>
+        <friction>5</friction>
+      </dynamics>
+    </axis>
+    <axis2>
+      <xyz>0 0 1</xyz>
+      <limit>
+        <lower>-100000000</lower>
+        <upper>100000000</upper>
+      </limit>
+    </axis2>
+  </joint>
+
+
+  <plugin filename="libumbilical_plugin.so" name="umbilical_plugin">
+    <robotNamespace></robotNamespace>
+    <connectorLink>connector</connectorLink>
+    <baseLink>base</baseLink>
+    <maxSegmentLength>2.0</maxSegmentLength>
+  </plugin>
+
+</model>
+</sdf>

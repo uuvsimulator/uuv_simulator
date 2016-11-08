@@ -1,0 +1,16 @@
+<launch>
+<arg name="uuv_name" />
+<arg name="joy_id" default="0"/>
+
+<group ns="$(arg uuv_name)">
+  <node pkg="uuv_auv_teleop" type="JoyAnglesThrustControl.py" name="joy_angles_thrust"
+        output="screen">
+    <param name="tf_prefix" type="string" value="$(arg uuv_name)/" />
+  </node>
+
+  <node pkg="joy" type="joy_node" name="joystick">
+    <param name="autorepeat_rate" value="10" />
+    <param name="dev" value="/dev/input/js$(arg joy_id)"/>
+  </node>
+</group>
+</launch>

@@ -1,0 +1,30 @@
+// Copyright (c) 2016 The UUV Simulator Authors.
+// All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package uuv_gazebo_plugins_msgs.msgs;
+
+/// \ingroup uuv_gazebo_plugins_msgs
+/// \interface Accel
+/// \brief Message for a acceleration vector
+
+import "vector3d.proto";
+import "time.proto";
+
+message Accel
+{
+    required gazebo.msgs.Vector3d linear = 1;
+    required gazebo.msgs.Vector3d angular = 2;
+    optional gazebo.msgs.Time time = 3;
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version="1.4">
+  <world name="heightmap">
+    <!-- Global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- Sea surface -->
+    <include>
+      <uri>model://ocean_box</uri>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <!-- Heightmap -->
+    <include>
+      <uri>model://sand_heightmap</uri>
+      <pose>0 0 -95 0 0 0</pose>
+    </include>
+
+    <plugin name="underwater_world" filename="libuuv_underwater_world_ros_plugin.so">
+      <namespace>hydrodynamics</namespace>
+      <constant_current>
+        <topic>current_velocity</topic>
+        <velocity>
+          <mean>0</mean>
+          <min>-5</min>
+          <max>5</max>
+          <mu>0.0</mu>
+          <noiseAmp>0.0</noiseAmp>
+        </velocity>
+
+        <direction>
+          <mean>0</mean>
+          <min>-1.5707963267948966</min>
+          <max>1.5707963267948966</max>
+          <mu>0.0</mu>
+          <noiseAmp>0.0</noiseAmp>
+        </direction>
+      </constant_current>
+    </plugin>
+
+  </world>
+</sdf>

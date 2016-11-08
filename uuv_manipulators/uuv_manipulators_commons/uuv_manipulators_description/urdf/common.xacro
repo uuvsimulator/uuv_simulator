@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<!--  Common macros and definitions -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <material name="LightGrey">
+    <color rgba="0.6 0.6 0.6 1.0"/>
+  </material>
+
+  <!-- Transmission Macro -->
+  <xacro:macro name="simple_transmission" params="joint">
+    <transmission name="${joint}_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${joint}">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${joint}_motor">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <!-- Transmission Macro -->
+  <xacro:macro name="simple_transmission_pos" params="joint">
+    <transmission name="${joint}_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${joint}">
+        <hardwareInterface>PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${joint}_motor">
+        <hardwareInterface>PositionJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <!-- Macro for a minimal collision block (for when you do not want collision block but gazebo needs one) -->
+  <xacro:macro name="no_collision">
+    <collision>
+      <geometry>
+        <cylinder length="${0.000001}" radius="${0.000001}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+    </collision>
+  </xacro:macro>
+
+  <!-- A smaller dummy link makes the model to explode in Gazebo -->
+  <xacro:macro name="dummy_link" params="name">
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <sphere radius="0.01"/>
+        </geometry>
+        <material name="LightGrey" />
+      </visual>
+      <collision>
+        <geometry>
+          <sphere radius="0.01"/>
+        </geometry>
+      </collision>
+      <cylinder_inertia radius="0.01" length="0.02" mass="0.05"/>
+    </link>
+  </xacro:macro>
+
+</robot>

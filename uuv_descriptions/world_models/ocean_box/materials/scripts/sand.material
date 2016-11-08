@@ -1,0 +1,43 @@
+material UUV/Sand
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.5 0.5 0.5 1.0
+      diffuse 0.5 0.5 0.5 1.0
+      specular 0.2 0.2 0.2 1.0 12.5
+
+      texture_unit
+      {
+        texture soil_sand_0045_01.jpg
+        filtering anistropic
+        max_anisotropy 16
+        scale 0.5 0.5
+      }
+    }
+  }
+}
+
+material UUV/Water
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.5 0.5 0.5 0.8
+      diffuse 0.5 0.5 0.5 0.8
+      // specular 0.2 0.2 0.2 1.0 12.5
+
+      scene_blend alpha_blend
+
+      texture_unit
+      {
+        texture water_water_0076_03_s.jpg
+        filtering anistropic
+        max_anisotropy 16
+        scale 1.0 1.0
+      }
+    }
+  }
+}

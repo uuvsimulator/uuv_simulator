@@ -1,0 +1,38 @@
+<launch>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+        <arg name="verbose" value="true" />
+    </include>
+
+    <group ns="rexrov">
+        <param name="robot_description" command="$(find xacro)/xacro.py '$(find orion_7p_description)/robots/orion_7p_standalone.xacro' debug:=false namespace:=rexrov" />
+
+        <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+        <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+              args="-urdf -x 0 -y 0 -z 2 -model rexrov -param /rexrov/robot_description"/>
+
+        <!-- A joint state publisher plugin already is started with the model, no need to use the default joint state publisher -->
+
+        <!-- Publish robot model for ROS -->
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen">
+            <param name="robot_description" value="/rexrov/robot_description" />
+        </node>
+    </group>
+
+    <rosparam param="rexrov/arms/n_arms">
+        1
+    </rosparam>
+
+    <rosparam param="rexrov/arms/names">
+        [orion_7p,]
+    </rosparam>
+
+    <group ns="rexrov/arms/orion_7p">
+        <rosparam file="$(find orion_7p_description)/params/robot_config.yaml" command="load"/>
+    </group>
+
+</launch>

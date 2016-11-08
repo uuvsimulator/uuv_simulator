@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+  <xacro:property name="pi" value="3.14159"/>
+
+  <!-- Conversion factor: radian = d2r*degrees -->
+  <xacro:property name="d2r" value="0.01745329"/>
+
+  <!-- Drag coefficient for sub-critical flow Re<2*10^5 -->
+  <!-- From Antonelli - Underwater Robots -->
+  <xacro:property name="cd_subcritical" value="1" />
+
+  <!-- Lift coefficient for sub-critical flow Re<2*10^5 -->
+  <!-- From Antonelli - Underwater Robots -->
+  <xacro:property name="cl_subcritical" value="5" />
+
+  <!-- Some pretty colors -->
+  <material name="blue">
+		<color rgba="0.0 0.0 0.8 1.0"/>
+	</material>
+
+	<material name="green">
+		<color rgba="0.0 0.8 0.0 1.0"/>
+	</material>
+
+	<material name="grey">
+		<color rgba="0.7 0.7 0.7 1.0"/>
+	</material>
+
+	<material name="grey2">
+		<color rgba="0.9 0.9 0.9 1.0"/>
+	</material>
+
+	<material name="red">
+		<color rgba="0.8 0.0 0.0 1.0"/>
+	</material>
+
+	<material name="orange">
+		<color rgba="1.0 0.5 0.0 1.0"/>
+	</material>
+
+	<material name="white">
+		<color rgba="1.0 1.0 1.0 1.0"/>
+	</material>
+
+	<material name="black">
+		<color rgba="0.05 0.05 0.05 1.0"/>
+	</material>
+
+  <!-- Added-mass for a sphere -->
+  <xacro:macro name="added_mass_sphere" params="radius rho">
+    <added_mass>
+      ${2/3 * rho * pi * radius*radius*radius} 0 0 0 0 0
+      0 ${2/3 * rho * pi * radius*radius*radius} 0 0 0 0
+      0 0 ${2/3 * rho * pi * radius*radius*radius} 0 0 0
+      0 0 0 0 0 0
+      0 0 0 0 0 0
+      0 0 0 0 0 0
+    </added_mass>
+  </xacro:macro>
+
+  <!-- Simple quadratic damping coefficients for the drag forces of a sphere moving in fluid-->
+  <xacro:macro name="quad_damping_sphere" params="radius rho cd">
+    <quadratic_damping>
+      ${-0.5 * rho * cd * pi * radius*radius} ${-0.5 * rho * cd * pi * radius*radius} ${-0.5 * rho * cd * pi * radius*radius} 0 0 0
+    </quadratic_damping>
+  </xacro:macro>
+
+  <!-- Added-mass for a cylinder (from Scholberg, 1994)-->
+  <xacro:macro name="added_mass_cylinder" params="mass radius length rho">
+    ${0.1 * mass} 0 0 0 0 0
+    0 ${pi * radius*radius * length * rho} 0 0 0 0
+    0 0 ${pi * radius*radius * length * rho} 0 0 0
+    0 0 0 0 0 0
+    0 0 0 0 ${1/12 * pi * rho * radius*radius * length*3} 0
+    0 0 0 0 0 ${1/12 * pi * rho * radius*radius * length*3}
+  </xacro:macro>
+
+  <!-- Macro for the inertial properties of a box -->
+  <xacro:macro name="box_inertial" params="x y z mass *origin">
+    <inertial>
+      <mass value="${mass}" />
+      <xacro:insert_block name="origin" />
+      <inertia ixx="${0.0833333 * mass * (y*y + z*z)}" ixy="0.0" ixz="0.0"
+             iyy="${0.0833333 * mass * (x*x + z*z)}" iyz="0.0"
+             izz="${0.0833333 * mass * (x*x + y*y)}" />
+    </inertial>
+  </xacro:macro>
+
+
+  <!-- Cylinder collision -->
+  <xacro:macro name="cylinder_collision" params="radius length">
+    <collision>
+      <origin xyz="0 0 ${length/2}" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${radius}" length="${length}"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- Cylinder inertial tensor -->
+  <xacro:macro name="cylinder_inertia" params="mass radius length">
+    <inertial>
+      <origin xyz="0 0 ${length/2}" rpy="0 0 0" />
+      <mass value="${mass}" />
+      <inertia  ixx="${mass*radius*radius / 4  + mass*length*length / 12}" ixy="0.0"  ixz="0.0"
+                iyy="${mass*radius*radius / 4  + mass*length*length / 12}" iyz="0.0"
+                izz="${mass*radius*radius / 2}" />
+    </inertial>
+  </xacro:macro>
+
+  <!-- Link Macro -->
+  <xacro:macro name="create_link" params="name color mesh *collision *inertia">
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh}" />
+        </geometry>
+        <material name="${color}" />
+      </visual>
+      <xacro:insert_block name="collision" />
+      <xacro:insert_block name="inertia" />
+    </link>
+  </xacro:macro>
+
+  <!-- A smaller dummy link makes the model to explode in Gazebo -->
+  <xacro:macro name="dummy_link" params="name">
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <geometry>
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="0.001" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.000000017" ixy="0.0" ixz="0.0"
+               iyy="0.000000017" iyz="0.0"
+               izz="0.000000017" />
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <!-- Dummy inertial block for links that should be mass-less -->
+  <xacro:macro name="no_inertial">
+    <xacro:box_inertial x="0" y="0" z="0" mass="0.0001">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:box_inertial>
+  </xacro:macro>
+
+  <!-- Default joint state publisher -->
+  <xacro:macro name="default_joint_state_publisher" params="namespace update_rate">
+    <gazebo>
+      <plugin name="joint_state_publisher" filename="libjoint_state_publisher.so">
+        <robotNamespace>${namespace}</robotNamespace>
+        <updateRate>${update_rate}</updateRate>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Joint state publisher with moving joints -->
+  <xacro:macro name="custom_joint_state_publisher" params="namespace update_rate joints">
+    <gazebo>
+      <plugin name="joint_state_publisher" filename="libjoint_state_publisher.so">
+        <robotNamespace>${namespace}</robotNamespace>
+        <updateRate>${update_rate}</updateRate>
+        <movingJoints>${joints}</movingJoints>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

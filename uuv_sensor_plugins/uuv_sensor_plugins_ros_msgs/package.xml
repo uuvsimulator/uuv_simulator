@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package>
+  <name>uuv_sensor_plugins_ros_msgs</name>
+  <version>0.0.0</version>
+  <description>The uuv_sensor_plugins_ros_msgs package</description>
+
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="sebastian.scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+
+  <author email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</author>
+  <author email="sebastian.scherer2@de.bosch.com">Sebastian Scherer</author>
+  <author email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</author>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+
+  <export>
+  </export>
+</package>

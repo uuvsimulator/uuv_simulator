@@ -1,0 +1,44 @@
+<launch>
+  <arg name="uuv_name" default=""/>
+  <arg name="arm_name" default="orion_7p"/>
+  <arg name="gripper" default="dummy"/>
+  <arg name="teleop" default="true"/>
+  <arg name="joy_id" default="0" />
+  <arg name="use_joy" default="true"/>
+
+  <!-- Initialize effort controllers -->
+  <include file="$(find orion_7p_control)/launch/joint_effort_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+  </include>
+
+  <!-- Initialize gripper controllers -->
+  <include file="$(find orion_7p_control)/launch/$(arg gripper)_gripper_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+  </include>
+
+  <group ns="/$(arg uuv_name)/$(arg arm_name)">
+    <node name="kinematics_service" pkg="uuv_manipulators_kinematics" type="kinematics_service.py"
+      output="screen"/>
+
+    <!-- Load cartesian controller parameters -->
+    <rosparam command="load" file="$(find orion_7p_control)/config/jt_cartesian_controller.yaml"/>
+
+    <node name="cartesian_controller" pkg="uuv_manipulators_control" type="jt_cartesian_controller.py"
+      respawn="false" output="screen">
+        <rosparam param="is_cylindrical">0</rosparam>
+    </node>
+
+    <group if="$(arg teleop)">
+      <include file="$(find uuv_filtered_joy)/launch/joy_reference.launch">
+        <arg name="joy_id" value="$(arg joy_id)" />
+        <arg name="output_topic" value="cartesian_controller/command" />
+        <arg name="deadman_button" value="right"/>
+        <arg name="type" value="default"/>
+      </include>
+    </group>
+  </group>
+
+
+</launch>

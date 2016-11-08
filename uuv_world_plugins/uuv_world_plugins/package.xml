@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+  <name>uuv_world_plugins</name>
+  <version>0.0.0</version>
+  <description>The uuv_world_plugins package</description>
+
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="sebastian.scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+
+  <author email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</author>
+  <author email="sebastian.scherer2@de.bosch.com">Sebastian Scherer</author>
+  <author email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</author>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>gazebo</build_depend>
+  <build_depend>gazebo_msgs</build_depend>
+  <run_depend>gazebo</run_depend>
+  <run_depend>gazebo_msgs</run_depend>
+
+  <export>
+  </export>
+</package>

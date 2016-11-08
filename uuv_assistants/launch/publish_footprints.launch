@@ -1,0 +1,3 @@
+<launch>
+    <node name="publish_footprints" pkg="uuv_trajectory_control_swarms" type="publish_footprints.py" output="screen"/>
+</launch>

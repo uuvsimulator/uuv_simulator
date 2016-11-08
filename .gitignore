@@ -1,0 +1,5 @@
+*~
+*.pyc
+*.swp
+.clang_complete
+.idea

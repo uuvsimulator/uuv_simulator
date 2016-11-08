@@ -1,0 +1,23 @@
+<launch>
+  <arg name="namespace"/>
+  <arg name="deadman_button" default="right"/>
+  <arg name="joystick_model" default="xbox360"/>
+  <arg name="joy_id" default="0"/>
+
+  <group ns="/$(arg namespace)">
+    <node pkg="joy_teleop" type="joy_teleop.py" name="joy" />
+
+    <node pkg="joy" type="joy_node" name="joystick">
+      <param name="autorepeat_rate" value="10" />
+      <param name="dev" value="/dev/input/js$(arg joy_id)"/>
+    </node>
+
+    <node name="gripper_teleop"
+          pkg="uuv_manipulators_teleop"
+          type="gripper_joy_teleop.py">
+          <rosparam param="deadman_button" subst_value="true">$(arg deadman_button)</rosparam>
+          <rosparam command="load" file="$(find uuv_manipulators_teleop)/config/joystick/$(arg joystick_model).yaml"/>
+    </node>
+  </group>
+
+</launch>

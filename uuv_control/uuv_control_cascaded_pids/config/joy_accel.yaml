@@ -1,0 +1,24 @@
+# This works for xbox 360 wireless controllers.
+teleop:
+  move:
+    type: topic
+    message_type: geometry_msgs/Accel
+    topic_name: cmd_accel
+    deadman_buttons: [4]
+    axis_mappings:
+      -
+        axis: 0
+        target: angular.z
+        scale: 0.5
+      -
+        axis: 1
+        target: linear.z
+        scale: 1.0
+      -
+        axis: 3
+        target: linear.y
+        scale: 1.0
+      -
+        axis: 4
+        target: linear.x
+        scale: 1.0
