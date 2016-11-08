@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Macro for a minimal collision block (for when you do not want collision block but gazebo needs one) -->
+  <xacro:macro name="no_collision">
+    <collision>
+      <geometry>
+        <cylinder length="${0.000001}" radius="${0.000001}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+    </collision>
+  </xacro:macro>
+
+
+  <xacro:macro name="default_magnetometer" params="namespace parent_link">
+    <!-- Bosch BMX055. -->
+    <xacro:magnetometer_plugin_macro
+      namespace="${namespace}"
+      suffix=""
+      parent_link="${parent_link}"
+      topic="magnetometer"
+      mass="0.015"
+      update_period="0.02"
+      mag_intensity="65.0"
+      noise_xy="1.0"
+      noise_z="1.4"
+      turn_on_bias="2.0">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:magnetometer_plugin_macro>
+  </xacro:macro>
+
+  <!-- Macro to add a Magnetometer. -->
+  <xacro:macro name="magnetometer_plugin_macro"
+    params="namespace suffix parent_link topic mass update_period
+      mag_intensity noise_xy noise_z turn_on_bias
+      *inertia *origin">
+    <!-- Sensor link -->
+    <link name="${namespace}/magnetometer${suffix}_link">
+      <inertial>
+        <xacro:insert_block name="inertia" />
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+      <visual>
+        <geometry>
+          <box size="0.1 0.1 0.1" />
+        </geometry>
+      </visual>
+      <xacro:no_collision/>
+    </link>
+
+    <!-- Sensor joint -->
+    <joint name="${namespace}/magnetometer${suffix}_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/magnetometer${suffix}_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo>
+      <plugin filename="libuuv_gazebo_ros_magnetometer.so" name="libuuv_gazebo_magnetometer${suffix}_plugin">
+        <robotNamespace>${namespace}</robotNamespace> <!-- (string, required): ros namespace in which the messages are published -->
+        <linkName>${namespace}/magnetometer${suffix}_link</linkName> <!-- (string, required): name of the body which holds the IMU sensor -->
+        <sensorTopic>${topic}</sensorTopic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+        <updatePeriod>${update_period}</updatePeriod> <!-- Update period of accelerometer and gyroscope [s] -->
+
+        <intensity>${mag_intensity}</intensity> <!-- magnitude of magnetic field [muT] -->
+        <referenceHeading>${pi}</referenceHeading> <!-- reference heading [rad] -->
+        <declination>0.0</declination> <!-- reference declination [rad] -->
+        <inclination>${pi*60/180}</inclination> <!-- refernce inclination [rad] -->
+        <noise_xy>${noise_xy}</noise_xy> <!-- Discrete-time std. dev. of output noise in xy-axis [muT] -->
+        <noise_z>${noise_z}</noise_z> <!-- Discrete-time std. dev. of output noise in z-axis [muT] -->
+        <turn_on_bias>${turn_on_bias}</turn_on_bias> <!-- Std. dev. of turn-on-bias [muT] -->
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

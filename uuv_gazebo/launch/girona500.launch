@@ -1,0 +1,39 @@
+<launch>
+  <include file="$(find uuv_descriptions)/models/girona500/launch/upload_girona500.launch">
+    <arg name="mode" value="default"/>
+    <arg name="namespace" value="girona500"/>
+    <arg name="debug" value="1"/>
+    <arg name="x" value="35"/>
+    <arg name="y" value="50"/>
+    <arg name="z" value="-30"/>
+  </include>
+
+  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+    <arg name="uuv_name" value="girona500" />
+    <arg name="model_name" value="girona500" />
+  </include>
+
+  <group ns="girona500">
+    <rosparam file="$(find uuv_control_cascaded_pid)/config/girona500/inertial.yaml" command="load"/>
+    <rosparam file="$(find uuv_control_cascaded_pid)/config/girona500/vel_pid_control.yaml" command="load"/>
+
+    <node pkg="uuv_control_cascaded_pid" type="AccelerationControl.py" name="acceleration_control"
+            output="screen">
+      <param name="tf_prefix" type="string" value="girona500/" />
+    </node>
+
+    <node pkg="uuv_control_cascaded_pid" type="VelocityControl.py" name="velocity_control"
+          output="screen">
+      <remap from="odom" to="/girona500/pose_gt"/>
+      <remap from="cmd_accel" to="/girona500/cmd_accel"/>
+    </node>
+
+    <rosparam file="$(find uuv_control_cascaded_pid)/config/joy_vel.yaml" command="load" />
+    <node pkg="joy_teleop" type="joy_teleop.py" name="joy_uuv_velocity_teleop" />
+
+    <node pkg="joy" type="joy_node" name="joystick">
+      <param name="autorepeat_rate" value="10" />
+      <param name="dev" value="/dev/input/js0"/>
+    </node>
+  </group>
+</launch>

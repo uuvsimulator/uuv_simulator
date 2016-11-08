@@ -1,0 +1,26 @@
+<launch>
+  <arg name="model_name" />
+  <arg name="uuv_name" default="$(arg model_name)"/>
+  <arg name="joy_id" default="0"/>
+
+  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)" />
+    <arg name="model_name" value="$(arg model_name)" />
+  </include>
+
+  <group ns="$(arg uuv_name)">
+    <rosparam file="$(find uuv_control_cascaded_pid)/config/$(arg model_name)/inertial.yaml" command="load"/>
+
+    <node pkg="uuv_control_cascaded_pid" type="AccelerationControl.py" name="acceleration_control"
+          output="screen">
+      <param name="tf_prefix" type="string" value="$(arg uuv_name)/" />
+    </node>
+  </group>
+
+  <include file="$(find uuv_vehicle_teleop)/launch/uuv_teleop.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="joy_id" value="$(arg joy_id)"/>
+    <arg name="output_topic" value="cmd_accel"/>
+    <arg name="message_type" value="geometry_msgs/Accel"/>
+  </include>
+</launch>

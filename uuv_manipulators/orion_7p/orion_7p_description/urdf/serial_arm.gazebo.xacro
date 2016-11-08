@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:macro name="orion_7p_gazebo_macro" params="namespace">
+
+  <gazebo reference="${namespace}/base">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <gazebo reference="${namespace}/shoulder_link">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <gazebo reference="${namespace}/upper_arm">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <gazebo reference="${namespace}/forearm_axis">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <gazebo reference="${namespace}/forearm">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <gazebo reference="${namespace}/wrist_1">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <gazebo reference="${namespace}/wrist_2">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <gazebo reference="${namespace}/end_effector">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="uuv_plugin_orion" filename="libunderwater_object_plugin.so">
+      <fluid_density>1028.0</fluid_density>
+      <flow_velocity_topic>/hydrodynamics/flow_velocity</flow_velocity_topic>
+      <link name="${namespace}/base">
+        <volume>${x1*y1*z1}</volume>
+        <box>
+          <width>${y1}</width>
+          <length>${x1}</length>
+          <height>${z1}</height>
+        </box>
+        <hydrodynamic_model>
+          <type>fossen</type>
+        </hydrodynamic_model>
+      </link>
+      <link name="${namespace}/shoulder_link">
+        <volume>${x2*y2*z2}</volume>
+        <box>
+          <width>${y2}</width>
+          <length>${x2}</length>
+          <height>${z2}</height>
+        </box>
+        <hydrodynamic_model>
+          <type>fossen</type>
+        </hydrodynamic_model>
+      </link>
+      <link name="${namespace}/upper_arm">
+        <volume>${x3*y3*z3}</volume>
+        <box>
+          <width>${y3}</width>
+          <length>${x3}</length>
+          <height>${z3}</height>
+        </box>
+        <hydrodynamic_model>
+          <type>fossen</type>
+        </hydrodynamic_model>
+      </link>
+      <link name="${namespace}/forearm">
+        <volume>${x4*y4*z4}</volume>
+        <box>
+          <width>${y4}</width>
+          <length>${x4}</length>
+          <height>${z4}</height>
+        </box>
+        <hydrodynamic_model>
+          <type>fossen</type>
+        </hydrodynamic_model>
+      </link>
+      <link name="${namespace}/wrist_1">
+        <volume>${x5*y5*z5}</volume>
+        <box>
+          <width>${y5}</width>
+          <length>${x5}</length>
+          <height>${z5}</height>
+        </box>
+        <hydrodynamic_model>
+          <type>fossen</type>
+        </hydrodynamic_model>
+      </link>
+      <link name="${namespace}/wrist_2">
+        <volume>${x6*y6*z6}</volume>
+        <box>
+          <width>${y6}</width>
+          <length>${x6}</length>
+          <height>${z6}</height>
+        </box>
+        <hydrodynamic_model>
+          <type>fossen</type>
+        </hydrodynamic_model>
+      </link>
+    </plugin>
+  </gazebo>
+
+</xacro:macro>
+
+</robot>

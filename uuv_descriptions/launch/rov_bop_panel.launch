@@ -1,0 +1,11 @@
+<launch>
+    <arg name="x" default="-1"/>
+    <arg name="y" default="-1"/>
+    <arg name="z" default="-4"/>
+    <arg name="angle" default="0"/>
+    <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+    <include file="$(find uuv_descriptions)/launch/empty_underwater_world.launch"/>
+
+    <node name="sdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-sdf -x $(arg x) -y $(arg y) -z $(arg z) -P 1.57 -Y $(arg angle) -model rov_bop_panel -database rov_bop_panel"/>
+</launch>

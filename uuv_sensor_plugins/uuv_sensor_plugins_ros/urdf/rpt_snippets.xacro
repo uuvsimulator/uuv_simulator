@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="no_collision">
+    <collision>
+      <geometry>
+        <cylinder length="${0.000001}" radius="${0.000001}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+    </collision>
+  </xacro:macro>
+
+  <xacro:macro name="default_rpt" params="namespace parent_link *origin">
+    <xacro:rpt_plugin_macro
+      namespace="${namespace}"
+      suffix=""
+      parent_link="${parent_link}"
+      topic="rpt">
+      <xacro:insert_block name="origin" />
+    </xacro:rpt_plugin_macro>
+  </xacro:macro>
+
+  <xacro:macro name="rpt_plugin_macro" params="namespace suffix parent_link topic *origin">
+    <link name="${namespace}/rpt${suffix}_link">
+      <inertial>
+        <mass value="0.001" />  <!-- [kg] -->
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="0.000000017" ixy="0" ixz="0" iyy="0.000000017" iyz="0" izz="0.000000017" />
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/rpt.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+      <xacro:no_collision/>
+    </link>
+
+    <joint name="${namespace}/rpt${suffix}_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/rpt${suffix}_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo>
+      <plugin filename="libuuv_gazebo_ros_rpt.so" name="libuuv_gazebo_rpt${suffix}_plugin">
+        <robotNamespace>${namespace}</robotNamespace> <!-- ros namespace in which the messages are published -->
+        <linkName>${namespace}/rpt${suffix}_link</linkName> <!-- sensor link name -->
+        <referenceFrame>ssbl</referenceFrame> <!-- name of the refernce frame of all position measurements -->
+        <sensorTopic>${topic}</sensorTopic> <!-- name of the sensor output topic and prefix of service name -->
+        <updatePeriod>2</updatePeriod> <!-- Update period [s] -->
+        <positionNoise>1.0</positionNoise> <!-- std dev of position estimates in x, y, z [m] -->
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+</robot>

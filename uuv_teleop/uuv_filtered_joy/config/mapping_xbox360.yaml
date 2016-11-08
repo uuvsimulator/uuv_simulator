@@ -1,0 +1,23 @@
+joystick_mapping:
+  buttons:
+    A: 0
+    B: 1
+    X: 2
+    Y: 3
+    start: 7
+    back: 6
+    left: 4
+    right: 5
+    cross_left: 11
+    cross_right: 12
+    cross_up: 13
+    cross_down: 14
+    pad_left: 9
+    pad_right: 10
+  axes:
+    left_x: 0
+    left_y: 1
+    right_x: 3
+    right_y: 4
+    left_trigger: 2
+    right_trigger: 5

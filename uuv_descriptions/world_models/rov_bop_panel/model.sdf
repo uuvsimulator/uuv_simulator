@@ -1,0 +1,320 @@
+<?xml version="1.0" ?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version="1.5">
+  <model name="rov_bop_panel">
+    <pose>0 0 0.25 0 1.57 0</pose>
+    <link name="panel">
+      <inertial>
+        <mass>10</mass>
+        <inertia>
+          <ixx>0.4166666666666667</ixx>
+          <iyy>0.4166666666666667</iyy>
+          <izz>0.4166666666666667</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="panel_collision">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/BOP_Panel.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="panel_visual">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/BOP_Panel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <self_collide>0</self_collide>
+    </link>
+
+    <link name="valve_1">
+      <pose>-0.15 -0.2 0.18 0 0 1.57</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_1_collision">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/Valve.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_1_visual">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/Valve.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_1_joint" type="revolute">
+      <parent>panel</parent>
+      <child>valve_1</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <link name="valve_2">
+      <pose>0.15 -0.2 0.18 0 0 1.57</pose>
+
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_2_collision">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/Valve.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_2_visual">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/Valve.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_2_joint" type="revolute">
+      <parent>panel</parent>
+      <child>valve_2</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Valve 3  -->
+    <link name="valve_3">
+      <pose>-0.15 0 0.18 0 0 1.57</pose>
+
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_3_collision">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/Valve.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_3_visual">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/Valve.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_3_joint" type="revolute">
+      <parent>panel</parent>
+      <child>valve_3</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Valve 4 (Small) -->
+    <link name="valve_4">
+      <pose>0 -0.2 0.14 0 0 0</pose>
+
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_4_collision">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/SmallValve.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_4_visual">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/SmallValve.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_4_joint" type="revolute">
+      <parent>panel</parent>
+      <child>valve_4</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Valve 5 (Small) -->
+    <link name="valve_5">
+      <pose>0 0 0.14 0 0 0</pose>
+
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_5_collision">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/SmallValve.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_5_visual">
+        <geometry>
+          <mesh>
+            <uri>model://rov_bop_panel/SmallValve.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_5_joint" type="revolute">
+      <parent>panel</parent>
+      <child>valve_5</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <joint name="world_joint" type="revolute">
+      <child>panel</child>
+      <parent>world</parent>
+      <axis>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+        <xyz>0 1 0</xyz>
+        <dynamics>
+          <damping>1.0</damping>
+        </dynamics>
+        <use_parent_model_frame>true</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <cfm_damping>1</cfm_damping>
+        </ode>
+      </physics>
+    </joint>
+  </model>
+</sdf>

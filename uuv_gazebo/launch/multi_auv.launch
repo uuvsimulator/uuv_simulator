@@ -1,0 +1,29 @@
+<launch>
+
+<include file="$(find uuv_descriptions_swarms)/models/eca_a9/launch/upload_eca_a9.launch">
+  <arg name="mode" value="default"/>
+  <arg name="namespace" value="eca_a9_1"/>
+  <arg name="x" value="5"/>
+  <arg name="y" value="5"/>
+  <arg name="z" value="-60"/>
+</include>
+
+<include file="$(find uuv_auv_teleop)/launch/joy_angles_thrust.launch">
+  <arg name="uuv_name" value="eca_a9_1"/>
+  <arg name="joy_id" value="0"/>
+</include>
+
+<include file="$(find uuv_descriptions_swarms)/models/eca_a9/launch/upload_eca_a9.launch">
+  <arg name="mode" value="default"/>
+  <arg name="namespace" value="eca_a9_2"/>
+  <arg name="x" value="5"/>
+  <arg name="y" value="-5"/>
+  <arg name="z" value="-60"/>
+</include>
+
+<include file="$(find uuv_auv_teleop)/launch/joy_angles_thrust.launch">
+  <arg name="uuv_name" value="eca_a9_2"/>
+  <arg name="joy_id" value="0"/>
+</include>
+
+</launch>

@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--
+      The RexROV meshes and hydrodynamic parameters are based on the parameters and dimensions
+      from the SF 30k.
+
+      Reference:
+        Dukan, Fredrik. "ROV Motion Control Systems." PhD Thesis, NTNU, 2014.
+  -->
+  <!-- includes -->
+  <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find uuv_sensor_plugins_ros)/urdf/sensor_snippets.xacro"/>
+
+  <!-- parameters -->
+  <xacro:property name="debug" value="0"/>
+  <xacro:property name="namespace" value="rexrov"/>
+  <xacro:property name="visual_mesh_file" value="file://$(find uuv_descriptions)/models/rexrov/mesh/RexROV_no_props.dae"/>
+  <xacro:property name="collision_mesh_file" value="file://$(find uuv_descriptions)/models/rexrov/mesh/RexROV_no_props.stl"/>
+  <xacro:property name="prop_mesh_file" value="file://$(find uuv_descriptions)/models/rexrov/mesh/prop.dae"/>
+
+  <!-- Mass, see p.28 in Berg2012 -->
+  <xacro:property name="mass" value="1862.87"/>
+
+  <!-- Volume, see p.31 in Berg2012 -->
+  <xacro:property name="volume" value="1.83826"/>
+
+  <!-- Center of buoyancy according to eq. (3.1) p. 28 in Berg2012.
+       The original values, [0.0822, -0.00773, 0.3872] however, seem to
+       assume NWU (otherwise cob is below cog?).  -->
+  <xacro:property name="cob" value="0.0 0.0 0.3"/>
+
+  <!-- Thruster joint and link snippet -->
+  <xacro:macro name="thruster_macro" params="namespace thruster_id *origin">
+    <joint name="${namespace}/thruster_${thruster_id}_joint" type="continuous">
+      <xacro:insert_block name="origin"/>
+      <axis xyz="1 0 0"/>
+      <parent link="${namespace}/base_link"/>
+      <child link="${namespace}/thruster_${thruster_id}"/>
+    </joint>
+    <link name="${namespace}/thruster_${thruster_id}">
+      <xacro:box_inertial x="0" y="0" z="0" mass="0.001">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </xacro:box_inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="${prop_mesh_file}" scale="1 1 1"/>
+        </geometry>
+      </visual>
+      <collision>
+        <!-- todo: gazebo needs a collision volume or it will ignore the pose of
+           the joint that leads to this link (and assume it to be the identity) -->
+        <geometry>
+          <cylinder length="0.000001" radius="0.000001"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+      </collision>
+    </link>
+    <gazebo>
+      <plugin name="${namespace}_${thruster_id}_thruster_model" filename="libthruster_ros_plugin.so">
+        <linkName>${namespace}/thruster_${thruster_id}</linkName>
+        <jointName>${namespace}/thruster_${thruster_id}_joint</jointName>
+        <thrustTopic>${namespace}/thrusters/${thruster_id}/thrust</thrustTopic>
+        <inputTopic>${namespace}/thrusters/${thruster_id}/input</inputTopic>
+        <dynamics>
+          <type>FirstOrder</type>
+          <timeConstant>0.05</timeConstant>
+        </dynamics>
+        <conversion>
+          <type>Basic</type>
+          <rotorConstant>0.00031</rotorConstant>
+        </conversion>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="rexrov_base" params="namespace debug">
+    <!-- base_link according to ROS conventions: x forward, z up -->
+    <link name="${namespace}/base_link">
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="525.39" ixy="1.44" ixz="33.41" iyy="794.20" iyz="2.6" izz="691.23"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="${visual_mesh_file}" scale="1 1 1"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="${collision_mesh_file}" scale="1 1 1"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <xacro:dummy_link name="${namespace}/ned_link" />
+
+    <joint name="ned_joint" type="fixed">
+      <!-- This is revolute and not static since gazebo would remove ned_link -->
+      <origin xyz="0 0 0" rpy="${pi} 0 0"/>
+      <parent link="${namespace}/base_link"/>
+      <child link="${namespace}/ned_link"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+    <!-- Set up hydrodynamic plugin -->
+    <gazebo>
+      <plugin name="uuv_plugin" filename="libunderwater_object_ros_plugin.so">
+        <fluid_density>1028.0</fluid_density>
+        <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+        <debug>${debug}</debug>
+        <link name="${namespace}/base_link">
+          <volume>${volume}</volume>
+          <box>
+            <width>1.5</width>
+            <length>2.6</length>
+            <height>1.6</height>
+          </box>
+          <center_of_buoyancy>${cob}</center_of_buoyancy>
+          <!-- Added mass: see p.28 in Berg2012 -->
+          <hydrodynamic_model>
+            <type>fossen</type>
+            <added_mass>
+               779.79 -6.8773 -103.32 8.5426 -165.54 -7.8033
+              -6.8773 1222 51.29 409.44 -5.8488 62.726
+                -103.32 51.29 3659.9 6.1112 -386.42 10.774
+                8.5426 409.44 6.1112 534.9 -10.027 21.019
+                -165.54 -5.8488 -386.42 -10.027 842.69 -1.1162
+                -7.8033 62.726 10.775 21.019 -1.1162 224.32
+            </added_mass>
+            <!-- Linear damping: see p.31 in Berg2012 -->
+            <linear_damping>-74.82 -69.48 -728.4 -268.8 -309.77 -105</linear_damping>
+            <!-- Non-linear damping: see p.30 in Berg2012 -->
+            <quadratic_damping>-748.22 -992.53 -1821.01 -672 -774.44 -523.27</quadratic_damping>
+          </hydrodynamic_model>
+        </link>
+      </plugin>
+    </gazebo>
+
+    <xacro:thruster_macro namespace="${namespace}" thruster_id="0">
+      <origin xyz="-0.890895 0.334385 0.528822" rpy="${0*d2r} ${-74.53*d2r} ${-53.21*d2r}"/>
+    </xacro:thruster_macro>
+    <xacro:thruster_macro namespace="${namespace}" thruster_id="1">
+      <origin xyz="-0.890895 -0.334385 0.528822" rpy="${0*d2r} ${-74.53*d2r} ${53.21*d2r}"/>
+    </xacro:thruster_macro>
+    <xacro:thruster_macro namespace="${namespace}" thruster_id="2">
+      <origin xyz="0.890895 0.334385 0.528822" rpy="${0*d2r} ${-105.47*d2r} ${53.21*d2r}"/>
+    </xacro:thruster_macro>
+    <xacro:thruster_macro namespace="${namespace}" thruster_id="3">
+      <origin xyz="0.890895 -0.334385 0.528822" rpy="${0*d2r} ${-105.47*d2r} ${-53.21*d2r}"/>
+    </xacro:thruster_macro>
+    <xacro:thruster_macro namespace="${namespace}" thruster_id="4">
+      <origin xyz="-0.412125 0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${45*d2r}"/>
+    </xacro:thruster_macro>
+    <xacro:thruster_macro namespace="${namespace}" thruster_id="5">
+      <origin xyz="-0.412125 -0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${-45*d2r}"/>
+    </xacro:thruster_macro>
+    <xacro:thruster_macro namespace="${namespace}" thruster_id="6">
+      <origin xyz="0.412125 0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${135*d2r}"/>
+    </xacro:thruster_macro>
+    <xacro:thruster_macro namespace="${namespace}" thruster_id="7">
+      <origin xyz="0.412125 -0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${-135*d2r}"/>
+    </xacro:thruster_macro>
+
+    <!-- Mount a 3D pose sensor -->
+    <link name="${namespace}/pose_sensor_link">
+      <xacro:box_inertial x="0" y="0" z="0" mass="0.01">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </xacro:box_inertial>
+      <visual>
+        <geometry>
+          <box size="0.1 0.1 0.1"/>
+        </geometry>
+      </visual>
+      <xacro:no_collision/>
+    </link>
+
+    <joint name="${namespace}/pose_sensor_joint" type="revolute">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <parent link="${namespace}/base_link"/>
+      <child link="${namespace}/pose_sensor_link"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+    <gazebo>
+      <plugin name="pose_3d_plugin" filename="libgazebo_ros_p3d.so">
+        <robotNamespace>${namespace}</robotNamespace>
+        <bodyName>${namespace}/base_link</bodyName>
+        <topicName>pose_gt</topicName>
+        <frameName>world</frameName>
+        <gaussianNoise>0.0</gaussianNoise>
+        <updateRate>30</updateRate>
+      </plugin>
+    </gazebo>
+
+    <!-- DVL  -->
+    <xacro:default_dvl namespace="${namespace}" parent_link="${namespace}/base_link">
+      <origin xyz="-1.4 0 -0.312" rpy="0 ${0.5*pi} 0"/>
+    </xacro:default_dvl>
+
+    <!-- RPT  -->
+    <xacro:default_rpt namespace="${namespace}" parent_link="${namespace}/base_link">
+      <origin xyz="-1.32 0 0.8" rpy="0 0 0"/>
+    </xacro:default_rpt>
+
+    <!-- Pressure  -->
+    <xacro:default_pressure namespace="${namespace}" parent_link="${namespace}/base_link">
+      <origin xyz="-1.32 0.5 0.85" rpy="0 0 0"/>
+    </xacro:default_pressure>
+
+    <!-- IMU  -->
+    <xacro:default_imu namespace="${namespace}" parent_link="${namespace}/base_link">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:default_imu>
+
+    <!-- Mount a camera -->
+    <xacro:default_camera namespace="${namespace}" parent_link="${namespace}/base_link">
+      <origin xyz="1.15 0 0.4" rpy="0 0.6 0"/>
+    </xacro:default_camera>
+
+  </xacro:macro>
+</robot>

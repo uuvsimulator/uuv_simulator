@@ -1,0 +1,50 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="arm_name" default="orion_7p"/>
+
+  <group ns="/$(arg uuv_name)/$(arg arm_name)">
+    <!-- Load joint controller configurations from YAML file to parameter server -->
+    <rosparam command="load" file="$(find orion_7p_control)/config/effort_controllers.yaml"/>
+
+    <rosparam param="azimuth/effort_controller/joint" subst_value="true">
+      $(arg arm_name)/azimuth
+    </rosparam>
+
+    <rosparam param="shoulder/effort_controller/joint" subst_value="true">
+      $(arg arm_name)/shoulder
+    </rosparam>
+
+    <rosparam param="elbow/effort_controller/joint" subst_value="true">
+      $(arg arm_name)/elbow
+    </rosparam>
+
+    <rosparam param="roll/effort_controller/joint" subst_value="true">
+      $(arg arm_name)/roll
+    </rosparam>
+
+    <rosparam param="pitch/effort_controller/joint" subst_value="true">
+      $(arg arm_name)/pitch
+    </rosparam>
+
+    <rosparam param="wrist/effort_controller/joint" subst_value="true">
+      $(arg arm_name)/wrist
+    </rosparam>
+  </group>
+
+  <group ns="$(arg uuv_name)">
+    <!-- load the controllers -->
+    <node name="controller_spawner_$(arg arm_name)"
+          pkg="controller_manager"
+          type="spawner"
+          respawn="false"
+          output="screen"
+          ns="/$(arg uuv_name)"
+          args="/$(arg uuv_name)/$(arg arm_name)/azimuth/effort_controller
+                /$(arg uuv_name)/$(arg arm_name)/shoulder/effort_controller
+                /$(arg uuv_name)/$(arg arm_name)/elbow/effort_controller
+                /$(arg uuv_name)/$(arg arm_name)/roll/effort_controller
+                /$(arg uuv_name)/$(arg arm_name)/pitch/effort_controller
+                /$(arg uuv_name)/$(arg arm_name)/wrist/effort_controller"/>
+
+  </group>
+</launch>

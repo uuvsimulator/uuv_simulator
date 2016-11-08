@@ -1,0 +1,84 @@
+<?xml version='1.0'?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version='1.5'>
+    <model name="ned">
+
+      <pose>0 0 0 3.14159265359 0 0</pose>
+      <static>true</static>
+
+      <link name="N">
+        <gravity>0</gravity>
+        <pose>0 0 0 0 0 0</pose>
+        <visual name="N_visual">
+          <pose>0.25 0 0 0 1.57079632679 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>0.5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Red</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+
+      <link name="E">
+        <gravity>0</gravity>
+        <pose>0 -0.25 0 1.57079632679 0 0</pose>
+        <visual name="E_visual">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>0.5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Green</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+
+      <link name="D">
+        <gravity>0</gravity>
+        <pose>0 0 0 0 0 0</pose>
+        <visual name="D_visual">
+          <pose>0 0 -0.25 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>0.5</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Blue</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+
+    </model>
+</sdf>

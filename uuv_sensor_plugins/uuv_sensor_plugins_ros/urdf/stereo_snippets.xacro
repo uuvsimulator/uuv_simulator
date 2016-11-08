@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="k1l" value="-0.389021"/>
+  <xacro:property name="k2l" value="0.118184"/>
+  <xacro:property name="p1l" value="0.001259"/>
+  <xacro:property name="p2l" value="0.002050"/>
+  <xacro:property name="k3l" value="0.000000"/>
+
+  <xacro:property name="k1r" value="-0.378206"/>
+  <xacro:property name="k2r" value="0.104833"/>
+  <xacro:property name="p1r" value="0.000458"/>
+  <xacro:property name="p2r" value="0.002447"/>
+  <xacro:property name="k3r" value="0.000000"/>
+
+  <xacro:property name="hfov" value="1.3844"/>
+
+  <!-- Macro for a minimal collision block (for when you do not want collision block but gazebo needs one) -->
+  <xacro:macro name="no_collision">
+    <collision>
+      <geometry>
+        <cylinder length="${0.000001}" radius="${0.000001}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+    </collision>
+  </xacro:macro>
+
+  <xacro:macro name="duo3d_camera" params="namespace parent_link *origin">
+    <link name="${namespace}/duo3d_left_link">
+      <inertial>
+        <mass value="0.01"/>
+        <inertia ixx="0" ixy="0.0" ixz="0.0" iyy="0" iyz="0.0" izz="0" />
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/duo3d.dae"/>
+        </geometry>
+      </visual>
+      <xacro:no_collision/>
+    </link>
+
+    <joint name="${namespace}/duo3d_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/duo3d_left_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo reference="${namespace}/duo3d_left_link">
+      <sensor name="camera" type="camera">
+      <camera>
+        <horizontal_fov>${hfov}</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>460</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>5000</far>
+        </clip>
+        <distortion>
+          <k1>${k1l}</k1>
+          <k2>${k2l}</k2>
+          <k3>${k3l}</k3>
+          <p1>${p1l}</p1>
+          <p2>${p2l}</p2>
+          <center>0.5 0.5</center>
+        </distortion>
+      </camera>
+
+      <plugin name="left_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>30.0</updateRate>
+        <cameraName>${namespace}/duo3d_left</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>${namespace}/duo3d_left_link</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>${k1l}</distortionK1>
+        <distortionK2>${k2l}</distortionK2>
+        <distortionK3>${k3l}</distortionK3>
+        <distortionT1>${p1l}</distortionT1>
+        <distortionT2>${p2l}</distortionT2>
+      </plugin>
+      <always_on>1</always_on>
+      <update_rate>30</update_rate>
+      <visualize>true</visualize>
+    </sensor>
+    </gazebo>
+
+    <link name="${namespace}/duo3d_right_link">
+      <inertial>
+        <mass value="0.01"/>
+        <inertia ixx="0" ixy="0.0" ixz="0.0" iyy="0" iyz="0.0" izz="0" />
+      </inertial>
+      <xacro:no_collision/>
+    </link>
+
+    <joint name="${namespace}/duo3d_right_joint" type="revolute">
+      <origin xyz="0.0 -0.03 0" rpy="0 0 0"/>
+      <parent link="${namespace}/duo3d_left_link" />
+      <child link="${namespace}/duo3d_right_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo reference="${namespace}/duo3d_right_link">
+      <sensor name="camera" type="camera">
+      <camera>
+        <horizontal_fov>${hfov}</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>460</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>5000</far>
+        </clip>
+        <distortion>
+          <k1>${k1l}</k1>
+          <k2>${k2l}</k2>
+          <k3>${k3l}</k3>
+          <p1>${p1l}</p1>
+          <p2>${p2l}</p2>
+          <center>0.5 0.5</center>
+        </distortion>
+      </camera>
+
+      <plugin name="right_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>30.0</updateRate>
+        <cameraName>${namespace}/duo3d_right</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>${namespace}/duo3d_right_link</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>${k1l}</distortionK1>
+        <distortionK2>${k2l}</distortionK2>
+        <distortionK3>${k3l}</distortionK3>
+        <distortionT1>${p1l}</distortionT1>
+        <distortionT2>${p2l}</distortionT2>
+      </plugin>
+      <always_on>1</always_on>
+      <update_rate>30</update_rate>
+      <visualize>true</visualize>
+    </sensor>
+  </gazebo>
+
+  </xacro:macro>
+</robot>
