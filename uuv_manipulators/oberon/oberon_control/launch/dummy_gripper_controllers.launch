@@ -1,0 +1,5 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="arm_name" default="oberon"/>
+
+</launch>

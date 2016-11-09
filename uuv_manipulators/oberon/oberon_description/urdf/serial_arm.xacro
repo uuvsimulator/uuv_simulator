@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+<!-- Oberon-7P Schilling Robotics Manipulator
+     Meshes and parameters a courtesy of Deutsche Forschungszentrum für
+     Künstliche Intelligenz GmbH (DFKI)
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--
+  *Parameters: meshes and 'origins' from DFKI
+  *Masses in relation to their corresponding volume proportion (volume calculated with 'admesh')
+  *Inertial tensors calculated as box links
+  -->
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="use_mesh_file" value="false" />
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="base_mass" value="7.79" /> <!-- mass of link 1 (kg) - 54kg*0,002797/0,019395 = 7,79 kg -->
+  <xacro:property name="x1" value="0.305" /> <!-- Link 1 - x dimension (m) - 0.305 -->
+  <xacro:property name="y1" value="0.100" /> <!-- Link 1 - y dimension (m) - 0.100 -->
+  <xacro:property name="z1" value="0.160" /> <!-- Link 1 - z dimension (m) - 0.160 -->
+  <xacro:property name="x1col" value="0.250" /> <!-- Link 1 - x dimension for collision (m) - 0.250 -->
+  <xacro:property name="shoulder_mass" value="2.76" /> <!-- mass of link 2 (kg) - 54kg*0,000993/0,019395 = 2,76 kg -->
+  <xacro:property name="x2" value="0.15" /> <!-- Link 2 - x dimension (m) - 0.150  -->
+  <xacro:property name="y2" value="0.085" /> <!-- Link 2 - y dimension (m) - 0.085 -->
+  <xacro:property name="z2" value="0.140" /> <!-- Link 2 - z dimension (m) - 0.140 -->
+  <xacro:property name="upper_arm_mass" value="7.65" /> <!-- mass of link 3 (kg) - 54kg*0.002748/0,019395 = 7,65 kg -->
+  <xacro:property name="x3" value="0.620" /> <!-- Link 3 - x dimension (m) - 0.620 -->
+  <xacro:property name="x3col" value="0.540" /> <!-- Link 3 - x dimension for collision (m) - 0.540 -->
+  <xacro:property name="y3" value="0.120" /> <!-- Link 3 - y dimension (m) - 0.120 -->
+  <xacro:property name="z3" value="0.080" /> <!-- Link 3 - z dimension (m) - 0.080 -->
+  <xacro:property name="forearm_mass" value="10.55" /> <!-- mass of link 4 (kg) - 54kg*0,003791/0,019395 = 10,55 kg -->
+  <xacro:property name="x4" value="0.190" /> <!-- Link 4 - x dimension (m) - 0.190  -->
+  <xacro:property name="y4" value="0.160" /> <!-- Link 4 - y dimension (m) - 0.160 -->
+  <xacro:property name="z4" value="0.240" /> <!-- Link 4 - z dimension (m) - 0.240 -->
+  <xacro:property name="wrist_1_mass" value="11.17" /> <!-- mass of link 5 (kg) - 54kg*0,004011/0,019395 = 11,17 kg -->
+  <xacro:property name="x5" value="0.360" /> <!-- Link 5 - x dimension (m) - 0.360 -->
+  <xacro:property name="y5" value="0.160" /> <!-- Link 5 - y dimension (m) - 0.160 -->
+  <xacro:property name="z5" value="0.160" /> <!-- Link 5 - z dimension (m) - 0.160 -->
+  <xacro:property name="wrist_2_mass" value="6.68" /> <!-- mass of link 6 (kg) - 54kg*0,002401/0,019395 = 6,68 kg -->
+  <xacro:property name="x6" value="0.250" /> <!-- Link 6 - x dimension (m) - 0.250 -->
+  <xacro:property name="y6" value="0.140" /> <!-- Link 6 - y dimension (m) - 0.140 -->
+  <xacro:property name="z6" value="0.125" /> <!-- Link 6 - z dimension (m) - 0.125 -->
+  <xacro:property name="mass7" value="3.43" /> <!-- mass of link 7 (kg) - 54kg*0,001232/0,019395 = 3,43 kg -->
+  <xacro:property name="x7" value="0.100" /> <!-- Link 7 - x dimension (m) - 0.100 -->
+  <xacro:property name="y7" value="0.123" /> <!-- Link 7 - y dimension (m) - 0.123 -->
+  <xacro:property name="z7" value="0.123" /> <!-- Link 7 - z dimension (m) - 0.123 -->
+
+  <!-- Import common macros-->
+  <xacro:include filename="$(find uuv_manipulators_description)/urdf/common.xacro" />
+
+  <xacro:macro name="serial_arm" params="namespace parent *origin">
+    <link name="${namespace}/base">
+      <inertial>
+        <origin xyz="-0.11 0 0" rpy="0 0 0"/>
+        <mass value="${base_mass}"/>
+        <inertia ixx="${base_mass / 12.0 * (y1*y1 + z1*z1)}" ixy="0.0" ixz="0.0"
+                 iyy="${base_mass / 12.0 * (x1*x1 + z1*z1)}" iyz="0.0"
+                 izz="${base_mass / 12.0 * (x1*x1 + y1*y1)}"/>
+      </inertial>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil1.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <xacro:if value="${use_mesh_file}">
+            <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil1.stl" scale="1 1 1" />
+          </xacro:if>
+          <xacro:unless value="${use_mesh_file}">
+            <box size="${x1col} ${y1} ${z1}"/>
+          </xacro:unless>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${namespace}/base">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <link name="${namespace}/shoulder_link">
+      <inertial>
+        <origin xyz="0.055 0 0.025" rpy="0 0 0"/>
+        <mass value="${shoulder_mass}"/>
+        <inertia ixx="${shoulder_mass / 12.0 * (y2*y2 + z2*z2)}" ixy="0.0" ixz="0.0"
+                 iyy="${shoulder_mass / 12.0 * (x2*x2 + z2*z2)}" iyz="0.0"
+                 izz="${shoulder_mass / 12.0 * (x2*x2 + y2*y2)}"/>
+     </inertial>
+
+      <visual type="trimesh">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil2.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <xacro:if value="${use_mesh_file}">
+            <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil2.stl" scale="1 1 1" />
+          </xacro:if>
+          <xacro:unless value="${use_mesh_file}">
+            <box size="${x2} ${y2} ${z2}"/>
+          </xacro:unless>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${namespace}/shoulder_link">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <link name="${namespace}/upper_arm">
+      <inertial>
+        <origin xyz="0.28 0 0" rpy="0 0 0"/>
+        <mass value="${upper_arm_mass}"/>
+        <inertia ixx="${upper_arm_mass / 12.0 * (y3*y3 + z3*z3)}" ixy="0.0" ixz="0.0"
+                 iyy="${upper_arm_mass / 12.0 * (x3*x3 + z3*z3)}" iyz="0.0"
+                 izz="${upper_arm_mass / 12.0 * (x3*x3 + y3*y3)}"/>
+      </inertial>
+
+      <visual type="trimesh">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil3.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <xacro:if value="${use_mesh_file}">
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil3.stl" scale="1 1 1" />
+          </geometry>
+        </xacro:if>
+        <xacro:unless value="${use_mesh_file}">
+          <origin xyz="${0.5*x3col}  0 0" rpy="0 0 0" />
+          <geometry>
+            <box size="${x3col} ${y3} ${z3}"/>
+          </geometry>
+        </xacro:unless>
+      </collision>
+    </link>
+
+    <gazebo reference="${namespace}/upper_arm">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <link name="${namespace}/forearm_axis"/>
+
+    <gazebo reference="${namespace}/forearm_axis">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <link name="${namespace}/forearm">
+      <inertial>
+      <origin xyz="0.045 0 -0.043" rpy="0 0 0"/>
+      <mass value="${forearm_mass}"/>
+      <inertia ixx="${forearm_mass / 12.0 * (y4*y4 + z4*z4)}" ixy="0.0" ixz="0.0"
+               iyy="${forearm_mass / 12.0 * (x4*x4 + z4*z4)}" iyz="0.0"
+               izz="${forearm_mass / 12.0 * (x4*x4 + y4*y4)}"/>
+      </inertial>
+
+      <visual>
+        <origin rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil4.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <xacro:if value="${use_mesh_file}">
+            <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil4.stl" scale="1 1 1" />
+          </xacro:if>
+          <xacro:unless value="${use_mesh_file}">
+            <box size="${x4} ${y4} ${z4}"/>
+          </xacro:unless>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${namespace}/forearm">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <link name="${namespace}/wrist_1">
+      <inertial>
+      <origin xyz="0.175 0 0" rpy="0 0 0"/>
+      <mass value="${wrist_1_mass}"/>
+      <inertia ixx="${wrist_1_mass / 12.0 * (y5*y5 + z5*z5)}" ixy="0.0" ixz="0.0"
+               iyy="${wrist_1_mass / 12.0 * (x5*x5 + z5*z5)}" iyz="0.0"
+               izz="${wrist_1_mass / 12.0 * (x5*x5 + y5*y5)}"/>
+      </inertial>
+
+      <visual>
+        <origin rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil5.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <xacro:if value="${use_mesh_file}">
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil5.stl" scale="1 1 1" />
+          </geometry>
+        </xacro:if>
+        <xacro:unless value="${use_mesh_file}">
+          <origin xyz="${0.5*x5} 0 0" rpy="0 0 0" />
+          <geometry>
+            <box size="${x5} ${y5} ${z5}"/>
+          </geometry>
+        </xacro:unless>
+      </collision>
+    </link>
+
+    <gazebo reference="${namespace}/wrist_1">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <link name="${namespace}/wrist_2">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${wrist_2_mass}"/>
+        <inertia ixx="${wrist_2_mass / 12.0 * (y6*y6 + z6*z6)}" ixy="0.0" ixz="0.0"
+                 iyy="${wrist_2_mass / 12.0 * (x6*x6 + z6*z6)}" iyz="0.0"
+                 izz="${wrist_2_mass / 12.0 * (x6*x6 + y6*y6)}"/>
+      </inertial>
+
+      <visual>
+        <origin rpy="0 0 0" />
+        <geometry>
+            <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil6.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <xacro:if value="${use_mesh_file}">
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="file://$(find oberon_description)/meshes/oberon_arm_teil6.stl" scale="1 1 1" />
+          </geometry>
+        </xacro:if>
+        <xacro:unless value="${use_mesh_file}">
+          <origin xyz="${0.5*x6} 0 0" rpy="0 0 0" />
+          <geometry>
+            <box size="${x6} ${y6} ${z6}"/>
+          </geometry>
+        </xacro:unless>
+      </collision>
+    </link>
+
+    <gazebo reference="${namespace}/wrist_2">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <xacro:dummy_link name="${namespace}/end_effector"/>
+
+    <gazebo reference="${namespace}/end_effector">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <!-- All the joints -->
+    <joint name="${namespace}/anchor" type="revolute">
+      <parent link="${parent}"/>
+      <child link="${namespace}/base"/>
+      <insert_block name="origin"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+    <joint name="${namespace}/azimuth" type="revolute">
+      <parent link="${namespace}/base"/>
+      <child link="${namespace}/shoulder_link"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="15" friction="40"/>
+      <limit lower="-1.0471975511965976" upper="1.0471975511965976" velocity="0.17" effort="10000"/>
+    </joint>
+
+    <joint name="${namespace}/shoulder" type="revolute">
+        <parent link="${namespace}/shoulder_link"/>
+        <child link="${namespace}/upper_arm"/>
+        <origin xyz="0.07 0.0 0.028" rpy="0 0 0"/>
+        <axis xyz="0 -1 0"/>
+        <dynamics damping="15" friction="40"/>
+        <limit lower="-0.55850536063818546" upper="1.5707963267948966" velocity=".17" effort="10000"/>
+    </joint>
+
+    <joint name="${namespace}/elbow" type="revolute">
+      <parent link="${namespace}/upper_arm"/>
+      <child link="${namespace}/forearm_axis"/>
+      <origin xyz="0.579 0.0 0" rpy="0 1.5707963267948966 0"/>
+      <dynamics damping="15" friction="40"/>
+      <axis xyz="0 -1 0"/>
+      <limit lower="-1.5358897417550099" upper="0.76794487087750496" velocity=".13" effort="10000"/>
+    </joint>
+
+    <joint name="${namespace}/elbow_dummy" type="fixed">
+      <parent link="${namespace}/forearm_axis"/>
+      <child link="${namespace}/forearm"/>
+      <origin xyz="0.0 0.0 0.135" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <joint name="${namespace}/roll" type="revolute">
+      <parent link="${namespace}/forearm"/>
+      <child link="${namespace}/wrist_1"/>
+      <origin xyz="0.139 0.0 0" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <dynamics damping="15" friction="40"/>
+      <limit lower="-2.3911010752322315" upper="2.3212879051524582" velocity=".085" effort="10000"/>
+    </joint>
+
+    <joint name="${namespace}/pitch" type="revolute">
+      <parent link="${namespace}/wrist_1"/>
+      <child link="${namespace}/wrist_2"/>
+      <origin xyz="0.362 0.0 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="15" friction="40"/>
+      <limit lower="-1.6406094968746698" upper="0.4537856055185257" velocity=".26" effort="10000"/>
+    </joint>
+
+    <joint name="${namespace}/wrist" type="revolute">
+      <parent link="${namespace}/wrist_2"/>
+      <child link="${namespace}/end_effector"/>
+      <origin xyz="0.232 0 0" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <dynamics damping="15" friction="40"/>
+      <limit lower="-0.38397243543875248" upper="5.8817595792208905" velocity=".26" effort="5"/>
+    </joint>
+
+    <!-- Transmissions -->
+    <xacro:simple_transmission joint="${namespace}/azimuth" />
+    <xacro:simple_transmission joint="${namespace}/shoulder" />
+    <xacro:simple_transmission joint="${namespace}/elbow" />
+    <xacro:simple_transmission joint="${namespace}/wrist" />
+    <xacro:simple_transmission joint="${namespace}/pitch" />
+    <xacro:simple_transmission joint="${namespace}/roll" />
+
+    <xacro:oberon_gazebo_macro namespace="${namespace}"/>
+
+  </xacro:macro>
+
+</robot>

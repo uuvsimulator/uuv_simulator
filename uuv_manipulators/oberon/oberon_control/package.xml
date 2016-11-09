@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+  <name>oberon_control</name>
+  <version>0.0.0</version>
+  <description>Package with configuration and launch files to control the Oberon 7P manipulator.</description>
+
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="Sebastian.Scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>

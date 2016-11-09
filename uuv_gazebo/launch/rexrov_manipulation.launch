@@ -6,7 +6,7 @@
   <arg name="namespace" default="rexrov"/>
 
   <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
-    <arg name="mode" value="orion_7p"/>
+    <arg name="mode" value="oberon"/>
     <arg name="namespace" value="$(arg namespace)"/>
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
@@ -42,9 +42,9 @@
     </node>
   </group>
 
-  <include file="$(find orion_7p_control)/launch/jt_cartesian_controller.launch">
+  <include file="$(find oberon_control)/launch/jt_cartesian_controller.launch">
     <arg name="uuv_name" value="$(arg namespace)"/>
-    <arg name="arm_name" value="orion_7p"/>
+    <arg name="arm_name" value="oberon"/>
     <arg name="teleop" default="true"/>
     <arg name="joy_id" default="$(arg joy_id)" />
   </include>

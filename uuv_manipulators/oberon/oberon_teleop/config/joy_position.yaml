@@ -1,0 +1,61 @@
+teleop:
+    applyPosAzimuth:
+        type: topic
+        message_type: std_msgs/Float64
+        topic_name: oberon/azimuth/ramp_generator/command
+        deadman_buttons: [3]
+        axis_mappings:
+            -
+                axis: 1
+                target: data
+                scale: 1
+    applyPosShoulder:
+        type: topic
+        message_type: std_msgs/Float64
+        topic_name: oberon/shoulder/ramp_generator/command
+        deadman_buttons: [1]
+        axis_mappings:
+            -
+                axis: 1
+                target: data
+                scale: 1
+    applyPosElbow:
+        type: topic
+        message_type: std_msgs/Float64
+        topic_name: /oberon/elbow/ramp_generator/command
+        deadman_buttons: [0]
+        axis_mappings:
+            -
+                axis: 1
+                target: data
+                scale: 1
+    applyPosRoll:
+        type: topic
+        message_type: std_msgs/Float64
+        topic_name: /oberon/roll/ramp_generator/command
+        deadman_buttons: [2]
+        axis_mappings:
+            -
+                axis: 1
+                target: data
+                scale: 1
+    applyPosPitch:
+        type: topic
+        message_type: std_msgs/Float64
+        topic_name: /oberon/pitch/ramp_generator/command
+        deadman_buttons: [5]
+        axis_mappings:
+            -
+                axis: 1
+                target: data
+                scale: 1
+    applyPosWrist:
+        type: topic
+        message_type: std_msgs/Float64
+        topic_name: /oberon/wrist/ramp_generator/command
+        deadman_buttons: [7]
+        axis_mappings:
+            -
+                axis: 1
+                target: data
+                scale: 1

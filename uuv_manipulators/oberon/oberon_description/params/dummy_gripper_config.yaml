@@ -1,0 +1,8 @@
+gripper:
+  type: no_gripper
+  base: base_gripper
+  links: [grasp]
+  groups:
+    gripper:
+      links: [grasp]
+      ee: grasp

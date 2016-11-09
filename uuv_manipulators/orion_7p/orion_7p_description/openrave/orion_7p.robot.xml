@@ -1,6 +1,0 @@
-<Robot name="orion_7p" file="orion_7p_standalone.dae">
-  <Manipulator name="arm">
-    <base>orion_7p/base</base>
-    <effector>orion_7p/end_effector</effector>
-  </Manipulator>
-</Robot>
