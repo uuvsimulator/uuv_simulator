@@ -1,5 +1,0 @@
-<launch>
-  <arg name="uuv_name" />
-  <arg name="arm_name" default="orion_7p"/>
-
-</launch>

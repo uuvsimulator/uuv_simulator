@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="oberon" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Oberon with parallel gripper -->
+  <xacro:include filename="$(find uuv_descriptions)/models/rexrov/robots/rexrov_oberon.xacro" />
+
+  <link name="world"/>
+
+  <joint name="fixed_rov" type="revolute">
+    <parent link="world"/>
+    <child link="$(arg namespace)/base_link"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+
+</robot>

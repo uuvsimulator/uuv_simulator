@@ -37,25 +37,25 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        orion_7p/base:
+        oberon/base:
           Value: true
-        orion_7p/base_gripper:
+        oberon/base_gripper:
           Value: true
-        orion_7p/end_effector:
+        oberon/end_effector:
           Value: true
-        orion_7p/forearm:
+        oberon/forearm:
           Value: true
-        orion_7p/forearm_axis:
+        oberon/forearm_axis:
           Value: true
-        orion_7p/grasp:
+        oberon/grasp:
           Value: true
-        orion_7p/shoulder_link:
+        oberon/shoulder_link:
           Value: true
-        orion_7p/upper_arm:
+        oberon/upper_arm:
           Value: true
-        orion_7p/wrist_1:
+        oberon/wrist_1:
           Value: true
-        orion_7p/wrist_2:
+        oberon/wrist_2:
           Value: true
         rexrov/base_footprint:
           Value: true
@@ -113,16 +113,16 @@ Visualization Manager:
           rexrov/base_footprint:
             rexrov/base_stabilized:
               rexrov/base_link:
-                orion_7p/base:
-                  orion_7p/shoulder_link:
-                    orion_7p/upper_arm:
-                      orion_7p/forearm_axis:
-                        orion_7p/forearm:
-                          orion_7p/wrist_1:
-                            orion_7p/wrist_2:
-                              orion_7p/end_effector:
-                                orion_7p/base_gripper:
-                                  orion_7p/grasp:
+                oberon/base:
+                  oberon/shoulder_link:
+                    oberon/upper_arm:
+                      oberon/forearm_axis:
+                        oberon/forearm:
+                          oberon/wrist_1:
+                            oberon/wrist_2:
+                              oberon/end_effector:
+                                oberon/base_gripper:
+                                  oberon/grasp:
                                     {}
                 rexrov/camera_link:
                   {}
@@ -203,51 +203,51 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        orion_7p/base:
+        oberon/base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        orion_7p/base_gripper:
+        oberon/base_gripper:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        orion_7p/end_effector:
+        oberon/end_effector:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        orion_7p/forearm:
+        oberon/forearm:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        orion_7p/forearm_axis:
+        oberon/forearm_axis:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        orion_7p/grasp:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        orion_7p/shoulder_link:
+        oberon/grasp:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        orion_7p/upper_arm:
+        oberon/shoulder_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        orion_7p/wrist_1:
+        oberon/upper_arm:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        orion_7p/wrist_2:
+        oberon/wrist_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        oberon/wrist_2:
           Alpha: 1
           Show Axes: false
           Show Trail: false

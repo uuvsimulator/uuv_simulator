@@ -1,0 +1,15 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="arm_name" default="oberon"/>
+
+  <include file="$(find oberon_control)/launch/joint_effort_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+  </include>
+
+  <include file="$(find oberon_control)/launch/parallel_gripper_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+  </include>
+
+</launch>

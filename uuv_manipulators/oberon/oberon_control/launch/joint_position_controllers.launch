@@ -1,0 +1,81 @@
+<launch>
+    <arg name="uuv_name" />
+    <arg name="arm_name" default="oberon"/>
+    <arg name="teleop" default="true"/>
+
+    <group ns="/$(arg uuv_name)/$(arg arm_name)">
+      <!-- Load joint controller configurations from YAML file to parameter server -->
+      <rosparam file="$(find oberon_control)/config/position_controllers.yaml" command="load"/>
+      <rosparam file="$(find oberon_control)/config/pa_gripper_position_controllers.yaml" command="load"/>
+
+      <rosparam param="azimuth/position_controller/joint" subst_value="true">
+        $(arg arm_name)/azimuth
+      </rosparam>
+
+      <rosparam param="shoulder/position_controller/joint" subst_value="true">
+        $(arg arm_name)/shoulder
+      </rosparam>
+
+      <rosparam param="elbow/position_controller/joint" subst_value="true">
+        $(arg arm_name)/elbow
+      </rosparam>
+
+      <rosparam param="roll/position_controller/joint" subst_value="true">
+        $(arg arm_name)/roll
+      </rosparam>
+
+      <rosparam param="pitch/position_controller/joint" subst_value="true">
+        $(arg arm_name)/pitch
+      </rosparam>
+
+      <rosparam param="wrist/position_controller/joint" subst_value="true">
+        $(arg arm_name)/wrist
+      </rosparam>
+
+      <rosparam param="finger_left_joint/position_controller/joint" subst_value="true">
+        $(arg arm_name)/finger_left_joint
+      </rosparam>
+
+      <rosparam param="finger_right_joint/position_controller/joint" subst_value="true">
+        $(arg arm_name)/finger_right_joint
+      </rosparam>
+
+      <!-- Load joint limits configurations from YAML file to parameter server -->
+      <rosparam file="$(find oberon_control)/config/joint_limits.yaml" command="load"/>
+    </group>
+
+    <group ns="$(arg uuv_name)">
+      <!-- load the controllers -->
+      <node name="controller_spawner"
+            pkg="controller_manager"
+            type="spawner"
+            respawn="false"
+            output="screen"
+            ns="/$(arg uuv_name)"
+            args="/$(arg uuv_name)/$(arg arm_name)/azimuth/position_controller
+                  /$(arg uuv_name)/$(arg arm_name)/shoulder/position_controller
+                  /$(arg uuv_name)/$(arg arm_name)/elbow/position_controller
+                  /$(arg uuv_name)/$(arg arm_name)/roll/position_controller
+                  /$(arg uuv_name)/$(arg arm_name)/pitch/position_controller
+                  /$(arg uuv_name)/$(arg arm_name)/wrist/position_controller"/>
+    </group>
+
+
+    <node name="kinematics_service" pkg="uuv_manipulators_kinematics" type="kinematics_service.py"
+      output="screen" args="--namespace $(arg uuv_name) --arm $(arg arm_name)"/>
+
+    <group if="$(arg teleop)">
+      <include file="$(find oberon_teleop)/launch/teleop_joy_position.launch">
+        <arg name="uuv_name" value="$(arg uuv_name)"/>
+        <arg name="arm_name" value="$(arg arm_name)"/>
+      </include>
+    </group>
+
+    <group unless="$(arg teleop)">
+      <node pkg="uuv_manipulators_control"
+            type="set_joint_config.py"
+            name="set_joint_config"
+            output="screen"
+            args="--namespace $(arg uuv_name) --arm $(arg arm_name) --config home "/>
+    </group>
+</launch>

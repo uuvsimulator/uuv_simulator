@@ -1,0 +1,11 @@
+finger_left_joint:
+    controller:
+        type: effort_controllers/JointEffortController
+        joint: finger_left_joint
+        pid: {p: 50.0, i: 0.01, d: 0.0}
+
+finger_tip_left_joint:
+    controller:
+        type: effort_controllers/JointEffortController
+        joint: finger_tip_left_joint
+        pid: {p: 50.0, i: 0.01, d: 0.0}

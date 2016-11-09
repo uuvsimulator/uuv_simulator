@@ -1,0 +1,25 @@
+joint_limits:
+  azimuth:
+    min: rad(-pi/3)
+    max: rad(pi/3)
+    init: 0.0
+  shoulder:
+    min: rad(-pi/6)
+    max: rad(pi/2)
+    init: rad(pi/2 - 0.001)
+  elbow:
+    min: rad(-pi/2)
+    max: rad(pi/6)
+    init: rad(-pi/2 + 0.001)
+  wrist:
+    min: rad(-3*pi/4)
+    max: rad(3*pi/4)
+    init: 0.0
+  roll:
+    min: rad(-pi)
+    max: rad(pi)
+    init: 0.0
+  pitch:
+    min: rad(-pi/3)
+    max: rad(pi/2)
+    init: rad(-pi/3 + 0.001)

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot name="oberon" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find oberon_description)/urdf/serial_arm.gazebo.xacro" />
+  <!-- Import serial arm -->
+  <xacro:include filename="$(find oberon_description)/urdf/serial_arm.xacro" />
+  <!-- Import parallel gripper -->
+  <xacro:include filename="$(find oberon_description)/urdf/parallel_gripper.xacro" />
+
+  <!-- Oberon 7P + Parallel gripper -->
+  <xacro:macro name="oberon" params="namespace parent *origin">
+    <xacro:serial_arm namespace="${namespace}" parent="${parent}">
+      <insert_block name="origin"/>
+    </xacro:serial_arm>
+
+    <xacro:parallel_gripper namespace="${namespace}" parent="${namespace}/end_effector"/>
+  </xacro:macro>
+
+</robot>

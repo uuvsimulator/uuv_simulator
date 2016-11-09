@@ -1,0 +1,46 @@
+<launch>
+    <arg name="uuv_name" default=""/>
+    <arg name="arm_name" default="oberon"/>
+    <arg name="joy_id" default="0"/>
+
+    <group ns="/$(arg uuv_name)/$(arg arm_name)">
+        <node pkg="uuv_manipulators_teleop" type="ramp_generation.py"
+          name="joy_ramp_generation" output="screen"
+          args="--namespace /$(arg uuv_name) --arm $(arg arm_name)">
+        </node>
+
+        <rosparam file="$(find oberon_teleop)/config/joy_position.yaml" command="load" />
+
+        <rosparam param="teleop/applyPosAzimuth/topic_name" subst_value="true">
+          /$(arg uuv_name)/$(arg arm_name)/azimuth/ramp_generator/command
+        </rosparam>
+
+        <rosparam param="teleop/applyPosShoulder/topic_name" subst_value="true">
+          /$(arg uuv_name)/$(arg arm_name)/shoulder/ramp_generator/command
+        </rosparam>
+
+        <rosparam param="teleop/applyPosElbow/topic_name" subst_value="true">
+          /$(arg uuv_name)/$(arg arm_name)/elbow/ramp_generator/command
+        </rosparam>
+
+        <rosparam param="teleop/applyPosRoll/topic_name" subst_value="true">
+          /$(arg uuv_name)/$(arg arm_name)/roll/ramp_generator/command
+        </rosparam>
+
+        <rosparam param="teleop/applyPosPitch/topic_name" subst_value="true">
+          /$(arg uuv_name)/$(arg arm_name)/pitch/ramp_generator/command
+        </rosparam>
+
+        <rosparam param="teleop/applyPosWrist/topic_name" subst_value="true">
+          /$(arg uuv_name)/$(arg arm_name)/wrist/ramp_generator/command
+        </rosparam>
+
+        <node pkg="joy_teleop" type="joy_teleop.py" name="joy_position_teleop" output="screen" />
+
+        <node pkg="joy" type="joy_node" name="joystick">
+            <param name="autorepeat_rate" value="10" />
+            <param name="dev" value="/dev/input/js$(arg joy_id)"/>
+        </node>
+    </group>
+
+</launch>
