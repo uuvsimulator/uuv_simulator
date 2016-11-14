@@ -301,9 +301,9 @@ void HMFossen::ComputeAddedCoriolisMatrix(const Eigen::Vector6d& _vel,
   // Fossen, Thor, "Handbook of Marine Craft and Hydrodynamics and Motion
   // Control", 2011
   Eigen::Vector6d ab = _Ma * _vel;
-  Eigen::Matrix3d Sa = CrossProductOperator(ab.head<3>());
+  Eigen::Matrix3d Sa = -1 * CrossProductOperator(ab.head<3>());
   _Ca << Eigen::Matrix3d::Zero(), Sa,
-         Sa, CrossProductOperator(ab.tail<3>());
+         Sa, -1 * CrossProductOperator(ab.tail<3>());
 }
 
 /////////////////////////////////////////////////
