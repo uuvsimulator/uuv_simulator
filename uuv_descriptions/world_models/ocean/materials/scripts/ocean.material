@@ -62,7 +62,7 @@ material Waves_GLSL
         param_named bumpScale float2 25 25
         param_named bumpSpeed float2 0.01 0.01
         param_named frequency float 0.028
-        param_named amplitude float 3.0
+        param_named amplitude float 0.7
         param_named steepness float 1.0
       }
 
