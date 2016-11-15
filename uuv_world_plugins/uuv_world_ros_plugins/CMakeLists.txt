@@ -3,30 +3,14 @@ project(uuv_world_ros_plugins)
 
 find_package(catkin REQUIRED
   uuv_world_plugins
-  message_generation
-  geometry_msgs)
+  uuv_world_ros_plugins_msgs)
 
 find_package(gazebo REQUIRED)
-
-## Generate services in the 'srv' folder
-add_service_files(
-  FILES
-  SetCurrentModel.srv
-  GetCurrentModel.srv
-  SetCurrentVelocity.srv
-  SetCurrentDirection.srv
-)
-
-## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
 
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES uuv_underwater_world_ros_plugin
- CATKIN_DEPENDS message_runtime
+ CATKIN_DEPENDS
 #  DEPENDS system_lib
 )
 

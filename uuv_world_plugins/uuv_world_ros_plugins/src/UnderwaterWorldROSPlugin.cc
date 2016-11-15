@@ -124,8 +124,8 @@ void UnderwaterWorldROSPlugin::PublishROSTopics()
 
 /////////////////////////////////////////////////
 bool UnderwaterWorldROSPlugin::UpdateCurrentDirection(
-    uuv_world_ros_plugins::SetCurrentDirection::Request& _req,
-    uuv_world_ros_plugins::SetCurrentDirection::Response& _res)
+    uuv_world_ros_plugins_msgs::SetCurrentDirection::Request& _req,
+    uuv_world_ros_plugins_msgs::SetCurrentDirection::Response& _res)
 {
   _res.success = this->currentDirectionModel.SetMean(_req.angle);
 
@@ -134,8 +134,8 @@ bool UnderwaterWorldROSPlugin::UpdateCurrentDirection(
 
 /////////////////////////////////////////////////
 bool UnderwaterWorldROSPlugin::UpdateCurrentVelocity(
-    uuv_world_ros_plugins::SetCurrentVelocity::Request& _req,
-    uuv_world_ros_plugins::SetCurrentVelocity::Response& _res)
+    uuv_world_ros_plugins_msgs::SetCurrentVelocity::Request& _req,
+    uuv_world_ros_plugins_msgs::SetCurrentVelocity::Response& _res)
 {
   _res.success = this->currentVelModel.SetMean(_req.velocity);
 
@@ -144,8 +144,8 @@ bool UnderwaterWorldROSPlugin::UpdateCurrentVelocity(
 
 /////////////////////////////////////////////////
 bool UnderwaterWorldROSPlugin::GetCurrentVelocityModel(
-    uuv_world_ros_plugins::GetCurrentModel::Request& _req,
-    uuv_world_ros_plugins::GetCurrentModel::Response& _res)
+    uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
+    uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res)
 {
   _res.mean = this->currentVelModel.mean;
   _res.min = this->currentVelModel.min;
@@ -157,8 +157,8 @@ bool UnderwaterWorldROSPlugin::GetCurrentVelocityModel(
 
 /////////////////////////////////////////////////
 bool UnderwaterWorldROSPlugin::GetCurrentDirectionModel(
-    uuv_world_ros_plugins::GetCurrentModel::Request& _req,
-    uuv_world_ros_plugins::GetCurrentModel::Response& _res)
+    uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
+    uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res)
 {
   _res.mean = this->currentDirectionModel.mean;
   _res.min = this->currentDirectionModel.min;
@@ -171,8 +171,8 @@ bool UnderwaterWorldROSPlugin::GetCurrentDirectionModel(
 
 /////////////////////////////////////////////////
 bool UnderwaterWorldROSPlugin::UpdateCurrentVelocityModel(
-    uuv_world_ros_plugins::SetCurrentModel::Request& _req,
-    uuv_world_ros_plugins::SetCurrentModel::Response& _res)
+    uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
+    uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res)
 {
   _res.success = this->currentVelModel.SetModel(_req.mean, _req.min, _req.max,
     _req.mu, _req.noise);
@@ -183,8 +183,8 @@ bool UnderwaterWorldROSPlugin::UpdateCurrentVelocityModel(
 
 /////////////////////////////////////////////////
 bool UnderwaterWorldROSPlugin::UpdateCurrentDirectionModel(
-    uuv_world_ros_plugins::SetCurrentModel::Request& _req,
-    uuv_world_ros_plugins::SetCurrentModel::Response& _res)
+    uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
+    uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res)
 {
   _res.success = this->currentDirectionModel.SetModel(_req.mean, _req.min,
     _req.max, _req.mu, _req.noise);

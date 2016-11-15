@@ -31,10 +31,10 @@
 #include <gazebo/physics/World.hh>
 #include <ros/ros.h>
 #include <geometry_msgs/TwistStamped.h>
-#include <uuv_world_ros_plugins/SetCurrentModel.h>
-#include <uuv_world_ros_plugins/GetCurrentModel.h>
-#include <uuv_world_ros_plugins/SetCurrentVelocity.h>
-#include <uuv_world_ros_plugins/SetCurrentDirection.h>
+#include <uuv_world_ros_plugins_msgs/SetCurrentModel.h>
+#include <uuv_world_ros_plugins_msgs/GetCurrentModel.h>
+#include <uuv_world_ros_plugins_msgs/SetCurrentVelocity.h>
+#include <uuv_world_ros_plugins_msgs/SetCurrentDirection.h>
 
 namespace uuv_simulator_ros
 {
@@ -53,36 +53,36 @@ namespace uuv_simulator_ros
     /// \brief Service call to update the parameters for the velocity
     /// Gauss-Markov process model
     public: bool UpdateCurrentVelocityModel(
-        uuv_world_ros_plugins::SetCurrentModel::Request& _req,
-        uuv_world_ros_plugins::SetCurrentModel::Response& _res);
+        uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
+        uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res);
 
     /// \brief Service call to update the parameters for the direction
     /// Gauss-Markov process model
     public: bool UpdateCurrentDirectionModel(
-        uuv_world_ros_plugins::SetCurrentModel::Request& _req,
-        uuv_world_ros_plugins::SetCurrentModel::Response& _res);
+        uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
+        uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res);
 
     /// \brief Service call to read the parameters for the velocity
     /// Gauss-Markov process model
     public: bool GetCurrentVelocityModel(
-        uuv_world_ros_plugins::GetCurrentModel::Request& _req,
-        uuv_world_ros_plugins::GetCurrentModel::Response& _res);
+        uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
+        uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res);
 
     /// \brief Service call to read the parameters for the direction
     /// Gauss-Markov process model
     public: bool GetCurrentDirectionModel(
-        uuv_world_ros_plugins::GetCurrentModel::Request& _req,
-        uuv_world_ros_plugins::GetCurrentModel::Response& _res);
+        uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
+        uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res);
 
     /// \brief Service call to update the mean value of the flow velocity
     public: bool UpdateCurrentVelocity(
-        uuv_world_ros_plugins::SetCurrentVelocity::Request& _req,
-        uuv_world_ros_plugins::SetCurrentVelocity::Response& _res);
+        uuv_world_ros_plugins_msgs::SetCurrentVelocity::Request& _req,
+        uuv_world_ros_plugins_msgs::SetCurrentVelocity::Response& _res);
 
     /// \brief Service call to update the mean value of the flow direction
     public: bool UpdateCurrentDirection(
-        uuv_world_ros_plugins::SetCurrentDirection::Request& _req,
-        uuv_world_ros_plugins::SetCurrentDirection::Response& _res);
+        uuv_world_ros_plugins_msgs::SetCurrentDirection::Request& _req,
+        uuv_world_ros_plugins_msgs::SetCurrentDirection::Response& _res);
 
     /// \brief Publishes ROS topics
     private: void PublishROSTopics();
