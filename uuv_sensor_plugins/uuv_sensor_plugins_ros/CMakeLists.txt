@@ -54,12 +54,15 @@ add_library(uuv_gazebo_ros_subseapressure src/SubseapressureRosPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_subseapressure ${catkin_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_subseapressure uuv_gazebo_subseapressure)
 
-install(
-  TARGETS
-    uuv_gazebo_ros_imu
-    uuv_gazebo_ros_magnetometer
-    uuv_gazebo_ros_camera
-    uuv_gazebo_ros_subseapressure
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+# install plug-ins
+install(TARGETS uuv_gazebo_ros_camera uuv_gazebo_ros_dvl uuv_gazebo_ros_imu
+    uuv_gazebo_ros_magnetometer uuv_gazebo_ros_rpt uuv_gazebo_ros_subseapressure
+    DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+# Install urdf files
+install(DIRECTORY urdf
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        PATTERN "*~" EXCLUDE)

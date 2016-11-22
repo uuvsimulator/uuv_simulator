@@ -18,7 +18,9 @@ from distutils.core import setup
 from catkin_pkg.python_setup import generate_distutils_setup
 
 d = generate_distutils_setup()
-d['packages'] = ['kdl', 'urdf_parser_py', 'uuv_kinematics_utils', 'uuv_manipulator_interfaces']
+d['packages'] = ['kdl', 'urdf_parser_py', 'uuv_kinematics_utils',
+                 'uuv_manipulator_interfaces', 'uuv_manipulator_nodes',
+                 'xml_reflection']
 d['package_dir'] = {'': 'src'}
 
 setup(**d)

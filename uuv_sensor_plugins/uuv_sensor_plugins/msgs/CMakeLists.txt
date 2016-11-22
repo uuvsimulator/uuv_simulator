@@ -18,3 +18,9 @@ set (msgs
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${msgs})
 add_library(uuv_sensors_msgs SHARED ${PROTO_SRCS})
 target_link_libraries(uuv_sensors_msgs ${PROTOBUF_LIBRARY} ${GAZEBO_LIBRARIES})
+
+install(
+  TARGETS
+    uuv_sensors_msgs
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)

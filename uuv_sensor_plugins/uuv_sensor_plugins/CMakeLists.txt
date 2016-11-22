@@ -101,10 +101,17 @@ add_dependencies(uuv_gazebo_subseapressure uuv_sensors_msgs)
 
 install(
   TARGETS
+    uuv_gazebo_camera
+    uuv_gazebo_dvl
     uuv_gazebo_imu
     uuv_gazebo_magnetometer
-    uuv_gazebo_camera
+    uuv_gazebo_rpt
     uuv_gazebo_subseapressure
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
+
+# Install mesh files
+install(DIRECTORY mesh
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        PATTERN "*~" EXCLUDE)

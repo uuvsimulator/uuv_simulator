@@ -90,7 +90,7 @@ target_link_libraries(thruster_plugin ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 ## Install ##
 #############
 
-install(TARGETS fin_plugin underwater_object_plugin thruster_plugin # umbilical_plugin
+install(TARGETS dynamics fin_plugin underwater_object_plugin thruster_plugin umbilical_plugin
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

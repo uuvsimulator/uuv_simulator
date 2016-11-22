@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from urdf_parser_py.xml_reflection.basics import *
+from xml_reflection.basics import *
 import sys
 import copy
 
