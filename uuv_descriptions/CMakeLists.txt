@@ -19,3 +19,8 @@ catkin_package(
 add_subdirectory(models)
 add_subdirectory(world_models)
 add_subdirectory(worlds)
+
+# Install launch files
+install(DIRECTORY launch/
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+        PATTERN "*~" EXCLUDE)
