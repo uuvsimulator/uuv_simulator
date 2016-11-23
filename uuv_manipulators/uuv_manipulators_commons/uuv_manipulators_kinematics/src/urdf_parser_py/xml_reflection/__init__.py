@@ -1,1 +1,2 @@
-from xml_reflection.core import *
+from .core import *
+from .basics import *
