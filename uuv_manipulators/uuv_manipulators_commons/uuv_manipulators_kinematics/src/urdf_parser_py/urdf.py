@@ -25,8 +25,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from xml_reflection.basics import *
-import xml_reflection as xmlr
+from urdf_parser_py.xml_reflection.basics import *
+import urdf_parser_py.xml_reflection as xmlr
 
 # Add a 'namespace' for names so that things don't conflict between URDF and SDF?
 # A type registry? How to scope that? Just make a 'global' type pointer?
