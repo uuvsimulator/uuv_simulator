@@ -68,6 +68,8 @@ void GazeboSubseaPressurePlugin::SimulateMeasurement(
         this->inferredDepth_ = (pressure - this->standardPressure_)
                 / this->kPaPerM_;
     }
+
+    this->lastMeasTime_ = _info.simTime;
 }
 
 bool GazeboSubseaPressurePlugin::OnUpdate(const common::UpdateInfo &_info)

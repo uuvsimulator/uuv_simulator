@@ -60,8 +60,6 @@ void GazeboDvlPlugin::Load(physics::ModelPtr _model,
 void GazeboDvlPlugin::SimulateMeasurement(
     const common::UpdateInfo &_info)
 {
-  this->lastMeasTime_ = _info.simTime;
-
   // True velocity
   this->vel = this->link_->GetRelativeLinearVel();
 
@@ -70,6 +68,7 @@ void GazeboDvlPlugin::SimulateMeasurement(
   this->vel.y += this->velocityNoise*this->normal_(this->rndGen_);
   this->vel.z += this->velocityNoise*this->normal_(this->rndGen_);
 
+  this->lastMeasTime_ = _info.simTime;
   return;
 }
 
