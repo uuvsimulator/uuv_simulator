@@ -220,7 +220,8 @@ void HMFossen::ApplyHydrodynamicForces(const math::Vector3 &_flowVelWorld)
 {
   const math::Vector3 linVel = this->link->GetRelativeLinearVel();
   const math::Vector3 angVel = this->link->GetRelativeAngularVel();
-  const math::Vector3 linAcc = this->link->GetRelativeLinearAccel();
+  // Take in account coriolis and centripetal term
+  const math::Vector3 linAcc = this->link->GetRelativeLinearAccel() - angVel.Cross(linVel);
   const math::Vector3 angAcc = this->link->GetRelativeAngularAccel();
 
   // Link's pose
