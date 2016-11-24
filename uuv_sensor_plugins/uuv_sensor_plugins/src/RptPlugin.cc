@@ -59,8 +59,6 @@ void GazeboRptPlugin::Load(physics::ModelPtr _model,
 void GazeboRptPlugin::SimulateMeasurement(
     const common::UpdateInfo &_info)
 {
-  this->lastMeasTime_ = _info.simTime;
-
   // True position
   this->position = this->link_->GetWorldPose().pos;
 
@@ -69,6 +67,7 @@ void GazeboRptPlugin::SimulateMeasurement(
   this->position.y += this->positionNoise*this->normal_(this->rndGen_);
   this->position.z += this->positionNoise*this->normal_(this->rndGen_);
 
+  this->lastMeasTime_ = _info.simTime;
   return;
 }
 

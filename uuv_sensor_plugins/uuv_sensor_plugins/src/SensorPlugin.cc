@@ -71,6 +71,9 @@ void GazeboSensorPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     else
         gzerr << "[gazebo_sensor_plugin] Please specify a sensorTopic.\n";
 
+    if (!_sdf->HasElement("updatePeriod"))
+        gzerr << "[gazebo_sensor_plugin] Please specify an updatePeriod.\n";
+
     double period;
     getSdfParam<double>(_sdf, "updatePeriod", period, 1./10);
     this->updatePeriod_.Set(period);
