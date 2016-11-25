@@ -218,13 +218,22 @@ HMFossen::HMFossen(sdf::ElementPtr _sdf,
 /////////////////////////////////////////////////
 void HMFossen::ApplyHydrodynamicForces(const math::Vector3 &_flowVelWorld)
 {
-  const math::Vector3 linVel = this->link->GetRelativeLinearVel();
-  const math::Vector3 angVel = this->link->GetRelativeAngularVel();
-  const math::Vector3 linAcc = this->link->GetRelativeLinearAccel();
-  const math::Vector3 angAcc = this->link->GetRelativeAngularAccel();
-
   // Link's pose
   const math::Pose pose = this->link->GetWorldPose();
+
+  // Compute velocities in body frame (usually called q or nu)
+  const math::Vector3 linVel = this->link->GetRelativeLinearVel();
+  const math::Vector3 angVel = this->link->GetRelativeAngularVel();
+
+  // Compute accelerations in body frame (\dot q or \dot nu):
+  math::Quaternion rotWorld2Body = pose.rot.GetInverse();
+
+  const math::Vector3 linAcc =
+    rotWorld2Body.RotateVector(this->link->GetWorldLinearAccel())
+    - angVel.Cross(linVel);
+
+  const math::Vector3 angAcc =
+    rotWorld2Body.RotateVector(this->link->GetWorldAngularAccel());
 
   // Transform the flow velocity to the BODY frame
   math::Vector3 flowVel = pose.rot.GetInverse().RotateVector(_flowVelWorld);
