@@ -84,6 +84,8 @@ void UnderwaterObjectPlugin::Load(physics::ModelPtr _model,
   // Center of buoyancy
   math::Vector3 cob;
 
+  // g
+  double gAcc = std::abs(this->world->GetPhysicsEngine()->GetGravity().z);
   if (_sdf->HasElement("link"))
   {
     for (sdf::ElementPtr linkElem = _sdf->GetElement("link"); linkElem;
@@ -116,6 +118,7 @@ void UnderwaterObjectPlugin::Load(physics::ModelPtr _model,
         HydrodynamicModelFactory::GetInstance().CreateHydrodynamicModel(
         linkElem, link));
       hydro->SetFluidDensity(fluidDensity);
+      hydro->SetGravity(gAcc);
 
       if (debugFlag)
         this->InitDebug(link, hydro);
