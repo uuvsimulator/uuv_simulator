@@ -129,6 +129,7 @@
         <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
         <debug>${debug}</debug>
         <link name="${namespace}/base_link">
+          <neutrally_buoyant>0</neutrally_buoyant>
           <volume>${volume}</volume>
           <box>
             <width>1.5</width>
