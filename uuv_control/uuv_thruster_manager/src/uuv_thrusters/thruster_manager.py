@@ -285,10 +285,14 @@ class ThrusterManager:
         # Obey limit on max thrust by applying a constant scaling factor to all
         # thrust forces
         limitation_factor = 1.0
-        for t in thrust:
-            if abs(t) > self.config['max_thrust']:
-                limitation_factor = min(limitation_factor,
-                                        self.config['max_thrust'] / abs(t))
-
-        thrust = thrust * limitation_factor
+        if type(self.config['max_thrust']) == list:
+            if len(self.config['max_thrust']) != self.n_thrusters:
+                raise rospy.ROSException('max_thrust list must have the length'
+                                         ' equal to the number of thrusters')
+            max_thrust = self.config['max_thrust']
+        else:
+            max_thrust = [self.config['max_thrust'] for _ in range(self.n_thrusters)]
+        for i in range(self.n_thrusters):
+            if abs(thrust[i]) > max_thrust[i]:
+                thrust[i] = numpy.sign(thrust[i]) * max_thrust[i]                    
         return thrust
