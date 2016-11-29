@@ -101,15 +101,26 @@ class ThrusterManager:
             # Set number of thrusters from the number of columns
             self.n_thrusters = self.configuration_matrix.shape[1]
             # Create publishing topics to each thruster
+            params = self.config['conversion_fcn_params']
+            conv_fcn = self.config['conversion_fcn']
+            if type(params) == list and type(conv_fcn) == list:
+                if len(params) != self.n_thrusters or len(conv_fcn) != self.n_thrusters:
+                    raise rospy.ROSException('Lists conversion_fcn and '
+                                             'conversion_fcn_params must have '
+                                             'the same number of items as of '
+                                             'thrusters')
             for i in range(self.n_thrusters):
                 topic = self.config['thruster_topic_prefix'] + str(i) + \
                     self.config['thruster_topic_suffix']
-                # TODO Read the option of type of thruster conversion function
-                # and create thruster model accordingly
-                params = self.config['conversion_fcn_params']
-                thruster = Thruster.create_thruster(
-                    self.config['conversion_fcn'], i, topic, None, None,
-                    **params)
+                if list not in [type(params), type(conv_fcn)]:
+                    thruster = Thruster.create_thruster(
+                        conv_fcn, i, topic, None, None,
+                        **params)
+                else:
+                    thruster = Thruster.create_thruster(
+                        conv_fcn[i], i, topic, None, None,
+                        **params[i])
+
                 if thruster is None:
                     rospy.ROSException('Invalid thruster conversion '
                                        'function=%s'
@@ -156,6 +167,21 @@ class ThrusterManager:
 
         self.thrusters = list()
 
+        equal_thrusters = True
+        idx_thruster_model = 0
+
+        if type(self.config['conversion_fcn_params']) == list and \
+            type(self.config['conversion_fcn']) == list:
+            if len(self.config['conversion_fcn_params']) != len(
+                self.config['conversion_fcn']):
+                raise rospy.ROSException(
+                    'Lists of conversion_fcn_params and conversion_fcn'
+                    ' must have equal length')
+            equal_thrusters = False
+
+        print 'conversion_fcn=', self.config['conversion_fcn']
+        print 'conversion_fcn_params=', self.config['conversion_fcn_params']
+
         for i in range(self.MAX_THRUSTERS):
             frame = self.namespace + \
                 self.config['thruster_frame_base'] + str(i)
@@ -168,10 +194,24 @@ class ThrusterManager:
 
                 topic = self.config['thruster_topic_prefix'] + str(i) + \
                     self.config['thruster_topic_suffix']
-                params = self.config['conversion_fcn_params']
-                thruster = Thruster.create_thruster(
-                    self.config['conversion_fcn'], i, topic, pos, quat,
-                    **params)
+
+                if equal_thrusters:
+                    params = self.config['conversion_fcn_params']
+                    thruster = Thruster.create_thruster(
+                        self.config['conversion_fcn'],
+                        i, topic, pos, quat,
+                        **params)
+                else:
+                    if idx_thruster_model >= len(self.config['conversion_fcn']):
+                        raise rospy.ROSException('Number of thrusters found and '
+                                                 'conversion_fcn are different')
+                    params = self.config['conversion_fcn_params'][idx_thruster_model]
+                    conv_fcn = self.config['conversion_fcn'][idx_thruster_model]
+                    thruster = Thruster.create_thruster(
+                        conv_fcn,
+                        i, topic, pos, quat,
+                        **params)
+                    idx_thruster_model += 1
                 if thruster is None:
                     rospy.ROSException('Invalid thruster conversion '
                                        'function=%s'
