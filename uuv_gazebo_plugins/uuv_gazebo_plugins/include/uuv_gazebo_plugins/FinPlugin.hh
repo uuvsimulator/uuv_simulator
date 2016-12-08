@@ -23,6 +23,7 @@
 #include <gazebo/gazebo.hh>
 #include <sdf/sdf.hh>
 
+#include <gazebo/msgs/msgs.hh>
 #include <uuv_gazebo_plugins/Dynamics.hh>
 #include <uuv_gazebo_plugins/LiftDragModel.hh>
 
@@ -55,6 +56,9 @@ class FinPlugin : public gazebo::ModelPlugin
 
     /// \brief Callback for the input topic subscriber
     protected: void UpdateInput(ConstDoublePtr &_msg);
+
+    /// \brief Reads current velocity topic
+    protected: void UpdateCurrentVelocity(ConstVector3dPtr &_msg);
 
     /// \brief Fin dynamic model
     protected: boost::scoped_ptr<Dynamics> dynamics;
@@ -91,6 +95,12 @@ class FinPlugin : public gazebo::ModelPlugin
 
     /// \brief Time stamp of latest thrust force
     protected: gazebo::common::Time angleStamp;
+
+    /// \brief Subcriber to current message
+    protected: gazebo::transport::SubscriberPtr currentSubscriber;
+
+    /// \brief Current velocity vector read from topic
+    protected: gazebo::math::Vector3 currentVelocity;
 };
 }
 
