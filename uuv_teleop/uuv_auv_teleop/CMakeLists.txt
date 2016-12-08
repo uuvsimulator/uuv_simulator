@@ -8,10 +8,6 @@ find_package(catkin REQUIRED dynamic_reconfigure)
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
 catkin_python_setup()
 
-generate_dynamic_reconfigure_options(
-  cfg/JoyAnglesThrust.cfg
-)
-
 # make sure configure headers are built before any node using them
 #add_dependencies(example_node ${PROJECT_NAME}_gencfg)
 
