@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_auv_teleop)
 
-find_package(catkin REQUIRED dynamic_reconfigure)
+find_package(catkin REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -21,6 +21,6 @@ catkin_package(
 catkin_install_python(PROGRAMS scripts/JoyAnglesThrustControl.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-install(DIRECTORY launch cfg
+install(DIRECTORY launch 
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)

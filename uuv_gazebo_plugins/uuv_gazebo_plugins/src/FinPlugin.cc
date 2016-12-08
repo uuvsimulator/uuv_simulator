@@ -51,6 +51,7 @@ void FinPlugin::Load(physics::ModelPtr _model,
   // Input/output topics
   GZ_ASSERT(_sdf->HasElement("input_topic"), "Could not find input_topic.");
   std::string input_topic = _sdf->Get<std::string>("input_topic");
+
   GZ_ASSERT(_sdf->HasElement("output_topic"), "Could not find output_topic.");
   std::string output_topic = _sdf->Get<std::string>("output_topic");
 
@@ -102,6 +103,13 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
   GZ_ASSERT(!std::isnan(this->inputCommand),
             "nan in this->inputCommand");
 
+  // Limit the input command using the fin joint limits
+  if(this->inputCommand > this->joint->GetUpperLimit(0).Radian())
+    this->inputCommand = this->joint->GetUpperLimit(0).Radian();
+
+  if(this->inputCommand < this->joint->GetLowerLimit(0).Radian())
+      this->inputCommand = this->joint->GetLowerLimit(0).Radian();
+
   // Update dynamics model:
   double angle = this->dynamics->update(this->inputCommand,
                                         _info.simTime.Double());
@@ -122,6 +130,8 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
 
   // Apply new fin angle. Do this last since this sets link's velocity to zero.
   this->joint->SetPosition(0, angle);
+
+  this->angleStamp = _info.simTime;
 }
 
 /////////////////////////////////////////////////
