@@ -103,6 +103,11 @@ void FinROSPlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     uuv_gazebo_ros_plugins_msgs::FloatStamped
     >(this->anglePublisher->GetTopic(), 10);
 
+  this->pubFinForce =
+    this->rosNode->advertise<geometry_msgs::WrenchStamped>(
+      this->link->GetName() + "/fin_wrench", 10);
+
+
   this->rosPublishConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
         boost::bind(&FinROSPlugin::RosPublishStates, this));
 }
@@ -121,6 +126,15 @@ void FinROSPlugin::RosPublishStates()
     state_msg.data = this->angle;
     this->pubState.publish(state_msg);
   }
+
+  geometry_msgs::WrenchStamped msg;
+  msg.header.stamp = ros::Time().now();
+  msg.header.frame_id = this->link->GetName();
+  msg.wrench.force.x = this->finForce.x;
+  msg.wrench.force.y = this->finForce.y;
+  msg.wrench.force.z = this->finForce.z;
+
+  this->pubFinForce.publish(msg);
 }
 
 GZ_REGISTER_MODEL_PLUGIN(FinROSPlugin)

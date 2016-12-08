@@ -115,10 +115,10 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
   math::Vector3 velInLDPlaneL = finPose.rot.RotateVectorReverse(velInLDPlaneI);
 
   // Compute lift and drag forces:
-  math::Vector3 FFin = this->liftdrag->compute(velInLDPlaneL);
+  this->finForce = this->liftdrag->compute(velInLDPlaneL);
 
   // Apply forces at cg (with torques for position shift).
-  this->link->AddRelativeForce(FFin);
+  this->link->AddRelativeForce(this->finForce);
 
   // Apply new fin angle. Do this last since this sets link's velocity to zero.
   this->joint->SetPosition(0, angle);

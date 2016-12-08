@@ -80,6 +80,9 @@ class FinPlugin : public gazebo::ModelPlugin
     /// \brief Publisher to the output thrust topic
     protected: gazebo::transport::PublisherPtr anglePublisher;
 
+    /// \brief Force component calculated from the lift and drag module
+    protected: gazebo::math::Vector3 finForce;
+
     /// \brief Latest input command.
     protected: double inputCommand;
 
