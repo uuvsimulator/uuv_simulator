@@ -118,10 +118,10 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
             "nan in this->inputCommand");
 
   // Limit the input command using the fin joint limits
-  if(this->inputCommand > this->joint->GetUpperLimit(0).Radian())
+  if (this->inputCommand > this->joint->GetUpperLimit(0).Radian())
     this->inputCommand = this->joint->GetUpperLimit(0).Radian();
 
-  if(this->inputCommand < this->joint->GetLowerLimit(0).Radian())
+  if (this->inputCommand < this->joint->GetLowerLimit(0).Radian())
       this->inputCommand = this->joint->GetLowerLimit(0).Radian();
 
   // Update dynamics model:
@@ -161,5 +161,4 @@ void FinPlugin::UpdateCurrentVelocity(ConstVector3dPtr &_msg)
   this->currentVelocity.y = _msg->y();
   this->currentVelocity.z = _msg->z();
 }
-
 }
