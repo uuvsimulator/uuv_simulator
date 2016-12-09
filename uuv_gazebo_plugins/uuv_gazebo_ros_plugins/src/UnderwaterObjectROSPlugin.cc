@@ -58,6 +58,16 @@ void UnderwaterObjectROSPlugin::Load(gazebo::physics::ModelPtr _parent,
           << '\n';
     return;
   }
+
+  this->subLocalCurVel = this->rosNode->subscribe<geometry_msgs::Vector3>(
+    _parent->GetName() + "/current_velocity", 10,
+    boost::bind(&UnderwaterObjectROSPlugin::UpdateLocalCurrentVelocity,
+    this, _1));
+
+  this->services["set_use_global_current_velocity"] =
+      this->rosNode->advertiseService(
+        _parent->GetName() + "/set_use_global_current_velocity",
+        &UnderwaterObjectROSPlugin::SetUseGlobalCurrentVel, this);
 }
 
 /////////////////////////////////////////////////
@@ -164,6 +174,43 @@ void UnderwaterObjectROSPlugin::GenWrenchMsg(
   _output.wrench.torque.z = _torque.z;
 
   _output.header.stamp = ros::Time(this->world->GetSimTime().Double());
+}
+
+/////////////////////////////////////////////////
+void UnderwaterObjectROSPlugin::UpdateLocalCurrentVelocity(
+  const geometry_msgs::Vector3::ConstPtr &_msg)
+{
+  if (!this->useGlobalCurrent)
+  {
+    this->flowVelocity.x = _msg->x;
+    this->flowVelocity.y = _msg->y;
+    this->flowVelocity.z = _msg->z;
+  }
+}
+
+/////////////////////////////////////////////////
+bool UnderwaterObjectROSPlugin::SetUseGlobalCurrentVel(
+  uuv_gazebo_ros_plugins_msgs::SetUseGlobalCurrentVel::Request& _req,
+  uuv_gazebo_ros_plugins_msgs::SetUseGlobalCurrentVel::Response& _res)
+{
+  if (_req.use_global == this->useGlobalCurrent)
+    _res.success = true;
+  else
+  {
+    this->useGlobalCurrent = _req.use_global;
+    this->flowVelocity.x = 0;
+    this->flowVelocity.y = 0;
+    this->flowVelocity.z = 0;
+    if (this->useGlobalCurrent)
+      gzmsg << this->model->GetName() <<
+        "::Now using global current velocity" << std::endl;
+    else
+      gzmsg << this->model->GetName() <<
+        "::Using the current velocity under the namespace " <<
+        this->model->GetName() << std::endl;
+    _res.success = true;
+  }
+  return true;
 }
 
 GZ_REGISTER_MODEL_PLUGIN(UnderwaterObjectROSPlugin)

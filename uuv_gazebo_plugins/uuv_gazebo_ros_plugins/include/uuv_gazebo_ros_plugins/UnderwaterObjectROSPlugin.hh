@@ -28,6 +28,8 @@
 #include <gazebo/common/Plugin.hh>
 #include <ros/ros.h>
 #include <geometry_msgs/WrenchStamped.h>
+#include <geometry_msgs/Vector3.h>
+#include <uuv_gazebo_ros_plugins_msgs/SetUseGlobalCurrentVel.h>
 
 #include <map>
 
@@ -49,6 +51,16 @@ namespace uuv_simulator_ros
 
     /// \brief Reset Module.
     public: virtual void Reset();
+
+    /// \brief Update the local current velocity, this data will be used only
+    /// if the useGlobalCurrent flag is set to false.
+    public: void UpdateLocalCurrentVelocity(
+      const geometry_msgs::Vector3::ConstPtr &_msg);
+
+    /// \brief Set the dynamic state efficiency factor
+    public: bool SetUseGlobalCurrentVel(
+      uuv_gazebo_ros_plugins_msgs::SetUseGlobalCurrentVel::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetUseGlobalCurrentVel::Response& _res);
 
     /// \brief Publish restoring force
     /// \param[in] _link Pointer to the link where the force information will
@@ -80,11 +92,14 @@ namespace uuv_simulator_ros
     /// \brief Pointer to this ROS node's handle.
     private: boost::scoped_ptr<ros::NodeHandle> rosNode;
 
-    /// \brief Subscriber reacting to new reference thrust set points.
-    private: ros::Subscriber subThrustReference;
+    /// \brief Subscriber to locally calculated current velocity
+    private: ros::Subscriber subLocalCurVel;
 
     /// \brief Publisher for current actual thrust.
     private: std::map<std::string, ros::Publisher> rosHydroPub;
+
+    /// \brief Map of services
+    private: std::map<std::string, ros::ServiceServer> services;
   };
 }
 

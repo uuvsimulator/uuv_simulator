@@ -14,6 +14,7 @@ add_service_files(
   SetThrusterState.srv
   GetThrusterEfficiency.srv
   GetThrusterState.srv
+  SetUseGlobalCurrentVel.srv
 )
 
 generate_messages(
