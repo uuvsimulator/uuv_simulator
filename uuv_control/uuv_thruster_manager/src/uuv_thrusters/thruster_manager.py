@@ -189,7 +189,7 @@ class ThrusterManager:
                 # try to get thruster pose with respect to base frame via tf
                 print('transform: ' + base + ' -> ' + frame)
                 self.listener.waitForTransform(base, frame,
-                                               now, rospy.Duration(4.0))
+                                               now, rospy.Duration(20.0))
                 [pos, quat] = self.listener.lookupTransform(base, frame, now)
 
                 topic = self.config['thruster_topic_prefix'] + str(i) + \
@@ -294,5 +294,5 @@ class ThrusterManager:
             max_thrust = [self.config['max_thrust'] for _ in range(self.n_thrusters)]
         for i in range(self.n_thrusters):
             if abs(thrust[i]) > max_thrust[i]:
-                thrust[i] = numpy.sign(thrust[i]) * max_thrust[i]                    
+                thrust[i] = numpy.sign(thrust[i]) * max_thrust[i]
         return thrust
