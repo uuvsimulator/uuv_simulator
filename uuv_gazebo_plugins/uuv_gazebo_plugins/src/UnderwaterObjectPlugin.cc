@@ -32,7 +32,7 @@ namespace gazebo {
 GZ_REGISTER_MODEL_PLUGIN(UnderwaterObjectPlugin)
 
 /////////////////////////////////////////////////
-UnderwaterObjectPlugin::UnderwaterObjectPlugin()
+UnderwaterObjectPlugin::UnderwaterObjectPlugin() : useGlobalCurrent(true)
 {
 }
 
@@ -73,6 +73,9 @@ void UnderwaterObjectPlugin::Load(physics::ModelPtr _model,
   // Get the fluid density, if present
   if (_sdf->HasElement("fluid_density"))
     fluidDensity = _sdf->Get<double>("fluid_density");
+
+  if (_sdf->HasElement("use_global_current"))
+    this->useGlobalCurrent = _sdf->Get<bool>("use_global_current");
 
   // Get the debug flag, if available
   bool debugFlag = false;
@@ -179,23 +182,15 @@ void UnderwaterObjectPlugin::Update(const common::UpdateInfo &_info)
   {
     physics::LinkPtr link = it->first;
     HydrodynamicModelPtr hydro = it->second;
-
-    // Check if the simulation is still running
-//    GZ_ASSERT(!isnan(link->GetRelativeLinearAccel().GetLength()),
-//              "nan in GetRelativeLinearAccel");
-
-//    GZ_ASSERT(!isnan(link->GetRelativeAngularAccel().GetLength()),
-//              "nan in GetRelativeLinearAccel");
-//
     // Apply hydrodynamic and hydrostatic forces and torques
     double linearAccel = link->GetRelativeLinearAccel().GetLength();
     double angularAccel = link->GetRelativeAngularAccel().GetLength();
 
     if (!std::isnan(linearAccel) && !std::isnan(angularAccel))
     {
-        hydro->ApplyHydrodynamicForces(this->flowVelocity);
-        this->PublishRestoringForce(link);
-        this->PublishHydrodynamicWrenches(link);
+      hydro->ApplyHydrodynamicForces(this->flowVelocity);
+      this->PublishRestoringForce(link);
+      this->PublishHydrodynamicWrenches(link);
     }
     else if (std::isnan(linearAccel))
     {
@@ -222,9 +217,12 @@ void UnderwaterObjectPlugin::Connect()
 /////////////////////////////////////////////////
 void UnderwaterObjectPlugin::UpdateFlowVelocity(ConstVector3dPtr &_msg)
 {
-  this->flowVelocity.x = _msg->x();
-  this->flowVelocity.y = _msg->y();
-  this->flowVelocity.z = _msg->z();
+  if (this->useGlobalCurrent)
+  {
+    this->flowVelocity.x = _msg->x();
+    this->flowVelocity.y = _msg->y();
+    this->flowVelocity.z = _msg->z();
+  }
 }
 
 /////////////////////////////////////////////////

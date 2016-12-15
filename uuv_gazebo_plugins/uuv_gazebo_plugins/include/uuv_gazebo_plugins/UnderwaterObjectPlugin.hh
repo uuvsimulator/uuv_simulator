@@ -106,6 +106,10 @@ class UnderwaterObjectPlugin : public gazebo::ModelPlugin
   /// \brief Subcriber to flow message
   protected: gazebo::transport::SubscriberPtr flowSubscriber;
 
+  /// \brief Flag to use the global current velocity or the individually
+  /// assigned current velocity
+  protected: bool useGlobalCurrent;
+
   /// \brief Publishers of hydrodynamic and hydrostatic forces and torques in
   /// the case the debug flag is on
   protected: std::map<std::string, gazebo::transport::PublisherPtr> hydroPub;
