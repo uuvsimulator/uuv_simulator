@@ -1,16 +1,84 @@
 <launch>
 <arg name="uuv_name" />
 <arg name="joy_id" default="0"/>
+<arg name="use_param_file" default="0"/>
+<arg name="filename" default="."/>
 
-<group ns="$(arg uuv_name)">
-  <node pkg="uuv_auv_teleop" type="JoyAnglesThrustControl.py" name="joy_angles_thrust"
-        output="screen">
-    <param name="tf_prefix" type="string" value="$(arg uuv_name)/" />
-  </node>
+<!-- Input arguments to map the joystick, default values for XBox 360 controller -->
+<arg name="axis_thruster" default="1"/>
+<arg name="axis_roll" default="0"/>
+<arg name="axis_pitch" default="4"/>
+<arg name="axis_yaw" default="3"/>
 
-  <node pkg="joy" type="joy_node" name="joystick">
-    <param name="autorepeat_rate" value="10" />
-    <param name="dev" value="/dev/input/js$(arg joy_id)"/>
-  </node>
+<!--
+Arguments to describe the fin configuration, only used if no parameter
+file is available, for this default mode the thruster is modelled as
+  tau = rotorGain * angVel * abs(angVel)
+-->
+<arg name="thruster_rotor_gain" default="0.0009"/>
+<arg name="max_thrust" default="200"/>
+<arg name="thruster_topic" default="thruster/input"/>
+<arg name="fin_topic_prefix" default="fins/"/>
+<arg name="fin_topic_suffix" default="/input"/>
+<!--
+The default fin configuration considered here assumes that your fins are placed
+around the body of the vehicle as follows (on the YZ plane)
+Fin 0: (-y, z)
+Fin 1: (-y -z)
+Fin 2: (y, -z)
+Fin 3: (y, z)
+If you want to pass these lists on the command line, remove the empty spaces
+between the number
+-->
+<arg name="n_fins" default="4"/>
+<arg name="gain_roll" default="1,1,1,1"/>
+<arg name="gain_pitch" default="1,1,-1,-1"/>
+<arg name="gain_yaw" default="-1,1,1,-1"/>
+
+<!-- If option to use a parameter file is given -->
+<group if="$(arg use_param_file)">
+  <group ns="$(arg uuv_name)">
+    <node pkg="uuv_auv_teleop" type="JoyAnglesThrustControl.py" name="joy_angles_thrust"
+          output="screen">
+      <rosparam command="load" file="$(arg filename)"/>
+    </node>
+
+    <node pkg="joy" type="joy_node" name="joystick">
+      <param name="autorepeat_rate" value="10" />
+      <param name="dev" value="/dev/input/js$(arg joy_id)"/>
+    </node>
+  </group>
 </group>
+
+<group unless="$(arg use_param_file)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_auv_teleop" type="JoyAnglesThrustControl.py" name="joy_angles_thrust"
+            output="screen">
+        <rosparam subst_value="true">
+          axis_thruster: $(arg axis_thruster)
+          axis_roll: $(arg axis_roll)
+          axis_pitch: $(arg axis_pitch)
+          axis_yaw: $(arg axis_yaw)
+          n_fins: $(arg n_fins)
+          thruster_model:
+            name: proportional
+            max_thrust: $(arg max_thrust)
+            params:
+              gain: $(arg thruster_rotor_gain)
+          gain_roll: [$(arg gain_roll)]
+          gain_pitch: [$(arg gain_pitch)]
+          gain_yaw: [$(arg gain_yaw)]
+          thruster_topic: $(arg thruster_topic)
+          fin_topic_prefix: $(arg fin_topic_prefix)
+          fin_topic_suffix: $(arg fin_topic_suffix)
+        </rosparam>
+      </node>
+
+      <node pkg="joy" type="joy_node" name="joystick">
+        <param name="autorepeat_rate" value="10" />
+        <param name="dev" value="/dev/input/js$(arg joy_id)"/>
+      </node>
+    </group>
+  </group>
+
 </launch>

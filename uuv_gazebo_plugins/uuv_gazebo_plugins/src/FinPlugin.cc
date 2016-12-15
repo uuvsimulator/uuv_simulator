@@ -51,6 +51,7 @@ void FinPlugin::Load(physics::ModelPtr _model,
   // Input/output topics
   GZ_ASSERT(_sdf->HasElement("input_topic"), "Could not find input_topic.");
   std::string input_topic = _sdf->Get<std::string>("input_topic");
+
   GZ_ASSERT(_sdf->HasElement("output_topic"), "Could not find output_topic.");
   std::string output_topic = _sdf->Get<std::string>("output_topic");
 
@@ -69,11 +70,25 @@ void FinPlugin::Load(physics::ModelPtr _model,
   this->dynamics.reset(DynamicsFactory::GetInstance().CreateDynamics(
                          _sdf->GetElement("dynamics")));
 
-  // Lift&drag model
+  // Lift and drag model
   GZ_ASSERT(_sdf->HasElement("liftdrag"), "Could not find liftdrag");
   this->liftdrag.reset(
         LiftDragFactory::GetInstance().CreateLiftDrag(
           _sdf->GetElement("liftdrag")));
+
+  // Subscribe to current velocity topic
+  GZ_ASSERT(_sdf->HasElement("current_velocity_topic"),
+    "Could not find current_velocity_topic.");
+  std::string currentVelocityTopic =
+    _sdf->Get<std::string>("current_velocity_topic");
+
+  GZ_ASSERT(!currentVelocityTopic.empty(),
+            "Fluid velocity topic tag cannot be empty");
+
+  gzmsg << "Subscribing to current velocity topic: " << currentVelocityTopic
+        << std::endl;
+  this->currentSubscriber = this->node->Subscribe(currentVelocityTopic,
+    &FinPlugin::UpdateCurrentVelocity, this);
 
   // Advertise the output topic
   this->anglePublisher = this->node->Advertise<
@@ -102,6 +117,13 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
   GZ_ASSERT(!std::isnan(this->inputCommand),
             "nan in this->inputCommand");
 
+  // Limit the input command using the fin joint limits
+  if (this->inputCommand > this->joint->GetUpperLimit(0).Radian())
+    this->inputCommand = this->joint->GetUpperLimit(0).Radian();
+
+  if (this->inputCommand < this->joint->GetLowerLimit(0).Radian())
+      this->inputCommand = this->joint->GetLowerLimit(0).Radian();
+
   // Update dynamics model:
   double angle = this->dynamics->update(this->inputCommand,
                                         _info.simTime.Double());
@@ -110,23 +132,33 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
   math::Pose finPose = this->link->GetWorldPose();
   math::Vector3 ldNormalI = finPose.rot.RotateVector(math::Vector3::UnitZ);
 
-  math::Vector3 velI = this->link->GetWorldLinearVel();
+  math::Vector3 velI = this->link->GetWorldLinearVel() - this->currentVelocity;
   math::Vector3 velInLDPlaneI = ldNormalI.Cross(velI.Cross(ldNormalI));
   math::Vector3 velInLDPlaneL = finPose.rot.RotateVectorReverse(velInLDPlaneI);
 
   // Compute lift and drag forces:
-  math::Vector3 FFin = this->liftdrag->compute(velInLDPlaneL);
+  this->finForce = this->liftdrag->compute(velInLDPlaneL);
 
   // Apply forces at cg (with torques for position shift).
-  this->link->AddRelativeForce(FFin);
+  this->link->AddRelativeForce(this->finForce);
 
   // Apply new fin angle. Do this last since this sets link's velocity to zero.
   this->joint->SetPosition(0, angle);
+
+  this->angleStamp = _info.simTime;
 }
 
 /////////////////////////////////////////////////
 void FinPlugin::UpdateInput(ConstDoublePtr &_msg)
 {
   this->inputCommand = _msg->value();
+}
+
+/////////////////////////////////////////////////
+void FinPlugin::UpdateCurrentVelocity(ConstVector3dPtr &_msg)
+{
+  this->currentVelocity.x = _msg->x();
+  this->currentVelocity.y = _msg->y();
+  this->currentVelocity.z = _msg->z();
 }
 }

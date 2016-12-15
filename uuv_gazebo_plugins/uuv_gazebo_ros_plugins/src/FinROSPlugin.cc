@@ -103,6 +103,12 @@ void FinROSPlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     uuv_gazebo_ros_plugins_msgs::FloatStamped
     >(this->anglePublisher->GetTopic(), 10);
 
+  GZ_ASSERT(_sdf->HasElement("wrench_topic"), "Could not find wrench_topic.");
+  std::string wrenchTopic = _sdf->Get<std::string>("wrench_topic");
+
+  this->pubFinForce =
+    this->rosNode->advertise<geometry_msgs::WrenchStamped>(wrenchTopic, 10);
+
   this->rosPublishConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
         boost::bind(&FinROSPlugin::RosPublishStates, this));
 }
@@ -115,11 +121,22 @@ void FinROSPlugin::RosPublishStates()
   {
     this->lastRosPublishTime = this->angleStamp;
 
+    // Publish the current angle of attack
     uuv_gazebo_ros_plugins_msgs::FloatStamped state_msg;
     state_msg.header.stamp = ros::Time().now();
     state_msg.header.frame_id = this->link->GetName();
     state_msg.data = this->angle;
     this->pubState.publish(state_msg);
+
+    // Publish the lift and drag forces
+    geometry_msgs::WrenchStamped msg;
+    msg.header.stamp = ros::Time().now();
+    msg.header.frame_id = this->link->GetName();
+    msg.wrench.force.x = this->finForce.x;
+    msg.wrench.force.y = this->finForce.y;
+    msg.wrench.force.z = this->finForce.z;
+
+    this->pubFinForce.publish(msg);
   }
 }
 

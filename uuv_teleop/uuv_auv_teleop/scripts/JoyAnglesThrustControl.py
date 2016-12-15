@@ -19,10 +19,9 @@ import rospy
 import tf
 import tf.transformations as trans
 
-from dynamic_reconfigure.server import Server
-from uuv_auv_teleop.cfg import JoyAnglesThrustConfig
 from sensor_msgs.msg import Joy
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
+from uuv_thrusters.models import Thruster
 from rospy.numpy_msg import numpy_msg
 
 
@@ -30,76 +29,92 @@ class JoyAnglesThrustControllerNode:
     def __init__(self):
         print('JoyAnglesThrustControllerNode: initializing node')
 
-        self.ready = False
-        self.config = {}
-        self.n_fins = 0
-        self.rpy_to_fins = numpy.array([])
+        self._ready = False
 
-        self.pub_cmd = []
+        # Test if any of the needed parameters are missing
+        param_labels = ['n_fins', 'gain_roll', 'gain_pitch', 'gain_yaw',
+                        'thruster_model', 'fin_topic_prefix',
+                        'fin_topic_suffix', 'thruster_topic',
+                        'axis_thruster', 'axis_roll', 'axis_pitch', 'axis_yaw']
 
-        # ROS infrastructure
-        self.listener = tf.TransformListener()
-        self.sub_joy = rospy.Subscriber(
-          'joy', numpy_msg(Joy), self.joy_callback)
-        self.srv_reconfigure = Server(
-          JoyAnglesThrustConfig, self.config_callback)
+        for label in param_labels:
+            if not rospy.has_param('~%s' % label):
+                raise rospy.ROSException('Parameter missing, label=%s' % label)
+
+        # Number of fins
+        self._n_fins = rospy.get_param('~n_fins')
+
+        # Read the vector for contribution of each fin on the change on
+        # orientation
+        gain_roll = rospy.get_param('~gain_roll')
+        gain_pitch = rospy.get_param('~gain_pitch')
+        gain_yaw = rospy.get_param('~gain_yaw')
+
+        if len(gain_roll) != self._n_fins or len(gain_pitch) != self._n_fins \
+            or len(gain_yaw) != self._n_fins:
+            raise rospy.ROSException('Input gain vectors must have length '
+                                     'equal to the number of fins')
+
+        # Create the command angle to fin angle mapping
+        self._rpy_to_fins = numpy.vstack((gain_roll, gain_pitch, gain_yaw)).T
+
+        # Read the joystick mapping
+        self._joy_axis = dict(axis_thruster=rospy.get_param('~axis_thruster'),
+                              axis_roll=rospy.get_param('~axis_roll'),
+                              axis_pitch=rospy.get_param('~axis_pitch'),
+                              axis_yaw=rospy.get_param('~axis_yaw'))
+
+        # Subscribe to the fin angle topics
+        self._pub_cmd = list()
+        self._fin_topic_prefix = rospy.get_param('~fin_topic_prefix')
+        self._fin_topic_suffix = rospy.get_param('~fin_topic_suffix')
+        for i in range(self._n_fins):
+            topic = self._fin_topic_prefix + str(i) + self._fin_topic_suffix
+            self._pub_cmd.append(
+              rospy.Publisher(topic, FloatStamped, queue_size=10))
+
+        # Create the thruster model object
+        try:
+            self._thruster_topic = rospy.get_param('~thruster_topic')
+            self._thruster_params = rospy.get_param('~thruster_model')
+            if 'max_thrust' not in self._thruster_params:
+                raise rospy.ROSException('No limit to thruster output was given')
+            self._thruster_model = Thruster.create_thruster(
+                        self._thruster_params['name'], 0,
+                        self._thruster_topic, None, None,
+                        **self._thruster_params['params'])
+        except:
+            raise rospy.ROSException('Thruster model could not be initialized')
+
+        # Subscribe to the joystick topic
+        self.sub_joy = rospy.Subscriber('joy', numpy_msg(Joy),
+                                        self.joy_callback)
+
+        self._ready = True
 
     def joy_callback(self, msg):
         """Handle callbacks with joystick state."""
 
-        if not self.ready:
+        if not self._ready:
             return
 
-        thrust = msg.axes[self.config['axis_thruster']] * \
-                 self.config['scale_thruster']
-        rpy = numpy.array([msg.axes[self.config['axis_roll']],
-                           msg.axes[self.config['axis_pitch']],
-                           msg.axes[self.config['axis_yaw']]])
+        thrust = msg.axes[self._joy_axis['axis_thruster']] * \
+            self._thruster_params['max_thrust']
 
-        fins = self.rpy_to_fins.dot(rpy)
+        rpy = numpy.array([msg.axes[self._joy_axis['axis_roll']],
+                           msg.axes[self._joy_axis['axis_pitch']],
+                           msg.axes[self._joy_axis['axis_yaw']]])
+        fins = self._rpy_to_fins.dot(rpy)
 
-        cmd = FloatStamped()
-        cmd.header.stamp = rospy.Time.now()
-        cmd.data = thrust
-        self.pub_thrust.publish(cmd)
+        self._thruster_model.publish_command(thrust)
 
-        for i in range(self.n_fins):
+        for i in range(self._n_fins):
+            cmd = FloatStamped()
             cmd.data = fins[i]
-            self.pub_cmd[i].publish(cmd)
+            self._pub_cmd[i].publish(cmd)
 
-        if not self.ready:
+        if not self._ready:
             return
-
-    def config_callback(self, config, level):
-        """Update configuration."""
-        self.config = config
-        print config
-
-        self.n_fins = self.config['n_fins']
-
-        print self.config['scale_pitch']
-        roll = numpy.fromstring(
-          self.config['scale_roll'], dtype=numpy.float, sep=',')
-        pitch = numpy.fromstring(
-          self.config['scale_pitch'], dtype=numpy.float, sep=',')
-        yaw = numpy.fromstring(
-          self.config['scale_yaw'], dtype=numpy.float, sep=',')
-
-        self.rpy_to_fins = numpy.vstack((roll, pitch, yaw)).T
-        print self.rpy_to_fins
-
-        self.pub_thrust = rospy.Publisher(
-          self.config['thruster_topic'], FloatStamped, queue_size=10)
-        self.pub_cmd = []
-
-        for i in range(self.n_fins):
-            topic = self.config['fin_topic_prefix'] + str(i) + \
-                    self.config['fin_topic_suffix']
-            self.pub_cmd.append(
-              rospy.Publisher(topic, FloatStamped, queue_size=10))
-
-        self.ready = True
-        return config
 
 
 if __name__ == '__main__':

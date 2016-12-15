@@ -22,6 +22,7 @@
 #include <gazebo/common/Plugin.hh>
 #include <ros/ros.h>
 #include <uuv_gazebo_ros_plugins_msgs/FloatStamped.h>
+#include <geometry_msgs/WrenchStamped.h>
 
 namespace uuv_simulator_ros
 {
@@ -63,6 +64,9 @@ public: FinROSPlugin();
 
     /// \brief Publisher for current state.
     private: ros::Publisher pubState;
+
+    /// \brief Publisher for current actual thrust.
+    private: ros::Publisher pubFinForce;
 
     /// \brief Connection for callbacks on update world.
     private: gazebo::event::ConnectionPtr rosPublishConnection;
