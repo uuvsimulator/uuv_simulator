@@ -61,16 +61,6 @@ class NCParser(object):
 
         print 'Time unit=', self._time_unit
 
-        try:
-            t0 = strptime(self._data.variables[self._labels['time']].units[11:],
-                          "%Y-%m-%d %H:%M:%S")
-            t0 = datetime.datetime(year=t0.tm_year, month=t0.tm_mon, \
-                                   day=t0.tm_mday, hour=t0.tm_hour, \
-                                   minute=t0.tm_mon, second=t0.tm_sec)
-            self._start_time = t0
-        except:
-            print 'Parsing the starting time out of units information failed!'
-
     def __str__(self):
         msg = 'Ocean data, name=%s\n' % self._data.title
         msg += 'Time range [s]=%f to %f\n' % (self.start_time, self.end_time)
@@ -159,17 +149,15 @@ class NCParser(object):
         return idx, idy
 
     def get_range(self, value, var_name):
-        if var_name not in ['x', 'y', 'z', self._labels['time']]:
+        if var_name not in self._labels.keys():
             print 'Invalid coordinate var_name'
             return None, None
 
-        label = var_name
-        if var_name in ['x', 'y', 'z']:
-            label = var_name + 'c'
+        label = self._labels[var_name]
 
-        if var_name in ['x', 'y']:
+        if var_name in ['x', 'y', 'z']:
             vec = self._data.variables[label][:]
-        elif var_name == self._labels['time']:
+        elif var_name == 'time':
             vec = self.time
         else:
             vec = self._data.variables[label][:]
@@ -203,7 +191,7 @@ class NCParser(object):
         idx = self.get_range(x, 'x')
         idy = self.get_range(y, 'y')
         idz = self.get_range(z, 'z')
-        idt = self.get_range(time, self._labels['time'])
+        idt = self.get_range(time, 'time')
 
         var = self._data.variables[variable]
 

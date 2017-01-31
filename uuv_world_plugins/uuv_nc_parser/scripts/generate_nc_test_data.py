@@ -125,7 +125,7 @@ if __name__ == '__main__':
                           standard_name='Northward current velocity',
                           units=u'm/s',
                           axis=u'Northward current velocity [m/s]'))
-    nc_fid.variables['v_north'][:] = 0.7 + np.random.rand(*shape)
+    nc_fid.variables['v_north'][:] = np.random.rand(*shape)
 
     # Wind velocity
     nc_var = nc_fid.createVariable('w_east', np.float64, ('time', 'yc', 'xc'))
