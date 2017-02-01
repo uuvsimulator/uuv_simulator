@@ -189,6 +189,9 @@ bool ThrusterROSPlugin::SetThrustForceEfficiency(
   {
     this->thrustEfficiency = _req.efficiency;
     _res.success = true;
+    gzmsg << "Setting thrust efficiency at thruster " <<
+      this->thrusterLink->GetName() << "=" << _req.efficiency  * 100
+      << "%" << std::endl;
   }
   return true;
 }
@@ -215,6 +218,9 @@ bool ThrusterROSPlugin::SetDynamicStateEfficiency(
   {
     this->propellerEfficiency = _req.efficiency;
     _res.success = true;
+    gzmsg << "Setting propeller efficiency at thruster " <<
+      this->thrusterLink->GetName() << "=" << _req.efficiency * 100
+      << "%" << std::endl;
   }
   return true;
 }
