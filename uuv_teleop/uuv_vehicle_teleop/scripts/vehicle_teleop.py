@@ -82,11 +82,11 @@ class VehicleTeleop:
         else:
             cmd = Accel()
         if joy is not None:
-            cmd.linear = Vector3(self._axes_gain['x'] * joy.axes[self._axes['x']],
-                                 self._axes_gain['y'] * joy.axes[self._axes['y']],
-                                 self._axes_gain['z'] * joy.axes[self._axes['z']])
+            cmd.linear = Vector3(self._axes_gain['x'] * (joy.axes[self._axes['x']] if abs(joy.axes[self._axes['x']]) > 0.5 else 0.0),
+                                 self._axes_gain['y'] * (joy.axes[self._axes['y']] if abs(joy.axes[self._axes['y']]) > 0.5 else 0.0),
+                                 self._axes_gain['z'] * (joy.axes[self._axes['z']] if abs(joy.axes[self._axes['z']]) > 0.5 else 0.0))
             cmd.angular = Vector3(0, 0,
-                                  self._axes_gain['yaw'] * joy.axes[self._axes['yaw']])
+                                  self._axes_gain['yaw'] * (joy.axes[self._axes['yaw']] if abs(joy.axes[self._axes['yaw']]) > 0.5 else 0.0))
         else:
             cmd.linear = Vector3(0, 0, 0)
             cmd.angular = Vector3(0, 0, 0)
@@ -97,7 +97,7 @@ class VehicleTeleop:
         for n in self._exclusion_buttons:
             if joy.buttons[n] == 1:
                 cmd = self._parse_joy()
-                self._output_pub.publish(cmd)                
+                self._output_pub.publish(cmd)
                 return
 
         if self._deadman_button != -1:
