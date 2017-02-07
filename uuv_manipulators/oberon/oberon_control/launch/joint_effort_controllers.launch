@@ -2,34 +2,40 @@
   <arg name="uuv_name" />
   <arg name="arm_name" default="oberon"/>
 
-  <group ns="/$(arg uuv_name)/$(arg arm_name)">
-    <!-- Load joint controller configurations from YAML file to parameter server -->
-    <rosparam command="load" file="$(find oberon_control)/config/effort_controllers.yaml"/>
-
-    <rosparam param="azimuth/effort_controller/joint" subst_value="true">
-      $(arg arm_name)/azimuth
-    </rosparam>
-
-    <rosparam param="shoulder/effort_controller/joint" subst_value="true">
-      $(arg arm_name)/shoulder
-    </rosparam>
-
-    <rosparam param="elbow/effort_controller/joint" subst_value="true">
-      $(arg arm_name)/elbow
-    </rosparam>
-
-    <rosparam param="roll/effort_controller/joint" subst_value="true">
-      $(arg arm_name)/roll
-    </rosparam>
-
-    <rosparam param="pitch/effort_controller/joint" subst_value="true">
-      $(arg arm_name)/pitch
-    </rosparam>
-
-    <rosparam param="wrist/effort_controller/joint" subst_value="true">
-      $(arg arm_name)/wrist
-    </rosparam>
-  </group>
+  <rosparam subst_value="true">
+    $(arg uuv_name):
+      $(arg arm_name):
+        azimuth:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/azimuth
+            pid: {p: 10000, i: 0, d: 10}
+        shoulder:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/shoulder
+            pid: {p: 10000, i: 0, d: 10}
+        elbow:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/elbow
+            pid: {p: 10000, i: 0, d: 10}
+        roll:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/roll
+            pid: {p: 10000, i: 0, d: 10}
+        pitch:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/pitch
+            pid: {p: 10000, i: 0, d: 10}
+        wrist:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/wrist
+            pid: {p: 10000, i: 0, d: 10}
+  </rosparam>
 
   <group ns="$(arg uuv_name)">
     <!-- load the controllers -->
@@ -39,12 +45,12 @@
           respawn="false"
           output="screen"
           ns="/$(arg uuv_name)"
-          args="/$(arg uuv_name)/$(arg arm_name)/azimuth/effort_controller
-                /$(arg uuv_name)/$(arg arm_name)/shoulder/effort_controller
-                /$(arg uuv_name)/$(arg arm_name)/elbow/effort_controller
-                /$(arg uuv_name)/$(arg arm_name)/roll/effort_controller
-                /$(arg uuv_name)/$(arg arm_name)/pitch/effort_controller
-                /$(arg uuv_name)/$(arg arm_name)/wrist/effort_controller"/>
+          args="/$(arg uuv_name)/$(arg arm_name)/azimuth/controller
+                /$(arg uuv_name)/$(arg arm_name)/shoulder/controller
+                /$(arg uuv_name)/$(arg arm_name)/elbow/controller
+                /$(arg uuv_name)/$(arg arm_name)/roll/controller
+                /$(arg uuv_name)/$(arg arm_name)/pitch/controller
+                /$(arg uuv_name)/$(arg arm_name)/wrist/controller"/>
 
   </group>
 </launch>

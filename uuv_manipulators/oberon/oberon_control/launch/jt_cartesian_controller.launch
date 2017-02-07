@@ -2,9 +2,8 @@
   <arg name="uuv_name" default=""/>
   <arg name="arm_name" default="oberon"/>
   <arg name="gripper" default="dummy"/>
-  <arg name="teleop" default="true"/>
-  <arg name="joy_id" default="0" />
-  <arg name="use_joy" default="true"/>
+  <arg name="exclusion_button" default="4"/>
+  <arg name="deadman_button" default="5"/>
 
   <!-- Initialize effort controllers -->
   <include file="$(find oberon_control)/launch/joint_effort_controllers.launch">
@@ -27,17 +26,13 @@
 
     <node name="cartesian_controller" pkg="uuv_manipulators_control" type="jt_cartesian_controller.py"
       respawn="false" output="screen">
-        <rosparam param="is_cylindrical">0</rosparam>
+      <remap from="joy" to="/$(arg uuv_name)/joy"/>
+      <rosparam subst_value="true">
+        exclusion_buttons: $(arg exclusion_button)
+        deadman_button: $(arg deadman_button)
+      </rosparam>
     </node>
 
-    <group if="$(arg teleop)">
-      <include file="$(find uuv_filtered_joy)/launch/joy_reference.launch">
-        <arg name="joy_id" value="$(arg joy_id)" />
-        <arg name="output_topic" value="cartesian_controller/command" />
-        <arg name="deadman_button" value="right"/>
-        <arg name="type" value="default"/>
-      </include>
-    </group>
   </group>
 
 

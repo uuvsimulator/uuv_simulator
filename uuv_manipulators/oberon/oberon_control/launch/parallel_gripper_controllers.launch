@@ -1,22 +1,33 @@
 <launch>
   <arg name="uuv_name" />
   <arg name="arm_name" default="oberon"/>
-  <arg name="joy_id" default="0"/>
-  <arg name="deadman_button" default="right"/>
-  <arg name="joy_model" default="xbox360" />
+  <arg name="deadman_button" default="5"/>
+  <arg name="exclusion_button" default="4"/>
 
-  <group ns="/$(arg uuv_name)/$(arg arm_name)">
-    <!-- Load joint controller configurations from YAML file to parameter server -->
-    <rosparam command="load" file="$(find oberon_control)/config/parallel_gripper_controllers.yaml"/>
-
-    <rosparam param="finger_left_joint/controller/joint" subst_value="true">
-      $(arg arm_name)/finger_left_joint
-    </rosparam>
-
-    <rosparam param="finger_tip_left_joint/controller/joint" subst_value="true">
-      $(arg arm_name)/finger_tip_left_joint
-    </rosparam>
-  </group>
+  <rosparam subst_value="true">
+    $(arg uuv_name):
+      $(arg arm_name):
+        finger_left_joint:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/finger_left_joint
+            pid: {p: 50.0, i: 0, d: 0}
+        finger_right_joint:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/finger_right_joint
+            pid: {p: 50.0, i: 0, d: 0}
+        finger_tip_left_joint:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/finger_tip_left_joint
+            pid: {p: 10.0, i: 0, d: 0}
+        finger_tip_right_joint:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/finger_tip_right_joint
+            pid: {p: 10.0, i: 0, d: 0}
+  </rosparam>
 
   <group ns="$(arg uuv_name)">
     <!-- load the controllers -->
@@ -27,22 +38,26 @@
           output="screen"
           ns="/$(arg uuv_name)"
           args="/$(arg uuv_name)/$(arg arm_name)/finger_left_joint/controller
-                /$(arg uuv_name)/$(arg arm_name)/finger_tip_left_joint/controller"/>
+                /$(arg uuv_name)/$(arg arm_name)/finger_tip_left_joint/controller
+                /$(arg uuv_name)/$(arg arm_name)/finger_right_joint/controller
+                /$(arg uuv_name)/$(arg arm_name)/finger_tip_right_joint/controller"/>
   </group>
 
   <group ns="/$(arg uuv_name)/$(arg arm_name)">
-    <node name="$(arg arm_name)_gripper_controller"
-          pkg="uuv_manipulators_control"
-          type="gripper_controller.py">
-          <rosparam command="load" file="$(find oberon_description)/params/parallel_gripper_config.yaml"/>
-    </node>
-
-    <node name="gripper_teleop"
-          pkg="uuv_manipulators_teleop"
-          type="gripper_joy_teleop.py">
-          <rosparam param="deadman_button" subst_value="true">$(arg deadman_button)</rosparam>
-          <rosparam command="load" file="$(find uuv_manipulators_teleop)/config/joystick/$(arg joy_model).yaml"/>
-    </node>
+    <node name="gripper_controller_$(arg arm_name)"
+            pkg="uuv_manipulators_control"
+            type="gripper_controller.py"
+            output="screen">
+            <rosparam command="load" file="$(find oberon_description)/params/parallel_gripper_config.yaml"/>
+            <remap from="joy" to="/$(arg uuv_name)/joy"/>
+            <rosparam subst_value="true">
+              exclusion_buttons: $(arg exclusion_button)
+              deadman_button: $(arg deadman_button)
+              kp: 300
+              ki: 4
+              kd: 1
+            </rosparam>
+      </node>
   </group>
 
 </launch>

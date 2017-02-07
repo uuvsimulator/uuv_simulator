@@ -1,5 +1,7 @@
 <launch>
   <arg name="uuv_name" />
   <arg name="arm_name" default="oberon"/>
-
+  <arg name="deadman_button" default="5"/>
+  <arg name="exclusion_button" default="4"/>
+  
 </launch>
