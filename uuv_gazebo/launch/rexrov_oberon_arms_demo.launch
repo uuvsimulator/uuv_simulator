@@ -1,4 +1,10 @@
 <launch>
+  <!-- Remember to first launch Gazebo with a underwater world model
+  Example:
+  >> roslaunch uuv_description ocean_waves.launch
+    or
+  >> roslaunch uuv_description empty_underwater_world.launch
+  -->
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>
   <arg name="z" default="-20"/>
