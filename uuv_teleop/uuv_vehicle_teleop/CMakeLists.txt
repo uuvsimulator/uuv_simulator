@@ -8,3 +8,6 @@ catkin_package()
 install(DIRECTORY launch
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
+
+catkin_install_python(PROGRAMS scripts/vehicle_teleop.py
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
