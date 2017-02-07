@@ -1,0 +1,13 @@
+# Main parameters for all Oberon 4P manipulator instances
+# To emulate the conditions for a real controller, the link parameters are
+# loaded in this parameter file instead of being read from Gazebo topics.
+joint_names: [azimuth, shoulder, wrist_joint, jaw_1_joint, jaw_2_joint]
+base_link: base
+tip_link: wrist
+default_configs:
+  home:
+    azimuth: 0
+    shoulder: 1.5707963
+    wrist_joint: 0
+    jaw_1_joint: 0
+    jaw_2_joint: 0
