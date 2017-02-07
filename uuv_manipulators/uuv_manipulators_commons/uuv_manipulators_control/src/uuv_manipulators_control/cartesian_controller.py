@@ -17,12 +17,12 @@ import rospy
 from uuv_manipulator_interfaces import ArmInterface
 from geometry_msgs.msg import TwistStamped
 from std_msgs.msg import Float64
-from uuv_manipulators_msgs.srv import SolveIK
 import numpy as np
 import tf
 import tf.transformations as trans
 from tf_conversions import posemath
 import PyKDL
+from sensor_msgs.msg import Joy
 
 
 class CartesianController(object):
@@ -35,6 +35,9 @@ class CartesianController(object):
         # namespace
         self._arm_interface = ArmInterface()
 
+        # Last goal for the end-effector pose/position
+        self._last_goal = self._arm_interface.get_config_in_ee_frame('home')
+
         # Retrieve the publish rate
         self._publish_rate = 25
         if not rospy.has_param('cartesian_controller/publish_rate'):
@@ -43,15 +46,51 @@ class CartesianController(object):
         if self._publish_rate <= 0:
             raise rospy.ROSException('Invalid negative publish rate')
 
-        # Check if orientation will be controlled
-        self._position_only = False
-        if rospy.has_param('~position_only'):
-            self._position_only = bool(rospy.get_param('~position_only'))
+        self._t_step = 0.01
+        if rospy.has_param("~tstep"):
+            self._t_step = rospy.get_param('~tstep')
+            if self._t_step <= 0:
+                raise rospy.ROSException('Invalid translational step')
 
-        # Check if cylindrical coordinates are to be used
-        self._is_cylindrical = False
-        if rospy.has_param('~is_cylindrical'):
-            self._is_cylindrical = bool(rospy.get_param('~is_cylindrical'))
+        self._r_step = 0.01
+        if rospy.has_param("~rstep"):
+            self._r_step = rospy.get_param('~rstep')
+            if self._r_step <= 0:
+                raise rospy.ROSException('Invalid rotational step')
+
+        # Default mapping for XBox 360 controller
+        self._axes = dict(x=4, y=3, z=1, roll=0, pitch=7, yaw=6)
+        if rospy.has_param('~axes'):
+            axes = rospy.get_param('~axes')
+            if type(axes) != dict:
+                raise rospy.ROSException('Axes structure must be a dict')
+            for tag in self._axes:
+                if tag not in axes:
+                    raise rospy.ROSException('Axes for %s missing' % tag)
+                self._axes[tag] = axes[tag]
+
+        # Default for the RB button of the XBox 360 controller
+        self._deadman_button = 5
+        if rospy.has_param('~deadman_button'):
+            self._deadman_button = int(rospy.get_param('~deadman_button'))
+
+        # If these buttons are pressed, the arm will not move
+        if rospy.has_param('~exclusion_buttons'):
+            self._exclusion_buttons = rospy.get_param('~exclusion_buttons')
+            if type(self._exclusion_buttons) in [float, int]:
+                self._exclusion_buttons = [int(self._exclusion_buttons)]
+            elif type(self._exclusion_buttons) == list:
+                for n in self._exclusion_buttons:
+                    if type(n) != float:
+                        raise rospy.ROSException('Exclusion buttons must be an'
+                                                 ' integer index to the joystick button')
+        else:
+            self._exclusion_buttons = list()
+
+        # Default for the start button of the XBox 360 controller
+        self._home_button = 7
+        if rospy.has_param('~home_button'):
+            self._home_button = int(rospy.get_param('~home_button'))
 
         # Get the transformation between the robot's base link and the
         # vehicle's base link
@@ -71,28 +110,9 @@ class CartesianController(object):
 
         # Velocity reference
         self._command = None
-        # Subscribe to the twist reference topic
-        self._command_sub = rospy.Subscriber('cartesian_controller/command',
-                                             TwistStamped,
-                                             self._command_callback,
-                                             queue_size=1)
 
         # Last controller update
         self._last_controller_update = rospy.get_time()
-
-        # Last goal for the end-effector pose/position
-        self._last_goal = None
-
-        try:
-            # Wait for the IK solver service
-            rospy.wait_for_service('ik_solver', timeout=2)
-        except rospy.ROSException, e:
-            print 'Service not available'
-
-        try:
-            self._ik_solver = rospy.ServiceProxy('ik_solver', SolveIK)
-        except rospy.ServiceException, e:
-            self._ik_solver = None
 
         rospy.set_param('cartesian_controller/name', self.LABEL)
 
@@ -101,40 +121,44 @@ class CartesianController(object):
         for joint in self._arm_interface.joint_names:
             self._joint_effort_pub[joint] = rospy.Publisher(
                 self._arm_interface.namespace +
-                joint + '/effort_controller/command',
+                joint + '/controller/command',
                 Float64, queue_size=1)
 
-        self._controller_update_timer = rospy.Timer(
-            rospy.Duration(1.0 / self._publish_rate), self._update)
-
-        rospy.on_shutdown(self._on_shutdown)
-
-    def _on_shutdown(self):
-        self._controller_update_timer.shutdown()
+        self._last_joy_update = rospy.get_time()
+        self._joy_sub = rospy.Subscriber('joy', Joy, self._joy_callback)
 
     def _update(self, event):
         pass
 
-    def _command_callback(self, msg):
+    def _run(self):
+        rate = rospy.Rate(self._publish_rate)
+        while not rospy.is_shutdown():
+            self._update()
+            rate.sleep()
+
+    def _joy_callback(self, joy):
         self._command = np.zeros(6)
+        if not joy.buttons[self._deadman_button] and self._deadman_button != -1:
+            return
+        for n in self._exclusion_buttons:
+            if joy.buttons[n] == 1:
+                return
 
-        rot = self._trans.M
-        twist = PyKDL.Twist(PyKDL.Vector(msg.twist.linear.x,
-                                         msg.twist.linear.y,
-                                         msg.twist.linear.z),
-                            PyKDL.Vector(msg.twist.angular.x,
-                                         msg.twist.angular.y,
-                                         msg.twist.angular.z))
-        twist = self._trans.M * twist
+        if joy.buttons[self._home_button] == 1:
+            self._last_goal = self._arm_interface.get_config_in_ee_frame('home')
+            self._last_joy_update = rospy.get_time()
+            return
 
-        self._command[0] = twist.vel.x()
-        self._command[1] = twist.vel.y()
-        self._command[2] = twist.vel.z()
 
-        if not self._position_only:
-            self._command[3] = twist.rot.x()
-            self._command[4] = twist.rot.y()
-            self._command[5] = twist.rot.z()
+        self._command[0] = joy.axes[self._axes['x']] * self._t_step
+        self._command[1] = joy.axes[self._axes['y']] * self._t_step
+        self._command[2] = joy.axes[self._axes['z']] * self._t_step
+
+        self._command[3] = joy.axes[self._axes['roll']] * self._r_step
+        self._command[4] = joy.axes[self._axes['pitch']] * self._r_step
+        self._command[5] = joy.axes[self._axes['yaw']] * self._r_step
+
+        self._last_joy_update = rospy.get_time()
 
     def publish_joint_efforts(self, tau):
         # Publish torques
