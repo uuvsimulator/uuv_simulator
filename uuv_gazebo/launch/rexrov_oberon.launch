@@ -1,13 +1,15 @@
 <launch>
-  <arg name="x" default="35"/>
-  <arg name="y" default="50"/>
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
   <arg name="z" default="-20"/>
   <arg name="joy_id" default="0"/>
   <arg name="namespace" default="rexrov"/>
+  <arg name="gripper" default="parallel"/>
+  <arg name="use_jt" default="0"/>
 
-  <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
-    <arg name="mode" value="oberon"/>
+  <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov_oberon.launch">
     <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="gripper" value="$(arg gripper)"/>
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
     <arg name="z" value="$(arg z)"/>
@@ -42,10 +44,19 @@
     </node>
   </group>
 
-  <include file="$(find oberon_control)/launch/jt_cartesian_controller.launch">
-    <arg name="uuv_name" value="$(arg namespace)"/>
-    <arg name="arm_name" value="oberon"/>
-    <arg name="teleop" default="true"/>
-    <arg name="joy_id" default="$(arg joy_id)" />
-  </include>
+  <group if="$(arg use_jt)">
+    <include file="$(find oberon_control)/launch/jt_cartesian_controller.launch">
+      <arg name="uuv_name" value="$(arg namespace)"/>
+      <arg name="arm_name" value="oberon"/>
+      <arg name="gripper" value="$(arg gripper)"/>
+    </include>
+  </group>
+
+  <group unless="$(arg use_jt)">
+    <include file="$(find oberon_control)/launch/joint_control.launch">
+      <arg name="uuv_name" value="$(arg namespace)"/>
+      <arg name="arm_name" value="oberon"/>
+      <arg name="gripper" value="$(arg gripper)"/>
+    </include>
+  </group>
 </launch>
