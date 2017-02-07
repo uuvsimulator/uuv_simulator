@@ -21,6 +21,7 @@ from uuv_manipulator_interfaces.kin_chain import KinChainInterface
 from uuv_manipulators_msgs.msg import EndeffectorState
 from std_msgs.msg import Float64
 from sensor_msgs.msg import JointState
+import time
 
 
 class GripperInterface(object):
@@ -51,8 +52,6 @@ class GripperInterface(object):
         # Retrieve gripper configuration information
         self._gripper_config = rospy.get_param('~gripper')
 
-        print self._gripper_config
-
         # Retrive gripper type
         if 'type' not in self._gripper_config:
             raise ROSException('Gripper type not defined')
@@ -74,6 +73,7 @@ class GripperInterface(object):
 
         # Chain groups
         self._groups = dict()
+
         # Loading the kinematic chain for each finger
         for group in self._gripper_config['groups']:
             chain = self._gripper_config['groups'][group]
@@ -83,8 +83,11 @@ class GripperInterface(object):
                                                     namespace=self._namespace,
                                                     arm_name=self._arm_name,
                                                     compute_fk_for_all=False)
+
         # Published topics
         self._pubTopics = dict()
+        # Controller input topics
+        self._pubControllers = dict()
         # Subscribed topics
         self._subTopics = dict()
 
@@ -108,24 +111,27 @@ class GripperInterface(object):
         self._control_joint = None
         self._control_joint_group = None
 
+        self._mimic_joint = None
+        self._mimic_joint_group = None
+
         if 'control_joint' in self._gripper_config:
-            self._control_joint = self._gripper_config['control_joint']
             # Correct the name including the namespace in TF
             for name in self._groups:
                 for joint in self._groups[name].joint_names:
                     if self._gripper_config['control_joint'] in joint:
                         self._control_joint = joint
                         self._control_joint_group = name
-                        break
-                if self._control_joint is not None:
-                    break
-
-            self._pubTopics['command'] = rospy.Publisher(
-                self._namespace + self._control_joint + '/controller/command',
-                Float64,
-                queue_size=1)
+                    if self._gripper_config['mimic_joint'] in joint:
+                        self._mimic_joint = joint
+                        self._mimic_joint_group = name
 
             rospy.loginfo(self._control_joint_group + ' - ' + self._control_joint)
+
+        for joint in self.get_joint_names():
+            self._pubControllers[joint] = rospy.Publisher(
+                self._namespace + joint + '/controller/command',
+                Float64,
+                queue_size=1)
 
         # Publishing rate for state topics
         self._publish_rate = 50
@@ -236,6 +242,44 @@ class GripperInterface(object):
         cur_ratio = self.get_position_ratio(self.control_joint_position)
         return cur_ratio
 
+    @property
+    def mimic_joint(self):
+        return self._mimic_joint
+
+    @property
+    def mimic_joint_group(self):
+        return self._mimic_joint_group
+
+    @property
+    def mimic_joint_position(self):
+        if None in [self._mimic_joint, self._mimic_joint_group]:
+            return None
+        return self._groups[self._mimic_joint_group].joint_angles[self._mimic_joint]
+
+    @property
+    def mimic_joint_velocity(self):
+        if None in [self._mimic_joint, self._mimic_joint_group]:
+            return None
+        return self._groups[self._mimic_joint_group].joint_velocities[self._mimic_joint]
+
+    @property
+    def mimic_joint_effort(self):
+        if None in [self._mimic_joint, self._mimic_joint_group]:
+            return None
+        return self._groups[self._mimic_joint_group].joint_efforts[self._mimic_joint]
+
+    @property
+    def mimic_joint_limits(self):
+        if None in [self._mimic_joint, self._mimic_joint_group]:
+            return None
+        return self._groups[self._mimic_joint_group].joint_limits[self._mimic_joint]
+
+    @property
+    def mimic_joint_pos_ratio(self):
+        limit = self.mimic_joint_limits
+        cur_ratio = self.get_position_ratio(self.mimic_joint_position)
+        return cur_ratio
+
     def _on_shutdown(self):
         self._publish_state_timer.shutdown()
 
@@ -295,4 +339,10 @@ class GripperInterface(object):
         elif set_point > self.control_joint_limits['effort']:
             set_point = self.control_joint_limits['effort']
 
-        self._pubTopics['command'].publish(set_point)
+        self._pubControllers[self._control_joint].publish(set_point)
+        self._pubControllers[self._mimic_joint].publish(float(self._gripper_config['mimic_joint_gain']) * set_point)
+
+    def set_controller_command(self, joint, effort):
+        if joint not in self._pubControllers:
+            raise rospy.ROSException('Invalid joint tag')
+        self._pubControllers[joint].publish(effort)
