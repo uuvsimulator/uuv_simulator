@@ -1,6 +1,6 @@
 <launch>
     <arg name="uuv_name" />
-    <arg name="arm_name" default="oberon4"/>    
+    <arg name="arm_name" default="oberon4"/>
     <!-- Arm will only move while the RB button (XBox 360 controller) is pressed -->
     <arg name="deadman_button" default="5"/>
     <!-- The arm will not move if the LB button (XBox 360 controller) is pressed -->
@@ -55,9 +55,9 @@
             <rosparam subst_value="true">
               exclusion_buttons: $(arg exclusion_button)
               deadman_button: $(arg deadman_button)
-              kp: 100
-              ki: 2
-              kd: 0
+              kp: 50
+              ki: 1
+              kd: 3
             </rosparam>
       </node>
     </group>

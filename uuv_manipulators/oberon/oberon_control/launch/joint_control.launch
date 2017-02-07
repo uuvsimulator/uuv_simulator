@@ -72,7 +72,7 @@
               d: 0
           wrist:
             joint_input_axis: 0
-            axis_gain: 0.02
+            axis_gain: 0.05
             topic: /$(arg uuv_name)/$(arg arm_name)/wrist/controller/command
             controller:
               p: 600

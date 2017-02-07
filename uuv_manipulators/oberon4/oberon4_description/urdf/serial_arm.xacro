@@ -318,7 +318,7 @@
       <parent link="${namespace}/gripper_base"/>
       <child link="${namespace}/jaw_2"/>
       <origin xyz="0.0444253 -0.021926 -0.0487509" rpy="${0.5*PI} 0 0"/>
-      <dynamics damping="15" friction="10"/>
+      <dynamics damping="5" friction="10"/>
       <axis xyz="0 0 1"/>
       <limit lower="${-0.5*PI}" upper="0" velocity=".13" effort="50000"/>
     </joint>
