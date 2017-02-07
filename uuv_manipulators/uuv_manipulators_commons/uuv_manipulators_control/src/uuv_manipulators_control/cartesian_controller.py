@@ -81,7 +81,7 @@ class CartesianController(object):
                 self._exclusion_buttons = [int(self._exclusion_buttons)]
             elif type(self._exclusion_buttons) == list:
                 for n in self._exclusion_buttons:
-                    if type(n) != float:
+                    if type(n) not in [float, int]:
                         raise rospy.ROSException('Exclusion buttons must be an'
                                                  ' integer index to the joystick button')
         else:
