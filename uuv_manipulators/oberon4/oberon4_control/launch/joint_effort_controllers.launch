@@ -1,0 +1,50 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="arm_name" default="oberon4"/>
+  
+  <rosparam subst_value="true">
+    $(arg uuv_name):
+      $(arg arm_name):
+        azimuth:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/azimuth
+            pid: {p: 500.0, i: 0.0, d: 20.0}
+        shoulder:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/shoulder
+            pid: {p: 500.0, i: 7.0, d: 20.0}
+        wrist_joint:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/wrist_joint
+            pid: {p: 500.0, i: 1.0, d: 10.0}
+        jaw_1_joint:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/jaw_1_joint
+            pid: {p: 100.0, i: 0, d: 1.0}
+        jaw_2_joint:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/jaw_2_joint
+            pid: {p: 100.0, i: 0, d: 1.0}
+  </rosparam>
+
+  <group ns="$(arg uuv_name)">
+    <!-- load the controllers -->
+    <node name="controller_spawner_$(arg arm_name)"
+          pkg="controller_manager"
+          type="spawner"
+          respawn="false"
+          output="screen"
+          args="--namespace /$(arg uuv_name)
+                /$(arg uuv_name)/$(arg arm_name)/azimuth/controller
+                /$(arg uuv_name)/$(arg arm_name)/shoulder/controller
+                /$(arg uuv_name)/$(arg arm_name)/wrist_joint/controller
+                /$(arg uuv_name)/$(arg arm_name)/jaw_1_joint/controller
+                /$(arg uuv_name)/$(arg arm_name)/jaw_2_joint/controller">
+    </node>
+  </group>
+</launch>
