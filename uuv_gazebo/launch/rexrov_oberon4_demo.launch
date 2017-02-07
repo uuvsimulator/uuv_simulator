@@ -31,19 +31,17 @@
       <remap from="odom" to="/$(arg namespace)/pose_gt"/>
       <remap from="cmd_accel" to="/$(arg namespace)/cmd_accel"/>
     </node>
-
-    <rosparam file="$(find uuv_control_cascaded_pid)/config/joy_vel.yaml" command="load" />
-    <node pkg="joy_teleop" type="joy_teleop.py" name="joy_uuv_velocity_teleop" />
-
-    <node pkg="joy" type="joy_node" name="joystick">
-      <param name="autorepeat_rate" value="10" />
-      <param name="dev" value="/dev/input/js$(arg joy_id)"/>
-    </node>
   </group>
+
+  <include file="$(find uuv_vehicle_teleop)/launch/uuv_teleop.launch">
+    <arg name="uuv_name" value="$(arg namespace)"/>
+    <arg name="joy_id" value="$(arg joy_id)"/>
+    <arg name="output_topic" value="cmd_vel"/>
+    <arg name="message_type" value="twist"/>
+  </include>
 
   <include file="$(find oberon4_control)/launch/joint_control.launch">
     <arg name="uuv_name" value="$(arg namespace)"/>
     <arg name="arm_name" value="oberon4"/>
-    <arg name="joy_id" default="$(arg joy_id)" />
   </include>
 </launch>

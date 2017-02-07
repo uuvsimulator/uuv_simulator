@@ -62,8 +62,20 @@
   <xacro:property name="jaw_z" value="0.091102" />
   <xacro:property name="jaw_center_of_mass" value="0.052693 0.02887 -0.00805"/>
 
-  <!-- Import common macros-->
-  <xacro:include filename="$(find uuv_manipulators_description)/urdf/common.xacro" />
+  <!-- Transmission Macro -->
+  <xacro:macro name="simple_transmission" params="joint">
+    <transmission name="${joint}_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${joint}">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${joint}_motor">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
   <!-- Gazebo specific configurations -->
   <xacro:include filename="$(find oberon4_description)/urdf/serial_arm.gazebo.xacro" />
 

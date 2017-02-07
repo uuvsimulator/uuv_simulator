@@ -75,7 +75,7 @@
             axis_gain: 0.02
             topic: /$(arg uuv_name)/$(arg arm_name)/wrist/controller/command
             controller:
-              p: 400
+              p: 600
               i: 0
               d: 0
       </rosparam>
