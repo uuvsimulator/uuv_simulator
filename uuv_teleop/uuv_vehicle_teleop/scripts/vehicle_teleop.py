@@ -82,10 +82,11 @@ class VehicleTeleop:
         else:
             cmd = Accel()
         if joy is not None:
-            cmd.linear = Vector3(joy.axes[self._axes['x']],
-                                 joy.axes[self._axes['y']],
-                                 joy.axes[self._axes['z']])
-            cmd.angular = Vector3(0, 0, joy.axes[self._axes['yaw']])
+            cmd.linear = Vector3(self._axes_gain['x'] * joy.axes[self._axes['x']],
+                                 self._axes_gain['y'] * joy.axes[self._axes['y']],
+                                 self._axes_gain['z'] * joy.axes[self._axes['z']])
+            cmd.angular = Vector3(0, 0,
+                                  self._axes_gain['yaw'] * joy.axes[self._axes['yaw']])
         else:
             cmd.linear = Vector3(0, 0, 0)
             cmd.angular = Vector3(0, 0, 0)
@@ -95,10 +96,8 @@ class VehicleTeleop:
         # If any exclusion buttons are pressed, do nothing
         for n in self._exclusion_buttons:
             if joy.buttons[n] == 1:
-                print 'mutex button', n
                 cmd = self._parse_joy()
-                self._output_pub.publish(cmd)
-                print cmd
+                self._output_pub.publish(cmd)                
                 return
 
         if self._deadman_button != -1:
