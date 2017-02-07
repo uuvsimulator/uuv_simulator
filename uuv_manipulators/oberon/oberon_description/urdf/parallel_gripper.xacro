@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<!-- Oberon-7P Schilling Robotics Manipulator Parallel Gripper -->
+<!-- Oberon-7P Parallel Gripper (inspired on the Orion 7P Schilling Robotics Manipulator) -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:property name="mass_gripper" value="3.96" /> <!-- mass of Gripper (kg) - 54kg*0,001422/0,019395 = 3,96 kg -->
     <xacro:property name="gripper_effort" value="200" />
@@ -122,7 +122,7 @@
             <child link="${namespace}/finger_left"/>
             <origin xyz="0.0 -0.028 0.05" rpy="0 ${-pi*0.5} 0"/>
             <axis xyz="0 0 1"/>
-            <limit effort="${gripper_effort}" lower="${-pi*0.25}" upper="0" velocity="${gripper_velocity}"/>
+            <limit effort="${gripper_effort}" lower="${-pi*0.3333}" upper="0" velocity="${gripper_velocity}"/>
             <dynamics damping="5" friction="10"/>
         </joint>
 
@@ -192,7 +192,7 @@
             <child link="${namespace}/finger_right"/>
             <origin xyz="0.0 0.028 0.05" rpy="0 ${-pi*0.5} ${pi}"/>
             <axis xyz="0 0 1"/>
-            <limit effort="${gripper_effort}" lower="${-pi*0.25}" upper="0" velocity="${gripper_velocity}"/>
+            <limit effort="${gripper_effort}" lower="${-pi*0.3333}" upper="0" velocity="${gripper_velocity}"/>
             <dynamics damping="5" friction="10"/>
         </joint>
 
@@ -243,18 +243,6 @@
             <!-- <maxVel>0.1</maxVel> -->
             <!-- <minDepth>0.001</minDepth> -->
             <!-- <maxContacts>5</maxContacts> -->
-        </gazebo>
-
-        <!-- Setting up mimic joints -->
-        <gazebo>
-          <plugin name="mimic_finger" filename="libgazebo_ros_mimic_joints.so">
-            <robotNamespace>${namespace}</robotNamespace>
-            <joint>${namespace}/finger_left_joint</joint>
-            <mimicJoint>${namespace}/finger_right_joint</mimicJoint>
-            <kp>60</kp>
-            <kd>5</kd>
-            <ki>1</ki>
-          </plugin>
         </gazebo>
 
     </xacro:macro>

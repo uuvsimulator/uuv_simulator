@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Oberon-7P Schilling Robotics Manipulator
+<!-- Oberon-7P Manipulator (inspired on the Orion 7P Schilling Robotics Manipulator)
      Meshes and parameters a courtesy of Deutsche Forschungszentrum für
      Künstliche Intelligenz GmbH (DFKI)
 -->
@@ -328,13 +328,12 @@
       <limit lower="-1.6406094968746698" upper="0.4537856055185257" velocity=".26" effort="10000"/>
     </joint>
 
-    <joint name="${namespace}/wrist" type="revolute">
+    <joint name="${namespace}/wrist" type="continuous">
       <parent link="${namespace}/wrist_2"/>
       <child link="${namespace}/end_effector"/>
       <origin xyz="0.232 0 0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <dynamics damping="15" friction="40"/>
-      <limit lower="-0.38397243543875248" upper="5.8817595792208905" velocity=".26" effort="5"/>
+      <dynamics damping="10" friction="60"/>
     </joint>
 
     <!-- Transmissions -->
