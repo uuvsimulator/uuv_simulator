@@ -1,0 +1,49 @@
+<launch>
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-20"/>
+  <arg name="joy_id" default="0"/>
+  <arg name="namespace" default="rexrov"/>
+
+  <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov_oberon4.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
+  </include>
+
+  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+    <arg name="uuv_name" value="$(arg namespace)" />
+    <arg name="model_name" value="rexrov" />
+  </include>
+
+  <group ns="$(arg namespace)">
+    <rosparam file="$(find uuv_control_cascaded_pid)/config/rexrov/inertial.yaml" command="load"/>
+    <rosparam file="$(find uuv_control_cascaded_pid)/config/rexrov/vel_pid_control.yaml" command="load"/>
+
+    <node pkg="uuv_control_cascaded_pid" type="AccelerationControl.py" name="acceleration_control"
+            output="screen">
+      <param name="tf_prefix" type="string" value="rexrov/" />
+    </node>
+
+    <node pkg="uuv_control_cascaded_pid" type="VelocityControl.py" name="velocity_control"
+          output="screen">
+      <remap from="odom" to="/$(arg namespace)/pose_gt"/>
+      <remap from="cmd_accel" to="/$(arg namespace)/cmd_accel"/>
+    </node>
+
+    <rosparam file="$(find uuv_control_cascaded_pid)/config/joy_vel.yaml" command="load" />
+    <node pkg="joy_teleop" type="joy_teleop.py" name="joy_uuv_velocity_teleop" />
+
+    <node pkg="joy" type="joy_node" name="joystick">
+      <param name="autorepeat_rate" value="10" />
+      <param name="dev" value="/dev/input/js$(arg joy_id)"/>
+    </node>
+  </group>
+
+  <include file="$(find oberon4_control)/launch/joint_control.launch">
+    <arg name="uuv_name" value="$(arg namespace)"/>
+    <arg name="arm_name" value="oberon4"/>
+    <arg name="joy_id" default="$(arg joy_id)" />
+  </include>
+</launch>
