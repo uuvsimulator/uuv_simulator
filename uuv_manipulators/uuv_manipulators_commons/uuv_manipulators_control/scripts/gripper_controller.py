@@ -90,8 +90,8 @@ class GripperController:
             self._kd = 0.0
 
         self._controllers = dict()
-        self._controllers[self._gripper.control_joint] = PIDRegulator(self._kp, self._ki, self._kd, 1000)
-        self._controllers[self._gripper.mimic_joint] = PIDRegulator(self._kp, self._ki, self._kd, 1000)
+        self._controllers[self._gripper.control_joint] = PIDRegulator(self._kp, self._ki, self._kd, 100)
+        self._controllers[self._gripper.mimic_joint] = PIDRegulator(self._kp, self._ki, self._kd, 100)
 
         if self._gripper.control_joint is None:
             raise rospy.ROSException('Gripper cannot be controlled')

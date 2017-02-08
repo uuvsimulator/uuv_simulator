@@ -25,16 +25,16 @@
               topic: /$(arg uuv_name)/$(arg arm_name)/azimuth/controller/command
               controller:
                 p: 800
-                i: 2
-                d: 5
+                i: 20
+                d: 50
             shoulder:
               joint_input_axis: 1
               axis_gain: 0.008
               topic: /$(arg uuv_name)/$(arg arm_name)/shoulder/controller/command
               controller:
-                p: 1000
+                p: 800
                 i: 20
-                d: 5
+                d: 50
             wrist_joint:
               joint_input_axis: 3
               axis_gain: 0.05
@@ -42,7 +42,7 @@
               controller:
                 p: 400
                 i: 2
-                d: 10
+                d: 5
         </rosparam>
       </node>
 
@@ -55,9 +55,9 @@
             <rosparam subst_value="true">
               exclusion_buttons: $(arg exclusion_button)
               deadman_button: $(arg deadman_button)
-              kp: 50
-              ki: 1
-              kd: 3
+              kp: 40
+              ki: 5
+              kd: 1
             </rosparam>
       </node>
     </group>
