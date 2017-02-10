@@ -176,6 +176,8 @@ void UnderwaterObjectPlugin::Init()
 /////////////////////////////////////////////////
 void UnderwaterObjectPlugin::Update(const common::UpdateInfo &_info)
 {
+  double time = _info.simTime.Double();
+
   for (std::map<gazebo::physics::LinkPtr,
        HydrodynamicModelPtr>::iterator it = models.begin();
        it != models.end(); ++it)
@@ -188,7 +190,7 @@ void UnderwaterObjectPlugin::Update(const common::UpdateInfo &_info)
 
     if (!std::isnan(linearAccel) && !std::isnan(angularAccel))
     {
-      hydro->ApplyHydrodynamicForces(this->flowVelocity);
+      hydro->ApplyHydrodynamicForces(time, this->flowVelocity);
       this->PublishRestoringForce(link);
       this->PublishHydrodynamicWrenches(link);
     }
