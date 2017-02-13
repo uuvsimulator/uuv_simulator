@@ -47,14 +47,15 @@ class HydrodynamicModel : public BuoyantObject
 
   /// \brief Computation of the hydrodynamic forces
   public: virtual void ApplyHydrodynamicForces(
-                             const math::Vector3 &_flowVelWorld) = 0;
+    double time, const math::Vector3 &_flowVelWorld) = 0;
 
   /// \brief Prints parameters
   public: virtual void Print(std::string _paramName,
                              std::string _message = std::string()) = 0;
 
   /// \brief Filter acceleration (fix due to the update structure of Gazebo)
-  protected: void FilterAcc(Eigen::Vector6d _acc,
+  protected: void ComputeAcc(Eigen::Vector6d _velRel,
+                            double _time,
                             double _alpha = 0.3);
 
   /// \brief Returns true if all parameters are available from the SDF element
@@ -65,6 +66,12 @@ class HydrodynamicModel : public BuoyantObject
   /// only calls the update function at the beginning or at the end of a
   /// iteration of the physics engine
   protected: Eigen::Vector6d filteredAcc;
+
+  /// \brief Last timestamp (in seconds) at which ApplyHydrodynamicForces was called
+  protected: double lastTime;
+
+  /// \brief Last body-fixed relative velocity (nu_R in Fossen's equations)
+  protected: Eigen::Vector6d lastVelRel;
 
   /// \brief List of parameters needed from the SDF element
   protected: std::vector<std::string> params;
@@ -145,7 +152,7 @@ class HMFossen : public HydrodynamicModel
   protected: HMFossen(sdf::ElementPtr _sdf, physics::LinkPtr _link);
 
   /// \brief Computation of the hydrodynamic forces
-  public: virtual void ApplyHydrodynamicForces(
+  public: virtual void ApplyHydrodynamicForces(double time,
                             const math::Vector3 &_flowVelWorld);
 
   /// \brief Computes the added-mass Coriolis matrix Ca.

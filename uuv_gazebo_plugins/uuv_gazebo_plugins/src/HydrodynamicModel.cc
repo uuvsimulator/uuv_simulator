@@ -75,9 +75,14 @@ HydrodynamicModel::HydrodynamicModel(sdf::ElementPtr _sdf,
 }
 
 /////////////////////////////////////////////////
-void HydrodynamicModel::FilterAcc(Eigen::Vector6d _acc,
+void HydrodynamicModel::ComputeAcc(Eigen::Vector6d _velRel, double _time,
                                   double _alpha)
 {
+  // Compute Fossen's nu-dot numerically. We have to do this for now since
+  // Gazebo reports angular accelerations that are off by orders of magnitues.
+  double dt = _time - lastTime;
+  Eigen::Vector6d acc = (_velRel - this->lastVelRel) / dt;
+
   // TODO  We only have access to the acceleration of the previous simulation
   //       step. The added mass will induce a strong force/torque counteracting
   //       it in the current simulation step. This can lead to an oscillating
@@ -85,7 +90,10 @@ void HydrodynamicModel::FilterAcc(Eigen::Vector6d _acc,
   //       The most accurate solution would probably be to first compute the
   //       latest acceleration without added mass and then use this to compute
   //       added mass effects. This is not how gazebo works, though.
-  this->filteredAcc = (1.0 - _alpha) * this->filteredAcc + _alpha * _acc;
+  this->filteredAcc = (1.0 - _alpha) * this->filteredAcc + _alpha * acc;
+
+  lastTime = _time;
+  this->lastVelRel = _velRel;
 }
 
 /////////////////////////////////////////////////
@@ -216,7 +224,8 @@ HMFossen::HMFossen(sdf::ElementPtr _sdf,
 }
 
 /////////////////////////////////////////////////
-void HMFossen::ApplyHydrodynamicForces(const math::Vector3 &_flowVelWorld)
+void HMFossen::ApplyHydrodynamicForces(
+  double _time, const math::Vector3 &_flowVelWorld)
 {
   // Link's pose
   const math::Pose pose = this->link->GetWorldPose();
@@ -238,37 +247,33 @@ void HMFossen::ApplyHydrodynamicForces(const math::Vector3 &_flowVelWorld)
   // Transform the flow velocity to the BODY frame
   math::Vector3 flowVel = pose.rot.GetInverse().RotateVector(_flowVelWorld);
 
-  Eigen::Vector6d vel, acc;
+  Eigen::Vector6d vel_rel, acc;
   // Compute the relative velocity
-  vel = EigenStack(linVel - flowVel, angVel);
-  // Calculating the relative acceleration
-  // Refsnes, 2007 - Nonlinear model-based control of slender body AUVs
-  // In the BODY frame, the constant flow does have an acceleration
-  // contribution
-  math::Vector3 flowAcc = -1 * Vec3dToGazebo(CrossProductOperator(angVel) *
-                            ToEigen(flowVel));
-  acc = EigenStack(linAcc - flowAcc, angAcc);
+  vel_rel = EigenStack(linVel - flowVel, angVel);
+
+  Eigen::Vector6d lastForce;
+  lastForce = EigenStack(this->link->GetRelativeForce(), this->link->GetRelativeTorque());
 
   // Update added Coriolis matrix
-  this->ComputeAddedCoriolisMatrix(vel, this->Ma, this->Ca);
+  this->ComputeAddedCoriolisMatrix(vel_rel, this->Ma, this->Ca);
 
   // Update damping matrix
-  this->ComputeDampingMatrix(vel, this->D);
+  this->ComputeDampingMatrix(vel_rel, this->D);
 
   // Filter acceleration (see issue explanation above)
-  this->FilterAcc(acc, 0.3);
+  this->ComputeAcc(vel_rel, _time, 0.3);
 
   // We can now compute the additional forces/torques due to thisdynamic
   // effects based on Eq. 8.136 on p.222 of Fossen: Handbook of Marine Craft ...
 
   // Damping forces and torques
-  Eigen::Vector6d damping = -this->D * vel;
+  Eigen::Vector6d damping = -this->D * vel_rel;
 
   // Added-mass forces and torques
   Eigen::Vector6d added = -this->Ma * this->filteredAcc;
 
   // Added Coriolis term
-  Eigen::Vector6d cor = -this->Ca * vel;
+  Eigen::Vector6d cor = -this->Ca * vel_rel;
 
   // All additional (compared to standard rigid body) Fossen terms combined.
   Eigen::Vector6d tau = damping + added + cor;
@@ -281,7 +286,7 @@ void HMFossen::ApplyHydrodynamicForces(const math::Vector3 &_flowVelWorld)
     math::Vector3 hydTorque = Vec3dToGazebo(tau.tail<3>());
 
     // Forces and torques are also wrt link frame
-    this->link->AddLinkForce(hydForce);
+    this->link->AddRelativeForce(hydForce);
     this->link->AddRelativeTorque(hydTorque);
   }
 
