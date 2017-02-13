@@ -48,7 +48,12 @@ add_dependencies(underwater_object_ros_plugin underwater_object_plugin)
 add_library(joint_state_publisher src/JointStatePublisher.cc)
 target_link_libraries(joint_state_publisher ${catkin_LIBRARIES})
 
-install(TARGETS fin_ros_plugin thruster_ros_plugin underwater_object_ros_plugin joint_state_publisher
+add_library(accelerations_test_plugin
+  src/AccelerationsTestPlugin.cc
+)
+target_link_libraries(accelerations_test_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
+
+install(TARGETS fin_ros_plugin thruster_ros_plugin underwater_object_ros_plugin joint_state_publisher accelerations_test_plugin
   DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

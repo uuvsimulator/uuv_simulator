@@ -155,6 +155,11 @@
           </hydrodynamic_model>
         </link>
       </plugin>
+
+      <!-- optional: plugin to test compare Gazebo's returned accelerations
+      <plugin name="${namespace}_test_plugin" filename="libaccelerations_test_plugin.so">
+        <link_name>${namespace}/base_link</link_name>
+      </plugin> -->
     </gazebo>
 
     <xacro:thruster_macro namespace="${namespace}" thruster_id="0">
