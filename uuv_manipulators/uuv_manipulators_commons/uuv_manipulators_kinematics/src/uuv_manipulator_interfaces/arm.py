@@ -152,7 +152,10 @@ class ArmInterface(KinChainInterface):
     def update_man_index(self):
         # Retrieve current jacobian matrix
         J = self.jacobian()
-        self._man_index = np.sqrt(np.linalg.det(np.dot(J, J.transpose())))
+        det = np.linalg.det(np.dot(J, J.transpose()))
+        self._man_index = 0.0
+        if det > 0:
+            self._man_index = np.sqrt(det)
 
     def update_endeffector_state(self):
         # Read joint states from the kinematics interface
