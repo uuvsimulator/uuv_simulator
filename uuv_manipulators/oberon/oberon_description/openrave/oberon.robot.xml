@@ -1,6 +1,0 @@
-<Robot name="oberon" file="oberon_standalone.dae">
-  <Manipulator name="arm">
-    <base>oberon/base</base>
-    <effector>oberon/end_effector</effector>
-  </Manipulator>
-</Robot>

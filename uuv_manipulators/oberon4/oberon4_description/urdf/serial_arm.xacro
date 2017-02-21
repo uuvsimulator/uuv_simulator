@@ -1,0 +1,395 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="use_mesh_file" value="false" />
+  <xacro:property name="PI" value="3.1415926535897931"/>
+
+  <xacro:property name="base_volume" value="0.002325" />
+  <xacro:property name="base_mass" value="7.62" />
+  <xacro:property name="base_x" value="0.282087" />
+  <xacro:property name="base_y" value="0.198133" />
+  <xacro:property name="base_z" value="0.155615" />
+  <xacro:property name="base_center_of_mass" value="-0.101581 -0.001371 -0.009781"/>
+
+  <xacro:property name="azimuth_volume" value="0.00123" />
+  <xacro:property name="azimuth_mass" value="4.03499" />
+  <xacro:property name="azimuth_x" value="0.152131" />
+  <xacro:property name="azimuth_y" value="0.128467" />
+  <xacro:property name="azimuth_z" value="0.166069" />
+  <xacro:property name="azimuth_center_of_mass" value="0.039574 0.006304 0.004241"/>
+
+  <xacro:property name="arm_volume" value="0.001583" />
+  <xacro:property name="arm_mass" value="5.193" />
+  <xacro:property name="arm_x" value="0.375" />
+  <xacro:property name="arm_y" value="0.128467" />
+  <xacro:property name="arm_z" value="0.166069" />
+  <xacro:property name="arm_center_of_mass" value="0.203946 0.000021 0.009857"/>
+
+  <xacro:property name="wrist_volume" value="0.001583" />
+  <xacro:property name="wrist_mass" value="5.826" />
+  <xacro:property name="wrist_x" value="0.122922" />
+  <xacro:property name="wrist_y" value="0.114324" />
+  <xacro:property name="wrist_z" value="0.114323" />
+  <xacro:property name="wrist_center_of_mass" value="0.05347 0.000035 0.000033"/>
+
+  <xacro:property name="gripper_base_volume" value="0.000637" />
+  <xacro:property name="gripper_base_mass" value="2.089667" />
+  <xacro:property name="gripper_base_x" value="0.085493" />
+  <xacro:property name="gripper_base_y" value="0.1143" />
+  <xacro:property name="gripper_base_z" value="0.145416" />
+  <xacro:property name="gripper_base_center_of_mass" value="0.026082 -0.000011 -0.00012"/>
+
+  <xacro:property name="jaw_volume" value="0.000797" />
+  <xacro:property name="jaw_mass" value="2.6145" />
+  <xacro:property name="jaw_x" value="0.191011" />
+  <xacro:property name="jaw_y" value="0.108069" />
+  <xacro:property name="jaw_z" value="0.091102" />
+  <xacro:property name="jaw_center_of_mass" value="0.052693 0.02887 -0.00805"/>
+
+  <!-- Transmission Macro -->
+  <xacro:macro name="simple_transmission" params="joint">
+    <transmission name="${joint}_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${joint}">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${joint}_motor">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <!-- Gazebo specific configurations -->
+  <xacro:include filename="$(find oberon4_description)/urdf/serial_arm.gazebo.xacro" />
+
+  <xacro:macro name="oberon4_serial_arm" params="namespace parent *origin">
+    <!-- Base -->
+    <link name="${namespace}/base">
+      <inertial>
+        <origin xyz="${base_center_of_mass}" rpy="0 0 0"/>
+        <mass value="${base_mass}"/>
+        <inertia ixx="${base_mass / 12.0 * (base_y*base_y + base_z*base_z)}" ixy="0.0" ixz="0.0"
+                 iyy="${base_mass / 12.0 * (base_x*base_x + base_z*base_z)}" iyz="0.0"
+                 izz="${base_mass / 12.0 * (base_x*base_x + base_y*base_y)}"/>
+      </inertial>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon4_description)/meshes/Base.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="${base_center_of_mass}" rpy="0 0 0" />
+        <geometry>
+          <box size="${base_x} ${base_y} ${base_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Azimuth link  -->
+
+    <link name="${namespace}/azimuth_link">
+      <inertial>
+        <origin xyz="${azimuth_center_of_mass}" rpy="0 0 0"/>
+        <mass value="${azimuth_mass}"/>
+        <inertia ixx="${azimuth_mass / 12.0 * (azimuth_y*azimuth_y + azimuth_z*azimuth_z)}" ixy="0.0" ixz="0.0"
+                 iyy="${azimuth_mass / 12.0 * (azimuth_x*azimuth_x + azimuth_z*azimuth_z)}" iyz="0.0"
+                 izz="${azimuth_mass / 12.0 * (azimuth_x*azimuth_x + azimuth_y*azimuth_y)}"/>
+     </inertial>
+
+      <visual type="trimesh">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon4_description)/meshes/Azimuth.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="${azimuth_center_of_mass}" rpy="0 0 0" />
+        <geometry>
+          <box size="${azimuth_x} ${azimuth_y} ${azimuth_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Arm link  -->
+
+    <link name="${namespace}/arm">
+      <inertial>
+        <origin xyz="${arm_center_of_mass}" rpy="0 0 0"/>
+        <mass value="${arm_mass}"/>
+        <inertia ixx="${arm_mass / 12.0 * (arm_y*arm_y + arm_z*arm_z)}" ixy="0.0" ixz="0.0"
+                 iyy="${arm_mass / 12.0 * (arm_x*arm_x + arm_z*arm_z)}" iyz="0.0"
+                 izz="${arm_mass / 12.0 * (arm_x*arm_x + arm_y*arm_y)}"/>
+     </inertial>
+
+      <visual type="trimesh">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon4_description)/meshes/Arm.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="${arm_center_of_mass}" rpy="0 ${0.5*PI} 0" />
+        <geometry>
+          <cylinder radius="${0.5*arm_y}" length="${arm_x}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Wrist link  -->
+
+    <link name="${namespace}/wrist">
+      <inertial>
+        <origin xyz="${wrist_center_of_mass}" rpy="0 0 0"/>
+        <mass value="${wrist_mass}"/>
+        <inertia ixx="${wrist_mass / 12.0 * (wrist_y*wrist_y + wrist_z*wrist_z)}" ixy="0.0" ixz="0.0"
+                 iyy="${wrist_mass / 12.0 * (wrist_x*wrist_x + wrist_z*wrist_z)}" iyz="0.0"
+                 izz="${wrist_mass / 12.0 * (wrist_x*wrist_x + wrist_y*wrist_y)}"/>
+     </inertial>
+
+      <visual type="trimesh">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon4_description)/meshes/WristStator.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="${wrist_center_of_mass}" rpy="0 ${0.5*PI} 0" />
+        <geometry>
+          <cylinder radius="${0.5*wrist_y}" length="${wrist_x}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Gripper base link  -->
+
+    <link name="${namespace}/gripper_base">
+      <inertial>
+        <origin xyz="${gripper_base_center_of_mass}" rpy="0 0 0"/>
+        <mass value="${gripper_base_mass}"/>
+        <inertia ixx="${gripper_base_mass / 12.0 * (gripper_base_y*gripper_base_y + gripper_base_z*gripper_base_z)}" ixy="0.0" ixz="0.0"
+                 iyy="${gripper_base_mass / 12.0 * (gripper_base_x*gripper_base_x + gripper_base_z*gripper_base_z)}" iyz="0.0"
+                 izz="${gripper_base_mass / 12.0 * (gripper_base_x*gripper_base_x + gripper_base_y*gripper_base_y)}"/>
+     </inertial>
+
+      <visual type="trimesh">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon4_description)/meshes/GripperBase.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="${gripper_base_center_of_mass}" rpy="0 0 0" />
+        <geometry>
+          <box size="${gripper_base_x} ${gripper_base_y} ${gripper_base_z}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Jaw 1 link  -->
+
+    <link name="${namespace}/jaw_1">
+      <inertial>
+        <origin xyz="${jaw_center_of_mass}" rpy="0 0 0"/>
+        <mass value="${jaw_mass}"/>
+        <inertia ixx="${jaw_mass / 12.0 * (jaw_y*jaw_y + jaw_z*jaw_z)}" ixy="0.0" ixz="0.0"
+                 iyy="${jaw_mass / 12.0 * (jaw_x*jaw_x + jaw_z*jaw_z)}" iyz="0.0"
+                 izz="${jaw_mass / 12.0 * (jaw_x*jaw_x + jaw_y*jaw_y)}"/>
+     </inertial>
+
+      <visual type="trimesh">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon4_description)/meshes/Jaw.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <xacro:if value="${use_mesh_file}">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon4_description)/meshes/Jaw.stl" scale="1 1 1" />
+        </geometry>
+      </collision>
+      </xacro:if>
+      <xacro:unless value="${use_mesh_file}">
+        <collision>
+          <origin xyz="0.08 0.035 -0.002" rpy="0 0 0" />
+          <geometry>
+            <box size="0.12 0.02 0.025"/>
+          </geometry>
+        </collision>
+        <collision>
+          <origin xyz="0.145 0.055 -0.002" rpy="0 0 0.7" />
+          <geometry>
+            <box size="0.07 0.015 0.025"/>
+          </geometry>
+        </collision>
+        <collision>
+          <origin xyz="0.08 0.035 -0.07" rpy="0 0 0" />
+          <geometry>
+            <box size="0.12 0.02 0.025"/>
+          </geometry>
+        </collision>
+        <collision>
+          <origin xyz="0.145 0.055 -0.07" rpy="0 0 0.7" />
+          <geometry>
+            <box size="0.07 0.015 0.025"/>
+          </geometry>
+        </collision>
+      </xacro:unless>
+
+
+    </link>
+
+    <!-- Jaw 2 link  -->
+
+    <link name="${namespace}/jaw_2">
+      <inertial>
+        <origin xyz="${jaw_center_of_mass}" rpy="0 0 0"/>
+        <mass value="${jaw_mass}"/>
+        <inertia ixx="${jaw_mass / 12.0 * (jaw_y*jaw_y + jaw_z*jaw_z)}" ixy="0.0" ixz="0.0"
+                 iyy="${jaw_mass / 12.0 * (jaw_x*jaw_x + jaw_z*jaw_z)}" iyz="0.0"
+                 izz="${jaw_mass / 12.0 * (jaw_x*jaw_x + jaw_y*jaw_y)}"/>
+     </inertial>
+
+      <visual type="trimesh">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon4_description)/meshes/Jaw.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <xacro:if value="${use_mesh_file}">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="file://$(find oberon4_description)/meshes/Jaw.stl" scale="1 1 1" />
+        </geometry>
+      </collision>
+      </xacro:if>
+      <xacro:unless value="${use_mesh_file}">
+      <collision>
+        <origin xyz="0.08 0.035 -0.002" rpy="0 0 0" />
+        <geometry>
+          <box size="0.12 0.02 0.025"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.145 0.055 -0.002" rpy="0 0 0.7" />
+        <geometry>
+          <box size="0.07 0.015 0.025"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.08 0.035 -0.07" rpy="0 0 0" />
+        <geometry>
+          <box size="0.12 0.02 0.025"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.145 0.055 -0.07" rpy="0 0 0.7" />
+        <geometry>
+          <box size="0.07 0.015 0.025"/>
+        </geometry>
+      </collision>
+    </xacro:unless>
+    </link>
+
+    <!-- All the joints -->
+    <joint name="${namespace}/anchor" type="revolute">
+      <parent link="${parent}"/>
+      <child link="${namespace}/base"/>
+      <insert_block name="origin"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+    <joint name="${namespace}/azimuth" type="revolute">
+      <parent link="${namespace}/base"/>
+      <child link="${namespace}/azimuth_link"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="15" friction="40"/>
+      <limit lower="-1.0472" upper="1.0472" velocity="0.17" effort="10000"/>
+    </joint>
+
+    <joint name="${namespace}/shoulder" type="revolute">
+      <parent link="${namespace}/azimuth_link"/>
+      <child link="${namespace}/arm"/>
+      <origin xyz="0.069521 0 0.015" rpy="0 0 0"/>
+      <dynamics damping="15" friction="40"/>
+      <axis xyz="0 -1 0"/>
+      <limit lower="-0.55850536" upper="${0.5*PI}" velocity=".13" effort="10000"/>
+    </joint>
+
+    <joint name="${namespace}/wrist_joint" type="continuous">
+      <parent link="${namespace}/arm"/>
+      <child link="${namespace}/wrist"/>
+      <origin xyz="0.3910053 0.0001537 0.0325669" rpy="0 0 0"/>
+      <dynamics damping="15" friction="40"/>
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <joint name="${namespace}/gripper_joint" type="revolute">
+      <parent link="${namespace}/wrist"/>
+      <child link="${namespace}/gripper_base"/>
+      <origin xyz="0.122941 0.0 0.0" rpy="${0.5*PI} 0 0"/>
+      <dynamics damping="15" friction="40"/>
+      <axis xyz="1 0 0"/>
+      <limit lower="0" upper="0" velocity="0" effort="0"/>
+    </joint>
+
+    <joint name="${namespace}/jaw_2_joint" type="revolute">
+      <parent link="${namespace}/gripper_base"/>
+      <child link="${namespace}/jaw_1"/>
+      <origin xyz="0.0444253 0.021926 0.0487509" rpy="${-0.5*PI} 0 0"/>
+      <dynamics damping="15" friction="10"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-0.5*PI}" upper="0" velocity=".1" effort="100"/>
+      <mimic joint="${namespace}/jaw_1_joint"/>
+    </joint>
+
+    <joint name="${namespace}/jaw_1_joint" type="revolute">
+      <parent link="${namespace}/gripper_base"/>
+      <child link="${namespace}/jaw_2"/>
+      <origin xyz="0.0444253 -0.021926 -0.0487509" rpy="${0.5*PI} 0 0"/>
+      <dynamics damping="5" friction="10"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${-0.5*PI}" upper="0" velocity=".1" effort="100"/>
+    </joint>
+
+    <!-- Transmissions -->
+    <xacro:simple_transmission joint="${namespace}/azimuth" />
+    <xacro:simple_transmission joint="${namespace}/shoulder" />
+    <xacro:simple_transmission joint="${namespace}/wrist_joint" />
+    <xacro:simple_transmission joint="${namespace}/jaw_1_joint" />
+    <xacro:simple_transmission joint="${namespace}/jaw_2_joint" />
+
+    <xacro:oberon4_gazebo_macro namespace="${namespace}"/>
+
+  </xacro:macro>
+
+</robot>

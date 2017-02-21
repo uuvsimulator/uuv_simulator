@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>oberon4</name>
+  <version>0.0.0</version>
+  <description>The oberon4 package</description>
+
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="Sebastian.Scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+    <metapackage/>
+  </export>
+</package>

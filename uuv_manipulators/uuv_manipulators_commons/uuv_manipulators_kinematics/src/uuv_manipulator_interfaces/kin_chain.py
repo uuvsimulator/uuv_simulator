@@ -136,10 +136,13 @@ class KinChainInterface(object):
         limits = dict()
         for joint in self._robot_description.joints:
             if joint.name in self._joint_names:
-                limits[joint.name] = dict(effort=joint.limit.effort,
-                                          lower=joint.limit.lower,
-                                          upper=joint.limit.upper,
-                                          velocity=joint.limit.velocity)
+                if joint.limit is not None:
+                    limits[joint.name] = dict(effort=joint.limit.effort,
+                                              lower=joint.limit.lower,
+                                              upper=joint.limit.upper,
+                                              velocity=joint.limit.velocity)
+                else:
+                    limits[joint.name] = None
         return limits
 
     @property

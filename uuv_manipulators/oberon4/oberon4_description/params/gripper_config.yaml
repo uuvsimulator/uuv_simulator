@@ -1,0 +1,16 @@
+gripper:
+  type: jaw
+  base: gripper_base
+  links: [jaw_1, jaw_2]
+  control_joint: jaw_1_joint
+  mimic_joint: jaw_2_joint
+  mimic_joint_gain: 1.0
+  closed_limit: upper
+  full_open_limit: lower
+  groups:
+    left_finger:
+      links: [jaw_1]
+      ee: jaw_1
+    right_finger:
+      links: [jaw_2]
+      ee: jaw_2

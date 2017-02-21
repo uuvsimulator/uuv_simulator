@@ -34,8 +34,6 @@ class JTCartesianController(CartesianController):
         """
         Class constructor
         """
-        self._last_goal = None
-
         CartesianController.__init__(self)
         # Retrieve the controller parameters from the parameter server
         Kd_tag = 'cartesian_controller/gains/Kd'
@@ -50,50 +48,33 @@ class JTCartesianController(CartesianController):
 
         rospy.loginfo('Kp=%s', str(self._Kp))
         rospy.loginfo('Kd=%s', str(self._Kd))
-        # Last target pose of the end-effector
-        self._last_goal = self._arm_interface.get_config_in_ee_frame('home')
+
         # Initialization flag, to wait the end-effector get to the home
         # position
         self._is_init = False
 
+        self._run()
+
     def _get_goal(self):
-        if self._command is None:
+        if self._command is None or rospy.get_time() - self._last_joy_update > 0.1:
             return self._last_goal
 
-        dt = rospy.get_time() - self._last_controller_update
-        if not self._is_cylindrical:
-            # Compute the step from the input velocity
-            step = self._command * dt
-            step_frame = PyKDL.Frame(
-                PyKDL.Rotation.RPY(step[3], step[4], step[5]),
-                PyKDL.Vector(step[0], step[1], step[2]))
-            return self._last_goal * step_frame
-        else:
-            theta_dot = self._command[5]
-            r_dot = self._command[0]
-            z_dot = self._command[2]
+        # Compute the step from the input velocity
+        step_frame = PyKDL.Frame(
+            PyKDL.Rotation.RPY(self._command[3],
+                               self._command[4],
+                               self._command[5]),
+            PyKDL.Vector(self._command[0],
+                         self._command[1],
+                         self._command[2]))
+        return self._last_goal * step_frame
 
-            goal = self._last_goal
-            roll, pitch, yaw = goal.M.GetRPY()
-            yaw += theta_dot * dt
-            radius = np.sqrt(goal.p[0]**2 + goal.p[1]**2)
-
-            goal.p[0] += r_dot * yaw * dt * np.cos(yaw)
-            goal.p[1] += r_dot * yaw * dt * np.sin(yaw)
-            goal.p[2] += z_dot * dt
-
-            goal.M = PyKDL.Rotation.RPY(roll + self._command[3] * dt,
-                                        pitch + self._command[4] * dt,
-                                        yaw)
-            return goal
-
-    def _update(self, event):
+    def _update(self):
         # Leave if ROS is not running or command is not valid
         if rospy.is_shutdown() or self._last_goal is None:
             return
         # Calculate the goal pose
         goal = self._get_goal()
-
         # TODO(mam0box) Test for singularities
 
         # End-effector's pose

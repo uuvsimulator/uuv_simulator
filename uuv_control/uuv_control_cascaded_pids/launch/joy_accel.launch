@@ -21,6 +21,6 @@
     <arg name="uuv_name" value="$(arg uuv_name)"/>
     <arg name="joy_id" value="$(arg joy_id)"/>
     <arg name="output_topic" value="cmd_accel"/>
-    <arg name="message_type" value="geometry_msgs/Accel"/>
+    <arg name="message_type" value="accel"/>
   </include>
 </launch>

@@ -1,0 +1,84 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="arm_name" default="oberon"/>
+  <!-- Arm will only move while the RB button (XBox 360 controller) is pressed -->
+  <arg name="deadman_button" default="5"/>
+  <!-- The arm will not move if the LB button (XBox 360 controller) is pressed -->
+  <arg name="exclusion_button" default="4"/>
+  <!-- Type of gripper -->
+  <arg name="gripper" default="parallel"/>
+
+  <!-- Initialize effort controllers -->
+  <include file="$(find oberon_control)/launch/joint_effort_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+  </include>
+
+  <!-- Initialize gripper controllers -->
+  <include file="$(find oberon_control)/launch/$(arg gripper)_gripper_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+    <arg name="deadman_button" value="$(arg deadman_button)"/>
+    <arg name="exclusion_button" value="$(arg exclusion_button)"/>
+  </include>
+
+  <group ns="/$(arg uuv_name)/$(arg arm_name)">
+    <node name="joint_position_controller_$(arg arm_name)" pkg="uuv_manipulators_control" type="joint_position_controller.py"
+      output="screen">
+      <remap from="joy" to="/$(arg uuv_name)/joy"/>
+      <rosparam subst_value="true">
+        exclusion_buttons: $(arg exclusion_button)
+        deadman_button: $(arg deadman_button)
+        controller_config:
+          azimuth:
+            joint_input_axis: 3
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/azimuth/controller/command
+            controller:
+              p: 800
+              i: 2
+              d: 5
+          shoulder:
+            joint_input_axis: 4
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/shoulder/controller/command
+            controller:
+              p: 1000
+              i: 20
+              d: 5
+          elbow:
+            joint_input_axis: 1
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/elbow/controller/command
+            controller:
+              p: 800
+              i: 2
+              d: 10
+          roll:
+            joint_input_axis: 6
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/roll/controller/command
+            controller:
+              p: 400
+              i: 0
+              d: 0
+          pitch:
+            joint_input_axis: 7
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/pitch/controller/command
+            controller:
+              p: 400
+              i: 0
+              d: 0
+          wrist:
+            joint_input_axis: 0
+            axis_gain: 0.05
+            topic: /$(arg uuv_name)/$(arg arm_name)/wrist/controller/command
+            controller:
+              p: 600
+              i: 0
+              d: 0
+      </rosparam>
+    </node>
+  </group>
+</launch>

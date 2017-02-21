@@ -1,4 +1,10 @@
 <launch>
+  <!-- Remember to first launch Gazebo with a underwater world model
+  Example:
+  >> roslaunch uuv_description ocean_waves.launch
+    or
+  >> roslaunch uuv_description empty_underwater_world.launch
+  -->
   <arg name="joy_id" default="0"/>
 
   <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov_default.launch">
@@ -18,24 +24,23 @@
     <rosparam file="$(find uuv_control_cascaded_pid)/config/rexrov/inertial.yaml" command="load"/>
     <rosparam file="$(find uuv_control_cascaded_pid)/config/rexrov/vel_pid_control.yaml" command="load"/>
 
-  <node pkg="uuv_control_cascaded_pid" type="AccelerationControl.py" name="acceleration_control"
+    <node pkg="uuv_control_cascaded_pid" type="AccelerationControl.py" name="acceleration_control"
+            output="screen">
+      <param name="tf_prefix" type="string" value="rexrov/" />
+    </node>
+
+    <node pkg="uuv_control_cascaded_pid" type="VelocityControl.py" name="velocity_control"
           output="screen">
-    <param name="tf_prefix" type="string" value="rexrov/" />
-  </node>
-
-  <node pkg="uuv_control_cascaded_pid" type="VelocityControl.py" name="velocity_control"
-        output="screen">
-    <remap from="odom" to="/rexrov/pose_gt"/>
-    <remap from="cmd_accel" to="/rexrov/cmd_accel"/>
-  </node>
-
-  <rosparam file="$(find uuv_control_cascaded_pid)/config/joy_vel.yaml" command="load" />
-  <node pkg="joy_teleop" type="joy_teleop.py" name="joy_uuv_velocity_teleop" />
-
-  <node pkg="joy" type="joy_node" name="joystick">
-    <param name="autorepeat_rate" value="10" />
-    <param name="dev" value="/dev/input/js$(arg joy_id)"/>
-  </node>
+      <remap from="odom" to="/rexrov/pose_gt"/>
+      <remap from="cmd_accel" to="/rexrov/cmd_accel"/>
+    </node>
   </group>
+
+  <include file="$(find uuv_vehicle_teleop)/launch/uuv_teleop.launch">
+    <arg name="uuv_name" value="$(arg namespace)"/>
+    <arg name="joy_id" value="$(arg joy_id)"/>
+    <arg name="output_topic" value="cmd_vel"/>
+    <arg name="message_type" value="twist"/>
+  </include>
 
 </launch>
