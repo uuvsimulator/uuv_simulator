@@ -17,7 +17,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Constants for robot dimensions -->
-  <xacro:property name="use_mesh_file" value="true" />
+  <xacro:property name="use_mesh_file" value="false" />
   <xacro:property name="PI" value="3.1415926535897931"/>
 
   <xacro:property name="base_volume" value="0.002325" />
@@ -36,7 +36,7 @@
 
   <xacro:property name="arm_volume" value="0.001583" />
   <xacro:property name="arm_mass" value="5.193" />
-  <xacro:property name="arm_x" value="0.42303" />
+  <xacro:property name="arm_x" value="0.375" />
   <xacro:property name="arm_y" value="0.128467" />
   <xacro:property name="arm_z" value="0.166069" />
   <xacro:property name="arm_center_of_mass" value="0.203946 0.000021 0.009857"/>
@@ -227,12 +227,42 @@
         </geometry>
       </visual>
 
+      <xacro:if value="${use_mesh_file}">
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="file://$(find oberon4_description)/meshes/Jaw.stl" scale="1 1 1" />
         </geometry>
       </collision>
+      </xacro:if>
+      <xacro:unless value="${use_mesh_file}">
+        <collision>
+          <origin xyz="0.08 0.035 -0.002" rpy="0 0 0" />
+          <geometry>
+            <box size="0.12 0.02 0.025"/>
+          </geometry>
+        </collision>
+        <collision>
+          <origin xyz="0.145 0.055 -0.002" rpy="0 0 0.7" />
+          <geometry>
+            <box size="0.07 0.015 0.025"/>
+          </geometry>
+        </collision>
+        <collision>
+          <origin xyz="0.08 0.035 -0.07" rpy="0 0 0" />
+          <geometry>
+            <box size="0.12 0.02 0.025"/>
+          </geometry>
+        </collision>
+        <collision>
+          <origin xyz="0.145 0.055 -0.07" rpy="0 0 0.7" />
+          <geometry>
+            <box size="0.07 0.015 0.025"/>
+          </geometry>
+        </collision>
+      </xacro:unless>
+
+
     </link>
 
     <!-- Jaw 2 link  -->
@@ -253,12 +283,40 @@
         </geometry>
       </visual>
 
+      <xacro:if value="${use_mesh_file}">
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="file://$(find oberon4_description)/meshes/Jaw.stl" scale="1 1 1" />
         </geometry>
       </collision>
+      </xacro:if>
+      <xacro:unless value="${use_mesh_file}">
+      <collision>
+        <origin xyz="0.08 0.035 -0.002" rpy="0 0 0" />
+        <geometry>
+          <box size="0.12 0.02 0.025"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.145 0.055 -0.002" rpy="0 0 0.7" />
+        <geometry>
+          <box size="0.07 0.015 0.025"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.08 0.035 -0.07" rpy="0 0 0" />
+        <geometry>
+          <box size="0.12 0.02 0.025"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.145 0.055 -0.07" rpy="0 0 0.7" />
+        <geometry>
+          <box size="0.07 0.015 0.025"/>
+        </geometry>
+      </collision>
+    </xacro:unless>
     </link>
 
     <!-- All the joints -->

@@ -35,6 +35,38 @@
     <selfCollide>false</selfCollide>
   </gazebo>
 
+  <gazebo reference="${namespace}/anchor">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+  <gazebo reference="${namespace}/azimuth">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+  <gazebo reference="${namespace}/shoulder">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+  <gazebo reference="${namespace}/elbow">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+  <gazebo reference="${namespace}/elbow_dummy">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+  <gazebo reference="${namespace}/roll">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+  <gazebo reference="${namespace}/pitch">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+  <gazebo reference="${namespace}/wrist">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
   <gazebo>
     <plugin name="uuv_plugin_oberon" filename="libunderwater_object_plugin.so">
       <fluid_density>1028.0</fluid_density>
