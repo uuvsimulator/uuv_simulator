@@ -23,8 +23,10 @@ HydrodynamicModel::HydrodynamicModel(sdf::ElementPtr _sdf,
     physics::LinkPtr _link) : BuoyantObject(_link)
 {
   GZ_ASSERT(_link != NULL, "Invalid link pointer");
-  // Initialize filtered acceleration
+
+  // Initialize filtered acceleration & last velocity
   this->filteredAcc.setZero();
+  this->lastVelRel.setZero();
 
   // Set volume
   if (_sdf->HasElement("volume"))
@@ -81,6 +83,10 @@ void HydrodynamicModel::ComputeAcc(Eigen::Vector6d _velRel, double _time,
   // Compute Fossen's nu-dot numerically. We have to do this for now since
   // Gazebo reports angular accelerations that are off by orders of magnitues.
   double dt = _time - lastTime;
+
+  if (dt <= 0.0) // Extra caution to prevent division by zero
+    return;
+
   Eigen::Vector6d acc = (_velRel - this->lastVelRel) / dt;
 
   // TODO  We only have access to the acceleration of the previous simulation
