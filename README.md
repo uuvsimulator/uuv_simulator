@@ -1,6 +1,6 @@
 # uuv_simulator: Unmanned Underwater Vehicle (UUV) simulation with Gazebo
 
-This package contains plugins to allow simulating UUVs with Gazebo. For installation and usage instructions, please refer to the [Wiki pages](https://github.com/uuvsimulator/uuv_simulator/wiki).
+This package contains plugins to allow simulating UUVs with Gazebo. For installation and usage instructions, please refer to the [Wiki pages](https://github.com/uuvsimulator/uuv_simulator/wiki). To send questions, report bugs or suggest improvements, please use the [Issues](https://github.com/uuvsimulator/uuv_simulator/issues) page.
 
 If you are using this simulator for your publication, please cite:
 
