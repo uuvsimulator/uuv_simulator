@@ -87,8 +87,11 @@ namespace gazebo
     /// \brief Gauss-Markov process instance for the current velocity
     protected: GaussMarkovProcess currentVelModel;
 
-    /// \brief Gauss-Markov process instance for the current direction
-    protected: GaussMarkovProcess currentDirectionModel;
+    /// \brief Gauss-Markov process instance for horizontal angle model
+    protected: GaussMarkovProcess currentHorzAngleModel;
+
+    /// \brief Gauss-Markov process instance for vertical angle model
+    protected: GaussMarkovProcess currentVertAngleModel;
 
     /// \brief Last update time stamp
     protected: gazebo::common::Time lastUpdate;
