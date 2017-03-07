@@ -29,6 +29,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <geometry_msgs/Vector3.h>
+#include <std_msgs/Bool.h>
 #include <visualization_msgs/Marker.h>
 #include <uuv_gazebo_ros_plugins_msgs/SetUseGlobalCurrentVel.h>
 

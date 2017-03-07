@@ -72,6 +72,10 @@ void UnderwaterObjectROSPlugin::Load(gazebo::physics::ModelPtr _parent,
   this->rosHydroPub["current_velocity_marker"] =
     this->rosNode->advertise<visualization_msgs::Marker>
     (_parent->GetName() + "/current_velocity_marker", 0);
+
+  this->rosHydroPub["using_global_current_velocity"] =
+    this->rosNode->advertise<std_msgs::Bool>
+    (_parent->GetName() + "/using_global_current_velocity", 0);
 }
 
 /////////////////////////////////////////////////
@@ -135,7 +139,8 @@ void UnderwaterObjectROSPlugin::PublishCurrentVelocityMarker()
   marker.ns = this->model->GetName() + "/current_velocity_marker";
   marker.id = 0;
   marker.type = visualization_msgs::Marker::ARROW;
-
+  // Creating the arrow marker for the current velocity information
+  // (orientation only, magnitude has to be read from the topic)
   if (this->flowVelocity.GetLength() > 0)
   {
     marker.action = visualization_msgs::Marker::ADD;
@@ -168,8 +173,12 @@ void UnderwaterObjectROSPlugin::PublishCurrentVelocityMarker()
   {
     marker.action = visualization_msgs::Marker::DELETE;
   }
-
+  // Publish current velocity RViz marker
   this->rosHydroPub["current_velocity_marker"].publish(marker);
+  // Publishing flag for usage of global current velocity
+  std_msgs::Bool useGlobalMsg;
+  useGlobalMsg.data = this->useGlobalCurrent;
+  this->rosHydroPub["using_global_current_velocity"].publish(useGlobalMsg);
 }
 
 /////////////////////////////////////////////////
