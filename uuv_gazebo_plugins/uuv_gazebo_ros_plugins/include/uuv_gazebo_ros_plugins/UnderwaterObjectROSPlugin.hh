@@ -29,6 +29,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <geometry_msgs/Vector3.h>
+#include <visualization_msgs/Marker.h>
 #include <uuv_gazebo_ros_plugins_msgs/SetUseGlobalCurrentVel.h>
 
 #include <map>
@@ -88,6 +89,9 @@ namespace uuv_simulator_ros
     /// \param[in] _hydro Pointer to the hydrodynamic model
     protected: virtual void InitDebug(gazebo::physics::LinkPtr _link,
       gazebo::HydrodynamicModelPtr _hydro);
+
+    /// \brief Publishes the current velocity marker
+    protected: virtual void PublishCurrentVelocityMarker();
 
     /// \brief Pointer to this ROS node's handle.
     private: boost::scoped_ptr<ros::NodeHandle> rosNode;
