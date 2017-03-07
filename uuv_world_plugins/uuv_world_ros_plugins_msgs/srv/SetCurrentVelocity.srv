@@ -14,5 +14,7 @@
 # limitations under the License.
 
 float64 velocity
+float64 horizontal_angle
+float64 vertical_angle
 ---
 bool success
