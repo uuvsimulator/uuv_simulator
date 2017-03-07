@@ -57,6 +57,9 @@ class UnderwaterObjectPlugin : public gazebo::ModelPlugin
   /// \brief Reads flow velocity topic
   protected: void UpdateFlowVelocity(ConstVector3dPtr &_msg);
 
+  /// \brief Publish current velocity marker
+  protected: virtual void PublishCurrentVelocityMarker();
+
   /// \brief Publish restoring force
   /// \param[in] _link Pointer to the link where the force information will
   /// be extracted from
