@@ -67,7 +67,8 @@ class HydrodynamicModel : public BuoyantObject
   /// iteration of the physics engine
   protected: Eigen::Vector6d filteredAcc;
 
-  /// \brief Last timestamp (in seconds) at which ApplyHydrodynamicForces was called
+  /// \brief Last timestamp (in seconds) at which ApplyHydrodynamicForces was
+  /// called
   protected: double lastTime;
 
   /// \brief Last body-fixed relative velocity (nu_R in Fossen's equations)
