@@ -84,7 +84,7 @@ void HydrodynamicModel::ComputeAcc(Eigen::Vector6d _velRel, double _time,
   // Gazebo reports angular accelerations that are off by orders of magnitues.
   double dt = _time - lastTime;
 
-  if (dt <= 0.0) // Extra caution to prevent division by zero
+  if (dt <= 0.0)  // Extra caution to prevent division by zero
     return;
 
   Eigen::Vector6d acc = (_velRel - this->lastVelRel) / dt;
@@ -258,7 +258,8 @@ void HMFossen::ApplyHydrodynamicForces(
   vel_rel = EigenStack(linVel - flowVel, angVel);
 
   Eigen::Vector6d lastForce;
-  lastForce = EigenStack(this->link->GetRelativeForce(), this->link->GetRelativeTorque());
+  lastForce = EigenStack(this->link->GetRelativeForce(),
+    this->link->GetRelativeTorque());
 
   // Update added Coriolis matrix
   this->ComputeAddedCoriolisMatrix(vel_rel, this->Ma, this->Ca);

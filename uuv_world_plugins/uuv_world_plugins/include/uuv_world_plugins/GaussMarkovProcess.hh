@@ -76,6 +76,9 @@ namespace gazebo
     /// \brief Update function for a new time stamp
     /// \param _time Current time stamp
     public: double Update(double _time);
+
+    /// \brief Print current model paramters
+    public: void Print();
   };
 }
 

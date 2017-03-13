@@ -193,6 +193,7 @@ void UnderwaterObjectPlugin::Update(const common::UpdateInfo &_info)
       hydro->ApplyHydrodynamicForces(time, this->flowVelocity);
       this->PublishRestoringForce(link);
       this->PublishHydrodynamicWrenches(link);
+      this->PublishCurrentVelocityMarker();
     }
     else if (std::isnan(linearAccel))
     {
@@ -214,6 +215,13 @@ void UnderwaterObjectPlugin::Connect()
   this->updateConnection = event::Events::ConnectWorldUpdateBegin(
         boost::bind(&UnderwaterObjectPlugin::Update,
                     this, _1));
+}
+
+/////////////////////////////////////////////////
+void UnderwaterObjectPlugin::PublishCurrentVelocityMarker()
+{
+  // Does nothing for now
+  return;
 }
 
 /////////////////////////////////////////////////

@@ -65,9 +65,17 @@ void UnderwaterObjectROSPlugin::Load(gazebo::physics::ModelPtr _parent,
     this, _1));
 
   this->services["set_use_global_current_velocity"] =
-      this->rosNode->advertiseService(
-        _parent->GetName() + "/set_use_global_current_velocity",
-        &UnderwaterObjectROSPlugin::SetUseGlobalCurrentVel, this);
+    this->rosNode->advertiseService(
+      _parent->GetName() + "/set_use_global_current_velocity",
+      &UnderwaterObjectROSPlugin::SetUseGlobalCurrentVel, this);
+
+  this->rosHydroPub["current_velocity_marker"] =
+    this->rosNode->advertise<visualization_msgs::Marker>
+    (_parent->GetName() + "/current_velocity_marker", 0);
+
+  this->rosHydroPub["using_global_current_velocity"] =
+    this->rosNode->advertise<std_msgs::Bool>
+    (_parent->GetName() + "/using_global_current_velocity", 0);
 }
 
 /////////////////////////////////////////////////
@@ -120,6 +128,57 @@ void UnderwaterObjectROSPlugin::PublishRestoringForce(
       gazebo::math::Vector3(0, 0, 0), msg);
     this->rosHydroPub[_link->GetName() + "/restoring"].publish(msg);
   }
+}
+
+/////////////////////////////////////////////////
+void UnderwaterObjectROSPlugin::PublishCurrentVelocityMarker()
+{
+  visualization_msgs::Marker marker;
+  marker.header.frame_id = "world";
+  marker.header.stamp = ros::Time();
+  marker.ns = this->model->GetName() + "/current_velocity_marker";
+  marker.id = 0;
+  marker.type = visualization_msgs::Marker::ARROW;
+  // Creating the arrow marker for the current velocity information
+  // (orientation only, magnitude has to be read from the topic)
+  if (this->flowVelocity.GetLength() > 0)
+  {
+    marker.action = visualization_msgs::Marker::ADD;
+
+    gazebo::math::Pose pose = this->model->GetWorldPose();
+
+    double yaw = std::atan2(this->flowVelocity.y, this->flowVelocity.x);
+    double pitch = std::atan2(
+      this->flowVelocity.z,
+      std::sqrt(std::pow(this->flowVelocity.x, 2) +
+        std::pow(this->flowVelocity.y, 2)));
+
+    gazebo::math::Quaternion qt(0.0, -pitch, yaw);
+    marker.pose.position.x = pose.pos.x;
+    marker.pose.position.y = pose.pos.y;
+    marker.pose.position.z = pose.pos.z + 1.5;
+    marker.pose.orientation.x = qt.x;
+    marker.pose.orientation.y = qt.y;
+    marker.pose.orientation.z = qt.z;
+    marker.pose.orientation.w = qt.w;
+    marker.scale.x = 1;
+    marker.scale.y = 0.1;
+    marker.scale.z = 0.1;
+    marker.color.a = 1.0;
+    marker.color.r = 0.0;
+    marker.color.g = 0.0;
+    marker.color.b = 1.0;
+  }
+  else
+  {
+    marker.action = visualization_msgs::Marker::DELETE;
+  }
+  // Publish current velocity RViz marker
+  this->rosHydroPub["current_velocity_marker"].publish(marker);
+  // Publishing flag for usage of global current velocity
+  std_msgs::Bool useGlobalMsg;
+  useGlobalMsg.data = this->useGlobalCurrent;
+  this->rosHydroPub["using_global_current_velocity"].publish(useGlobalMsg);
 }
 
 /////////////////////////////////////////////////

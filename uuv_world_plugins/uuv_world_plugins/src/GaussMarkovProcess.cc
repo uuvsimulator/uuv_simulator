@@ -73,8 +73,8 @@ bool GaussMarkovProcess::SetModel(double _mean, double _min, double _max,
 double GaussMarkovProcess::Update(double _time)
 {
   double step = _time - this->lastUpdate;
-  unsigned int seed = 0;
-  double random =  (rand_r(&seed) / RAND_MAX) - 0.5;
+  double random =  static_cast<double>(static_cast<double>(rand()) / RAND_MAX)
+    - 0.5;
   this->var = (1 - step * this->mu) * this->var + this->noiseAmp * random;
   if (this->var >= this->max)
     this->var = this->max;
@@ -82,5 +82,15 @@ double GaussMarkovProcess::Update(double _time)
     this->var = this->min;
   this->lastUpdate = _time;
   return this->var;
+}
+
+/////////////////////////////////////////////////
+void GaussMarkovProcess::Print()
+{
+  gzmsg << "\tMean = " << this->mean << std::endl;
+  gzmsg << "\tMin. Limit = " << this->min << std::endl;
+  gzmsg << "\tMax. Limit = " << this->max << std::endl;
+  gzmsg << "\tMu = " << this->mu << std::endl;
+  gzmsg << "\tNoise Amp. = " << this->noiseAmp << std::endl;
 }
 }

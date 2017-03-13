@@ -56,9 +56,15 @@ namespace uuv_simulator_ros
         uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
         uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res);
 
-    /// \brief Service call to update the parameters for the direction
+    /// \brief Service call to update the parameters for the horizontal angle
     /// Gauss-Markov process model
-    public: bool UpdateCurrentDirectionModel(
+    public: bool UpdateCurrentHorzAngleModel(
+        uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
+        uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res);
+
+    /// \brief Service call to update the parameters for the vertical angle
+    /// Gauss-Markov process model
+    public: bool UpdateCurrentVertAngleModel(
         uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
         uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res);
 
@@ -68,9 +74,15 @@ namespace uuv_simulator_ros
         uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
         uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res);
 
-    /// \brief Service call to read the parameters for the direction
+    /// \brief Service call to read the parameters for the horizontal angle
     /// Gauss-Markov process model
-    public: bool GetCurrentDirectionModel(
+    public: bool GetCurrentHorzAngleModel(
+        uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
+        uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res);
+
+    /// \brief Service call to read the parameters for the vertical angle
+    /// Gauss-Markov process model
+    public: bool GetCurrentVertAngleModel(
         uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
         uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res);
 
@@ -79,8 +91,13 @@ namespace uuv_simulator_ros
         uuv_world_ros_plugins_msgs::SetCurrentVelocity::Request& _req,
         uuv_world_ros_plugins_msgs::SetCurrentVelocity::Response& _res);
 
-    /// \brief Service call to update the mean value of the flow direction
-    public: bool UpdateCurrentDirection(
+    /// \brief Service call to update the mean value of the horizontal angle
+    public: bool UpdateHorzAngle(
+        uuv_world_ros_plugins_msgs::SetCurrentDirection::Request& _req,
+        uuv_world_ros_plugins_msgs::SetCurrentDirection::Response& _res);
+
+    /// \brief Service call to update the mean value of the vertical angle
+    public: bool UpdateVertAngle(
         uuv_world_ros_plugins_msgs::SetCurrentDirection::Request& _req,
         uuv_world_ros_plugins_msgs::SetCurrentDirection::Response& _res);
 

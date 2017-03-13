@@ -79,13 +79,21 @@
           <noiseAmp>0.0</noiseAmp>
         </velocity>
 
-        <direction>
+        <horizontal_angle>
           <mean>0</mean>
           <min>-1.5707963267948966</min>
           <max>1.5707963267948966</max>
           <mu>0.0</mu>
           <noiseAmp>0.0</noiseAmp>
-        </direction>
+        </horizontal_angle>
+
+        <vertical_angle>
+          <mean>0</mean>
+          <min>-1.5707963267948966</min>
+          <max>1.5707963267948966</max>
+          <mu>0.0</mu>
+          <noiseAmp>0.0</noiseAmp>
+        </vertical_angle>
       </constant_current>
     </plugin>
 

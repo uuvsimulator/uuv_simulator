@@ -66,7 +66,8 @@ void AccelerationsTestPlugin::Load(physics::ModelPtr _model,
   gzerr << "[TestPlugin] Please specify a link_name .\n";
   this->link = this->model->GetLink(link_name);
   if (this->link == NULL)
-    gzthrow("[TestPlugin] Could not find specified link \"" << link_name << "\".");
+    gzthrow("[TestPlugin] Could not find specified link \""
+      << link_name << "\".");
 
   // Connect the update event callback
   this->Connect();
@@ -82,11 +83,15 @@ void AccelerationsTestPlugin::Load(physics::ModelPtr _model,
 
   this->rosNode.reset(new ros::NodeHandle(""));
 
-  this->pub_accel_w_gazebo = this->rosNode->advertise<geometry_msgs::Accel>("accel_w_gazebo", 10);
-  this->pub_accel_w_numeric = this->rosNode->advertise<geometry_msgs::Accel>("accel_w_numeric", 10);
+  this->pub_accel_w_gazebo =
+    this->rosNode->advertise<geometry_msgs::Accel>("accel_w_gazebo", 10);
+  this->pub_accel_w_numeric =
+    this->rosNode->advertise<geometry_msgs::Accel>("accel_w_numeric", 10);
 
-  this->pub_accel_b_gazebo = this->rosNode->advertise<geometry_msgs::Accel>("accel_b_gazebo", 10);
-  this->pub_accel_b_numeric = this->rosNode->advertise<geometry_msgs::Accel>("accel_b_numeric", 10);
+  this->pub_accel_b_gazebo =
+    this->rosNode->advertise<geometry_msgs::Accel>("accel_b_gazebo", 10);
+  this->pub_accel_b_numeric =
+    this->rosNode->advertise<geometry_msgs::Accel>("accel_b_numeric", 10);
 }
 
 /////////////////////////////////////////////////
@@ -110,7 +115,9 @@ geometry_msgs::Accel accelFromEigen(const Eigen::Vector6d& acc)
 Eigen::Matrix3d Matrix3ToEigen(const math::Matrix3& m)
 {
   Eigen::Matrix3d r;
-  r << m[0][0], m[0][1], m[0][2], m[1][0], m[1][1], m[1][2], m[2][0], m[2][1], m[2][2];
+  r << m[0][0], m[0][1], m[0][2],
+    m[1][0], m[1][1], m[1][2],
+    m[2][0], m[2][1], m[2][2];
   return r;
 }
 
@@ -136,14 +143,12 @@ void AccelerationsTestPlugin::Update(const common::UpdateInfo &_info)
   // Accelerations of this link in world frame
   Eigen::Vector6d gazebo_w_a_w_b = EigenStack(
     this->link->GetWorldLinearAccel(),
-    this->link->GetWorldAngularAccel()
-  );
+    this->link->GetWorldAngularAccel());
 
   // Accelerations of this link in link frame
   Eigen::Vector6d gazebo_b_a_w_b = EigenStack(
     this->link->GetRelativeLinearAccel(),
-    this->link->GetRelativeAngularAccel()
-  );
+    this->link->GetRelativeAngularAccel());
 
   // Numerically computed accelerations
   math::Quaternion q_b_w = pose_w_b.rot.GetInverse();
@@ -177,5 +182,4 @@ void AccelerationsTestPlugin::Connect()
     boost::bind(&AccelerationsTestPlugin::Update,
                     this, _1));
 }
-
 }
