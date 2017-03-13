@@ -25,12 +25,10 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen">
       <param name="robot_description" value="/$(arg namespace)/robot_description" />
     </node>
-
-    <node name="ground_truth_to_tf" pkg="message_to_tf" type="message_to_tf" output="screen">
-      <param name="odometry_topic" value="/$(arg namespace)/pose_gt" />
-      <param name="frame_id" value="/$(arg world_frame)" />
-      <param name="tf_prefix" value="$(arg namespace)" />
-    </node>
   </group>
+
+  <include file="$(find uuv_descriptions)/models/common/launch/message_to_tf.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+  </include>
 
 </launch>
