@@ -12,7 +12,7 @@
         <param name="robot_description" command="$(find xacro)/xacro.py '$(find oberon_description)/robots/oberon_standalone.xacro' debug:=false namespace:=rexrov" />
 
         <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
-        <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+        <node name="urdf_spawner" pkg="uuv_descriptions" type="spawn_model.py" respawn="false" output="screen"
               args="-urdf -x 0 -y 0 -z 2 -model rexrov -param /rexrov/robot_description"/>
 
         <!-- A joint state publisher plugin already is started with the model, no need to use the default joint state publisher -->

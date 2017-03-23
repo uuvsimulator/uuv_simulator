@@ -16,7 +16,7 @@
     <param name="robot_description" command="$(find xacro)/xacro.py '$(find uuv_descriptions)/models/rexrov/robots/rexrov_$(arg mode).xacro' debug:=$(arg debug) namespace:=$(arg namespace)" />
 
     <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
-    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    <node name="urdf_spawner" pkg="uuv_descriptions" type="spawn_model" respawn="false" output="screen"
           args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model $(arg namespace) -param /$(arg namespace)/robot_description"/>
 
     <!-- A joint state publisher plugin already is started with the model, no need to use the default joint state publisher -->
