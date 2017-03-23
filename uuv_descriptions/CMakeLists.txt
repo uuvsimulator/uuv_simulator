@@ -17,6 +17,7 @@ catkin_package(
 
 # Install models and world descriptions
 add_subdirectory(models)
+add_subdirectory(scripts)
 add_subdirectory(world_models)
 add_subdirectory(worlds)
 
