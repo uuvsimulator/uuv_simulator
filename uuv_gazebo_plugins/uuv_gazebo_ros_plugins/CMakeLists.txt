@@ -4,6 +4,8 @@ project(uuv_gazebo_ros_plugins)
 find_package(catkin REQUIRED COMPONENTS
   uuv_gazebo_plugins
   sensor_msgs
+  geometry_msgs
+  std_msgs
   uuv_gazebo_ros_plugins_msgs
 )
 
