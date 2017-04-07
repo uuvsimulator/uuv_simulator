@@ -36,8 +36,8 @@ class JTCartesianController(CartesianController):
         """
         CartesianController.__init__(self)
         # Retrieve the controller parameters from the parameter server
-        Kd_tag = 'cartesian_controller/gains/Kd'
-        Kp_tag = 'cartesian_controller/gains/Kp'
+        Kd_tag = '~cartesian_controller/gains/Kd'
+        Kp_tag = '~cartesian_controller/gains/Kp'
         if not rospy.has_param(Kd_tag):
             rospy.ROSException('Kd gain vector not available for tag=%s' % Kd_tag)
         if not rospy.has_param(Kp_tag):

@@ -4,6 +4,8 @@
   >> roslaunch uuv_description ocean_waves.launch
     or
   >> roslaunch uuv_description empty_underwater_world.launch
+
+  The default joystick configuration is set for the XBox 360 controller
   -->
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>
@@ -29,7 +31,7 @@
 
     <node pkg="uuv_control_cascaded_pid" type="AccelerationControl.py" name="acceleration_control"
             output="screen">
-      <param name="tf_prefix" type="string" value="rexrov/" />
+      <param name="tf_prefix" type="string" value="$(arg namespace)/" />
     </node>
 
     <node pkg="uuv_control_cascaded_pid" type="VelocityControl.py" name="velocity_control"
