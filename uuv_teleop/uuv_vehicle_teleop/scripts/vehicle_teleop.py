@@ -23,21 +23,32 @@ from sensor_msgs.msg import Joy
 class VehicleTeleop:
     def __init__(self):
         # Load the mapping for each input
-        self._axes = dict(x=4, y=3, z=1, yaw=0)
+        self._axes = dict(x=4, y=3, z=1, roll=2, pitch=5, yaw=0,
+                          xfast=-1, yfast=-1, zfast=-1,
+                          rollfast=-1, pitchfast=-1, yawfast=-1)
         # Load the gain for each joystick axis input
         # (default values for the XBox 360 controller)
-        self._axes_gain = dict(x=3, y=3, z=0.5, yaw=0.5)
+        self._axes_gain = dict(x=3, y=3, z=0.5, yaw=0.5, roll=0.5, pitch=0.5,
+                               xfast=6, yfast=6, zfast=1,
+                               rollfast=2, pitchfast=2, yawfast=2)
+
         if rospy.has_param('~mapping'):
             mapping = rospy.get_param('~mapping')
             for tag in self._axes:
                 if tag not in mapping:
-                    raise rospy.ROSException('Invalid tag in axes mapping, '
-                                             'tag=%s' % tag)
+                    rospy.loginfo('Tag not found in axes mapping, '
+                                  'tag=%s' % tag)
                 else:
                     if 'axis' in mapping[tag]:
                         self._axes[tag] = mapping[tag]['axis']
                     if 'gain' in mapping[tag]:
                         self._axes_gain[tag] = mapping[tag]['gain']
+
+        # Dead zone: Force values close to 0 to 0
+        # (Recommended for imprecise controllers)
+        self._deadzone = 0.1
+        if rospy.has_param('~deadzone'):
+                    self._deadzone = float(rospy.get_param('~deadzone'))
 
         # Default for the RB button of the XBox 360 controller
         self._deadman_button = -1
@@ -82,11 +93,50 @@ class VehicleTeleop:
         else:
             cmd = Accel()
         if joy is not None:
-            cmd.linear = Vector3(self._axes_gain['x'] * (joy.axes[self._axes['x']] if abs(joy.axes[self._axes['x']]) > 0.5 else 0.0),
-                                 self._axes_gain['y'] * (joy.axes[self._axes['y']] if abs(joy.axes[self._axes['y']]) > 0.5 else 0.0),
-                                 self._axes_gain['z'] * (joy.axes[self._axes['z']] if abs(joy.axes[self._axes['z']]) > 0.5 else 0.0))
-            cmd.angular = Vector3(0, 0,
-                                  self._axes_gain['yaw'] * (joy.axes[self._axes['yaw']] if abs(joy.axes[self._axes['yaw']]) > 0.5 else 0.0))
+            # Linear velocities:
+            l = Vector3(0, 0, 0)
+
+            if self._axes['x'] > -1 and abs(joy.axes[self._axes['x']]) > self._deadzone:
+                l.x += self._axes_gain['x'] * joy.axes[self._axes['x']]
+
+            if self._axes['y'] > -1 and abs(joy.axes[self._axes['y']]) > self._deadzone:
+                l.y += self._axes_gain['y'] * joy.axes[self._axes['y']]
+
+            if self._axes['z'] > -1 and abs(joy.axes[self._axes['z']]) > self._deadzone:
+                l.z += self._axes_gain['z'] * joy.axes[self._axes['z']]
+
+            if self._axes['xfast'] > -1 and abs(joy.axes[self._axes['xfast']]) > self._deadzone:
+                l.x += self._axes_gain['xfast'] * joy.axes[self._axes['xfast']]
+
+            if self._axes['yfast'] > -1 and abs(joy.axes[self._axes['yfast']]) > self._deadzone:
+                l.y += self._axes_gain['yfast'] * joy.axes[self._axes['yfast']]
+
+            if self._axes['zfast'] > -1 and abs(joy.axes[self._axes['zfast']]) > self._deadzone:
+                l.z += self._axes_gain['zfast'] * joy.axes[self._axes['zfast']]
+
+            # Angular velocities:
+            a = Vector3(0, 0, 0)
+
+            if self._axes['roll'] > -1 and abs(joy.axes[self._axes['roll']]) > self._deadzone:
+                a.x += self._axes_gain['roll'] * joy.axes[self._axes['roll']]
+
+            if self._axes['rollfast'] > -1 and abs(joy.axes[self._axes['rollfast']]) > self._deadzone:
+                a.x += self._axes_gain['rollfast'] * joy.axes[self._axes['rollfast']]
+
+            if self._axes['pitch'] > -1 and abs(joy.axes[self._axes['pitch']]) > self._deadzone:
+                a.y += self._axes_gain['pitch'] * joy.axes[self._axes['pitch']]
+
+            if self._axes['pitchfast'] > -1 and abs(joy.axes[self._axes['pitchfast']]) > self._deadzone:
+                a.y += self._axes_gain['pitchfast'] * joy.axes[self._axes['pitchfast']]
+
+            if self._axes['yaw'] > -1 and abs(joy.axes[self._axes['yaw']]) > self._deadzone:
+                a.z += self._axes_gain['yaw'] * joy.axes[self._axes['yaw']]
+
+            if self._axes['yawfast'] > -1 and abs(joy.axes[self._axes['yawfast']]) > self._deadzone:
+                a.z += self._axes_gain['yawfast'] * joy.axes[self._axes['yawfast']]
+
+            cmd.linear = l
+            cmd.angular = a
         else:
             cmd.linear = Vector3(0, 0, 0)
             cmd.angular = Vector3(0, 0, 0)
