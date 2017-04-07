@@ -47,7 +47,8 @@ ThrusterPlugin::ThrusterPlugin() : thrustForce(0),
   gain(1.0),
   isOn(true),
   thrustEfficiency(1.0),
-  propellerEfficiency(1.0)
+  propellerEfficiency(1.0),
+  thrusterID(-1)
 {
 }
 
@@ -75,6 +76,10 @@ void ThrusterPlugin::Load(physics::ModelPtr _model,
   std::string linkName = _sdf->Get<std::string>("linkName");
   this->thrusterLink = _model->GetLink(linkName);
   GZ_ASSERT(this->thrusterLink, "thruster link is invalid");
+
+  // Reading thruster ID
+  GZ_ASSERT(_sdf->HasElement("thrusterID"), "Thruster ID was not provided");
+  this->thrusterID = _sdf->Get<int>("thrusterID");
 
   // Input/output topics
   GZ_ASSERT(_sdf->HasElement("inputTopic"), "Could not find inputTopic.");
