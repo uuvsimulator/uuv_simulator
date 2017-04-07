@@ -107,6 +107,9 @@ class ThrusterPlugin : public gazebo::ModelPlugin
   /// \brief Thruster ID, used to generated topic names automatically
   protected: int thrusterID;
 
+  /// \brief Thruster topics prefix
+  protected: std::string topicPrefix;
+
   /// \brief: Optional: Gain factor: Desired angular velocity = command * gain
   protected: double gain;
 

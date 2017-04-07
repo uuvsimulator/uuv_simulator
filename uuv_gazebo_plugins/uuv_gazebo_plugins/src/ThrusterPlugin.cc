@@ -81,12 +81,6 @@ void ThrusterPlugin::Load(physics::ModelPtr _model,
   GZ_ASSERT(_sdf->HasElement("thrusterID"), "Thruster ID was not provided");
   this->thrusterID = _sdf->Get<int>("thrusterID");
 
-  // Input/output topics
-  GZ_ASSERT(_sdf->HasElement("inputTopic"), "Could not find inputTopic.");
-  std::string inputTopic = _sdf->Get<std::string>("inputTopic");
-  GZ_ASSERT(_sdf->HasElement("thrustTopic"), "Could not find thrustTopic.");
-  std::string thrustTopic = _sdf->Get<std::string>("thrustTopic");
-
   // Thruster dynamics configuration:
   GZ_ASSERT(_sdf->HasElement("dynamics"), "Could not find dynamics.");
   this->thrusterDynamics.reset(
@@ -137,14 +131,28 @@ void ThrusterPlugin::Load(physics::ModelPtr _model,
       this->propellerEfficiency = 1.0;
     }
   }
+  // Root string for topics
+  std::stringstream strs;
+  strs << "/" << _model->GetName() << "/thrusters/" << this->thrusterID << "/";
+  this->topicPrefix = strs.str();
+
   // Advertise the thrust topic
   this->thrustTopicPublisher =
-      this->node->Advertise<msgs::Vector3d>(thrustTopic);
+      this->node->Advertise<msgs::Vector3d>(this->topicPrefix + "thrust");
 
   // Subscribe to the input signal topic
-  this->commandSubscriber = this->node->Subscribe(inputTopic,
-                                                &ThrusterPlugin::UpdateInput,
-                                                this);
+
+  this->commandSubscriber =
+    this->node->Subscribe(this->topicPrefix + "input",
+        &ThrusterPlugin::UpdateInput,
+        this);
+  gzmsg << "Thruster #" << this->thrusterID << " initialized" << std::endl;
+  gzmsg << "\t- Link: " << this->thrusterLink->GetName() << std::endl;
+  gzmsg << "\t- Robot model: " << _model->GetName() << std::endl;
+  gzmsg << "\t- Input command Gazebo topic: " <<
+    this->commandSubscriber->GetTopic() << std::endl;
+  gzmsg << "\t- Thrust output Gazebo topic: " <<
+    this->thrustTopicPublisher->GetTopic() << std::endl;
 
   // Connect the update event
   this->updateConnection = event::Events::ConnectWorldUpdateBegin(
