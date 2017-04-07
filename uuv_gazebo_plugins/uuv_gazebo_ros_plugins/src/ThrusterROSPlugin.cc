@@ -107,32 +107,32 @@ void ThrusterROSPlugin::Load(gazebo::physics::ModelPtr _parent,
 
   this->services["set_thrust_force_efficiency"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/set_thrust_force_efficiency",
+      this->topicPrefix + "set_thrust_force_efficiency",
       &ThrusterROSPlugin::SetThrustForceEfficiency, this);
 
   this->services["get_thrust_force_efficiency"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/get_thrust_force_efficiency",
+      this->topicPrefix + "get_thrust_force_efficiency",
       &ThrusterROSPlugin::GetThrustForceEfficiency, this);
 
   this->services["set_dynamic_state_efficiency"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/set_dynamic_state_efficiency",
+      this->topicPrefix + "set_dynamic_state_efficiency",
       &ThrusterROSPlugin::SetDynamicStateEfficiency, this);
 
   this->services["get_dynamic_state_efficiency"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/get_dynamic_state_efficiency",
+      this->topicPrefix + "get_dynamic_state_efficiency",
       &ThrusterROSPlugin::GetDynamicStateEfficiency, this);
 
   this->services["set_thruster_state"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/set_thruster_state",
+      this->topicPrefix + "set_thruster_state",
       &ThrusterROSPlugin::SetThrusterState, this);
 
   this->services["get_thruster_state"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/get_thruster_state",
+      this->topicPrefix + "get_thruster_state",
       &ThrusterROSPlugin::GetThrusterState, this);
 
   this->subThrustReference = this->rosNode->subscribe<
@@ -149,13 +149,13 @@ void ThrusterROSPlugin::Load(gazebo::physics::ModelPtr _parent,
       this->thrustTopicPublisher->GetTopic() + "_wrench", 10);
 
   this->pubThrusterState = this->rosNode->advertise<std_msgs::Bool>(
-    this->thrusterLink->GetName() + "/is_on", 1);
+    this->topicPrefix + "is_on", 1);
 
   this->pubThrustForceEff = this->rosNode->advertise<std_msgs::Float64>(
-    this->thrusterLink->GetName() + "/thrust_efficiency", 1);
+    this->topicPrefix + "thrust_efficiency", 1);
 
   this->pubDynamicStateEff = this->rosNode->advertise<std_msgs::Float64>(
-    this->thrusterLink->GetName() + "/dynamic_state_efficiency", 1);
+    this->topicPrefix + "dynamic_state_efficiency", 1);
 
   this->rosPublishConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
     boost::bind(&ThrusterROSPlugin::RosPublishStates, this));
