@@ -26,6 +26,8 @@
 #include <ros/ros.h>
 #include <uuv_gazebo_ros_plugins_msgs/FloatStamped.h>
 #include <geometry_msgs/WrenchStamped.h>
+#include <std_msgs/Bool.h>
+#include <std_msgs/Float64.h>
 
 #include <uuv_gazebo_ros_plugins_msgs/SetThrusterState.h>
 #include <uuv_gazebo_ros_plugins_msgs/GetThrusterState.h>
@@ -108,6 +110,15 @@ namespace uuv_simulator_ros
 
     /// \brief Publisher for current actual thrust as wrench.
     private: ros::Publisher pubThrustWrench;
+
+    /// \brief Publisher for the thruster state
+    private: ros::Publisher pubThrusterState;
+
+    /// \brief Publisher for the thrust force efficiency
+    private: ros::Publisher pubThrustForceEff;
+
+    /// \brief Publisher for the dynamic state efficiency
+    private: ros::Publisher pubDynamicStateEff;
 
     /// \brief Connection for callbacks on update world.
     private: gazebo::event::ConnectionPtr rosPublishConnection;

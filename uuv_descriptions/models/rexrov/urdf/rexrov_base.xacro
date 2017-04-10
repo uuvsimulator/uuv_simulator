@@ -75,8 +75,7 @@
       <plugin name="${namespace}_${thruster_id}_thruster_model" filename="libthruster_ros_plugin.so">
         <linkName>${namespace}/thruster_${thruster_id}</linkName>
         <jointName>${namespace}/thruster_${thruster_id}_joint</jointName>
-        <thrustTopic>${namespace}/thrusters/${thruster_id}/thrust</thrustTopic>
-        <inputTopic>${namespace}/thrusters/${thruster_id}/input</inputTopic>
+        <thrusterID>${thruster_id}</thrusterID>
         <dynamics>
           <type>FirstOrder</type>
           <timeConstant>0.05</timeConstant>

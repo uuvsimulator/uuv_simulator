@@ -17,6 +17,8 @@
   <build_depend>uuv_gazebo_plugin</build_depend>
   <build_depend>uuv_gazebo_ros_plugins_msgs</build_depend>
   <build_depend>sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
 
   <buildtool_depend>catkin</buildtool_depend>
 </package>
