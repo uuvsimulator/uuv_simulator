@@ -110,27 +110,30 @@ class JointPositionController:
         return output
 
     def _joy_callback(self, joy):
-        # If deadman button is not pressed, do nothing
-        if not joy.buttons[self._deadman_button] and self._deadman_button != -1:
-            return
-        # If any exclusion buttons are pressed, do nothing
-        for n in self._exclusion_buttons:
-            if joy.buttons[n] == 1:
+        try:
+            # If deadman button is not pressed, do nothing
+            if not joy.buttons[self._deadman_button] and self._deadman_button != -1:
                 return
-        if joy.buttons[self._home_button]:
-            self._reference_pos = deepcopy(self._arm_interface.home)
-            self._last_joy_update = rospy.get_time()
-        else:
-            # Parse the joystick input to set the joint angle reference
-            for joint in self._arm_interface.joint_names:
-                if abs(joy.axes[self._axes[joint]]) < 0.8:
-                    continue
-                else:
-                    self._reference_pos[joint] += self._axes_gain[joint] * \
-                        joy.axes[self._axes[joint]]
-                    # Check for the joint limits
-                    self._reference_pos[joint] = self._check_joint_limits(self._reference_pos[joint], joint)
-            self._last_joy_update = rospy.get_time()
+            # If any exclusion buttons are pressed, do nothing
+            for n in self._exclusion_buttons:
+                if joy.buttons[n] == 1:
+                    return
+            if joy.buttons[self._home_button]:
+                self._reference_pos = deepcopy(self._arm_interface.home)
+                self._last_joy_update = rospy.get_time()
+            else:
+                # Parse the joystick input to set the joint angle reference
+                for joint in self._arm_interface.joint_names:
+                    if abs(joy.axes[self._axes[joint]]) < 0.8:
+                        continue
+                    else:
+                        self._reference_pos[joint] += self._axes_gain[joint] * \
+                            joy.axes[self._axes[joint]]
+                        # Check for the joint limits
+                        self._reference_pos[joint] = self._check_joint_limits(self._reference_pos[joint], joint)
+                self._last_joy_update = rospy.get_time()
+        except Exception, e:
+            print 'Error during joy parsing, message=', e
 
 if __name__ == '__main__':
     # Start the node
