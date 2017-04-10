@@ -40,8 +40,8 @@ class CartesianController(object):
 
         # Retrieve the publish rate
         self._publish_rate = 25
-        if not rospy.has_param('cartesian_controller/publish_rate'):
-            self._publish_rate = rospy.get_param('cartesian_controller/publish_rate')
+        if not rospy.has_param('~cartesian_controller/publish_rate'):
+            self._publish_rate = rospy.get_param('~cartesian_controller/publish_rate')
 
         if self._publish_rate <= 0:
             raise rospy.ROSException('Invalid negative publish rate')
@@ -114,7 +114,7 @@ class CartesianController(object):
         # Last controller update
         self._last_controller_update = rospy.get_time()
 
-        rospy.set_param('cartesian_controller/name', self.LABEL)
+        rospy.set_param('~cartesian_controller/name', self.LABEL)
 
         self._joint_effort_pub = dict()
 

@@ -9,32 +9,32 @@
           controller:
             type: effort_controllers/JointEffortController
             joint: $(arg arm_name)/azimuth
-            pid: {p: 10000, i: 0, d: 10}
+            pid: {p: 10000, i: 0, d: 200}
         shoulder:
           controller:
             type: effort_controllers/JointEffortController
             joint: $(arg arm_name)/shoulder
-            pid: {p: 10000, i: 0, d: 10}
+            pid: {p: 10000, i: 0, d: 200}
         elbow:
           controller:
             type: effort_controllers/JointEffortController
             joint: $(arg arm_name)/elbow
-            pid: {p: 10000, i: 0, d: 10}
+            pid: {p: 10000, i: 0, d: 200}
         roll:
           controller:
             type: effort_controllers/JointEffortController
             joint: $(arg arm_name)/roll
-            pid: {p: 10000, i: 0, d: 10}
+            pid: {p: 10000, i: 0, d: 200}
         pitch:
           controller:
             type: effort_controllers/JointEffortController
             joint: $(arg arm_name)/pitch
-            pid: {p: 10000, i: 0, d: 10}
+            pid: {p: 10000, i: 0, d: 200}
         wrist:
           controller:
             type: effort_controllers/JointEffortController
             joint: $(arg arm_name)/wrist
-            pid: {p: 10000, i: 0, d: 10}
+            pid: {p: 10000, i: 0, d: 200}
   </rosparam>
 
   <group ns="$(arg uuv_name)">

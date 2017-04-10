@@ -23,12 +23,14 @@ from sensor_msgs.msg import Joy
 class VehicleTeleop:
     def __init__(self):
         # Load the mapping for each input
-        self._axes = dict(x=4, y=3, z=1, roll=2, pitch=5, yaw=0,
+        self._axes = dict(x=4, y=3, z=1,
+                          roll=2, pitch=5, yaw=0,
                           xfast=-1, yfast=-1, zfast=-1,
                           rollfast=-1, pitchfast=-1, yawfast=-1)
         # Load the gain for each joystick axis input
         # (default values for the XBox 360 controller)
-        self._axes_gain = dict(x=3, y=3, z=0.5, yaw=0.5, roll=0.5, pitch=0.5,
+        self._axes_gain = dict(x=3, y=3, z=0.5,
+                               roll=0.5, pitch=0.5, yaw=0.5,
                                xfast=6, yfast=6, zfast=1,
                                rollfast=2, pitchfast=2, yawfast=2)
 
