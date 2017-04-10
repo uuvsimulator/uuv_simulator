@@ -9,13 +9,20 @@
   -->
   <arg name="namespace" default="rexrov"/>
   <arg name="joy_id" default="0"/>
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-20"/>
 
   <include file="$(find uuv_gazebo)/launch/rexrov_sonar.launch">
-    <arg name="namespace" default="$(arg namespace)"/>
-    <arg name="joy_id" default="$(arg joy_id)"/>
-    <arg name="axis_yaw" default="2"/>
-    <arg name="axis_x" default="1"/>
-    <arg name="axis_y" default="0"/>
-    <arg name="axis_z" default="5"/>
+    <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="joy_id" value="$(arg joy_id)"/>
+    <arg name="axis_yaw" value="2"/>
+    <arg name="axis_x" value="1"/>
+    <arg name="axis_y" value="0"/>
+    <arg name="axis_z" value="5"/>
+    <!-- Starting position -->
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
   </include>
 </launch>

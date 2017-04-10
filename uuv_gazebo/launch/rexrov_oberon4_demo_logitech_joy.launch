@@ -9,27 +9,34 @@
   -->
   <arg name="namespace" default="rexrov"/>
   <arg name="joy_id" default="0"/>
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-20"/>
 
   <include file="$(find uuv_gazebo)/launch/rexrov_oberon4_demo.launch">
-    <arg name="namespace" default="$(arg namespace)"/>
-    <arg name="joy_id" default="$(arg joy_id)"/>
+    <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="joy_id" value="$(arg joy_id)"/>
+    <!-- Starting position -->
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
     <!-- Joystick mapping for the vehicle control -->
-    <arg name="axis_yaw" default="2"/>
-    <arg name="axis_x" default="1"/>
-    <arg name="axis_y" default="0"/>
-    <arg name="axis_z" default="5"/>
-    <arg name="deadman_button" default="-1"/>
-    <arg name="exclusion_buttons" default="1"/>
+    <arg name="axis_yaw" value="2"/>
+    <arg name="axis_x" value="1"/>
+    <arg name="axis_y" value="0"/>
+    <arg name="axis_z" value="5"/>
+    <arg name="deadman_button" value="-1"/>
+    <arg name="exclusion_buttons" value="1"/>
     <!-- Joystick mapping for the joint control node -->
-    <arg name="axis_oberon_azimuth" default="2"/>
-    <arg name="axis_oberon_shoulder" default="1"/>
-    <arg name="axis_oberon_wrist" default="0"/>
+    <arg name="axis_oberon_azimuth" value="2"/>
+    <arg name="axis_oberon_shoulder" value="1"/>
+    <arg name="axis_oberon_wrist" value="0"/>
 
-    <arg name="oberon_exclusion_button" default="3"/>
-    <arg name="oberon_deadman_button" default="1"/>
-    <arg name="oberon_home_button" default="6"/>
+    <arg name="oberon_exclusion_button" value="0"/>
+    <arg name="oberon_deadman_button" value="1"/>
+    <arg name="oberon_home_button" value="6"/>
 
-    <arg name="gripper_open_button" default="11"/>
-    <arg name="gripper_close_button" default="10"/>
+    <arg name="gripper_open_button" value="11"/>
+    <arg name="gripper_close_button" value="10"/>
   </include>
 </launch>
