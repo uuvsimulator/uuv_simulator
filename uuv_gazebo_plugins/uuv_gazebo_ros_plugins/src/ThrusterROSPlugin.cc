@@ -107,32 +107,32 @@ void ThrusterROSPlugin::Load(gazebo::physics::ModelPtr _parent,
 
   this->services["set_thrust_force_efficiency"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/set_thrust_force_efficiency",
+      this->topicPrefix + "set_thrust_force_efficiency",
       &ThrusterROSPlugin::SetThrustForceEfficiency, this);
 
   this->services["get_thrust_force_efficiency"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/get_thrust_force_efficiency",
+      this->topicPrefix + "get_thrust_force_efficiency",
       &ThrusterROSPlugin::GetThrustForceEfficiency, this);
 
   this->services["set_dynamic_state_efficiency"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/set_dynamic_state_efficiency",
+      this->topicPrefix + "set_dynamic_state_efficiency",
       &ThrusterROSPlugin::SetDynamicStateEfficiency, this);
 
   this->services["get_dynamic_state_efficiency"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/get_dynamic_state_efficiency",
+      this->topicPrefix + "get_dynamic_state_efficiency",
       &ThrusterROSPlugin::GetDynamicStateEfficiency, this);
 
   this->services["set_thruster_state"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/set_thruster_state",
+      this->topicPrefix + "set_thruster_state",
       &ThrusterROSPlugin::SetThrusterState, this);
 
   this->services["get_thruster_state"] =
     this->rosNode->advertiseService(
-      this->thrusterLink->GetName() + "/get_thruster_state",
+      this->topicPrefix + "get_thruster_state",
       &ThrusterROSPlugin::GetThrusterState, this);
 
   this->subThrustReference = this->rosNode->subscribe<
@@ -148,6 +148,15 @@ void ThrusterROSPlugin::Load(gazebo::physics::ModelPtr _parent,
     this->rosNode->advertise<geometry_msgs::WrenchStamped>(
       this->thrustTopicPublisher->GetTopic() + "_wrench", 10);
 
+  this->pubThrusterState = this->rosNode->advertise<std_msgs::Bool>(
+    this->topicPrefix + "is_on", 1);
+
+  this->pubThrustForceEff = this->rosNode->advertise<std_msgs::Float64>(
+    this->topicPrefix + "thrust_efficiency", 1);
+
+  this->pubDynamicStateEff = this->rosNode->advertise<std_msgs::Float64>(
+    this->topicPrefix + "dynamic_state_efficiency", 1);
+
   this->rosPublishConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
     boost::bind(&ThrusterROSPlugin::RosPublishStates, this));
 }
@@ -161,18 +170,34 @@ void ThrusterROSPlugin::RosPublishStates()
   {
     this->lastRosPublishTime = this->thrustForceStamp;
 
-    uuv_gazebo_ros_plugins_msgs::FloatStamped thrust_msg;
-    thrust_msg.header.stamp = ros::Time().now();
-    thrust_msg.header.frame_id = this->thrusterLink->GetName();
-    thrust_msg.data = this->thrustForce;
-    this->pubThrust.publish(thrust_msg);
+    // Publish the thrust force magnitude
+    uuv_gazebo_ros_plugins_msgs::FloatStamped thrustMsg;
+    thrustMsg.header.stamp = ros::Time().now();
+    thrustMsg.header.frame_id = this->thrusterLink->GetName();
+    thrustMsg.data = this->thrustForce;
+    this->pubThrust.publish(thrustMsg);
 
-    geometry_msgs::WrenchStamped thrust_wrench_msg;
-    thrust_wrench_msg.header.stamp = ros::Time().now();
-    thrust_wrench_msg.header.frame_id = this->thrusterLink->GetName();
+    // Publish the thrust force vector wrt the thruster frame
+    geometry_msgs::WrenchStamped thrustWrenchMsg;
+    thrustWrenchMsg.header.stamp = ros::Time().now();
+    thrustWrenchMsg.header.frame_id = this->thrusterLink->GetName();
+    thrustWrenchMsg.wrench.force.x = this->thrustForce;
+    this->pubThrustWrench.publish(thrustWrenchMsg);
 
-    thrust_wrench_msg.wrench.force.x = this->thrustForce;
-    this->pubThrustWrench.publish(thrust_wrench_msg);
+    // Publish the thruster current state (ON or OFF)
+    std_msgs::Bool isOnMsg;
+    isOnMsg.data = this->isOn;
+    this->pubThrusterState.publish(isOnMsg);
+
+    // Publish thrust output efficiency
+    std_msgs::Float64 thrustEffMsg;
+    thrustEffMsg.data = this->thrustEfficiency;
+    this->pubThrustForceEff.publish(thrustEffMsg);
+
+    // Publish dynamic state efficiency
+    std_msgs::Float64 dynStateEffMsg;
+    dynStateEffMsg.data = this->propellerEfficiency;
+    this->pubDynamicStateEff.publish(dynStateEffMsg);
   }
 }
 
