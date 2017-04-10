@@ -103,6 +103,21 @@ void HydrodynamicModel::ComputeAcc(Eigen::Vector6d _velRel, double _time,
 }
 
 /////////////////////////////////////////////////
+math::Vector3 HydrodynamicModel::ToNEDConvention(math::Vector3 _vec)
+{
+  math::Vector3 output = _vec;
+  output.y = -1 * output.y;
+  output.z = -1 * output.z;
+  return output;
+}
+
+/////////////////////////////////////////////////
+math::Vector3 HydrodynamicModel::FromNEDConvention(math::Vector3 _vec)
+{
+  return this->ToNEDConvention(_vec);
+}
+
+/////////////////////////////////////////////////
 bool HydrodynamicModel::CheckParams(sdf::ElementPtr _sdf)
 {
   if (this->params.empty()) return true;
@@ -253,34 +268,32 @@ void HMFossen::ApplyHydrodynamicForces(
   // Transform the flow velocity to the BODY frame
   math::Vector3 flowVel = pose.rot.GetInverse().RotateVector(_flowVelWorld);
 
-  Eigen::Vector6d vel_rel, acc;
+  Eigen::Vector6d velRel, acc;
   // Compute the relative velocity
-  vel_rel = EigenStack(linVel - flowVel, angVel);
-
-  Eigen::Vector6d lastForce;
-  lastForce = EigenStack(this->link->GetRelativeForce(),
-    this->link->GetRelativeTorque());
+  velRel = EigenStack(
+    this->ToNEDConvention(linVel - flowVel),
+    this->ToNEDConvention(angVel));
 
   // Update added Coriolis matrix
-  this->ComputeAddedCoriolisMatrix(vel_rel, this->Ma, this->Ca);
+  this->ComputeAddedCoriolisMatrix(velRel, this->Ma, this->Ca);
 
   // Update damping matrix
-  this->ComputeDampingMatrix(vel_rel, this->D);
+  this->ComputeDampingMatrix(velRel, this->D);
 
   // Filter acceleration (see issue explanation above)
-  this->ComputeAcc(vel_rel, _time, 0.3);
+  this->ComputeAcc(velRel, _time, 0.3);
 
   // We can now compute the additional forces/torques due to thisdynamic
   // effects based on Eq. 8.136 on p.222 of Fossen: Handbook of Marine Craft ...
 
   // Damping forces and torques
-  Eigen::Vector6d damping = -this->D * vel_rel;
+  Eigen::Vector6d damping = -this->D * velRel;
 
   // Added-mass forces and torques
   Eigen::Vector6d added = -this->Ma * this->filteredAcc;
 
   // Added Coriolis term
-  Eigen::Vector6d cor = -this->Ca * vel_rel;
+  Eigen::Vector6d cor = -this->Ca * velRel;
 
   // All additional (compared to standard rigid body) Fossen terms combined.
   Eigen::Vector6d tau = damping + added + cor;
@@ -289,8 +302,10 @@ void HMFossen::ApplyHydrodynamicForces(
 
   if (!std::isnan(tau.norm()))
   {
-    math::Vector3 hydForce = Vec3dToGazebo(tau.head<3>());
-    math::Vector3 hydTorque = Vec3dToGazebo(tau.tail<3>());
+    math::Vector3 hydForce =
+      this->FromNEDConvention(Vec3dToGazebo(tau.head<3>()));
+    math::Vector3 hydTorque =
+      this->FromNEDConvention(Vec3dToGazebo(tau.tail<3>()));
 
     // Forces and torques are also wrt link frame
     this->link->AddRelativeForce(hydForce);

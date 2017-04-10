@@ -61,6 +61,12 @@ class HydrodynamicModel : public BuoyantObject
   /// \brief Returns true if all parameters are available from the SDF element
   protected: bool CheckParams(sdf::ElementPtr _sdf);
 
+  /// \brief Convert vector to comply with the NED reference frame
+  protected: math::Vector3 ToNEDConvention(math::Vector3 _vec);
+
+  /// \brief Convert vector to comply with the NED reference frame
+  protected: math::Vector3 FromNEDConvention(math::Vector3 _vec);
+
   /// \brief Filtered linear & angular acceleration vector in link frame.
   /// This is used to prevent the model to become unstable given that Gazebo
   /// only calls the update function at the beginning or at the end of a
