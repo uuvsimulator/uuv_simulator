@@ -202,42 +202,99 @@ HMFossen::HMFossen(sdf::ElementPtr _sdf,
                    physics::LinkPtr _link)
                   : HydrodynamicModel(_sdf, _link)
 {
-  std::vector<double> addedMass(36);
-  std::vector<double> linDampCoef(6);
-  std::vector<double> quadDampCoef(6);
+  std::vector<double> addedMass(36, 0.0);
+  std::vector<double> linDampCoef(6, 0.0);
+  std::vector<double> linDampForward(6, 0.0);
+  std::vector<double> quadDampCoef(6, 0.0);
 
   GZ_ASSERT(_sdf->HasElement("hydrodynamic_model"),
             "Hydrodynamic model is missing");
 
   sdf::ElementPtr modelParams = _sdf->GetElement("hydrodynamic_model");
-
+  // Load added-mass coefficients, if provided. Otherwise, the added-mass
+  // matrix is set to zero
   if (modelParams->HasElement("added_mass"))
     addedMass = Str2Vector(modelParams->Get<std::string>("added_mass"));
   else
     gzmsg << "HMFossen: Using added mass NULL" << std::endl;
 
+  this->params.push_back("added_mass");
+
+  // Load linear damping coefficients, if provided. Otherwise, the linear
+  // damping matrix is set to zero
   if (modelParams->HasElement("linear_damping"))
     linDampCoef = Str2Vector(modelParams->Get<std::string>("linear_damping"));
   else
     gzmsg << "HMFossen: Using linear damping NULL" << std::endl;
 
+  this->params.push_back("linear_damping");
+
+  // Load linear damping coefficients that described the damping forces
+  // proportional to the forward speed only, if provided. Otherwise, the linear
+  // damping matrix is set to zero
+  if (modelParams->HasElement("linear_damping_forward_speed"))
+    linDampCoef = Str2Vector(
+      modelParams->Get<std::string>("linear_damping_forward_speed"));
+  else
+    gzmsg << "HMFossen: Using linear damping for forward speed NULL"
+      << std::endl;
+
+  this->params.push_back("linear_damping_forward_speed");
+
+  // Load nonlinear quadratic damping coefficients, if provided. Otherwise,
+  // the nonlinear quadratic damping matrix is set to zero
   if (modelParams->HasElement("quadratic_damping"))
     quadDampCoef = Str2Vector(
         modelParams->Get<std::string>("quadratic_damping"));
   else
     gzmsg << "HMFossen: Using quad damping NULL" << std::endl;
 
+  this->params.push_back("quadratic_damping");
+
+  // Adding the volume
+  this->params.push_back("volume");
+
   GZ_ASSERT(addedMass.size() == 36,
             "Added-mass coefficients vector must have 36 elements");
-  GZ_ASSERT(linDampCoef.size() == 6,
-            "Linear damping coefficients vector must have 6 elements");
-  GZ_ASSERT(quadDampCoef.size() == 6,
-            "Quadratic damping coefficients vector must have 36 elements");
+  GZ_ASSERT(linDampCoef.size() == 6 || linDampCoef.size() == 36,
+            "Linear damping coefficients vector must have 6 elements for a "
+            "diagonal matrix or 36 elements for a full matrix");
+  GZ_ASSERT(linDampForward.size() == 6 || linDampForward.size() == 36,
+            "Linear damping coefficients proportional to the forward speed "
+            "vector must have 6 elements for a diagonal matrix or 36 elements"
+            " for a full matrix");
+  GZ_ASSERT(quadDampCoef.size() == 6 || quadDampCoef.size() == 36,
+            "Quadratic damping coefficients vector must have 6 elements for a "
+            "diagonal matrix or 36 elements for a full matrix");
 
-  // Update the added-mass matrix
+  this->DLin.setZero();
+  this->DNonLin.setZero();
+  this->DLinForwardSpeed.setZero();
+
   for (int row = 0; row < 6; row++)
     for (int col = 0; col < 6; col++)
+    {
+      // Set added-mass coefficient
       this->Ma(row, col) = addedMass[6*row+col];
+      // Set the linear damping matrix if a full matrix was provided
+      if (linDampCoef.size() == 36)
+        this->DLin(row, col) = linDampCoef[6*row+col];
+      if (quadDampCoef.size() == 36)
+        this->DNonLin(row, col) = quadDampCoef[6*row+col];
+      if (linDampForward.size() == 36)
+        this->DLinForwardSpeed(row, col) = linDampForward[6*row+col];
+    }
+
+  // In the case the linear damping matrix was set as a diagonal matrix
+  for (int i = 0; i < 6; i++)
+  {
+    if (linDampCoef.size() == 6)
+      this->DLin(i, i) = linDampCoef[i];
+    if (quadDampCoef.size() == 6)
+      this->DNonLin(i, i) = quadDampCoef[i];
+    if (linDampForward.size() == 6)
+      this->DLinForwardSpeed(i, i) = linDampForward[i];
+  }
 
   // Store damping coefficients
   this->linearDampCoef = linDampCoef;
@@ -302,6 +359,7 @@ void HMFossen::ApplyHydrodynamicForces(
 
   if (!std::isnan(tau.norm()))
   {
+    // Convert the forces and moments back to Gazebo's reference frame
     math::Vector3 hydForce =
       this->FromNEDConvention(Vec3dToGazebo(tau.head<3>()));
     math::Vector3 hydTorque =
@@ -354,17 +412,31 @@ void HMFossen::ComputeDampingMatrix(const Eigen::Vector6d& _vel,
 
   _D.setZero();
 
-  for (int i = 0; i < 6; i++)
-    _D(i, i) = -this->linearDampCoef[i] + \
-               -this->quadDampCoef[i] * std::fabs(_vel[i]);
+  _D = -1 * this->DLin - _vel[0] * this->DLinForwardSpeed;
+
+  for (int row = 0; row < 6; row++)
+    for (int col = 0; col < 6; col++)
+    {
+      _D(row, col) += -1 * this->DNonLin(row, col) * std::fabs(_vel[row]);
+    }
 }
 
 /////////////////////////////////////////////////
 void HMFossen::Print(std::string _paramName, std::string _message)
 {
+  if (!_paramName.compare("all"))
+  {
+    for (auto tag : this->params)
+      this->Print(tag);
+    return;
+  }
   if (!_message.empty())
-    gzmsg << _message << std::endl;
-  if (!_paramName.compare("Ma"))
+    std::cout << _message << std::endl;
+  else
+    std::cout << this->link->GetModel()->GetName() << "::"
+      << this->link->GetName() << "::" << _paramName
+      << std::endl;
+  if (!_paramName.compare("added_mass"))
   {
     for (int i = 0; i < 6; i++)
     {
@@ -373,21 +445,36 @@ void HMFossen::Print(std::string _paramName, std::string _message)
       std::cout << std::endl;
     }
   }
-  else if (!_paramName.compare("lin_damping"))
+  else if (!_paramName.compare("linear_damping"))
   {
-    for (int i = 0; i < this->linearDampCoef.size(); i++)
-      std::cout << std::setw(12) << this->linearDampCoef[i];
-    std::cout << std::endl;
+    for (int i = 0; i < 6; i++)
+    {
+      for (int j = 0; j < 6; j++)
+        std::cout << std::setw(12) << this->DLin(i, j);
+      std::cout << std::endl;
+    }
   }
-  else if (!_paramName.compare("quad_damping"))
+  else if (!_paramName.compare("linear_damping_forward_speed"))
   {
-    for (int i = 0; i < this->quadDampCoef.size(); i++)
-      std::cout << std::setw(12) << this->quadDampCoef[i];
-    std::cout << std::endl;
+    for (int i = 0; i < 6; i++)
+    {
+      for (int j = 0; j < 6; j++)
+        std::cout << std::setw(12) << this->DLinForwardSpeed(i, j);
+      std::cout << std::endl;
+    }
+  }
+  else if (!_paramName.compare("quadratic_damping"))
+  {
+    for (int i = 0; i < 6; i++)
+    {
+      for (int j = 0; j < 6; j++)
+        std::cout << std::setw(12) << this->DNonLin(i, j);
+      std::cout << std::endl;
+    }
   }
   else if (!_paramName.compare("volume"))
   {
-    std::cout << std::setw(12) << this->volume << std::endl;
+    std::cout << std::setw(12) << this->volume << " m^3" << std::endl;
   }
 }
 
@@ -429,6 +516,7 @@ HMSphere::HMSphere(sdf::ElementPtr _sdf,
   gzmsg << "HMSphere::radius=" << this->radius << std::endl;
   gzmsg << "HMSphere: Computing added mass" << std::endl;
 
+  this->params.push_back("radius");
   // Reynolds number for subcritical flow
   // Reference:
   //    - MIT Marine Hydrodynamic (Lecture Notes)
@@ -464,14 +552,22 @@ HMSphere::HMSphere(sdf::ElementPtr _sdf,
 /////////////////////////////////////////////////
 void HMSphere::Print(std::string _paramName, std::string _message)
 {
-    if (!_paramName.compare("radius"))
-    {
-      if (!_message.empty())
-        gzmsg << _message << std::endl;
-      std::cout << std::setw(12) << this->radius << std::endl;
-    }
-    else
-        HMFossen::Print(_paramName, _message);
+  if (!_paramName.compare("all"))
+  {
+    for (auto tag : this->params)
+      this->Print(tag);
+    return;
+  }
+  if (!_message.empty())
+    std::cout << _message << std::endl;
+  else
+    std::cout << this->link->GetModel()->GetName() << "::"
+      << this->link->GetName() << "::" << _paramName
+      << std::endl;
+  if (!_paramName.compare("radius"))
+    std::cout << std::setw(12) << this->radius << std::endl;
+  else
+    HMFossen::Print(_paramName, _message);
 }
 
 //////////////////////////////////////////////////////////////////////////
