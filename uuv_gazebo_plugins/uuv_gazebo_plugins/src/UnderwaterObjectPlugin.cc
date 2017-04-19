@@ -127,14 +127,7 @@ void UnderwaterObjectPlugin::Load(physics::ModelPtr _model,
         this->InitDebug(link, hydro);
 
       this->models[link] = hydro;
-      this->models[link]->Print("volume", this->model->GetName() + "::" +
-                                link->GetName() + "::volume");
-      this->models[link]->Print("Ma", this->model->GetName() + "::" +
-                                link->GetName() + "::Ma");
-      this->models[link]->Print("lin_damping", this->model->GetName() + "::" +
-                                link->GetName() + "::lin_damping");
-      this->models[link]->Print("quad_damping", this->model->GetName() + "::" +
-                                link->GetName() + "::quad_damping");
+      this->models[link]->Print("all");
     }  // for each link mentioned in plugin sdf
   }
 
