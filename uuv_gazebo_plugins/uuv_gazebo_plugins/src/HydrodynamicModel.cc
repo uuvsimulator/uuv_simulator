@@ -81,7 +81,7 @@ void HydrodynamicModel::ComputeAcc(Eigen::Vector6d _velRel, double _time,
                                   double _alpha)
 {
   // Compute Fossen's nu-dot numerically. We have to do this for now since
-  // Gazebo reports angular accelerations that are off by orders of magnitues.
+  // Gazebo reports angular accelerations that are off by orders of magnitude.
   double dt = _time - lastTime;
 
   if (dt <= 0.0)  // Extra caution to prevent division by zero
@@ -314,13 +314,6 @@ void HMFossen::ApplyHydrodynamicForces(
 
   // Compute accelerations in body frame (\dot q or \dot nu):
   math::Quaternion rotWorld2Body = pose.rot.GetInverse();
-
-  const math::Vector3 linAcc =
-    rotWorld2Body.RotateVector(this->link->GetWorldLinearAccel())
-    - angVel.Cross(linVel);
-
-  const math::Vector3 angAcc =
-    rotWorld2Body.RotateVector(this->link->GetWorldAngularAccel());
 
   // Transform the flow velocity to the BODY frame
   math::Vector3 flowVel = pose.rot.GetInverse().RotateVector(_flowVelWorld);
