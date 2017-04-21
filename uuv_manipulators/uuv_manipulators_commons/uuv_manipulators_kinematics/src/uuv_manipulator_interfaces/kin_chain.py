@@ -331,3 +331,32 @@ class KinChainInterface(object):
         self._fk_v_kdl.JntToCart(vel_array, end_frame)
 
         return end_frame.GetTwist()
+
+    def inverse_kinematics(self, position, orientation=None, seed=None):
+        ik = PyKDL.ChainIkSolverVel_pinv(self._chain)
+        pos = PyKDL.Vector(position[0], position[1], position[2])
+        if orientation is not None:
+            rot = PyKDL.Rotation()
+            rot = rot.Quaternion(orientation[0], orientation[1],
+                                 orientation[2], orientation[3])
+        # Populate seed with current angles if not provided
+        seed_array = PyKDL.JntArray(self.n_joints)
+        if seed is not None:
+            seed_array.resize(len(seed))
+            for idx, jnt in enumerate(seed):
+                seed_array[idx] = jnt
+        else:
+            seed_array = self.joints_to_kdl('positions')
+
+        # Make IK Call
+        if orientation is not None:
+            goal_pose = PyKDL.Frame(rot, pos)
+        else:
+            goal_pose = PyKDL.Frame(pos)
+        result_angles = PyKDL.JntArray(self.n_joints)
+
+        if self._ik_p_kdl.CartToJnt(seed_array, goal_pose, result_angles) >= 0:
+            result = np.array(list(result_angles))
+            return result
+        else:
+            return None
