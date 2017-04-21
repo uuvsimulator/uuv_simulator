@@ -19,8 +19,12 @@ import roslib; roslib.load_manifest(PKG)
 
 import sys
 import unittest
-import numpy
+import numpy as np
 from uuv_manipulator_interfaces import ArmInterface
+
+HOME_CART_POS = np.array([0.45318439, 0.00000000, 0.13526251])
+
+HOME_CART_ROT = np.array([0.00000000, -0.05232793, 0.00000000, 0.99862996])
 
 class TestArmInterface(unittest.TestCase):
     def test_init_interface(self):
@@ -58,6 +62,21 @@ class TestArmInterface(unittest.TestCase):
     def test_home_config(self):
         arm = ArmInterface()
         self.assertIsNotNone(arm.home, 'Home configuration is invalid')
+
+    def test_forward_position_kinematics(self):
+        arm = ArmInterface()
+        jnt_array = arm.home
+        pose = arm.forward_position_kinematics(arm.home)
+
+        self.assertLess(np.abs(pose[0:3] - HOME_CART_POS).sum(), 1e-6, 'Invalid output position, pos=[%.8f, %.8f, %.8f]' % (pose[0], pose[1], pose[2]))
+        self.assertLess(np.abs(pose[3::] - HOME_CART_ROT).sum(), 1e-6, 'Invalid output orientation, rot=[%.8f, %.8f, %.8f, %.8f]' % (pose[3], pose[4], pose[5], pose[6]))
+
+    def test_inv_kinematics(self):
+        arm = ArmInterface()
+        home_q = arm.home
+        q = arm.inverse_kinematics(HOME_CART_POS, HOME_CART_ROT)
+        for idx in range(len(arm.joint_names)):
+            self.assertLess(np.abs(home_q[arm.joint_names[idx]] - q[idx]), 1e-6, 'home_q=%.4f, q=%.4f' % (home_q[arm.joint_names[idx]], q[idx]))
 
 if __name__ == '__main__':
     import rosunit
