@@ -59,7 +59,9 @@ class KinematicsService(object):
         self._ik_v_kdl = PyKDL.ChainIkSolverVel_pinv(self._arm_interface.chain)
         self._ik_p_kdl = PyKDL.ChainIkSolverPos_NR(self._arm_interface.chain,
                                                    self._arm_interface._fk_p_kdl,
-                                                   self._ik_v_kdl)
+                                                   self._ik_v_kdl,
+                                                   100,
+                                                   1e-6)
         self._dyn_kdl = PyKDL.ChainDynParam(self._arm_interface.chain,
                                             PyKDL.Vector.Zero())
 
@@ -114,6 +116,8 @@ class KinematicsService(object):
         pos = [req.pose.position.x, req.pose.position.y, req.pose.position.z]
         orientation = [req.pose.orientation.x, req.pose.orientation.y,
                        req.pose.orientation.z, req.pose.orientation.w]
+
+        result_ik = self.inverse_kinematics(pos, orientation)
 
         if result_ik is not None:
             for i, name in zip(range(len(self.joint_names)), self.joint_names):
