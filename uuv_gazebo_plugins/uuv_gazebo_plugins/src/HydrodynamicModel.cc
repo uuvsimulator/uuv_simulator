@@ -233,7 +233,7 @@ HMFossen::HMFossen(sdf::ElementPtr _sdf,
   // proportional to the forward speed only, if provided. Otherwise, the linear
   // damping matrix is set to zero
   if (modelParams->HasElement("linear_damping_forward_speed"))
-    linDampCoef = Str2Vector(
+    linDampForward = Str2Vector(
       modelParams->Get<std::string>("linear_damping_forward_speed"));
   else
     gzmsg << "HMFossen: Using linear damping for forward speed NULL"
