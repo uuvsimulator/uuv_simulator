@@ -332,8 +332,7 @@ class KinChainInterface(object):
 
         return end_frame.GetTwist()
 
-    def inverse_kinematics(self, position, orientation=None, seed=None):
-        ik = PyKDL.ChainIkSolverVel_pinv(self._chain)
+    def inverse_kinematics(self, position, orientation=None, seed=None):        
         pos = PyKDL.Vector(position[0], position[1], position[2])
         if orientation is not None:
             rot = PyKDL.Rotation()
