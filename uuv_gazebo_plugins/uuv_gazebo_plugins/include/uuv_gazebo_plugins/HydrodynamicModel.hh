@@ -22,6 +22,7 @@
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/Link.hh>
+#include <gazebo/physics/Model.hh>
 #include <gazebo/physics/Collision.hh>
 #include <gazebo/physics/Shape.hh>
 
@@ -34,6 +35,7 @@
 
 #include <uuv_gazebo_plugins/Def.hh>
 #include <uuv_gazebo_plugins/BuoyantObject.hh>
+
 
 namespace gazebo
 {
@@ -179,6 +181,21 @@ class HMFossen : public HydrodynamicModel
 
   /// \brief Damping matrix
   protected: Eigen::Matrix6d D;
+
+  /// \brief Linear damping matrix
+  protected: Eigen::Matrix6d DLin;
+
+  /// \brief Linear damping matrix proportional only to the forward speed
+  /// (useful for modeling AUVs). From [1], according to Newman (1977), there
+  /// is a damping force component that linearly increases with the presence
+  /// of forward speed, particularly so for slender bodies.
+  ///
+  /// References:
+  /// [1] Refsnes - 2007 - Nonlinear model-based control of slender body AUVs
+  protected: Eigen::Matrix6d DLinForwardSpeed;
+
+  /// \brief Nonlinear damping coefficients
+  protected: Eigen::Matrix6d DNonLin;
 
   /// \brief Linear damping coefficients
   protected: std::vector<double> linearDampCoef;
