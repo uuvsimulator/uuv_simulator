@@ -17,15 +17,6 @@ catkin_package(
     uuv_manipulators_kinematics
 )
 
-include_directories(
-  ${PROJECT_SOURCE_DIR}/include
-  ${catkin_INCLUDE_DIRS}
-)
-
-find_package(Boost REQUIRED system filesystem date_time thread)
-
-link_directories(${catkin_LIBRARY_DIRS})
-
 catkin_install_python(PROGRAMS
       scripts/set_joint_config.py
       scripts/jt_cartesian_controller.py
