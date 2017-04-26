@@ -102,6 +102,13 @@ class KinChainInterface(object):
         self._fk_p_kdl = PyKDL.ChainFkSolverPos_recursive(self._chain)
         # Forward velocity kinematics solvers
         self._fk_v_kdl = PyKDL.ChainFkSolverVel_recursive(self._chain)
+        # Inverse kinematic solvers
+        self._ik_v_kdl = PyKDL.ChainIkSolverVel_pinv(self._chain)
+        self._ik_p_kdl = PyKDL.ChainIkSolverPos_NR(self._chain,
+                                                   self._fk_p_kdl,
+                                                   self._ik_v_kdl,
+                                                   100,
+                                                   1e-6)
 
     @property
     def joint_names(self):
@@ -244,9 +251,7 @@ class KinChainInterface(object):
                 self._joint_velocity[name] = states.velocity[idx]
                 self._joint_effort[name] = states.effort[idx]
 
-    def joints_to_kdl(self, type, values=None):
-        kdl_array = PyKDL.JntArray(self.n_joints)
-
+    def joints_to_kdl(self, type, values=None, last_joint=None):
         if values is None:
             if type == 'positions':
                 cur_type_values = self.joint_angles
@@ -257,26 +262,35 @@ class KinChainInterface(object):
         else:
             cur_type_values = values
 
-        for idx in range(len(self.joint_names)):
-            if self.joint_names[idx] in cur_type_values:
-                kdl_array[idx] = cur_type_values[self.joint_names[idx]]
+        if last_joint is None:
+            last_idx = len(self.joint_names) - 1
+            kdl_array = PyKDL.JntArray(self.n_joints)
+        else:
+            if last_joint not in self.joint_names:
+                raise rospy.ROSException('Invalid joint name')
+            last_idx = self.joint_names.index(last_joint)
+            kdl_array = PyKDL.JntArray(last_idx + 1)
+        for idx in range(last_idx + 1):
+            name = self.joint_names[idx]
+            if name in cur_type_values:
+                kdl_array[idx] = cur_type_values[name]
         if type == 'velocities':
             kdl_array = PyKDL.JntArrayVel(kdl_array)
         return kdl_array
 
-    def jacobian(self, joint_values=None):
+    def jacobian(self, joint_values=None, last_joint=None):
         """Compute the Jacobian for the current joint positions."""
-        if joint_values is None:
-            joint_values = self.joint_angles
-        jac = PyKDL.Jacobian(self.n_joints)
-        self._jac_kdl.JntToJac(self.joints_to_kdl('positions', joint_values), jac)
+        jnt_array = self.joints_to_kdl('positions', joint_values, last_joint)
+        jac = PyKDL.Jacobian(jnt_array.rows())
+        self._jac_kdl.JntToJac(
+            jnt_array, jac)
         return self.kdl_to_mat(jac)
 
-    def jacobian_transpose(self, joint_values=None):
+    def jacobian_transpose(self, joint_values=None, last_joint=None):
         """Return the Jacobian transpose."""
         if joint_values is None:
             joint_values = self.joint_angles
-        return self.jacobian(joint_values).T
+        return self.jacobian(joint_values, last_joint).T
 
     def jacobian_pseudo_inverse(self, joint_values=None):
         """Return the pseudo-inverse of the Jacobian matrix."""
@@ -317,3 +331,31 @@ class KinChainInterface(object):
         self._fk_v_kdl.JntToCart(vel_array, end_frame)
 
         return end_frame.GetTwist()
+
+    def inverse_kinematics(self, position, orientation=None, seed=None):        
+        pos = PyKDL.Vector(position[0], position[1], position[2])
+        if orientation is not None:
+            rot = PyKDL.Rotation()
+            rot = rot.Quaternion(orientation[0], orientation[1],
+                                 orientation[2], orientation[3])
+        # Populate seed with current angles if not provided
+        seed_array = PyKDL.JntArray(self.n_joints)
+        if seed is not None:
+            seed_array.resize(len(seed))
+            for idx, jnt in enumerate(seed):
+                seed_array[idx] = jnt
+        else:
+            seed_array = self.joints_to_kdl('positions')
+
+        # Make IK Call
+        if orientation is not None:
+            goal_pose = PyKDL.Frame(rot, pos)
+        else:
+            goal_pose = PyKDL.Frame(pos)
+        result_angles = PyKDL.JntArray(self.n_joints)
+
+        if self._ik_p_kdl.CartToJnt(seed_array, goal_pose, result_angles) >= 0:
+            result = np.array(list(result_angles))
+            return result
+        else:
+            return None

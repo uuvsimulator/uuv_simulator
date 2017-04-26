@@ -146,20 +146,23 @@ class VehicleTeleop:
 
     def _joy_callback(self, joy):
         # If any exclusion buttons are pressed, do nothing
-        for n in self._exclusion_buttons:
-            if joy.buttons[n] == 1:
-                cmd = self._parse_joy()
-                self._output_pub.publish(cmd)
-                return
+        try:
+            for n in self._exclusion_buttons:
+                if joy.buttons[n] == 1:
+                    cmd = self._parse_joy()
+                    self._output_pub.publish(cmd)
+                    return
 
-        if self._deadman_button != -1:
-            if joy.buttons[self._deadman_button] == 1:
-                cmd = self._parse_joy(joy)
+            if self._deadman_button != -1:
+                if joy.buttons[self._deadman_button] == 1:
+                    cmd = self._parse_joy(joy)
+                else:
+                    cmd = self._parse_joy()
             else:
-                cmd = self._parse_joy()
-        else:
-            cmd = self._parse_joy(joy)
-        self._output_pub.publish(cmd)
+                cmd = self._parse_joy(joy)
+            self._output_pub.publish(cmd)
+        except Exception, e:
+            print 'Error occured while parsing joystick input, error=' + str(e)
 
 if __name__ == '__main__':
     # Start the node

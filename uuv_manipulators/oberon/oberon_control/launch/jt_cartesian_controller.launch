@@ -32,8 +32,11 @@
   </include>
 
   <group ns="/$(arg uuv_name)/$(arg arm_name)">
+    <!-- Starting the kinematics service node -->
     <node name="kinematics_service" pkg="uuv_manipulators_kinematics" type="kinematics_service.py"
       output="screen"/>
+
+    <!-- Starting the Jacobian transpose controller node -->
     <node name="cartesian_controller" pkg="uuv_manipulators_control" type="jt_cartesian_controller.py"
       respawn="false" output="screen">
       <remap from="joy" to="/$(arg uuv_name)/joy"/>

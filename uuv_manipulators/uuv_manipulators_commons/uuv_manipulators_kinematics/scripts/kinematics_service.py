@@ -59,7 +59,9 @@ class KinematicsService(object):
         self._ik_v_kdl = PyKDL.ChainIkSolverVel_pinv(self._arm_interface.chain)
         self._ik_p_kdl = PyKDL.ChainIkSolverPos_NR(self._arm_interface.chain,
                                                    self._arm_interface._fk_p_kdl,
-                                                   self._ik_v_kdl)
+                                                   self._ik_v_kdl,
+                                                   100,
+                                                   1e-6)
         self._dyn_kdl = PyKDL.ChainDynParam(self._arm_interface.chain,
                                             PyKDL.Vector.Zero())
 
@@ -115,42 +117,15 @@ class KinematicsService(object):
         orientation = [req.pose.orientation.x, req.pose.orientation.y,
                        req.pose.orientation.z, req.pose.orientation.w]
 
+        result_ik = self._arm_interface.inverse_kinematics(pos, orientation)
+
         if result_ik is not None:
             for i, name in zip(range(len(self.joint_names)), self.joint_names):
                 out.joints.name.append(name)
                 out.joints.position.append(result_ik[i])
             out.isValid = True
         return out
-
-    def inverse_kinematics(self, position, orientation=None, seed=None):
-        ik = PyKDL.ChainIkSolverVel_pinv(self._arm_interface.chain)
-        pos = PyKDL.Vector(position[0], position[1], position[2])
-        if orientation is not None:
-            rot = PyKDL.Rotation()
-            rot = rot.Quaternion(orientation[0], orientation[1],
-                                 orientation[2], orientation[3])
-        # Populate seed with current angles if not provided
-        seed_array = PyKDL.JntArray(self._arm_interface.n_joints)
-        if seed is not None:
-            seed_array.resize(len(seed))
-            for idx, jnt in enumerate(seed):
-                seed_array[idx] = jnt
-        else:
-            seed_array = self._arm_interface.joints_to_kdl('positions')
-
-        # Make IK Call
-        if orientation:
-            goal_pose = PyKDL.Frame(rot, pos)
-        else:
-            goal_pose = PyKDL.Frame(pos)
-        result_angles = PyKDL.JntArray(self._arm_interface.n_joints)
-
-        if self._ik_p_kdl.CartToJnt(seed_array, goal_pose, result_angles) >= 0:
-            result = np.array(list(result_angles))
-            return result
-        else:
-            return None
-
+        
     def publish_man_index(self):
         # Retrieve current jacobian matrix
         w_msg = Float64()
