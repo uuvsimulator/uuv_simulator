@@ -24,12 +24,12 @@ class ROV_NMB_SMController(DPControllerBase):
     """
     Model-free sliding mode controller based on the work published in [1] and
     [2], or model-free high order sliding mode controller.
-    
-    [1] García-Valdovinos, Luis Govinda, et al. "Modelling, design and robust
+
+    [1] Garcia-Valdovinos, Luis Govinda, et al. "Modelling, design and robust
         control of a remotely operated underwater vehicle." International
         Journal of Advanced Robotic Systems 11.1 (2014): 1.
-    [2] Salgado-Jiménez, Tomás, Luis G. García-Valdovinos, and Guillermo
-        Delgado-Ramírez. "Control of ROVs using a Model-free 2nd-Order Sliding
+    [2] Salgado-Jimenez, Tomas, Luis G. Garcia-Valdovinos, and Guillermo
+        Delgado-Ramirez. "Control of ROVs using a Model-free 2nd-Order Sliding
         Mode Approach." Sliding Mode Control (2011): 347-368.
     """
 
