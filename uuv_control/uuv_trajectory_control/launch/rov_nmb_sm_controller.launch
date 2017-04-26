@@ -12,7 +12,7 @@
   <!-- If the file is not used, read the parameters from the user input -->
   <!-- Caution: no spaces between the parameter values -->
   <!-- The following controller parameters have been optimized for the RexROV
-       vehicle using SMAC
+       vehicle using SMAC (https://github.com/automl/SMAC3)
   -->
   <arg name="K" default="5,5,5,5,5,5"/>
   <arg name="Kd" default="4118.98,4118.98,4118.98,5926.195,5926.195,5926.195"/>
