@@ -2,7 +2,7 @@
   <arg name="record" default="false"/>
 
   <node pkg="rosbag" type="record" name="recording"
-    args="record -O $(find uuv_control_evaluation)/bags/recording.bag
+    args="record -O $(find uuv_evaluation)/bags/recording.bag
       /rexrov/dp_controller/trajectory
       /rexrov/dp_controller/reference
       /rexrov/pose_gt
