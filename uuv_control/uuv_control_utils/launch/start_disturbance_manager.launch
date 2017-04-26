@@ -1,0 +1,71 @@
+<launch>
+  <!-- Vehicle namespace -->
+  <arg name="uuv_name" />
+  <!-- Flag, if true, read disturbance specifications from a file -->
+  <arg name="use_file" default="false" />
+  <!-- Filename -->
+  <arg name="disturbance_file" />
+  <!-- In case the file is not used, then the user can set one current
+    perturbation and one body wrench through the launch file -->
+
+  <!-- Current perturbation -->
+  <!-- The current is applied as an absolute setting -->
+  <arg name="current_starting_time" default="20.0"/>
+  <arg name="current_vel" default="1"/>
+  <arg name="current_horz_angle" default="0.0"/>
+  <arg name="current_vert_angle" default="0.0"/>
+  <arg name="current_duration" default="10"/>
+  <!-- Body wrench -->
+  <!-- Forces and torques are summed up -->
+  <arg name="force_x" default="0"/>
+  <arg name="force_y" default="2000"/>
+  <arg name="force_z" default="0"/>
+  <arg name="torque_x" default="0"/>
+  <arg name="torque_y" default="0"/>
+  <arg name="torque_z" default="0"/>
+  <arg name="wrench_starting_time" default="30"/>
+  <arg name="wrench_duration" default="20"/>
+
+  <group ns="$(arg uuv_name)">
+    <group if="$(arg use_file)">
+        <node pkg="uuv_control_utils"
+          type="disturbance_manager.py"
+          name="disturbance_manager"
+          output="screen">
+          <!-- Load  parameters -->
+          <rosparam file="$(arg disturbance_file)" command="load"/>
+        </node>
+    </group>
+
+    <group unless="$(arg use_file)">
+      <node pkg="uuv_control_utils"
+        type="disturbance_manager.py"
+        name="disturbance_manager"
+        output="screen">
+        <rosparam subst_value="true">
+          disturbances:
+            -
+              type: current
+              starting_time: $(arg current_starting_time)
+              velocity: $(arg current_vel)
+              horizontal_angle: $(arg current_horz_angle)
+              vertical_angle: $(arg current_vert_angle)
+              duration: $(arg current_duration)
+            -
+              type: wrench
+              starting_time: $(arg wrench_starting_time)
+              duration: $(arg wrench_duration)
+              force:
+                - $(arg force_x)
+                - $(arg force_y)
+                - $(arg force_z)
+              torque:
+                - $(arg torque_x)
+                - $(arg torque_y)
+                - $(arg torque_z)
+        </rosparam>
+      </node>
+    </group>
+  </group>
+
+</launch>

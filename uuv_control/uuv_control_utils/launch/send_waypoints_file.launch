@@ -1,0 +1,18 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="filename" default="$(find uuv_control_utils)/config/example_waypoints.yaml"/>
+  <arg name="start_time" default="-1"/>
+
+  <group ns="$(arg uuv_name)">
+    <node pkg="uuv_control_utils"
+          type="send_waypoint_file.py"
+          name="send_waypoint_file"
+          output="screen">
+          <rosparam subst_value="true">
+            filename: $(arg filename)
+            start_time: $(arg start_time)
+          </rosparam>
+    </node>
+  </group>
+
+</launch>
