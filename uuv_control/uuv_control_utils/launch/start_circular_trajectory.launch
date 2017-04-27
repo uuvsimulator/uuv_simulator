@@ -1,0 +1,33 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="start_time" default="-1"/>
+  <arg name="radius" default="8"/>
+  <arg name="center_x" default="0"/>
+  <arg name="center_y" default="0"/>
+  <arg name="center_z" default="-22"/>
+  <arg name="n_points" default="50"/>
+  <!-- Heading offset given in degrees -->
+  <arg name="heading_offset" default="0"/>
+  <arg name="duration" default="0"/>
+  <arg name="max_forward_speed" default="0.5"/>
+
+  <group ns="$(arg uuv_name)">
+    <node pkg="uuv_control_utils"
+      type="start_circular_trajectory.py"
+      name="start_circular_trajectory"
+      output="screen">
+      <rosparam subst_value="true">
+        start_time: $(arg start_time)
+        radius: $(arg radius)
+        center:
+          - $(arg center_x)
+          - $(arg center_y)
+          - $(arg center_z)
+        n_points: $(arg n_points)
+        heading_offset: $(arg heading_offset)
+        duration: $(arg duration)
+        max_forward_speed: $(arg max_forward_speed)
+      </rosparam>
+    </node>
+  </group>
+</launch>

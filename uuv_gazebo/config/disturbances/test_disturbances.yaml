@@ -1,0 +1,38 @@
+disturbances:
+  -
+    type: current
+    starting_time: 5
+    velocity: 0.5
+    horizontal_angle: 0
+    vertical_angle: 0
+    duration: -1
+  -
+    type: wrench
+    starting_time: 100
+    duration: 10
+    force:
+      - 500
+      - 100
+      - 0
+    torque:
+      - 0
+      - 0
+      - 0
+  -
+    type: thruster_state
+    starting_time: 60
+    duration: 20
+    is_on: 0
+    thruster_id: 2
+  -
+    type: thrust_efficiency
+    starting_time: 120
+    duration: 30
+    efficiency: 0.4
+    thruster_id: 0
+  -
+    type: propeller_efficiency
+    starting_time: 80
+    duration: 10
+    efficiency: 0.7
+    thruster_id: 7

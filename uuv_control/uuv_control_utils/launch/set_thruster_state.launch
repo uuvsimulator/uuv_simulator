@@ -1,0 +1,21 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="starting_time" default="0.0" />
+  <arg name="thruster_id" default="0" />
+  <arg name="is_on" default="0"/>
+  <arg name="duration" default="-1"/>
+
+  <group ns="$(arg uuv_name)">
+    <node pkg="uuv_control_utils"
+      type="set_thruster_state.py"
+      name="set_thruster_state"
+      output="screen">
+      <rosparam subst_value="true">
+        starting_time: $(arg starting_time)
+        thruster_id: $(arg thruster_id)
+        is_on: $(arg is_on)
+        duration: $(arg duration)
+      </rosparam>
+    </node>
+  </group>
+</launch>

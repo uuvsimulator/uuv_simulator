@@ -1,0 +1,21 @@
+<launch>
+  <!-- This launch file allows changing the velocity and side slip angle of the current -->
+  <arg name="starting_time" default="0.0"/>
+  <arg name="end_time" default="-1"/>
+  <arg name="current_vel" default="1"/>
+  <arg name="horizontal_angle" default="0.0"/>
+  <arg name="vertical_angle" default="0.0"/>
+
+  <node pkg="uuv_control_utils"
+    type="set_timed_current_perturbation.py"
+    name="set_timed_current_perturbation"
+    output="screen">
+    <rosparam subst_value="true">
+      starting_time: $(arg starting_time)
+      end_time: $(arg end_time)
+      current_velocity: $(arg current_vel)
+      horizontal_angle: $(arg horizontal_angle)
+      vertical_angle: $(arg vertical_angle)
+    </rosparam>
+  </node>
+</launch>

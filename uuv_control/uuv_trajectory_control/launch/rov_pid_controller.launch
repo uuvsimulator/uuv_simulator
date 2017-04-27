@@ -1,0 +1,84 @@
+<launch>
+  <!-- Vehicle namespace -->
+  <arg name="uuv_name"/>
+  <!-- Name of the vehicle model -->
+  <arg name="model_name" default="$(arg uuv_name)"/>
+  <!-- Thruster saturation -->
+  <arg name="saturation" default="1200"/>
+  <!-- Flag set as true to use load controller the parameters from the file  -->
+  <arg name="use_params_file" default="false"/>
+
+  <!-- If the file is not used, read the parameters from the user input -->
+  <!-- Caution: no spaces between the parameter values -->
+  <!-- The following controller parameters have been optimized for the RexROV
+       vehicle using SMAC (https://github.com/automl/SMAC3)
+  -->
+  <arg name="Kp" default="11993.888,11993.888,11993.888,19460.069,19460.069,19460.069"/>
+  <arg name="Kd" default="9077.459,9077.459,9077.459,18880.925,18880.925,18880.925"/>
+  <arg name="Ki" default="321.417,321.417,321.417,2096.951,2096.951,2096.951"/>
+
+  <arg name="controller_config_file" default="$(find uuv_trajectory_control)/config/controllers/pid/$(arg model_name)/params.yaml"/>
+
+  <!-- Start the thruster allocation manager -->
+  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+     <arg name="uuv_name" value="$(arg uuv_name)" />
+     <arg name="model_name" value="$(arg model_name)" />
+   </include>
+
+  <!-- This node just reads the trajectory and waypoint topics and publishes
+       visualization markers for RViz -->
+  <group ns="$(arg uuv_name)">
+    <node pkg="uuv_control_utils"
+          type="trajectory_marker_publisher.py"
+          name="trajectory_marker_publisher"
+          output="screen">
+      <remap from="trajectory" to="dp_controller/trajectory"/>
+      <remap from="waypoints" to="dp_controller/waypoints"/>
+    </node>
+  </group>
+
+  <group if="$(arg use_params_file)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_trajectory_control"
+            type="rov_pid_controller.py"
+            name="rov_pid_controller"
+            output="screen">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input"/>
+        <rosparam file="$(arg controller_config_file)" command="load"/>
+      </node>
+    </group>
+  </group>
+
+  <group unless="$(arg use_params_file)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_trajectory_control"
+            type="rov_pid_controller.py"
+            name="rov_pid_controller"
+            output="screen">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input"/>
+        <!-- Controller parameters -->
+        <rosparam subst_value="true">
+          saturation: $(arg saturation)
+          Kp: [$(arg Kp)]
+          Kd: [$(arg Kd)]
+          Ki: [$(arg Ki)]
+        </rosparam>
+      </node>
+    </group>
+  </group>
+
+</launch>

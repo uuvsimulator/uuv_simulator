@@ -1,0 +1,21 @@
+<launch>
+  <arg name="record" default="false"/>
+
+  <node pkg="rosbag" type="record" name="recording"
+    args="record -O $(find uuv_evaluation)/bags/recording.bag
+      /rexrov/dp_controller/trajectory
+      /rexrov/dp_controller/reference
+      /rexrov/pose_gt
+      /hydrodynamics/current_velocity
+      /rexrov/thruster_manager/input
+      /rexrov/wrench_perturbation
+      /rexrov/thrusters/0/thrust
+      /rexrov/thrusters/1/thrust
+      /rexrov/thrusters/2/thrust
+      /rexrov/thrusters/3/thrust
+      /rexrov/thrusters/4/thrust
+      /rexrov/thrusters/5/thrust
+      /rexrov/thrusters/6/thrust
+      /rexrov/thrusters/7/thrust"
+    if="$(arg record)"/>
+</launch>

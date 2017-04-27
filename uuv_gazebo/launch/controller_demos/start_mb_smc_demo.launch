@@ -1,0 +1,27 @@
+<launch>
+    <arg name="record" default="false"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="worlds/empty_underwater.world"/>
+        <arg name="paused" value="false"/>
+    </include>
+
+    <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
+        <arg name="x" default="30"/>
+        <arg name="y" default="0"/>
+        <arg name="z" default="-20"/>
+        <arg name="yaw" default="0"/>
+    </include>
+
+    <include file="$(find uuv_trajectory_control)/launch/rov_mb_sm_controller.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="model_name" value="rexrov"/>
+    </include>
+
+    <include file="$(find uuv_gazebo)/launch/controller_demos/record_demo.launch">
+      <arg name="record" value="$(arg record)"/>
+    </include>
+
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/controller_demo.rviz"/>
+
+</launch>
