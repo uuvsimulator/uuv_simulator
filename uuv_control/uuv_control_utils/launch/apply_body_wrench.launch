@@ -1,0 +1,38 @@
+<launch>
+  <!-- This launch file allows the user to launch wrench
+       disturbances to a vehicle
+  -->
+  <arg name="uuv_name"/>
+  <arg name="force_x" default="0"/>
+  <arg name="force_y" default="0"/>
+  <arg name="force_z" default="0"/>
+
+  <arg name="torque_x" default="0"/>
+  <arg name="torque_y" default="0"/>
+  <arg name="torque_z" default="0"/>
+
+  <arg name="starting_time" default="0"/>
+
+  <arg name="duration" default="1"/>
+
+  <group ns="$(arg uuv_name)">
+    <node pkg="uuv_control_utils"
+      type="apply_body_wrench.py"
+      name="apply_body_wrench"
+      output="screen">
+
+      <rosparam subst_value="true">
+        starting_time: $(arg starting_time)
+        force:
+          - $(arg force_x)
+          - $(arg force_y)
+          - $(arg force_z)
+        torque:
+          - $(arg torque_x)
+          - $(arg torque_y)
+          - $(arg torque_z)
+        duration: $(arg duration)
+      </rosparam>
+    </node>
+  </group>
+</launch>

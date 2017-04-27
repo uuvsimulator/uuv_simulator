@@ -1,0 +1,10 @@
+<launch>
+  <arg name="uuv_name" />
+
+  <include file="$(find uuv_control_utils)/launch/start_disturbance_manager.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)" />
+    <arg name="use_file" value="1" />
+    <arg name="disturbance_file" value="$(find uuv_gazebo)/config/disturbances/test_disturbances.yaml" />
+  </include>
+
+</launch>
