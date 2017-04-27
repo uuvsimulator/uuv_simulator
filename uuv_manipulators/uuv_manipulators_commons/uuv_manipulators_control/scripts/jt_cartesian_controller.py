@@ -36,8 +36,8 @@ class JTCartesianController(CartesianController):
         """
         CartesianController.__init__(self)
         # Retrieve the controller parameters from the parameter server
-        Kd_tag = '~cartesian_controller/gains/Kd'
-        Kp_tag = '~cartesian_controller/gains/Kp'
+        Kd_tag = '~Kd'
+        Kp_tag = '~Kp'
         if not rospy.has_param(Kd_tag):
             rospy.ROSException('Kd gain vector not available for tag=%s' % Kd_tag)
         if not rospy.has_param(Kp_tag):
@@ -55,27 +55,12 @@ class JTCartesianController(CartesianController):
 
         self._run()
 
-    def _get_goal(self):
-        if self._command is None or rospy.get_time() - self._last_joy_update > 0.1:
-            return self._last_goal
-
-        # Compute the step from the input velocity
-        step_frame = PyKDL.Frame(
-            PyKDL.Rotation.RPY(self._command[3],
-                               self._command[4],
-                               self._command[5]),
-            PyKDL.Vector(self._command[0],
-                         self._command[1],
-                         self._command[2]))
-        return self._last_goal * step_frame
-
     def _update(self):
         # Leave if ROS is not running or command is not valid
         if rospy.is_shutdown() or self._last_goal is None:
             return
         # Calculate the goal pose
         goal = self._get_goal()
-        # TODO(mam0box) Test for singularities
 
         # End-effector's pose
         ee_pose = self._arm_interface.get_ee_pose_as_frame()
@@ -95,6 +80,7 @@ class JTCartesianController(CartesianController):
         # Store current pose target
         self._last_goal = goal
 
+        self.publish_goal()
         self.publish_joint_efforts(tau)
 
 if __name__ == '__main__':
