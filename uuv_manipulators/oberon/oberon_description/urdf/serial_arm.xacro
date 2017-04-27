@@ -281,7 +281,7 @@
       <parent link="${namespace}/base"/>
       <child link="${namespace}/shoulder_link"/>
       <axis xyz="0 0 1"/>
-      <dynamics damping="20" friction="50"/>
+      <dynamics damping="50" friction="120"/>
       <limit lower="-1.0471975511965976" upper="1.0471975511965976" velocity="0.17" effort="10000"/>
     </joint>
 
@@ -290,7 +290,7 @@
         <child link="${namespace}/upper_arm"/>
         <origin xyz="0.07 0.0 0.028" rpy="0 0 0"/>
         <axis xyz="0 -1 0"/>
-        <dynamics damping="20" friction="50"/>
+        <dynamics damping="50" friction="120"/>
         <limit lower="-0.55850536063818546" upper="1.5707963267948966" velocity=".17" effort="10000"/>
     </joint>
 
@@ -298,7 +298,7 @@
       <parent link="${namespace}/upper_arm"/>
       <child link="${namespace}/forearm_axis"/>
       <origin xyz="0.579 0.0 0" rpy="0 1.5707963267948966 0"/>
-      <dynamics damping="20" friction="50"/>
+      <dynamics damping="50" friction="120"/>
       <axis xyz="0 -1 0"/>
       <limit lower="-1.5358897417550099" upper="0.76794487087750496" velocity=".13" effort="10000"/>
     </joint>
@@ -315,7 +315,7 @@
       <child link="${namespace}/wrist_1"/>
       <origin xyz="0.139 0.0 0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <dynamics damping="20" friction="50"/>
+      <dynamics damping="50" friction="120"/>
       <limit lower="-2.3911010752322315" upper="2.3212879051524582" velocity=".085" effort="10000"/>
     </joint>
 
@@ -324,7 +324,7 @@
       <child link="${namespace}/wrist_2"/>
       <origin xyz="0.362 0.0 0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <dynamics damping="20" friction="50"/>
+      <dynamics damping="50" friction="120"/>
       <limit lower="-1.6406094968746698" upper="0.4537856055185257" velocity=".26" effort="10000"/>
     </joint>
 
@@ -333,7 +333,7 @@
       <child link="${namespace}/end_effector"/>
       <origin xyz="0.232 0 0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <dynamics damping="10" friction="60"/>
+      <dynamics damping="50" friction="120"/>
     </joint>
 
     <!-- Transmissions -->
