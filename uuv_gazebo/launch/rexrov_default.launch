@@ -8,6 +8,9 @@
   The default joystick configuration is set for the XBox 360 controller
   -->
   <arg name="namespace" default="rexrov"/>
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-70"/>
   <arg name="joy_id" default="0"/>
   <arg name="axis_yaw" default="0"/>
   <arg name="axis_x" default="4"/>
@@ -17,9 +20,9 @@
   <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
     <arg name="mode" value="default"/>
     <arg name="namespace" value="$(arg namespace)"/>
-    <arg name="x" value="35"/>
-    <arg name="y" value="50"/>
-    <arg name="z" value="-30"/>
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
   </include>
 
   <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
@@ -43,7 +46,7 @@
     </node>
   </group>
 
-  <include file="$(find uuv_vehicle_teleop)/launch/uuv_teleop.launch">
+  <include file="$(find uuv_teleop)/launch/uuv_teleop.launch">
     <arg name="uuv_name" value="$(arg namespace)"/>
     <arg name="joy_id" value="$(arg joy_id)"/>
     <arg name="output_topic" value="cmd_vel"/>
@@ -53,5 +56,7 @@
     <arg name="axis_y" value="$(arg axis_y)"/>
     <arg name="axis_z" value="$(arg axis_z)"/>
   </include>
+
+  <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/rexrov_default.rviz"/>
 
 </launch>

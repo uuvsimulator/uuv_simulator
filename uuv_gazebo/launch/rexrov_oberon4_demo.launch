@@ -9,7 +9,7 @@
   -->
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>
-  <arg name="z" default="-20"/>
+  <arg name="z" default="-70"/>
   <arg name="joy_id" default="0"/>
   <arg name="namespace" default="rexrov"/>
 
@@ -60,7 +60,7 @@
     </node>
   </group>
 
-  <include file="$(find uuv_vehicle_teleop)/launch/uuv_teleop.launch">
+  <include file="$(find uuv_teleop)/launch/uuv_teleop.launch">
     <arg name="uuv_name" value="$(arg namespace)"/>
     <arg name="joy_id" value="$(arg joy_id)"/>
     <arg name="output_topic" value="cmd_vel"/>
@@ -85,4 +85,6 @@
     <arg name="axis_shoulder" value="$(arg axis_oberon_shoulder)"/>
     <arg name="axis_wrist" value="$(arg axis_oberon_wrist)"/>
   </include>
+
+  <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/rexrov_default.rviz"/>
 </launch>
