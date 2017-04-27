@@ -54,31 +54,31 @@
             axis_gain: 0.01
             topic: /$(arg uuv_name)/$(arg arm_name)/azimuth/controller/command
             controller:
-              p: 800
+              p: 1000
               i: 2
-              d: 200
+              d: 100
           shoulder:
             joint_input_axis: $(arg axis_shoulder)
             axis_gain: 0.01
             topic: /$(arg uuv_name)/$(arg arm_name)/shoulder/controller/command
             controller:
-              p: 800
-              i: 20
-              d: 200
+              p: 1000
+              i: 2
+              d: 100
           elbow:
             joint_input_axis: $(arg axis_elbow)
             axis_gain: 0.01
             topic: /$(arg uuv_name)/$(arg arm_name)/elbow/controller/command
             controller:
-              p: 800
+              p: 1000
               i: 2
-              d: 200
+              d: 100
           roll:
             joint_input_axis: $(arg axis_roll)
             axis_gain: 0.01
             topic: /$(arg uuv_name)/$(arg arm_name)/roll/controller/command
             controller:
-              p: 800
+              p: 200
               i: 0
               d: 0
           pitch:
@@ -86,7 +86,7 @@
             axis_gain: 0.01
             topic: /$(arg uuv_name)/$(arg arm_name)/pitch/controller/command
             controller:
-              p: 800
+              p: 200
               i: 0
               d: 0
           wrist:
@@ -94,7 +94,7 @@
             axis_gain: 0.05
             topic: /$(arg uuv_name)/$(arg arm_name)/wrist/controller/command
             controller:
-              p: 600
+              p: 200
               i: 0
               d: 0
       </rosparam>
