@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <name>uuv_teleop</name>
+  <version>0.0.0</version>
+  <description>ROS nodes to generate command topics for vehicles and manipulators using a joystick input</description>
+
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="sebastian.scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+
+  <author email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</author>
+  <author email="sebastian.scherer2@de.bosch.com">Sebastian Scherer</author>
+  <author email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</author>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>joy</build_depend>
+  <build_depend>joy_teleop</build_depend>
+
+  <run_depend>joy</run_depend>
+  <run_depend>joy_teleop</run_depend>
+
+  <export>
+
+  </export>
+</package>
