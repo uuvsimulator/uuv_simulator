@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Some examples of sensors that can be added to the vehicle frame
+  Set the origin of the sensor frames correctly for your application
+  Look into the sensor macros in the package uuv_sensor_plugins_ros/urdf for
+  more examples.
+  -->
+
+  <!-- Mount a 3D pose sensor -->
+  <gazebo>
+    <plugin name="pose_3d_plugin" filename="libgazebo_ros_p3d.so">
+      <robotNamespace>${namespace}</robotNamespace>
+      <bodyName>${namespace}/base_link</bodyName>
+      <topicName>pose_gt</topicName>
+      <frameName>world</frameName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <updateRate>30</updateRate>
+    </plugin>
+  </gazebo>
+
+  <!-- Forward-looking sonar sensor -->
+  <xacro:forward_multibeam_p900 namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:forward_multibeam_p900>
+
+  <!-- DVL  -->
+  <xacro:default_dvl namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:default_dvl>
+
+  <!-- RPT  -->
+  <xacro:default_rpt namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:default_rpt>
+
+  <!-- Pressure  -->
+  <xacro:default_pressure namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:default_pressure>
+
+  <!-- IMU  -->
+  <xacro:default_imu namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:default_imu>
+
+  <!-- Mount a camera -->
+  <xacro:default_camera namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:default_camera>
+
+</robot>

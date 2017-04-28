@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Loading some constants -->
+  <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
+  <!-- Loading file with sensor macros -->
+  <xacro:include filename="$(find uuv_sensor_plugins_ros)/urdf/sensor_snippets.xacro"/>
+  <!-- Loading vehicle's specific macros -->
+  <xacro:include filename="$(find uuv_tutorial_rov_model)/models/rov_example/urdf/rov_example_snippets.xacro"/>
+
+  <!--
+    Vehicle's parameters (remember to enter the model parameters below)
+  -->
+
+  <xacro:property name="mass" value="0"/>
+  <xacro:property name="volume" value="0"/>
+  <!-- Center of gravity -->
+  <xacro:property name="cog" value="0 0 0"/>
+  <!-- Center of buoyancy -->
+  <xacro:property name="cob" value="0 0 0"/>
+  <!-- Fluid density -->
+  <xacro:property name="rho" value="1028"/>
+
+  <!-- Describing the dimensions of the vehicle's bounding box -->
+  <xacro:property name="length" value="0"/>
+  <xacro:property name="width"  value="0"/>
+  <xacro:property name="height" value="0"/>
+
+  <!--
+  Visual mesh file for the vehicle, usually in DAE (Collada) format. Be sure to store the
+  mesh with the origin of the mesh on the same position of the center of mass, otherwise
+  the mesh pose will have to be corrected below in the <visual> block.
+  Open the meshes for the RexROV vehicle in Blender to see an example on the mesh placement.
+  -->
+  <xacro:property name="visual_mesh_file" value="file://$(find uuv_tutorial_rov_model)/mesh/vehicle.dae"/>
+
+  <!-- Collision geometry mesh, usually in STL format (it is recommended to keep
+  this geometry as simple as possible to improve the performance the physics engine
+  regarding the computation of collision forces) -->
+  <xacro:property name="collision_mesh_file" value="file://$(find uuv_tutorial_rov_model)/mesh/vehicle.stl"/>
+
+  <!-- Vehicle macro -->
+  <xacro:macro name="rov_example_base" params="namespace debug">
+
+    <!-- Rigid body description of the base link -->
+    <link name="${namespace}/base_link">
+      <inertial>
+        <mass value="${mass}" />
+        <origin xyz="${cog}" rpy="0 0 0"/>
+        <inertia ixx="0" ixy="0" ixz="0"
+                 iyy="0" iyz="0"
+                 izz="0" />
+      </inertial>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="${visual_mesh_file}" scale="1 1 1" />
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="${collision_mesh_file}" scale="1 1 1" />
+        </geometry>
+      </collision>
+    </link>
+
+  <gazebo reference="${namespace}/base_link">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <!-- Dummy link for the frame in SNAME standard, Gazebo does not offer
+  the option to change from ENU standard yet-->
+  <xacro:dummy_link name="${namespace}/ned_link" />
+
+  <joint name="ned_joint" type="revolute">
+    <!-- This is revolute and not static since gazebo would remove ned_link -->
+    <origin xyz="0 0 0" rpy="${pi} 0 0"/>
+    <parent link="${namespace}/base_link"/>
+    <child link="${namespace}/ned_link"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+
+    <!-- Set up hydrodynamic plugin -->
+    <gazebo>
+      <plugin name="${namespace}_uuv_plugin" filename="libunderwater_object_ros_plugin.so">
+        <!-- Fluid density to be used in the computation of buoyancy forces
+        for all links specified below -->
+        <fluid_density>${rho}</fluid_density>
+
+        <!-- Name of the current velocity topic -->
+        <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+
+        <!-- Debug flag, if set to true, added-mass, damping and restoring
+        forces and moments will be published in separate topics -->
+        <debug>${debug}</debug>
+
+        <!-- List of hydrodynamic models this robot's links -->
+        <link name="${namespace}/base_link">
+          <!-- This flag will make the link neutrally buoyant -->
+          <neutrally_buoyant>0</neutrally_buoyant>
+
+          <!-- Link's volume -->
+          <volume>${volume}</volume>
+
+          <!-- Link's bounding box, it is used to recalculate the immersed
+          volume when close to the surface.
+          This is a workaround the invalid bounding box given by Gazebo-->
+          <box>
+            <width>${width}</width>
+            <length>${length}</length>
+            <height>${height}</height>
+          </box>
+
+          <!-- Center of buoyancy -->
+          <center_of_buoyancy>${cob}</center_of_buoyancy>
+
+          <!--
+          ----------------------------------------------------
+          ----------------------------------------------------
+          Choose one of the hydrodynamic models below, all are based on
+          Fossen's equation of motion for underwater vehicles
+
+          Reference:
+          [1] Fossen, Thor I. Handbook of marine craft hydrodynamics and motion
+              control. John Wiley & Sons, 2011.
+          ----------------------------------------------------
+          ---------------------------------------------------->
+
+          <!-- Fossen's equation of motion -->
+          <hydrodynamic_model>
+            <type>fossen</type>
+            <added_mass>
+              0 0 0 0 0 0
+              0 0 0 0 0 0
+              0 0 0 0 0 0
+              0 0 0 0 0 0
+              0 0 0 0 0 0
+              0 0 0 0 0 0
+            </added_mass>
+            <!--
+            The linear damping coefficients can be provided as a diagonal (6 elements)
+            or a full matrix (36 coefficients), like the added-mass coefficients above
+            -->
+            <linear_damping>
+              0 0 0 0 0 0
+            </linear_damping>
+            <!--
+            The linear damping coefficients proportional to the forward speed
+            can be provided as a diagonal (6 elements) or a full matrix (36 coefficients),
+            like the added-mass coefficients above.
+            This matrix is mostly useful for slender bodies (e.g. AUVs with torpedo shape)
+            -->
+            <linear_damping_forward_speed>
+              0 0 0 0 0 0
+            </linear_damping_forward_speed>
+            <!--
+            The quadratic damping coefficients can be provided as a diagonal (6 elements)
+            or a full matrix (36 coefficients), like the added-mass coefficients above
+            -->
+            <quadratic_damping>
+              0 0 0 0 0 0
+            </quadratic_damping>
+          </hydrodynamic_model>
+
+          <!-- This computes the added-mass and damping parameters for a sphere
+          in the fluid with the given radius -->
+          <hydrodynamic_model>
+            <type>sphere</type>
+            <radius>0</radius>
+          </hydrodynamic_model>
+
+        </link>
+      </plugin>
+    </gazebo>
+
+    <!-- Include the thruster modules -->
+    <xacro:include filename="$(find uuv_tutorial_rov_model)/urdf/rov_example_thrusters.xacro"/>
+
+    <!-- Include the sensor modules -->
+    <xacro:include filename="$(find uuv_tutorial_rov_model)/urdf/rov_example_sensors.xacro"/>
+
+  </xacro:macro>
+
+</robot>
