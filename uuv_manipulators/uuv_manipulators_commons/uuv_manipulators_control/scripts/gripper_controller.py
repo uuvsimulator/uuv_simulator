@@ -108,7 +108,8 @@ class GripperController:
 
     def _update(self):
         # Compute the necessary effort for the requested joint position
-        self._pos_goal = self._ratio_goal * (self._gripper.fully_open_pos - self._gripper.closed_pos) + self._gripper.closed_pos
+        self._pos_goal = self._ratio_goal * (self._gripper.fully_open_pos - self._gripper.closed_pos) + \
+                         self._gripper.closed_pos
 
         # Set the torque for the control joint
         error = self._pos_goal - self._gripper.control_joint_position
@@ -124,17 +125,22 @@ class GripperController:
             pass
 
     def _joy_callback(self, joy):
-        if not joy.buttons[self._deadman_button] and self._deadman_button != -1:
-            return
-        for n in self._exclusion_buttons:
-            if joy.buttons[n] == 1:
-                return
+        try:
+            if self._deadman_button > -1:
+                if not joy.buttons[self._deadman_button]:
+                    return
+            for n in self._exclusion_buttons:
+                if joy.buttons[n] == 1:
+                    return
 
-        self._ratio_goal += self._joy_gain * (joy.buttons[self._open_button] - joy.buttons[self._close_button])
-        if self._ratio_goal < 0:
-            self._ratio_goal = 0.0
-        if self._ratio_goal > 1:
-            self._ratio_goal = 1.0
+            self._ratio_goal += self._joy_gain * (joy.buttons[self._open_button] - joy.buttons[self._close_button])
+            if self._ratio_goal < 0:
+                self._ratio_goal = 0.0
+            if self._ratio_goal > 1:
+                self._ratio_goal = 1.0
+        except Exception, e:
+            print 'Error occurred while parsing joystick input, check if the joy_id corresponds to the joystick ' \
+                  'being used. message=%s' % str(e)
 
 
 if __name__ == '__main__':
