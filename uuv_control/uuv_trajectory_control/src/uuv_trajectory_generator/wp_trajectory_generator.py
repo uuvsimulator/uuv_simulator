@@ -351,9 +351,9 @@ class WPTrajectoryGenerator(object):
             self._has_started = True
             self._has_ended = False
 
-        if t - self.interpolator.start_time > self.interpolator.max_time or t - self.interpolator.start_time < 0:
+        if t > self.interpolator.max_time or t - self.interpolator.start_time < 0:
             self._has_started = False
-            if t - self.interpolator.start_time > self.interpolator.max_time:
+            if t > self.interpolator.max_time:
                 self._has_ended = True
         else:
             self._has_started = True
