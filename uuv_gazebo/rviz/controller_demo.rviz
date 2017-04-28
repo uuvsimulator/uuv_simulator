@@ -1,13 +1,12 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /Global Options1
         - /Status1
         - /Odometry1
-        - /Camera1
         - /RobotModel1
         - /Pose1
         - /Path2
@@ -15,7 +14,7 @@ Panels:
         - /Waypoint Path1
         - /Current Velocity Marker1
       Splitter Ratio: 0.5
-    Tree Height: 526
+    Tree Height: 510
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -34,7 +33,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: Image
 Visualization Manager:
   Class: ""
   Displays:
@@ -88,28 +87,6 @@ Visualization Manager:
       Position Tolerance: 0.100000001
       Topic: /rexrov/pose_gt
       Value: true
-    - Class: rviz/Camera
-      Enabled: true
-      Image Rendering: background and overlay
-      Image Topic: /rexrov/rexrov/camera/camera_image
-      Name: Camera
-      Overlay Alpha: 0.5
-      Queue Size: 2
-      Transport Hint: raw
-      Unreliable: false
-      Value: true
-      Visibility:
-        Current Velocity Marker: true
-        Grid: true
-        Marker: true
-        Odometry: true
-        Path: true
-        Pose: true
-        RobotModel: true
-        Value: true
-        Waypoint Path: true
-        Waypoints: true
-      Zoom Factor: 1
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -268,7 +245,7 @@ Visualization Manager:
       Marker Topic: /rexrov/waypoint_markers
       Name: Waypoints
       Namespaces:
-        "": true
+        {}
       Queue Size: 1
       Value: true
     - Alpha: 1
@@ -309,6 +286,118 @@ Visualization Manager:
         {}
       Queue Size: 100
       Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /rexrov/rexrov/camera/camera_image
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        rexrov/base_footprint:
+          Value: true
+        rexrov/base_link:
+          Value: true
+        rexrov/base_stabilized:
+          Value: true
+        rexrov/camera_link:
+          Value: true
+        rexrov/dvl_link:
+          Value: true
+        rexrov/dvl_sonar0_link:
+          Value: true
+        rexrov/dvl_sonar1_link:
+          Value: true
+        rexrov/dvl_sonar2_link:
+          Value: true
+        rexrov/dvl_sonar3_link:
+          Value: true
+        rexrov/imu_link:
+          Value: true
+        rexrov/ned_link:
+          Value: true
+        rexrov/pose_sensor_link:
+          Value: true
+        rexrov/pressure_link:
+          Value: true
+        rexrov/rpt_link:
+          Value: true
+        rexrov/thruster_0:
+          Value: true
+        rexrov/thruster_1:
+          Value: true
+        rexrov/thruster_2:
+          Value: true
+        rexrov/thruster_3:
+          Value: true
+        rexrov/thruster_4:
+          Value: true
+        rexrov/thruster_5:
+          Value: true
+        rexrov/thruster_6:
+          Value: true
+        rexrov/thruster_7:
+          Value: true
+        world:
+          Value: true
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          rexrov/base_footprint:
+            rexrov/base_stabilized:
+              rexrov/base_link:
+                rexrov/camera_link:
+                  {}
+                rexrov/dvl_link:
+                  rexrov/dvl_sonar0_link:
+                    {}
+                  rexrov/dvl_sonar1_link:
+                    {}
+                  rexrov/dvl_sonar2_link:
+                    {}
+                  rexrov/dvl_sonar3_link:
+                    {}
+                rexrov/imu_link:
+                  {}
+                rexrov/ned_link:
+                  {}
+                rexrov/pose_sensor_link:
+                  {}
+                rexrov/pressure_link:
+                  {}
+                rexrov/rpt_link:
+                  {}
+                rexrov/thruster_0:
+                  {}
+                rexrov/thruster_1:
+                  {}
+                rexrov/thruster_2:
+                  {}
+                rexrov/thruster_3:
+                  {}
+                rexrov/thruster_4:
+                  {}
+                rexrov/thruster_5:
+                  {}
+                rexrov/thruster_6:
+                  {}
+                rexrov/thruster_7:
+                  {}
+      Update Interval: 0
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 9; 126; 162
@@ -333,7 +422,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 19.9027252
+      Distance: 43.2476997
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -353,14 +442,14 @@ Visualization Manager:
       Yaw: 0.563568175
     Saved: ~
 Window Geometry:
-  Camera:
-    collapsed: false
   Displays:
     collapsed: false
-  Height: 1056
+  Height: 1176
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000016a0000039afc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005e00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000000280000029c000000d000fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000c00430061006d00650072006101000002ca000000f80000001600ffffff000000010000010f0000039afc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a0056006900650077007301000000280000039a000000a800fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007530000003efc0100000002fb0000000800540069006d00650100000000000007530000028200fffffffb0000000800540069006d00650100000000000004500000000000000000000004ce0000039a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Image:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd00000004000000000000016a00000412fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005e00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000000280000023e000000d000fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000c00430061006d0065007200610100000260000000160000000000000000fb0000000a0049006d006100670065010000026c000001ce0000001600ffffff000000010000010f00000412fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000002800000412000000a800fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007530000003efc0100000002fb0000000800540069006d00650100000000000007530000028200fffffffb0000000800540069006d00650100000000000004500000000000000000000004ce0000041200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -370,5 +459,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1875
-  X: 45
+  X: 1965
   Y: 24
