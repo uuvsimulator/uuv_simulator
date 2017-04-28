@@ -11,7 +11,7 @@
   <!-- Heading offset given in degrees -->
   <arg name="heading_offset" default="0"/>
   <arg name="duration" default="150"/>
-  <arg name="max_forward_speed" default="0.6"/>
+  <arg name="max_forward_speed" default="0.3"/>
 
   <group ns="$(arg uuv_name)">
     <node pkg="uuv_control_utils"
