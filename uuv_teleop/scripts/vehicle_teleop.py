@@ -174,7 +174,8 @@ class VehicleTeleop:
             self._home_pressed_pub.publish(
                 Bool(bool(joy.buttons[self._home_button])))
         except Exception, e:
-            print 'Error occured while parsing joystick input, error=' + str(e)
+            print 'Error occurred while parsing joystick input, check if the joy_id corresponds to the joystick ' \
+                  'being used. message=%s' % str(e)
 
 if __name__ == '__main__':
     # Start the node

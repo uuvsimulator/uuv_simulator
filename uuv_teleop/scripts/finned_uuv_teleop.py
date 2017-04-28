@@ -98,23 +98,27 @@ class FinnedUUVControllerNode:
         if not self._ready:
             return
 
-        thrust = msg.axes[self._joy_axis['axis_thruster']] * \
-            self._thruster_params['max_thrust']
+        try:
+            thrust = msg.axes[self._joy_axis['axis_thruster']] * \
+                self._thruster_params['max_thrust']
 
-        rpy = numpy.array([msg.axes[self._joy_axis['axis_roll']],
-                           msg.axes[self._joy_axis['axis_pitch']],
-                           msg.axes[self._joy_axis['axis_yaw']]])
-        fins = self._rpy_to_fins.dot(rpy)
+            rpy = numpy.array([msg.axes[self._joy_axis['axis_roll']],
+                               msg.axes[self._joy_axis['axis_pitch']],
+                               msg.axes[self._joy_axis['axis_yaw']]])
+            fins = self._rpy_to_fins.dot(rpy)
 
-        self._thruster_model.publish_command(thrust)
+            self._thruster_model.publish_command(thrust)
 
-        for i in range(self._n_fins):
-            cmd = FloatStamped()
-            cmd.data = fins[i]
-            self._pub_cmd[i].publish(cmd)
+            for i in range(self._n_fins):
+                cmd = FloatStamped()
+                cmd.data = fins[i]
+                self._pub_cmd[i].publish(cmd)
 
-        if not self._ready:
-            return
+            if not self._ready:
+                return
+        except Exception, e:
+            print 'Error occurred while parsing joystick input, check if the joy_id corresponds to the joystick ' \
+                  'being used. message=%s' % str(e)
 
 
 if __name__ == '__main__':
