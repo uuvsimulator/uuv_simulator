@@ -445,22 +445,30 @@ class DPControllerLocalPlanner(object):
 
         if not self._station_keeping_on and self._traj_running:
             if self._smooth_approach_on:
+                # Generate extra waypoint before the initial waypoint
                 self._calc_smooth_approach()
                 self._smooth_approach_on = False
+            # Get interpolated reference from the reference trajectory
             self._this_ref_pnt = self._traj_interpolator.interpolate(t)
+
             if not self._traj_running:
                 self._traj_running = True
 
             if (self._this_ref_pnt is None and self._traj_running) or \
                (self._traj_running and self._traj_interpolator.has_finished()):
-               self._display_message('Trajectory completed!')
-               self._this_ref_pnt.vel = np.zeros(6)
-               self._this_ref_pnt.acc = np.zeros(6)
-               self.set_station_keeping(True)
-               self.set_automatic_mode(False)
-               self.set_trajectory_running(False)
+                # Trajectory ended, start station keeping mode
+                self._display_message('Trajectory completed!')
+                self._this_ref_pnt.vel = np.zeros(6)
+                self._this_ref_pnt.acc = np.zeros(6)
+                self.set_station_keeping(True)
+                self.set_automatic_mode(False)
+                self.set_trajectory_running(False)
         elif self._this_ref_pnt is None:
+            # Use the latest position and heading of the vehicle from the odometry to enter station keeping mode
             self._this_ref_pnt = deepcopy(self._vehicle_pose)
+            # Set roll and pitch reference to zero
+            yaw = self._this_ref_pnt.rot[2]
+            self._this_ref_pnt.rot = [0, 0, yaw]
             self.set_automatic_mode(False)
 
         return self._this_ref_pnt

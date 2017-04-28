@@ -65,12 +65,12 @@ class PathGenerator(object):
 
     @property
     def max_time(self):
-        return self._max_time
+        return self._max_time + self._start_time
 
     @max_time.setter
     def max_time(self, time):
         assert time > 0, 'Invalid negative time'
-        self._max_time = time
+        self._max_time = time - self._start_time
 
     @property
     def start_time(self):

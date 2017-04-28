@@ -234,12 +234,12 @@ class WPTrajectoryGenerator(object):
         if A == 0.0:
             return 0.0, 0.0
 
-        v = (1.0 / A) * (sx * (st * st4 - st2 * st3) + \
-                         stx * (st2 * st2 - n * st4) + \
+        v = (1.0 / A) * (sx * (st * st4 - st2 * st3) +
+                         stx * (st2 * st2 - n * st4) +
                          st2x * (n * st3 - st * st2))
 
-        a = (2.0 / A) * (sx * (st2 * st2 - st * st3) + \
-                         stx * (n * st3 - st * st2) + \
+        a = (2.0 / A) * (sx * (st2 * st2 - st * st3) +
+                         stx * (n * st3 - st * st2) +
                          st2x * (st * st - n * st2))
         return v, a
 
@@ -287,7 +287,7 @@ class WPTrajectoryGenerator(object):
         # Generate position and rotation quaternion for the current path
         # generator method
         pnt = self.interpolator.generate_pnt(
-            cur_s, cur_s * self.interpolator.max_time + self.interpolator.start_time)
+            cur_s, cur_s * (self.interpolator.max_time - self.interpolator.start_time) + self.interpolator.start_time)
         if self._use_finite_diff:
             # Set linear velocity
             pnt.vel = self._generate_vel(cur_s)
@@ -299,7 +299,7 @@ class WPTrajectoryGenerator(object):
             for ti in np.arange(pnt.t - self._regression_window / 2, pnt.t + self._regression_window, self._t_step):
                 if ti < 0:
                     si = 0
-                elif ti > self.interpolator.max_time:
+                elif ti > self.interpolator.max_time - self.interpolator.start_time:
                     si = 1
                 else:
                     si = (ti - self.interpolator.start_time) / self.interpolator.max_time
