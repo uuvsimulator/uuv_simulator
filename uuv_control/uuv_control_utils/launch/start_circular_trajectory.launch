@@ -2,8 +2,8 @@
   <arg name="uuv_name" />
   <arg name="start_time" default="-1"/>
   <arg name="radius" default="8"/>
-  <arg name="center_x" default="0"/>
-  <arg name="center_y" default="0"/>
+  <arg name="center_x" default="4"/>
+  <arg name="center_y" default="2"/>
   <arg name="center_z" default="-22"/>
   <arg name="n_points" default="50"/>
   <!-- Heading offset given in degrees -->
