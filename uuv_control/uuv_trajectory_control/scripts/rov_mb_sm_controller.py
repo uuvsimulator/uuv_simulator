@@ -109,41 +109,41 @@ class ROV_MB_SMController(DPControllerBase):
 
         # Enable(1) / disable(0) integral term in the sliding surface
         if rospy.has_param('~enable_integral_term'):
-            self._sliding_int = bool(rospy.get_param('~enable_integral_term'))
+            self._sliding_int = rospy.get_param('~enable_integral_term')
         else:
-            self._sliding_int = False
+            self._sliding_int = 0
 
         # Enable(1) / disable(0) adaptive uncertainty upper boundaries for
         # robust control
         if rospy.has_param('~adaptive_bounds'):
-            self._adaptive_bounds = bool(rospy.get_param('~adaptive_bounds'))
+            self._adaptive_bounds = rospy.get_param('~adaptive_bounds')
         else:
-            self._adaptive_bounds = True
+            self._adaptive_bounds = 1
 
         # Enable(1) / disable(0) constant uncertainty upper boundaries for
         # robust control
         if rospy.has_param('~constant_bound'):
-            self._constant_bound = bool(rospy.get_param('~constant_bound'))
+            self._constant_bound = rospy.get_param('~constant_bound')
         else:
-            self._constant_bound = True
+            self._constant_bound = 1
 
         # Enable(1) / disable(0) equivalent control term
         if rospy.has_param('~ctrl_eq'):
-            self._ctrl_eq = bool(rospy.get_param('~ctrl_eq'))
+            self._ctrl_eq = rospy.get_param('~ctrl_eq')
         else:
-            self._ctrl_eq = True
+            self._ctrl_eq = 1
 
         # Enable(1) / disable(0) linear control term
         if rospy.has_param('~ctrl_lin'):
-            self._ctrl_lin = bool(rospy.get_param('~ctrl_lin'))
+            self._ctrl_lin = rospy.get_param('~ctrl_lin')
         else:
-            self._ctrl_lin = True
+            self._ctrl_lin = 1
 
         # Enable(1) / disable(0) robust control term
         if rospy.has_param('~ctrl_robust'):
             self._ctrl_robust = rospy.get_param('~ctrl_robust')
         else:
-            self._ctrl_robust = True
+            self._ctrl_robust = 1
 
         # Stores last simulation time
         self._prev_t = -1.0
