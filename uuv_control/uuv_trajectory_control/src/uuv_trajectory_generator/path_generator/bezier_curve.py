@@ -19,7 +19,7 @@ from scipy.misc import factorial
 
 class BezierCurve(object):
     def __init__(self, pnts, order, tangents=None):
-
+        assert order in [3, 4, 5], 'Invalid Bezier curve order'
         assert type(pnts) == list and len(pnts) >= 2, 'At least two points are needed to calculate the curve'
 
         self._pnts = list()
