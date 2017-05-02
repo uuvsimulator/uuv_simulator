@@ -134,7 +134,7 @@ class ROV_MB_SMController(DPControllerBase):
             self._ctrl_eq = True
 
         # Enable(1) / disable(0) linear control term
-        if rospy.has_param('~ctrl_lin')
+        if rospy.has_param('~ctrl_lin'):
             self._ctrl_lin = bool(rospy.get_param('~ctrl_lin'))
         else:
             self._ctrl_lin = True
