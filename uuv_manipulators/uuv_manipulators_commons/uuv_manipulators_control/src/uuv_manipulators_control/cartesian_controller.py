@@ -157,8 +157,8 @@ class CartesianController(object):
         self._command[2] = self._filter_input(self._command[2], msg.linear.z, dt) * dt
 
         self._command[3] = self._filter_input(self._command[3], msg.angular.x, dt) * dt
-        self._command[4] = self._filter_input(self._command[3], msg.angular.y, dt) * dt
-        self._command[5] = self._filter_input(self._command[3], msg.angular.z, dt) * dt
+        self._command[4] = self._filter_input(self._command[4], msg.angular.y, dt) * dt
+        self._command[5] = self._filter_input(self._command[5], msg.angular.z, dt) * dt
 
         self._last_reference_update = rospy.get_time()
 
