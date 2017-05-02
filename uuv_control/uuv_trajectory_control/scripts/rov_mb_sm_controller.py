@@ -175,14 +175,14 @@ class ROV_MB_SMController(DPControllerBase):
         self._tau = np.zeros(6)
 
         self._services['set_mb_sm_controller_params'] = rospy.Service(
-        'set_mb_sm_controller_params',
-        SetMBSMControllerParams,
-        self.set_mb_sm_controller_params_callback)
+            'set_mb_sm_controller_params',
+            SetMBSMControllerParams,
+            self.set_mb_sm_controller_params_callback)
 
         self._services['get_mb_sm_controller_params'] = rospy.Service(
-        'get_mb_sm_controller_params',
-        GetMBSMControllerParams,
-        self.get_mb_sm_controller_params_callback)
+            'get_mb_sm_controller_params',
+            GetMBSMControllerParams,
+            self.get_mb_sm_controller_params_callback)
 
     def _reset_controller(self):
         super(ROV_MB_SMController, self)._reset_controller()
