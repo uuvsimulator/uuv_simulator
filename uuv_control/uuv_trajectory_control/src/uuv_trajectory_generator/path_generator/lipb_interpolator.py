@@ -62,10 +62,15 @@ class LIPBInterpolator(PathGenerator):
             q_start_line = q_seg
             heading = [0]
             for i in range(1, self._waypoints.num_waypoints):
-                line = LineSegment(q_start_line, self._waypoints.get_waypoint(i).pos)
-                radius = min(self._radius, line.get_length() / 2)
+                first_line = LineSegment(q_start_line, self._waypoints.get_waypoint(i).pos)
+                radius = min(self._radius, first_line.get_length() / 2)
+                if i + 1 < self._waypoints.num_waypoints:
+                    second_line = LineSegment(self._waypoints.get_waypoint(i).pos,
+                                              self._waypoints.get_waypoint(i + 1).pos)
+                    radius = min(radius, second_line.get_length() / 2)
                 if i < self._waypoints.num_waypoints - 1:
-                    q_seg = np.vstack((q_seg, line.interpolate((line.get_length() - radius) / line.get_length())))
+                    q_seg = np.vstack(
+                        (q_seg, first_line.interpolate((first_line.get_length() - radius) / first_line.get_length())))
                     self._interp_fcns['pos'].append(LineSegment(q_start_line, q_seg[-1, :]))
                     heading.append(0)
                 if i == self._waypoints.num_waypoints - 1:
@@ -73,10 +78,7 @@ class LIPBInterpolator(PathGenerator):
                     self._interp_fcns['pos'].append(LineSegment(q_seg[-2, :], q_seg[-1, :]))
                     heading.append(0)
                 elif i + 1 < self._waypoints.num_waypoints:
-                    line = LineSegment(self._waypoints.get_waypoint(i).pos,
-                                       self._waypoints.get_waypoint(i + 1).pos)
-                    radius = min(radius, line.get_length() / 2)
-                    q_seg = np.vstack((q_seg, line.interpolate(radius / line.get_length())))
+                    q_seg = np.vstack((q_seg, second_line.interpolate(radius / second_line.get_length())))
                     self._interp_fcns['pos'].append(
                         BezierCurve([q_seg[-2, :], self._waypoints.get_waypoint(i).pos, q_seg[-1, :]], 5))
                     heading.append(0)
