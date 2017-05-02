@@ -25,9 +25,9 @@ from uuv_thrusters.models import Thruster
 from rospy.numpy_msg import numpy_msg
 
 
-class JoyAnglesThrustControllerNode:
+class FinnedUUVControllerNode:
     def __init__(self):
-        print('JoyAnglesThrustControllerNode: initializing node')
+        print('FinnedUUVControllerNode: initializing node')
 
         self._ready = False
 
@@ -98,31 +98,35 @@ class JoyAnglesThrustControllerNode:
         if not self._ready:
             return
 
-        thrust = msg.axes[self._joy_axis['axis_thruster']] * \
-            self._thruster_params['max_thrust']
+        try:
+            thrust = msg.axes[self._joy_axis['axis_thruster']] * \
+                self._thruster_params['max_thrust']
 
-        rpy = numpy.array([msg.axes[self._joy_axis['axis_roll']],
-                           msg.axes[self._joy_axis['axis_pitch']],
-                           msg.axes[self._joy_axis['axis_yaw']]])
-        fins = self._rpy_to_fins.dot(rpy)
+            rpy = numpy.array([msg.axes[self._joy_axis['axis_roll']],
+                               msg.axes[self._joy_axis['axis_pitch']],
+                               msg.axes[self._joy_axis['axis_yaw']]])
+            fins = self._rpy_to_fins.dot(rpy)
 
-        self._thruster_model.publish_command(thrust)
+            self._thruster_model.publish_command(thrust)
 
-        for i in range(self._n_fins):
-            cmd = FloatStamped()
-            cmd.data = fins[i]
-            self._pub_cmd[i].publish(cmd)
+            for i in range(self._n_fins):
+                cmd = FloatStamped()
+                cmd.data = fins[i]
+                self._pub_cmd[i].publish(cmd)
 
-        if not self._ready:
-            return
+            if not self._ready:
+                return
+        except Exception, e:
+            print 'Error occurred while parsing joystick input, check if the joy_id corresponds to the joystick ' \
+                  'being used. message=%s' % str(e)
 
 
 if __name__ == '__main__':
-    print('starting JoyAnglesThrustControl.py')
-    rospy.init_node('joy_angles_thrust_control')
+    print('starting FinnedUUVControllerNode.py')
+    rospy.init_node('finned_uuv_teleop')
 
     try:
-        node = JoyAnglesThrustControllerNode()
+        node = FinnedUUVControllerNode()
         rospy.spin()
     except rospy.ROSInterruptException:
         print('caught exception')

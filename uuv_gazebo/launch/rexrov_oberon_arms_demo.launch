@@ -73,7 +73,7 @@
     </node>
   </group>
 
-  <include file="$(find uuv_vehicle_teleop)/launch/uuv_teleop.launch">
+  <include file="$(find uuv_teleop)/launch/uuv_teleop.launch">
     <arg name="uuv_name" value="$(arg namespace)"/>
     <arg name="joy_id" value="$(arg joy_id)"/>
     <arg name="output_topic" value="cmd_vel"/>
@@ -121,5 +121,7 @@
     <arg name="gripper_open_button" value="$(arg gripper_open_button)"/>
     <arg name="gripper_close_button" value="$(arg gripper_close_button)"/>
   </include>
+
+  <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/rexrov_default.rviz"/>
 
 </launch>

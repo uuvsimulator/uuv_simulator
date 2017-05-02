@@ -16,6 +16,7 @@
 import os
 import rospy
 import numpy as np
+from std_msgs.msg import Bool
 from geometry_msgs.msg import Twist, Accel, Vector3
 from sensor_msgs.msg import Joy
 
@@ -48,9 +49,9 @@ class VehicleTeleop:
 
         # Dead zone: Force values close to 0 to 0
         # (Recommended for imprecise controllers)
-        self._deadzone = 0.1
+        self._deadzone = 0.5
         if rospy.has_param('~deadzone'):
-                    self._deadzone = float(rospy.get_param('~deadzone'))
+            self._deadzone = float(rospy.get_param('~deadzone'))
 
         # Default for the RB button of the XBox 360 controller
         self._deadman_button = -1
@@ -66,21 +67,30 @@ class VehicleTeleop:
                 for n in self._exclusion_buttons:
                     if type(n) not in [float, int]:
                         raise rospy.ROSException(
-                            'Exclusion buttons must be an integer index to the joystick button')
+                            'Exclusion buttons must be an integer index to '
+                            'the joystick button')
         else:
             self._exclusion_buttons = list()
+
+        # Default for the start button of the XBox 360 controller
+        self._home_button = 7
+        if rospy.has_param('~home_button'):
+            self._home_button = int(rospy.get_param('~home_button'))
 
         self._msg_type = 'twist'
         if rospy.has_param('~type'):
             self._msg_type = rospy.get_param('~type')
             if self._msg_type not in ['twist', 'accel']:
-                raise rospy.ROSException('Vehicle teleop output must be either'
-                                         ' twist or accel')
+                raise rospy.ROSException('Teleoperation output must be either '
+                                         'twist or accel')
 
         if self._msg_type == 'twist':
             self._output_pub = rospy.Publisher('output', Twist, queue_size=1)
         else:
             self._output_pub = rospy.Publisher('output', Accel, queue_size=1)
+
+        self._home_pressed_pub = rospy.Publisher(
+            'home_pressed', Bool, queue_size=1)
 
         # Joystick topic subscriber
         self._joy_sub = rospy.Subscriber('joy', Joy, self._joy_callback)
@@ -161,8 +171,11 @@ class VehicleTeleop:
             else:
                 cmd = self._parse_joy(joy)
             self._output_pub.publish(cmd)
+            self._home_pressed_pub.publish(
+                Bool(bool(joy.buttons[self._home_button])))
         except Exception, e:
-            print 'Error occured while parsing joystick input, error=' + str(e)
+            print 'Error occurred while parsing joystick input, check if the joy_id corresponds to the joystick ' \
+                  'being used. message=%s' % str(e)
 
 if __name__ == '__main__':
     # Start the node

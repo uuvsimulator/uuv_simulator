@@ -38,7 +38,7 @@ between the number
 <!-- If option to use a parameter file is given -->
 <group if="$(arg use_param_file)">
   <group ns="$(arg uuv_name)">
-    <node pkg="uuv_auv_teleop" type="JoyAnglesThrustControl.py" name="joy_angles_thrust"
+    <node pkg="uuv_teleop" type="finned_uuv_teleop.py" name="finned_uuv_teleop"
           output="screen">
       <rosparam command="load" file="$(arg filename)"/>
     </node>
@@ -52,7 +52,7 @@ between the number
 
 <group unless="$(arg use_param_file)">
     <group ns="$(arg uuv_name)">
-      <node pkg="uuv_auv_teleop" type="JoyAnglesThrustControl.py" name="joy_angles_thrust"
+      <node pkg="uuv_teleop" type="finned_uuv_teleop.py" name="finned_uuv_teleop"
             output="screen">
         <rosparam subst_value="true">
           axis_thruster: $(arg axis_thruster)

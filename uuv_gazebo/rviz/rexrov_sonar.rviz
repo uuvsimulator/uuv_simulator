@@ -8,6 +8,9 @@ Panels:
         - /TF1/Frames1
         - /Grid1
         - /Odometry1
+        - /Current Velocity Marker1
+        - /LaserScan1
+        - /LaserScan1/Status1
       Splitter Ratio: 0.721476018
     Tree Height: 552
   - Class: rviz/Selection
@@ -65,6 +68,8 @@ Visualization Manager:
           Value: true
         rexrov/rpt_link:
           Value: true
+        rexrov/sonar_link:
+          Value: true
         rexrov/thruster_0:
           Value: true
         rexrov/thruster_1:
@@ -113,6 +118,8 @@ Visualization Manager:
                 rexrov/pressure_link:
                   {}
                 rexrov/rpt_link:
+                  {}
+                rexrov/sonar_link:
                   {}
                 rexrov/thruster_0:
                   {}
@@ -232,6 +239,11 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        rexrov/sonar_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rexrov/thruster_0:
           Alpha: 1
           Show Axes: false
@@ -336,6 +348,36 @@ Visualization Manager:
         {}
       Queue Size: 100
       Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: -80.0347595
+        Min Value: -80.0402298
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/LaserScan
+      Color: 255; 255; 255
+      Color Transformer: AxisColor
+      Decay Time: 100
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 0
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: LaserScan
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.00999999978
+      Style: Points
+      Topic: /rexrov/sonar
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -360,7 +402,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.1567688
+      Distance: 86.5438919
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -374,10 +416,10 @@ Visualization Manager:
       Focal Shape Size: 0.0500000007
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.340397984
+      Pitch: 0.405397952
       Target Frame: rexrov/base_link
       Value: Orbit (rviz)
-      Yaw: 0.760399163
+      Yaw: 2.49040103
     Saved: ~
 Window Geometry:
   Displays:

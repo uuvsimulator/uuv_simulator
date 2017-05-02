@@ -27,7 +27,7 @@
       <param name="dev" value="/dev/input/js$(arg joy_id)"/>
     </node>
 
-    <node pkg="uuv_vehicle_teleop" type="vehicle_teleop.py" name="joy_uuv_velocity_teleop">
+    <node pkg="uuv_teleop" type="vehicle_teleop.py" name="joy_uuv_velocity_teleop">
       <remap from="output" to="/$(arg uuv_name)/$(arg output_topic)"/>
       <remap from="joy" to="/$(arg uuv_name)/joy"/>
       <rosparam subst_value="true">
@@ -53,7 +53,6 @@
           yaw:
             axis: $(arg axis_yaw)
             gain: $(arg gain_yaw)
-
       </rosparam>
     </node>
 

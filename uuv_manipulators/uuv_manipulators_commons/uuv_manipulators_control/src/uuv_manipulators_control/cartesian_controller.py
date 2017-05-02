@@ -15,14 +15,14 @@
 
 import rospy
 from uuv_manipulator_interfaces import ArmInterface
-from geometry_msgs.msg import TwistStamped
-from std_msgs.msg import Float64
+from geometry_msgs.msg import Twist, PoseStamped, Quaternion, Vector3
+from visualization_msgs.msg import Marker
+from std_msgs.msg import Float64, Bool
 import numpy as np
 import tf
 import tf.transformations as trans
 from tf_conversions import posemath
 import PyKDL
-from sensor_msgs.msg import Joy
 
 
 class CartesianController(object):
@@ -40,57 +40,13 @@ class CartesianController(object):
 
         # Retrieve the publish rate
         self._publish_rate = 25
-        if not rospy.has_param('~cartesian_controller/publish_rate'):
-            self._publish_rate = rospy.get_param('~cartesian_controller/publish_rate')
+        if not rospy.has_param('~publish_rate'):
+            self._publish_rate = rospy.get_param('~publish_rate')
 
         if self._publish_rate <= 0:
             raise rospy.ROSException('Invalid negative publish rate')
 
-        self._t_step = 0.01
-        if rospy.has_param("~tstep"):
-            self._t_step = rospy.get_param('~tstep')
-            if self._t_step <= 0:
-                raise rospy.ROSException('Invalid translational step')
-
-        self._r_step = 0.01
-        if rospy.has_param("~rstep"):
-            self._r_step = rospy.get_param('~rstep')
-            if self._r_step <= 0:
-                raise rospy.ROSException('Invalid rotational step')
-
-        # Default mapping for XBox 360 controller
-        self._axes = dict(x=4, y=3, z=1, roll=0, pitch=7, yaw=6)
-        if rospy.has_param('~axes'):
-            axes = rospy.get_param('~axes')
-            if type(axes) != dict:
-                raise rospy.ROSException('Axes structure must be a dict')
-            for tag in self._axes:
-                if tag not in axes:
-                    raise rospy.ROSException('Axes for %s missing' % tag)
-                self._axes[tag] = axes[tag]
-
-        # Default for the RB button of the XBox 360 controller
-        self._deadman_button = 5
-        if rospy.has_param('~deadman_button'):
-            self._deadman_button = int(rospy.get_param('~deadman_button'))
-
-        # If these buttons are pressed, the arm will not move
-        if rospy.has_param('~exclusion_buttons'):
-            self._exclusion_buttons = rospy.get_param('~exclusion_buttons')
-            if type(self._exclusion_buttons) in [float, int]:
-                self._exclusion_buttons = [int(self._exclusion_buttons)]
-            elif type(self._exclusion_buttons) == list:
-                for n in self._exclusion_buttons:
-                    if type(n) not in [float, int]:
-                        raise rospy.ROSException('Exclusion buttons must be an'
-                                                 ' integer index to the joystick button')
-        else:
-            self._exclusion_buttons = list()
-
-        # Default for the start button of the XBox 360 controller
-        self._home_button = 7
-        if rospy.has_param('~home_button'):
-            self._home_button = int(rospy.get_param('~home_button'))
+        self._tau = 0.1
 
         # Get the transformation between the robot's base link and the
         # vehicle's base link
@@ -114,7 +70,10 @@ class CartesianController(object):
         # Last controller update
         self._last_controller_update = rospy.get_time()
 
-        rospy.set_param('~cartesian_controller/name', self.LABEL)
+        # Last velocity reference update time stamp
+        self._last_reference_update = rospy.get_time()
+
+        rospy.set_param('~name', self.LABEL)
 
         self._joint_effort_pub = dict()
 
@@ -124,11 +83,28 @@ class CartesianController(object):
                 joint + '/controller/command',
                 Float64, queue_size=1)
 
-        self._last_joy_update = rospy.get_time()
-        self._joy_sub = rospy.Subscriber('joy', Joy, self._joy_callback)
+        # Input velocity command subscriber, remap this topic to set a custom
+        # command topic
+        self._vel_command_sub = rospy.Subscriber(
+            'cmd_vel', Twist, self._vel_command_callback)
+
+        # Topic that will receive the flag if the home button was pressed. If
+        # the flag is true, the manipulator's goal is set to the stow
+        # configuration
+        self._home_pressed_sub = rospy.Subscriber(
+            'home_pressed', Bool, self._home_button_pressed)
+
+        # Topic publishes the current goal set as reference to the manipulator
+        self._goal_pub = rospy.Publisher(
+            'reference', PoseStamped, queue_size=1)
+
+        # Topic to publish a visual marker for visualization of the current
+        # reference in RViz
+        self._goal_marker_pub = rospy.Publisher(
+            'reference_marker', Marker, queue_size=1)
 
     def _update(self, event):
-        pass
+        raise NotImplementedError()
 
     def _run(self):
         rate = rospy.Rate(self._publish_rate)
@@ -136,29 +112,88 @@ class CartesianController(object):
             self._update()
             rate.sleep()
 
-    def _joy_callback(self, joy):
-        self._command = np.zeros(6)
-        if not joy.buttons[self._deadman_button] and self._deadman_button != -1:
-            return
-        for n in self._exclusion_buttons:
-            if joy.buttons[n] == 1:
-                return
+    def _filter_input(self, state, cmd, dt):
+        alpha = np.exp(- 1 * dt / self._tau)
+        return state * alpha + (1.0 - alpha) * cmd
 
-        if joy.buttons[self._home_button] == 1:
+    def _get_goal(self):
+        if self._command is None or rospy.get_time() - self._last_reference_update > 0.1:
+            return self._last_goal
+
+        # Compute the step from the input velocity
+        step_frame = PyKDL.Frame(
+            PyKDL.Rotation.RPY(self._command[3],
+                               self._command[4],
+                               self._command[5]),
+            PyKDL.Vector(self._command[0],
+                         self._command[1],
+                         self._command[2]))
+        next_goal = self._last_goal * step_frame
+
+        g_pos = [next_goal.p.x(), next_goal.p.y(), next_goal.p.z()]
+        g_quat = next_goal.M.GetQuaternion()
+        if self._arm_interface.inverse_kinematics(g_pos, g_quat) is not None:
+            return next_goal
+        else:
+            return self._last_goal
+
+    def _home_button_pressed(self, msg):
+        if msg.data:
+            self._command = np.zeros(6)
             self._last_goal = self._arm_interface.get_config_in_ee_frame('home')
-            self._last_joy_update = rospy.get_time()
+
+    def _vel_command_callback(self, msg):
+        dt = rospy.get_time() - self._last_reference_update
+        if dt > 0.1:
+            self._command = np.zeros(6)
+            self._last_reference_update = rospy.get_time()
             return
 
+        if self._command is None:
+            self._command = np.zeros(6)
 
-        self._command[0] = joy.axes[self._axes['x']] * self._t_step
-        self._command[1] = joy.axes[self._axes['y']] * self._t_step
-        self._command[2] = joy.axes[self._axes['z']] * self._t_step
+        self._command[0] = self._filter_input(self._command[0], msg.linear.x, dt) * dt
+        self._command[1] = self._filter_input(self._command[1], msg.linear.y, dt) * dt
+        self._command[2] = self._filter_input(self._command[2], msg.linear.z, dt) * dt
 
-        self._command[3] = joy.axes[self._axes['roll']] * self._r_step
-        self._command[4] = joy.axes[self._axes['pitch']] * self._r_step
-        self._command[5] = joy.axes[self._axes['yaw']] * self._r_step
+        self._command[3] = self._filter_input(self._command[3], msg.angular.x, dt) * dt
+        self._command[4] = self._filter_input(self._command[3], msg.angular.y, dt) * dt
+        self._command[5] = self._filter_input(self._command[3], msg.angular.z, dt) * dt
 
-        self._last_joy_update = rospy.get_time()
+        self._last_reference_update = rospy.get_time()
+
+    def publish_goal(self):
+        # Publish the reference topic
+        msg = PoseStamped()
+        msg.header.frame_id = self._arm_interface.base_link
+        msg.header.stamp = rospy.Time.now()
+
+        msg.pose.position.x = self._last_goal.p.x()
+        msg.pose.position.y = self._last_goal.p.y()
+        msg.pose.position.z = self._last_goal.p.z()
+
+        msg.pose.orientation = Quaternion(*self._last_goal.M.GetQuaternion())
+
+        self._goal_pub.publish(msg)
+
+        marker = Marker()
+        marker.header.frame_id = self._arm_interface.base_link
+        marker.header.stamp = rospy.Time.now()
+        marker.ns = self._arm_interface.arm_name
+        marker.id = 0
+        marker.type = Marker.SPHERE
+        marker.action = Marker.MODIFY
+        marker.pose.position = Vector3(self._last_goal.p.x(),
+                                       self._last_goal.p.y(),
+                                       self._last_goal.p.z())
+        marker.pose.orientation = Quaternion(*self._last_goal.M.GetQuaternion())
+        marker.scale = Vector3(0.2, 0.2, 0.2)
+        marker.color.a = 1.0
+        marker.color.r = 1.0
+        marker.color.g = 0.0
+        marker.color.b = 0.0
+
+        self._goal_marker_pub.publish(marker)
 
     def publish_joint_efforts(self, tau):
         # Publish torques

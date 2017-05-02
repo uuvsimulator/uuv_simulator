@@ -9,7 +9,7 @@
   -->
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>
-  <arg name="z" default="-20"/>
+  <arg name="z" default="-70"/>
   <arg name="joy_id" default="0"/>
   <arg name="namespace" default="rexrov"/>
   <arg name="gripper" default="parallel"/>
@@ -34,8 +34,8 @@
 
   <!-- Default joystick mapping for the Oberon arm Jacobian transpose
        controller (XBox 360 controller) -->
-  <arg name="axis_oberon_jt_x" default="3"/>
-  <arg name="axis_oberon_jt_y" default="4"/>
+  <arg name="axis_oberon_jt_x" default="4"/>
+  <arg name="axis_oberon_jt_y" default="3"/>
   <arg name="axis_oberon_jt_z" default="1"/>
   <arg name="axis_oberon_jt_roll" default="6"/>
   <arg name="axis_oberon_jt_pitch" default="7"/>
@@ -76,7 +76,7 @@
     </node>
   </group>
 
-  <include file="$(find uuv_vehicle_teleop)/launch/uuv_teleop.launch">
+  <include file="$(find uuv_teleop)/launch/uuv_teleop.launch">
     <arg name="uuv_name" value="$(arg namespace)"/>
     <arg name="joy_id" value="$(arg joy_id)"/>
     <arg name="output_topic" value="cmd_vel"/>
@@ -106,6 +106,8 @@
       <arg name="gripper_open_button" value="$(arg gripper_open_button)"/>
       <arg name="gripper_close_button" value="$(arg gripper_close_button)"/>
     </include>
+
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/rexrov_oberon_jt_controller.rviz"/>
   </group>
 
   <group unless="$(arg use_jt)">
@@ -125,5 +127,7 @@
       <arg name="gripper_open_button" value="$(arg gripper_open_button)"/>
       <arg name="gripper_close_button" value="$(arg gripper_close_button)"/>
     </include>
+
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/rexrov_default.rviz"/>
   </group>
 </launch>
