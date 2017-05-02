@@ -3,7 +3,7 @@
   <arg name="output_dir" default="$(find uuv_evaluation)/bags"/>
   
   <node name="trajectory_eval"
-        pkg="uuv_control_evaluation"
+        pkg="uuv_evaluation"
         type="trajectory_eval.py"
         output="screen"
         required="true"
