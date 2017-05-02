@@ -22,7 +22,7 @@ from uuv_control_interfaces.dp_controller_base import DPControllerBase
 class DPPIDControllerBase(DPControllerBase):
     """
     This is an abstract class for PID-based controllers. The base class method
-    update_controller must be overriden in other for a controller to work.
+    update_controller must be overridden in other for a controller to work.
     """
 
     def __init__(self, *args):
