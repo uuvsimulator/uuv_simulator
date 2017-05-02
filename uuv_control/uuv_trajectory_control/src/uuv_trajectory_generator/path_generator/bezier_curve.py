@@ -18,6 +18,13 @@ from scipy.misc import factorial
 
 
 class BezierCurve(object):
+    """
+    Implementation of Bezier curves of orders 3, 4 and 5 based on [1].
+    
+    [1] Biagiotti, Luigi, and Claudio Melchiorri. Trajectory planning for 
+        automatic machines and robots. Springer Science & Business Media, 2008.
+    """
+
     def __init__(self, pnts, order, tangents=None):
         assert order in [3, 4, 5], 'Invalid Bezier curve order'
         assert type(pnts) == list and len(pnts) >= 2, 'At least two points are needed to calculate the curve'

@@ -28,6 +28,9 @@ from path_generator import PathGenerator
 class LIPBInterpolator(PathGenerator):
     """
     Linear interpolator with polynomial blends.
+    
+    [1] Biagiotti, Luigi, and Claudio Melchiorri. Trajectory planning for 
+        automatic machines and robots. Springer Science & Business Media, 2008.
     """
     LABEL = 'lipb_interpolator'
 
