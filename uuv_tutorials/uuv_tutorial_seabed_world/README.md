@@ -1,0 +1,1 @@
+Check the this [seabed world tutorial wiki page](https://github.com/uuvsimulator/uuv_simulator/wiki/Making-your-seabed-world-model) for more information on how to generate a surface mesh from a point cloud. 

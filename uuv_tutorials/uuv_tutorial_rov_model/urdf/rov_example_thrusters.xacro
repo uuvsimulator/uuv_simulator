@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Adding the thruster units with the macro created in rov_example_snippets.xacro -->
+    <!--
+    Important:
+        - The thruster IDs must be given as integers and must be unique to each thruster unit
+        - The thruster pose in the <origin> block is relative to the body's center of mass. Be
+          aware that Gazebo does not use the SNAME convention per default.
+    -->
+
+    <xacro:thruster_macro robot_namespace="${namespace}" thruster_id="0">
+        <origin xyz="0 0 0" rpy="0 0 ${pi}" />
+    </xacro:thruster_macro>
+
+    <xacro:thruster_macro robot_namespace="${namespace}" thruster_id="1">
+        <origin xyz="0 0 0" rpy="0 0 ${pi}" />
+    </xacro:thruster_macro>
+
+    <xacro:thruster_macro robot_namespace="${namespace}" thruster_id="2">
+    <origin xyz="0 0 0" rpy="0 -${0.5*pi} 0" />
+    </xacro:thruster_macro>
+
+</robot>
