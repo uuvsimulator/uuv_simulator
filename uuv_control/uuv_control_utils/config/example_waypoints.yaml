@@ -1,45 +1,45 @@
 -
   point: [0, 2, -22]
-  max_forward_speed: 0.6
+  max_forward_speed: 0.5
   heading: 0
   use_fixed_heading: False
 -
   point: [16, 12, -24]
-  max_forward_speed: 0.6
+  max_forward_speed: 0.5
   heading: 0
   use_fixed_heading: False
 -
   point: [20, 12, -27]
-  max_forward_speed: 0.6
+  max_forward_speed: 0.5
   heading: 0
   use_fixed_heading: False
 -
   point: [25, 16, -25]
-  max_forward_speed: 0.6
+  max_forward_speed: 0.5
   heading: 0
   use_fixed_heading: False
 -
   point: [25, 20, -25]
-  max_forward_speed: 0.6
+  max_forward_speed: 0.5
   heading: 0
   use_fixed_heading: False
 -
   point: [30, 40, -25]
-  max_forward_speed: 0.6
+  max_forward_speed: 0.5
   heading: 0
   use_fixed_heading: False
 -
   point: [36, 45, -25]
-  max_forward_speed: 0.6
+  max_forward_speed: 0.5
   heading: 0
   use_fixed_heading: False
 -
   point: [40, 50, -30]
-  max_forward_speed: 0.6
+  max_forward_speed: 0.5
   heading: 0
   use_fixed_heading: False
 -
   point: [47, 56, -33]
-  max_forward_speed: 0.6
+  max_forward_speed: 0.5
   heading: 0
   use_fixed_heading: False
