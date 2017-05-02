@@ -15,14 +15,19 @@
 
 from scipy.interpolate import splrep, splev
 import numpy as np
-from path_generator import PathGenerator
 from ..waypoint import Waypoint
 from ..waypoint_set import WaypointSet
 from ..trajectory_point import TrajectoryPoint
 from tf.transformations import quaternion_multiply, quaternion_about_axis
+from line_segment import LineSegment
+from bezier_curve import BezierCurve
+from path_generator import PathGenerator
 
 
 class CSInterpolator(PathGenerator):
+    """
+    Interpolator that will generate cubic Bezier curve segments for a set of waypoints. 
+    """
     LABEL = 'cubic_interpolator'
 
     def __init__(self):
@@ -31,58 +36,64 @@ class CSInterpolator(PathGenerator):
         # Set of interpolation functions for each degree of freedom
         # The heading function interpolates the given heading offset and its
         # value is added to the heading computed from the trajectory
-        self._interp_fcns = dict(x=None,
-                                 y=None,
-                                 z=None,
+        self._interp_fcns = dict(pos=None,
                                  heading=None)
-
-        self._splines = dict(x=None,
-                             y=None,
-                             z=None,
-                             heading=None)
+        self._heading_spline = None
 
     def init_interpolator(self):
-        # Generate the parametric variable for each of the interpolators
-        t = 0.0
-        heading = list()
-        self._s = [0.0]
-        # Compute the parameter vector s
-        for i in range(1, self._waypoints.num_waypoints):
-            wp_this = self._waypoints.get_waypoint(i)
-            wp_last = self._waypoints.get_waypoint(i - 1)
+        if self._waypoints is None:
+            return False
 
-            dx = wp_this.x - wp_last.x
-            dy = wp_this.y - wp_last.y
-            dz = wp_this.z - wp_last.z
-            heading.append(wp_this.heading_offset)
-            # Calculate distance of travel on a straight line
-            dist = np.sqrt(dx**2 + dy**2 + dz**2)
-            # Calculate the time of travel based on the set maximum
-            # velocity set for this waypoint
-            t += dist / wp_last.max_forward_speed
-            self._s.append(t)
-        # Advance parameter for the interpolator
-        # Repeat the first value for the heading function
-        if self._waypoints.get_waypoint(0).heading_offset is None:
-            heading = [heading[0]] + heading
+        self._interp_fcns['pos'] = list()
+        if self._waypoints.num_waypoints == 2:
+            self._interp_fcns['pos'].append(
+                LineSegment(self._waypoints.get_waypoint(0).pos,
+                            self._waypoints.get_waypoint(1).pos))
+        elif self._waypoints.num_waypoints > 2:
+            tangents = [np.zeros(3) for _ in range(self._waypoints.num_waypoints)]
+            lengths = [self._waypoints.get_waypoint(i + 1).dist(
+                self._waypoints.get_waypoint(i).pos) for i in range(self._waypoints.num_waypoints - 1)]
+            lengths = [0] + lengths
+            # Initial vector of parametric variables for the curve
+            u = np.cumsum(lengths) / np.sum(lengths)
+
+            delta_u = lambda k: u[k] - u[k - 1]
+            delta_q = lambda k: self._waypoints.get_waypoint(k).pos - self._waypoints.get_waypoint(k - 1).pos
+            lamb_k = lambda k: delta_q(k) / delta_u(k)
+            alpha_k = lambda k: delta_u(k) / (delta_u(k) + delta_u(k + 1))
+
+            for i in range(1, len(u) - 1):
+                tangents[i] = (1 - alpha_k(i)) * lamb_k(i) + alpha_k(i) * lamb_k(i + 1)
+                if i == 1:
+                    tangents[0] = 2 * lamb_k(i) - tangents[1]
+
+            tangents[-1] = 2 * lamb_k(len(u) - 1) - tangents[-2]
+
+            # Normalize tangent vectors
+            for i in range(len(tangents)):
+                tangents[i] = tangents[i] / np.linalg.norm(tangents[i])
+
+            # Generate the cubic Bezier curve segments
+            for i in range(len(tangents) - 1):
+                self._interp_fcns['pos'].append(
+                    BezierCurve(
+                        [self._waypoints.get_waypoint(i).pos,
+                         self._waypoints.get_waypoint(i + 1).pos], 3, tangents[i:i + 2]))
         else:
-            heading = [self._waypoints.get_waypoint(0).heading_offset] + heading
-        if self._max_time is None:
-            self._max_time = t
-        self._s = np.array(self._s) / self._s[-1]
-        self._cur_s = 0.0
+            return False
 
-        self._splines['x'] = splrep(self._s, self._waypoints.x, k=3, per=False)
-        self._interp_fcns['x'] = lambda x: splev(x, self._splines['x'])
+        # Reparametrizing the curves
+        lengths = [seg.get_length() for seg in self._interp_fcns['pos']]
+        lengths = [0] + lengths
+        self._s = np.cumsum(lengths) / np.sum(lengths)
+        mean_vel = np.mean(
+            [self._waypoints.get_waypoint(k).max_forward_speed for k in range(self._waypoints.num_waypoints)])
+        self._max_time = np.sum(lengths) / mean_vel
 
-        self._splines['y'] = splrep(self._s, self._waypoints.y, k=3, per=False)
-        self._interp_fcns['y'] = lambda x: splev(x, self._splines['y'])
-
-        self._splines['z'] = splrep(self._s, self._waypoints.z, k=3, per=False)
-        self._interp_fcns['z'] = lambda x: splev(x, self._splines['z'])
-
-        self._splines['heading'] = splrep(self._s, heading, k=3, per=False)
-        self._interp_fcns['heading'] = lambda x: splev(x, self._splines['heading'])
+        # Set a simple spline to interpolate heading offset, if existent
+        heading = [self._waypoints.get_waypoint(k).heading_offset for k in range(self._waypoints.num_waypoints)]
+        self._heading_spline = splrep(self._s, heading, k=3, per=False)
+        self._interp_fcns['heading'] = lambda x: splev(x, self._heading_spline)
 
         return True
 
@@ -90,23 +101,30 @@ class CSInterpolator(PathGenerator):
         if self._waypoints is None:
             return None
         s = np.arange(0, 1 + step, step)
-        t = s * self._max_time
-        x = self._interp_fcns['x'](s)
-        y = self._interp_fcns['y'](s)
-        z = self._interp_fcns['z'](s)
+        t = s * self._max_time + self._start_time
 
         pnts = list()
         for i in range(t.size):
             pnt = TrajectoryPoint()
-            pnt.pos = [x[i], y[i], z[i]]
+            pnt.pos = self.generate_pos(s[i]).tolist()
             pnt.t = t[i]
             pnts.append(pnt)
         return pnts
 
     def generate_pos(self, s):
-        pos = [self._interp_fcns['x'](s),
-               self._interp_fcns['y'](s),
-               self._interp_fcns['z'](s)]
+        s = max(0, s)
+        s = min(s, 1)
+
+        if s == 1:
+            idx = self._s.size - 1
+        else:
+            idx = (self._s - s >= 0).nonzero()[0][0]
+        if idx == 0:
+            u_k = 0
+            pos = self._interp_fcns['pos'][idx].interpolate(u_k)
+        else:
+            u_k = (s - self._s[idx - 1]) / (self._s[idx] - self._s[idx - 1])
+            pos = self._interp_fcns['pos'][idx - 1].interpolate(u_k)
         return pos
 
     def generate_pnt(self, s, t=0.0):
@@ -114,23 +132,24 @@ class CSInterpolator(PathGenerator):
         # Trajectory time stamp
         pnt.t = t
         # Set position vector
-        pnt.pos = self.generate_pos(s)
+        pnt.pos = self.generate_pos(s).tolist()
         # Set rotation quaternion
         pnt.rotq = self.generate_quat(s)
         return pnt
 
     def generate_quat(self, s):
-        if s < 0:
-            s = 0
-        if s > 1:
-            s = 1
+        s = max(0, s)
+        s = min(s, 1)
+
         last_s = s - self._s_step
         if last_s == 0:
             last_s = 0
 
-        dx = self._interp_fcns['x'](s) - self._interp_fcns['x'](last_s)
-        dy = self._interp_fcns['y'](s) - self._interp_fcns['y'](last_s)
-        dz = self._interp_fcns['z'](s) - self._interp_fcns['z'](last_s)
+        this_pos = self.generate_pos(s)
+        last_pos = self.generate_pos(last_s)
+        dx = this_pos[0] - last_pos[0]
+        dy = this_pos[1] - last_pos[1]
+        dz = this_pos[2] - last_pos[2]
 
         rotq = self._compute_rot_quat(dx, dy, dz)
 
