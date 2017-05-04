@@ -22,6 +22,8 @@ from .waypoint_set import WaypointSet
 from tf.transformations import quaternion_multiply, quaternion_inverse, \
     quaternion_conjugate
 from path_generator import PathGenerator
+import logging
+import sys
 
 
 class WPTrajectoryGenerator(object):
@@ -38,6 +40,13 @@ class WPTrajectoryGenerator(object):
     def __init__(self, full_dof=False, use_finite_diff=True,
                  interpolation_method='cubic_interpolator'):
         """Class constructor."""
+        self._logger = logging.getLogger('wp_trajectory_generator')
+        out_hdlr = logging.StreamHandler(sys.stdout)
+        out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+        out_hdlr.setLevel(logging.INFO)
+        self._logger.addHandler(out_hdlr)
+        self._logger.setLevel(logging.INFO)
+
         self._path_generators = dict()
         for gen in PathGenerator.get_all_generators():
             self._path_generators[gen.get_label()] = gen
@@ -76,6 +85,11 @@ class WPTrajectoryGenerator(object):
         # The parametric variable to use as input for the interpolator
         self._cur_s = 0
 
+    def __del__(self):
+        # Removing logging message handlers
+        while self._logger.handlers:
+            self._logger.handlers.pop()
+
     @property
     def started(self):
         """Return true if the interpolation has started."""
@@ -113,17 +127,11 @@ class WPTrajectoryGenerator(object):
     def set_interpolation_method(self, method):
         if method in self._path_generators:
             self._interp_method = method
+            self._logger.info('Interpolation method set: ' + method)
             return True
         else:
-            print 'Invalid interpolation method, keeping the current method <%s>' % self._interp_method
+            self._logger.info('Invalid interpolation method, keeping the current method <%s>' % self._interp_method)
             return False
-
-    def set_interp_method(self, method):
-        if method not in [gen.get_label() for gen in self._path_generators]:
-            print 'Invalid interpolation method, method=', method
-            return False
-        self._interp_method = method
-        return True
 
     def is_full_dof(self):
         """Return true if the trajectory is generated for all 6 degrees of
@@ -140,10 +148,10 @@ class WPTrajectoryGenerator(object):
         if max_time > 0:
             self.interpolator.max_time = max_time
             self.interpolator.s_step = self._t_step / self.interpolator.max_time
-            print 'New duration, max. time=', self.interpolator.max_time
+            self._logger.info('New duration, max. relative time=%.2f s' % self.interpolator.max_time)
             return True
         else:
-            print 'Invalid max. time, time=', max_time
+            self._logger.info('Invalid max. time, time=%.2f s' % max_time)
             return False
 
     def is_finished(self):
@@ -190,12 +198,15 @@ class WPTrajectoryGenerator(object):
 
     def get_samples(self, step=0.005):
         """Return pose samples from the interpolated path."""
+        assert step > 0, 'Step size must be positive'
         return self.interpolator.get_samples(
             self.interpolator.max_time, step)
 
     def set_start_time(self, t):
         """Set a custom starting time to the interpolated trajectory."""
+        assert t >= 0, 'Starting time must be positive'
         self.interpolator.start_time = t
+        self._logger.info('Setting new starting time, t=%.2f s' % t)
 
     def _motion_regression_1d(self, pnts, t):
         """
@@ -234,12 +245,12 @@ class WPTrajectoryGenerator(object):
         if A == 0.0:
             return 0.0, 0.0
 
-        v = (1.0 / A) * (sx * (st * st4 - st2 * st3) + \
-                         stx * (st2 * st2 - n * st4) + \
+        v = (1.0 / A) * (sx * (st * st4 - st2 * st3) +
+                         stx * (st2 * st2 - n * st4) +
                          st2x * (n * st3 - st * st2))
 
-        a = (2.0 / A) * (sx * (st2 * st2 - st * st3) + \
-                         stx * (n * st3 - st * st2) + \
+        a = (2.0 / A) * (sx * (st2 * st2 - st * st3) +
+                         stx * (n * st3 - st * st2) +
                          st2x * (st * st - n * st2))
         return v, a
 
@@ -255,9 +266,7 @@ class WPTrajectoryGenerator(object):
         """
 
         lin_vel = np.zeros(3)
-        ang_vel = np.zeros(4)
         lin_acc = np.zeros(3)
-        ang_acc = np.zeros(4)
 
         q_d = np.zeros(4)
         q_dd = np.zeros(4)
@@ -287,7 +296,7 @@ class WPTrajectoryGenerator(object):
         # Generate position and rotation quaternion for the current path
         # generator method
         pnt = self.interpolator.generate_pnt(
-            cur_s, cur_s * self.interpolator.max_time + self.interpolator.start_time)
+            cur_s, cur_s * (self.interpolator.max_time - self.interpolator.start_time) + self.interpolator.start_time)
         if self._use_finite_diff:
             # Set linear velocity
             pnt.vel = self._generate_vel(cur_s)
@@ -299,7 +308,7 @@ class WPTrajectoryGenerator(object):
             for ti in np.arange(pnt.t - self._regression_window / 2, pnt.t + self._regression_window, self._t_step):
                 if ti < 0:
                     si = 0
-                elif ti > self.interpolator.max_time:
+                elif ti > self.interpolator.max_time - self.interpolator.start_time:
                     si = 1
                 else:
                     si = (ti - self.interpolator.start_time) / self.interpolator.max_time
@@ -351,9 +360,9 @@ class WPTrajectoryGenerator(object):
             self._has_started = True
             self._has_ended = False
 
-        if t - self.interpolator.start_time > self.interpolator.max_time or t - self.interpolator.start_time < 0:
+        if t > self.interpolator.max_time or t - self.interpolator.start_time < 0:
             self._has_started = False
-            if t - self.interpolator.start_time > self.interpolator.max_time:
+            if t > self.interpolator.max_time:
                 self._has_ended = True
         else:
             self._has_started = True

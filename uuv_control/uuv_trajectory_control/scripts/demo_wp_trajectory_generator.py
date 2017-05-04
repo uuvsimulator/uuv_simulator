@@ -29,10 +29,11 @@ Demo file to demonstrate the waypoint interpolation method with generation of
 velocity and acceleration profile using a constant rate.
 """
 
-def run_generator(waypoint_set):
+def run_generator(waypoint_set, interp_method):
     # Initialize the trajectory generator
     gen = uuv_trajectory_generator.WPTrajectoryGenerator(full_dof=False)
-    gen.init_waypoints(wp_set)
+    gen.set_interp_method(interp_method)
+    gen.init_waypoints(waypoint_set)
 
     dt = 0.05
     idx = 0
@@ -56,16 +57,17 @@ def run_generator(waypoint_set):
     ax.plot([p.x for p in pnts], [p.y for p in pnts], [p.z for p in pnts], 'b')
 
     # Plot original waypoints
-    ax.plot(wp_set.x, wp_set.y, wp_set.z, 'r.')
+    ax.plot(waypoint_set.x, waypoint_set.y, waypoint_set.z, 'r.')
 
     # Plot the raw path along the waypoints
-    ax.plot(wp_set.x, wp_set.y, wp_set.z, 'g--')
+    ax.plot(waypoint_set.x, waypoint_set.y, waypoint_set.z, 'g--')
 
     for i in range(1, len(pnts), 100):
         p0 = pnts[i - 1]
         p1 = p0.pos + np.dot(p0.rot_matrix, [2, 0, 0])
         ax.plot([p0.pos[0], p1[0]], [p0.pos[1], p1[1]], [p0.pos[2], p1[2]], 'c', linewidth=2)
     ax.grid(True)
+    ax.set_title(interp_method)
 
     # Position and orientation plot
     fig = plt.figure()
@@ -74,7 +76,7 @@ def run_generator(waypoint_set):
         ax.plot([p.t for p in pnts], [p.pos[i] for p in pnts], label='%d' % i)
     ax.legend()
     ax.grid(True)
-    ax.set_title('Position')
+    ax.set_title('Position - ' + interp_method)
     ax.set_xlim(pnts[0].t, pnts[-1].t)
 
     ax = fig.add_subplot(212)
@@ -82,7 +84,7 @@ def run_generator(waypoint_set):
         ax.plot([p.t for p in pnts], [p.rot[i] * 180 / np.pi for p in pnts], label='%d' % i)
     ax.legend()
     ax.grid(True)
-    ax.set_title('Rotation')
+    ax.set_title('Rotation - ' + interp_method)
     ax.set_xlim(pnts[0].t, pnts[-1].t)
 
     fig = plt.figure()
@@ -91,7 +93,7 @@ def run_generator(waypoint_set):
         ax.plot([p.t for p in pnts], [p.vel[i] for p in pnts], label='%d' % i)
     ax.legend()
     ax.grid(True)
-    ax.set_title('Linear velocity')
+    ax.set_title('Linear velocity - ' + interp_method)
     ax.set_xlim(pnts[0].t, pnts[-1].t)
 
     ax = fig.add_subplot(212)
@@ -99,7 +101,7 @@ def run_generator(waypoint_set):
         ax.plot([p.t for p in pnts], [p.vel[i+3] for p in pnts], label='%d' % i)
     ax.legend()
     ax.grid(True)
-    ax.set_title('Angular velocity')
+    ax.set_title('Angular velocity - ' + interp_method)
     ax.set_xlim(pnts[0].t, pnts[-1].t)
 
     fig = plt.figure()
@@ -108,7 +110,7 @@ def run_generator(waypoint_set):
         ax.plot([p.t for p in pnts], [p.acc[i] for p in pnts], label='%d' % i)
     ax.legend()
     ax.grid(True)
-    ax.set_title('Linear accelerations')
+    ax.set_title('Linear accelerations - ' + interp_method)
     ax.set_xlim(pnts[0].t, pnts[-1].t)
 
     ax = fig.add_subplot(212)
@@ -116,20 +118,12 @@ def run_generator(waypoint_set):
         ax.plot([p.t for p in pnts], [p.acc[i+3] for p in pnts], label='%d' % i)
     ax.legend()
     ax.grid(True)
-    ax.set_title('Angular accelerations')
+    ax.set_title('Angular accelerations - ' + interp_method)
     ax.set_xlim(pnts[0].t, pnts[-1].t)
 
 if __name__ == '__main__':
     # For a helical trajectory
     wp_set = uuv_trajectory_generator.WaypointSet()
-    wp_set.generate_helix(radius=8,
-                          center=Point(2, 2, -30),
-                          num_points=50,
-                          max_forward_speed=0.5,
-                          delta_z=10,
-                          num_turns=1.2,
-                          theta_offset=0.0,
-                          heading_offset=0.0)
     # Add some waypoints at the beginning
     wp_set.add_waypoint(uuv_trajectory_generator.Waypoint(-10, -12, -36, 0.5),
                         add_to_beginning=True)
@@ -139,6 +133,12 @@ if __name__ == '__main__':
                         add_to_beginning=True)
     wp_set.add_waypoint(uuv_trajectory_generator.Waypoint(-10, 10, -5, 0.5))
     wp_set.add_waypoint(uuv_trajectory_generator.Waypoint(-20, 20, -5, 0.5))
-    run_generator(wp_set)
+    wp_set.add_waypoint(uuv_trajectory_generator.Waypoint(-30, 60, -50, 0.5))
+    wp_set.add_waypoint(uuv_trajectory_generator.Waypoint(-40, 70, -55, 0.5))
+    wp_set.add_waypoint(uuv_trajectory_generator.Waypoint(-40, 80, -30, 0.5))
+
+    run_generator(wp_set, 'cubic_interpolator')
+    run_generator(wp_set, 'lipb_interpolator')
 
     plt.show()
+

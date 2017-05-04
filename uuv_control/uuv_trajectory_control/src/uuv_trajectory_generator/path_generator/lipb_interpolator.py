@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from copy import deepcopy
 from scipy.interpolate import splrep, splev
 import numpy as np
 from ..waypoint import Waypoint
@@ -24,15 +25,19 @@ from bezier_curve import BezierCurve
 from path_generator import PathGenerator
 
 
-class CSInterpolator(PathGenerator):
+class LIPBInterpolator(PathGenerator):
     """
-    Interpolator that will generate cubic Bezier curve segments for a set of waypoints. 
+    Linear interpolator with polynomial blends.
+    
+    [1] Biagiotti, Luigi, and Claudio Melchiorri. Trajectory planning for 
+        automatic machines and robots. Springer Science & Business Media, 2008.
     """
-    LABEL = 'cubic_interpolator'
+    LABEL = 'lipb_interpolator'
 
     def __init__(self):
-        super(CSInterpolator, self).__init__(self)
+        super(LIPBInterpolator, self).__init__(self)
 
+        self._radius = 5
         # Set of interpolation functions for each degree of freedom
         # The heading function interpolates the given heading offset and its
         # value is added to the heading computed from the trajectory
@@ -49,36 +54,35 @@ class CSInterpolator(PathGenerator):
             self._interp_fcns['pos'].append(
                 LineSegment(self._waypoints.get_waypoint(0).pos,
                             self._waypoints.get_waypoint(1).pos))
+            # Set a simple spline to interpolate heading offset, if existent
+            heading = [self._waypoints.get_waypoint(k).heading_offset for k in range(self._waypoints.num_waypoints)]
+
         elif self._waypoints.num_waypoints > 2:
-            tangents = [np.zeros(3) for _ in range(self._waypoints.num_waypoints)]
-            lengths = [self._waypoints.get_waypoint(i + 1).dist(
-                self._waypoints.get_waypoint(i).pos) for i in range(self._waypoints.num_waypoints - 1)]
-            lengths = [0] + lengths
-            # Initial vector of parametric variables for the curve
-            u = np.cumsum(lengths) / np.sum(lengths)
-
-            delta_u = lambda k: u[k] - u[k - 1]
-            delta_q = lambda k: self._waypoints.get_waypoint(k).pos - self._waypoints.get_waypoint(k - 1).pos
-            lamb_k = lambda k: delta_q(k) / delta_u(k)
-            alpha_k = lambda k: delta_u(k) / (delta_u(k) + delta_u(k + 1))
-
-            for i in range(1, len(u) - 1):
-                tangents[i] = (1 - alpha_k(i)) * lamb_k(i) + alpha_k(i) * lamb_k(i + 1)
-                if i == 1:
-                    tangents[0] = 2 * lamb_k(i) - tangents[1]
-
-            tangents[-1] = 2 * lamb_k(len(u) - 1) - tangents[-2]
-
-            # Normalize tangent vectors
-            for i in range(len(tangents)):
-                tangents[i] = tangents[i] / np.linalg.norm(tangents[i])
-
-            # Generate the cubic Bezier curve segments
-            for i in range(len(tangents) - 1):
-                self._interp_fcns['pos'].append(
-                    BezierCurve(
-                        [self._waypoints.get_waypoint(i).pos,
-                         self._waypoints.get_waypoint(i + 1).pos], 3, tangents[i:i + 2]))
+            q_seg = self._waypoints.get_waypoint(0).pos
+            q_start_line = q_seg
+            heading = [0]
+            for i in range(1, self._waypoints.num_waypoints):
+                first_line = LineSegment(q_start_line, self._waypoints.get_waypoint(i).pos)
+                radius = min(self._radius, first_line.get_length() / 2)
+                if i + 1 < self._waypoints.num_waypoints:
+                    second_line = LineSegment(self._waypoints.get_waypoint(i).pos,
+                                              self._waypoints.get_waypoint(i + 1).pos)
+                    radius = min(radius, second_line.get_length() / 2)
+                if i < self._waypoints.num_waypoints - 1:
+                    q_seg = np.vstack(
+                        (q_seg, first_line.interpolate((first_line.get_length() - radius) / first_line.get_length())))
+                    self._interp_fcns['pos'].append(LineSegment(q_start_line, q_seg[-1, :]))
+                    heading.append(0)
+                if i == self._waypoints.num_waypoints - 1:
+                    q_seg = np.vstack((q_seg, self._waypoints.get_waypoint(i).pos))
+                    self._interp_fcns['pos'].append(LineSegment(q_seg[-2, :], q_seg[-1, :]))
+                    heading.append(0)
+                elif i + 1 < self._waypoints.num_waypoints:
+                    q_seg = np.vstack((q_seg, second_line.interpolate(radius / second_line.get_length())))
+                    self._interp_fcns['pos'].append(
+                        BezierCurve([q_seg[-2, :], self._waypoints.get_waypoint(i).pos, q_seg[-1, :]], 5))
+                    heading.append(0)
+                    q_start_line = deepcopy(q_seg[-1, :])
         else:
             return False
 
@@ -91,7 +95,6 @@ class CSInterpolator(PathGenerator):
         self._max_time = np.sum(lengths) / mean_vel
 
         # Set a simple spline to interpolate heading offset, if existent
-        heading = [self._waypoints.get_waypoint(k).heading_offset for k in range(self._waypoints.num_waypoints)]
         self._heading_spline = splrep(self._s, heading, k=3, per=False)
         self._interp_fcns['heading'] = lambda x: splev(x, self._heading_spline)
 

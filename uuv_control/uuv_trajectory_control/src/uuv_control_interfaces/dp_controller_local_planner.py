@@ -21,10 +21,24 @@ from std_msgs.msg import Bool
 from uuv_control_msgs.srv import *
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint, WaypointSet
 import uuv_trajectory_generator
+import logging
+import sys
 
 
 class DPControllerLocalPlanner(object):
+    """
+    Local planner for the dynamic positioning controllers to interpolate trajectories and generate trajectories from
+    interpolated waypoint paths.
+    """
+
     def __init__(self, full_dof=False):
+        self._logger = logging.getLogger('dp_local_planner')
+        out_hdlr = logging.StreamHandler(sys.stdout)
+        out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+        out_hdlr.setLevel(logging.INFO)
+        self._logger.addHandler(out_hdlr)
+        self._logger.setLevel(logging.INFO)
+
         self._traj_interpolator = uuv_trajectory_generator.TrajectoryGenerator(
             full_dof=full_dof)
 
@@ -91,6 +105,11 @@ class DPControllerLocalPlanner(object):
         self._services['go_to_incremental'] = rospy.Service(
             'go_to_incremental', GoToIncremental, self.go_to_incremental)
 
+    def __del__(self):
+        # Removing logging message handlers
+        while self._logger.handlers:
+            self._logger.handlers.pop()
+
     def _publish_trajectory_info(self, event):
         if self._waypoints_msg is not None:
             self._waypoints_pub.publish(self._waypoints_msg)
@@ -108,7 +127,7 @@ class DPControllerLocalPlanner(object):
             if wps is not None:
                 self._waypoints_msg = wps.to_message()
         self._trajectory_msg = self._traj_interpolator.get_trajectory_as_message()
-        self._display_message('Updating the trajectory information')
+        self._logger.info('Updating the trajectory information')
 
     def _display_message(self, msg):
         print 'DP Local Planner - ' + str(msg)
@@ -119,17 +138,16 @@ class DPControllerLocalPlanner(object):
         approach to the given trajectory.
         """
         if self._vehicle_pose is None:
-            self._display_message('Simulation not properly initialized yet, ignoring approach...')
+            self._logger.error('Simulation not properly initialized yet, ignoring approach...')
             return
         if not self._traj_interpolator.is_using_waypoints():
-            self._display_message('Not using the waypoint interpolation method')
+            self._logger.error('Not using the waypoint interpolation method')
             return
         init_wp = uuv_trajectory_generator.Waypoint(
             x=self._vehicle_pose.pos[0],
             y=self._vehicle_pose.pos[1],
             z=self._vehicle_pose.pos[2],
-            max_forward_speed=self._traj_interpolator.get_waypoints().get_waypoint(0).max_forward_speed,
-            heading_offset=self._vehicle_pose.rot[2])
+            max_forward_speed=self._traj_interpolator.get_waypoints().get_waypoint(0).max_forward_speed)
         first_wp = self._traj_interpolator.get_waypoints().get_waypoint(0)
 
         dx = first_wp.x - init_wp.x
@@ -137,7 +155,7 @@ class DPControllerLocalPlanner(object):
         dz = first_wp.z - init_wp.z
 
         # One new waypoint at each meter
-        self._display_message('Adding waypoints to approach the first position in the given waypoint set')
+        self._logger.info('Adding waypoints to approach the first position in the given waypoint set')
         steps = int(np.floor(first_wp.dist(init_wp.pos)) / 10)
         if steps > 0:
             for i in range(1, steps):
@@ -159,17 +177,17 @@ class DPControllerLocalPlanner(object):
     def set_station_keeping(self, is_on=True):
         """Set station keeping mode flag."""
         self._station_keeping_on = is_on
-        self._display_message('STATION KEEPING MODE = ' + ('ON' if is_on else 'OFF'))
+        self._logger.info('STATION KEEPING MODE = ' + ('ON' if is_on else 'OFF'))
 
     def set_automatic_mode(self, is_on=True):
         """Set automatic mode flag."""
         self._is_automatic = is_on
-        self._display_message('AUTOMATIC MODE = ' + ('ON' if is_on else 'OFF'))
+        self._logger.info('AUTOMATIC MODE = ' + ('ON' if is_on else 'OFF'))
 
     def set_trajectory_running(self, is_on=True):
         """Set trajectory tracking flag."""
         self._traj_running = is_on
-        self._display_message('TRAJECTORY TRACKING = ' + ('ON' if is_on else 'OFF'))
+        self._logger.info('TRAJECTORY TRACKING = ' + ('ON' if is_on else 'OFF'))
 
     def has_started(self):
         """
@@ -192,7 +210,7 @@ class DPControllerLocalPlanner(object):
     def _update_trajectory_from_msg(self, msg):
         self._stamp_trajectory_received = rospy.get_time()
         self._traj_interpolator.init_from_trajectory_message(msg)
-        self._display_message('New trajectory received at ' + str(self._stamp_trajectory_received) + 's')
+        self._logger.info('New trajectory received at ' + str(self._stamp_trajectory_received) + 's')
         self._update_trajectory_info()
 
     def hold_vehicle(self, request):
@@ -207,7 +225,7 @@ class DPControllerLocalPlanner(object):
 
     def start_waypoint_list(self, request):
         if len(request.waypoints) == 0:
-            self._display_message('Waypoint list is empty')
+            self._logger.error('Waypoint list is empty')
             return InitWaypointSet(False)
         self.set_station_keeping(False)
         self.set_automatic_mode(True)
@@ -218,11 +236,11 @@ class DPControllerLocalPlanner(object):
     def start_circle(self, request):
         if request.max_forward_speed <= 0 or request.radius <= 0 or \
            request.n_points <= 0:
-            self._display_message('Invalid parameters to generate a circular trajectory')
+            self._logger.error('Invalid parameters to generate a circular trajectory')
             return InitCircularTrajectoryResponse(False)
         t = rospy.Time(request.start_time.data.secs, request.start_time.data.nsecs)
         if t.to_sec() < rospy.get_time() and not request.start_now:
-            self._display_message('The trajectory starts in the past, correct the starting time!')
+            self._logger.error('The trajectory starts in the past, correct the starting time!')
             return InitCircularTrajectoryResponse(False)
         wp_set = uuv_trajectory_generator.WaypointSet()
         success = wp_set.generate_circle(radius=request.radius,
@@ -234,13 +252,14 @@ class DPControllerLocalPlanner(object):
         if success:
             # Activates station keeping
             self.set_station_keeping(True)
+            self._traj_interpolator.set_interp_method('cubic_interpolator')
             self._traj_interpolator.set_waypoints(wp_set)
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             if request.duration > 0:
                 if self._traj_interpolator.set_max_time(request.duration):
-                    self._display_message('Setting a maximum duration')
+                    self._logger.info('Setting a maximum duration')
                 else:
-                    self._display_message('Setting maximum duration failed')
+                    self._logger.error('Setting maximum duration failed')
             self._update_trajectory_info()
             # Disables station keeping to start trajectory
             self.set_station_keeping(False)
@@ -264,20 +283,20 @@ class DPControllerLocalPlanner(object):
             print '==========================================================='
             return InitCircularTrajectoryResponse(True)
         else:
-            self._display_message('Error generating circular trajectory from waypoint set')
+            self._logger.error('Error generating circular trajectory from waypoint set')
             return InitCircularTrajectoryResponse(False)
 
     def start_helix(self, request):
         if request.radius <= 0 or request.n_points <= 0 or \
            request.n_turns <= 0:
-           self._display_message('Invalid parameters to generate a helical trajectory')
+           self._logger.error('Invalid parameters to generate a helical trajectory')
            return InitHelicalTrajectoryResponse(False)
         t = rospy.Time(request.start_time.data.secs, request.start_time.data.nsecs)
         if t.to_sec() < rospy.get_time() and not request.start_now:
-            self._display_message('The trajectory starts in the past, correct the starting time!')
+            self._logger.error('The trajectory starts in the past, correct the starting time!')
             return InitHelicalTrajectoryResponse(False)
         else:
-            self._display_message('Start helical trajectory now!')
+            self._logger.info('Start helical trajectory now!')
         wp_set = uuv_trajectory_generator.WaypointSet()
         success = wp_set.generate_helix(radius=request.radius,
                                         center=request.center,
@@ -289,13 +308,14 @@ class DPControllerLocalPlanner(object):
                                         heading_offset=request.heading_offset)
         if success:
             self.set_station_keeping(True)
+            self._traj_interpolator.set_interp_method('cubic_interpolator')
             self._traj_interpolator.set_waypoints(wp_set)
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             if request.duration > 0:
                 if self._traj_interpolator.set_max_time(request.duration):
-                    self._display_message('Setting a maximum duration')
+                    self._logger.info('Setting a maximum duration')
                 else:
-                    self._display_message('Setting maximum duration failed')
+                    self._logger.error('Setting maximum duration failed')
             self._update_trajectory_info()
             self.set_station_keeping(False)
             self.set_automatic_mode(True)
@@ -320,21 +340,22 @@ class DPControllerLocalPlanner(object):
             print '==========================================================='
             return InitHelicalTrajectoryResponse(True)
         else:
-            self._display_message('Error generating helical trajectory from waypoint set')
+            self._logger.error('Error generating helical trajectory from waypoint set')
             return InitHelicalTrajectoryResponse(False)
 
     def init_waypoints_from_file(self, request):
         if (len(request.filename.data) == 0 or
                 not isfile(request.filename.data)):
-            self._display_message('Invalid waypoint file')
+            self._logger.error('Invalid waypoint file')
             return InitWaypointsFromFileResponse(False)
         t = rospy.Time(request.start_time.data.secs, request.start_time.data.nsecs)
         if t.to_sec() < rospy.get_time() and not request.start_now:
-            self._display_message('The trajectory starts in the past, correct the starting time!')
+            self._logger.error('The trajectory starts in the past, correct the starting time!')
             return InitHelicalTrajectoryResponse(False)
         else:
-            self._display_message('Start waypoint trajectory now!')
+            self._logger.info('Start waypoint trajectory now!')
         self.set_station_keeping(True)
+        self._traj_interpolator.set_interp_method('lipb_interpolator')
         if self._traj_interpolator.init_from_waypoint_file(request.filename.data):
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             self._update_trajectory_info()
@@ -351,12 +372,12 @@ class DPControllerLocalPlanner(object):
             print '==========================================================='
             return InitWaypointsFromFileResponse(True)
         else:
-            print 'Error occured while parsing waypoint file'
+            self._logger.info('Error occured while parsing waypoint file')
             return InitWaypointsFromFileResponse(False)
 
     def go_to(self, request):
         if self._vehicle_pose is None:
-            self._display_message('Current pose has not been initialized yet')
+            self._logger.error('Current pose has not been initialized yet')
             return GoToResponse(False)
         self.set_station_keeping(True)
         wp_set = uuv_trajectory_generator.WaypointSet()
@@ -370,8 +391,9 @@ class DPControllerLocalPlanner(object):
             use_fixed_heading=request.waypoint.use_fixed_heading)
         wp_set.add_waypoint(init_wp)
         wp_set.add_waypoint_from_msg(request.waypoint)
+        self._traj_interpolator.set_interp_method('lipb_interpolator')
         if not self._traj_interpolator.set_waypoints(wp_set):
-            self._display_message('Error while setting waypoints')
+            self._logger.error('Error while setting waypoints')
             return GoToResponse(False)
 
         self._traj_interpolator.set_start_time(rospy.Time.now().to_sec())
@@ -395,10 +417,10 @@ class DPControllerLocalPlanner(object):
         relative position in the world.
         """
         if self._vehicle_pose is None:
-            self._display_message('Current pose has not been initialized yet')
+            self._logger.error('Current pose has not been initialized yet')
             return GoToIncrementalResponse(False)
         if request.max_forward_speed <= 0:
-            self._display_message('Max. forward speed must be positive')
+            self._logger.error('Max. forward speed must be positive')
             return GoToIncrementalResponse(False)
         self.set_station_keeping(True)
         wp_set = uuv_trajectory_generator.WaypointSet()
@@ -416,8 +438,9 @@ class DPControllerLocalPlanner(object):
             max_forward_speed=request.max_forward_speed)
         wp_set.add_waypoint(wp)
 
+        self._traj_interpolator.set_interp_method('lipb_interpolator')
         if not self._traj_interpolator.set_waypoints(wp_set):
-            self._display_message('Error while setting waypoints')
+            self._logger.error('Error while setting waypoints')
             return GoToIncrementalResponse(False)
 
         self._traj_interpolator.set_start_time(rospy.Time.now().to_sec())
@@ -445,22 +468,31 @@ class DPControllerLocalPlanner(object):
 
         if not self._station_keeping_on and self._traj_running:
             if self._smooth_approach_on:
+                # Generate extra waypoint before the initial waypoint
                 self._calc_smooth_approach()
                 self._smooth_approach_on = False
+            # Get interpolated reference from the reference trajectory
             self._this_ref_pnt = self._traj_interpolator.interpolate(t)
+
             if not self._traj_running:
                 self._traj_running = True
 
             if (self._this_ref_pnt is None and self._traj_running) or \
                (self._traj_running and self._traj_interpolator.has_finished()):
-               self._display_message('Trajectory completed!')
-               self._this_ref_pnt.vel = np.zeros(6)
-               self._this_ref_pnt.acc = np.zeros(6)
-               self.set_station_keeping(True)
-               self.set_automatic_mode(False)
-               self.set_trajectory_running(False)
+                # Trajectory ended, start station keeping mode
+                self._logger.info('Trajectory completed!')
+                self._this_ref_pnt.vel = np.zeros(6)
+                self._this_ref_pnt.acc = np.zeros(6)
+                self.set_station_keeping(True)
+                self.set_automatic_mode(False)
+                self.set_trajectory_running(False)
         elif self._this_ref_pnt is None:
+            self._traj_interpolator.set_interp_method('lipb_interpolator')
+            # Use the latest position and heading of the vehicle from the odometry to enter station keeping mode
             self._this_ref_pnt = deepcopy(self._vehicle_pose)
+            # Set roll and pitch reference to zero
+            yaw = self._this_ref_pnt.rot[2]
+            self._this_ref_pnt.rot = [0, 0, yaw]
             self.set_automatic_mode(False)
 
         return self._this_ref_pnt
