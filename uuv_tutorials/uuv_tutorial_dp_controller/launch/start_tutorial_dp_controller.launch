@@ -1,0 +1,103 @@
+<launch>
+    <!-- This launch file will start the controller nodes with the necessary parameters -->
+
+    <!--
+    Vehicle namespace: since the simulation can run with multiple vehicle, each vehicle
+    is created under a namespace, which is per default equal to the name of vehicle model, but
+    can be assigned differently at startup
+    -->
+    <arg name="uuv_name"/>
+    <!-- Name of the vehicle model: the name of the robot model -->
+    <arg name="model_name" default="$(arg uuv_name)"/>
+
+    <!-- Control effort saturation -->
+    <arg name="saturation" default="5000"/>
+
+    <!--
+    The controller parameters are given below and will be given to the controller node in its
+    private namespace. These are vectors and for roslaunch to see this as one argument, there
+    can be no spaces between the commas and the floating point values. The default values
+    are usually the ones that are going to be used.
+    -->
+    <arg name="Kp" default="11993.888,11993.888,11993.888,19460.069,19460.069,19460.069"/>
+    <arg name="Kd" default="9077.459,9077.459,9077.459,18880.925,18880.925,18880.925"/>
+    <arg name="Ki" default="321.417,321.417,321.417,2096.951,2096.951,2096.951"/>
+
+    <!--
+    For the control vector to be distributed amongst the thrusters, a thruster manager node
+    has to be initialized for this specific vehicle. The thruster manager will calculate the
+    thruster allocation matrix if none is provided, but it is better if the TAM is stored
+    in a YAML file beforehand. Check the tutorial on how to initialize the thruster allocation
+    matrix.
+    -->
+    <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+        <!--
+        The thruster manager will use the namespace uuv_name to initialize the node and
+        will use the robot's model_name to search for the YAML file containing the thruster
+        allocation matrix.
+        -->
+        <arg name="uuv_name" value="$(arg uuv_name)"/>
+        <arg name="model_name" value="$(arg model_name)"/>
+    </include>
+
+    <!--
+    It is important to start all nodes relative to this vehicle under the vehicle's
+    namespace in order to avoid errors and parameter being initialized in wrong place.
+    Most of the nodes per default are going to look for configuration parameters and
+    topics under the vehicle's namespace per default.
+    -->
+    <group ns="$(arg uuv_name)">
+        <!--
+        This node just reads the trajectory and waypoint topics and publishes visualization
+        markers to RViz, but is not essential to the controller's operation
+        -->
+        <node pkg="uuv_control_utils"
+              type="trajectory_marker_publisher.py"
+              name="trajectory_marker_publisher"
+              output="screen">
+            <remap from="trajectory" to="dp_controller/trajectory"/>
+            <remap from="waypoints" to="dp_controller/waypoints"/>
+        </node>
+
+        <!--
+        Start the vehicle controller node. Remember to include this controller's script
+        correctly in the CMakeLists.txt file of your catkin package. This can be done by
+        adding the following line in the CMakeLists.txt after the line where catkin_package()
+        is given:
+
+        catkin_install_python(PROGRAMS scripts/tutorial_dp_controller.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+        The scripts/tutorial_dp_controller.py file must also be set as an executable as follows
+
+        >> cd <path_to_ros_package>/scripts
+        >> chmod 777 tutorial_dp_controller.py
+        -->
+
+        <node pkg="uuv_tutorial_dp_controller"
+            type="tutorial_dp_controller.py"
+            name="tutorial_dp_controller"
+            output="screen">
+            <!-- Remap necessary topics -->
+            <remap from="odom" to="pose_gt"/>
+            <remap from="trajectory" to="dp_controller/trajectory"/>
+            <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+            <remap from="waypoints" to="dp_controller/waypoints"/>
+            <remap from="error" to="dp_controller/error"/>
+            <remap from="reference" to="dp_controller/reference"/>
+            <remap from="thruster_output" to="thruster_manager/input"/>
+            <!-- Set the controller parameters in the node's private namespace-->
+            <rosparam subst_value="true">
+                saturation: $(arg saturation)
+                Kp: [$(arg Kp)]
+                Kd: [$(arg Kd)]
+                Ki: [$(arg Ki)]
+            </rosparam>
+        </node>
+    </group>
+
+    <!--
+    Now run the demo file to start a new simulation with this controller
+
+    >> roslaunch uuv_tutorial_dp_controller start_tutorial_dp_controller_demo.launch
+    -->
+</launch>
