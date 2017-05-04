@@ -127,7 +127,7 @@ class TutorialDPController(DPControllerBase):
         # The controller algorithm must be implemented here, the super class will connect this method
         # to the odometry update as a callback function
 
-        # First test whether or not the odometry ROS topics has already been updated
+        # First test whether or not the odometry topic subscriber has already been initialized
         if not self.odom_is_init:
             return
 
