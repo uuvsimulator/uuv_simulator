@@ -86,15 +86,6 @@ class TutorialDPController(DPControllerBase):
                 raise rospy.ROSException('For the Kp diagonal matrix, 6 coefficients are needed')
 
         # Do the same for the other two matrices
-        if rospy.get_param('~Kp'):
-            diag = rospy.get_param('~Kp')
-            if len(diag) == 6:
-                self._Kp = np.diag(diag)
-                print 'Kp=\n', self._Kp
-            else:
-                # If the vector provided has the wrong dimension, raise an exception
-                raise rospy.ROSException('For the Kp diagonal matrix, 6 coefficients are needed')
-
         if rospy.get_param('~Kd'):
             diag = rospy.get_param('~Kd')
             if len(diag) == 6:
