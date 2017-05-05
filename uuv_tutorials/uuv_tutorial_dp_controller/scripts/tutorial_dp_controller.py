@@ -125,7 +125,7 @@ class TutorialDPController(DPControllerBase):
         # Update the integrator, read the super class vector for the pose error (orientation is represented
         # with Euler angles in RPY convention) and integrate to the stored pose error from the last
         # iteration
-        self._int = 0.5 * (self.error_pose_euler - self._error_pose) * self._dt
+        self._int = 0.5 * (self.error_pose_euler + self._error_pose) * self._dt
 
         # Store the current pose error for the next iteration
         self._error_pose = self.error_pose_euler
