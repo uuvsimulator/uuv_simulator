@@ -143,15 +143,15 @@ class WPTrajectoryGenerator(object):
         """Return maximum trajectory time."""
         return self.interpolator.max_time
 
-    def set_max_time(self, max_time):
+    def set_duration(self, t):
         """Set a new maximum trajectory time."""
-        if max_time > 0:
-            self.interpolator.max_time = max_time
-            self.interpolator.s_step = self._t_step / self.interpolator.max_time
-            self._logger.info('New duration, max. relative time=%.2f s' % self.interpolator.max_time)
+        if t > 0:
+            self.interpolator.duration = t
+            self.interpolator.s_step = self._t_step / self.interpolator.duration
+            self._logger.info('New duration, max. relative time=%.2f s' % self.interpolator.duration)
             return True
         else:
-            self._logger.info('Invalid max. time, time=%.2f s' % max_time)
+            self._logger.info('Invalid max. time, time=%.2f s' % t)
             return False
 
     def is_finished(self):
@@ -172,6 +172,7 @@ class WPTrajectoryGenerator(object):
 
     def init_waypoints(self, waypoint_set):
         """Initialize the waypoint set."""
+        self.interpolator.reset()
         return self.interpolator.init_waypoints(waypoint_set)
 
     def add_waypoint(self, waypoint, add_to_beginning=False):
@@ -352,26 +353,34 @@ class WPTrajectoryGenerator(object):
     def interpolate(self, t):
         if not self._has_started:
             if not self.interpolator.init_interpolator():
+                self._logger.error('Error initializing the waypoint interpolator')
                 return None
+
             self.interpolator.s_step = self._t_step / (self.interpolator.max_time - self.interpolator.start_time)
             self.update_dt(t)
             # Generate first point
             self._cur_s = 0
             self._has_started = True
             self._has_ended = False
+            self._logger.info('Waypoint interpolator initialiazed!')
 
         if t > self.interpolator.max_time or t - self.interpolator.start_time < 0:
-            self._has_started = False
             if t > self.interpolator.max_time:
                 self._has_ended = True
+            else:
+                self._this_pnt = self.generate_pnt(0)
+                self._this_pnt.vel = np.zeros(6)
+                self._this_pnt.acc = np.zeros(6)
+                self._this_pnt.t = t
+
         else:
             self._has_started = True
             self._has_ended = False
 
-        # Retrieving current position and heading
-        self._cur_s = (t - self.interpolator.start_time) / (self.interpolator.max_time - self.interpolator.start_time)
-        self._this_pnt = self.generate_pnt()
-        self._this_pnt.t = t
+            # Retrieving current position and heading
+            self._cur_s = (t - self.interpolator.start_time) / (self.interpolator.max_time - self.interpolator.start_time)
+            self._this_pnt = self.generate_pnt()
+            self._this_pnt.t = t
 
-        self._last_pnt = deepcopy(self._this_pnt)
+            self._last_pnt = deepcopy(self._this_pnt)
         return self._this_pnt

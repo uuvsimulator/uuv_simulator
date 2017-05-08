@@ -143,12 +143,12 @@ class TrajectoryGenerator(object):
             print 'Cannot add trajectory point! Generator is in waypoint interpolation mode!'
             return False
 
-    def set_max_time(self, max_time):
+    def set_duration(self, t):
         if not self._wp_interp_on:
             print 'Waypoint interpolation is not activated'
             return False
         else:
-            return self._wp_interp.set_max_time(max_time)
+            return self._wp_interp.set_duration(t)
 
     def get_max_time(self):
         if self._points is None and not self._wp_interp_on:

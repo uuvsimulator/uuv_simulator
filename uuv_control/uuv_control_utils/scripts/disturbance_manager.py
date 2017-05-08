@@ -99,7 +99,7 @@ class DisturbanceManager:
                 elif item['type'] == 'thrust_efficiency':
                     services.append('/%s/thruster_%d/set_thrust_force_efficiency' % (vehicle_name, item['thruster_id']))
             for s in services:
-                rospy.wait_for_service(s, timeout=2)
+                rospy.wait_for_service(s, timeout=10)
         except rospy.ROSException:
             print 'Current velocity services not available! Closing node...'
             sys.exit(-1)

@@ -42,8 +42,8 @@ class PathGenerator(object):
         self._cur_s = 0
         self._s_step = 0.0001
 
-        self._max_time = None
         self._start_time = None
+        self._duration = None
 
     @staticmethod
     def get_generator(name, *args, **kwargs):
@@ -65,12 +65,16 @@ class PathGenerator(object):
 
     @property
     def max_time(self):
-        return self._max_time + self._start_time
+        return self._duration + self._start_time
 
-    @max_time.setter
-    def max_time(self, time):
-        assert time > 0, 'Invalid negative time'
-        self._max_time = time - self._start_time
+    @property
+    def duration(self):
+        return self._duration
+
+    @duration.setter
+    def duration(self, t):
+        assert t > 0, 'Duration must be a positive value'
+        self._duration = t
 
     @property
     def start_time(self):
@@ -100,6 +104,23 @@ class PathGenerator(object):
         v = np.array(self._s - self._cur_s)
         idx = np.argmin(v)
         return idx
+
+    @property
+    def s_step(self):
+        return self._s_step
+
+    @s_step.setter
+    def s_step(self, step):
+        assert 0 < step < 1
+        self._s_step = step
+
+    def reset(self):
+        self._s = list()
+        self._cur_s = 0
+        self._s_step = 0.0001
+
+        self._start_time = None
+        self._duration = None
 
     def is_full_dof(self):
         return self._is_full_dof
@@ -152,15 +173,6 @@ class PathGenerator(object):
                 self._waypoints.add_waypoint(wp)
 
         return self.init_interpolator()
-
-    @property
-    def s_step(self):
-        return self._s_step
-
-    @s_step.setter
-    def s_step(self, step):
-        assert 0 < step < 1
-        self._s_step = step
 
     def interpolate(self, tag, s):
         return self._interp_fcns[tag](s)

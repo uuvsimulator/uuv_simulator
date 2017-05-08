@@ -92,7 +92,10 @@ class LIPBInterpolator(PathGenerator):
         self._s = np.cumsum(lengths) / np.sum(lengths)
         mean_vel = np.mean(
             [self._waypoints.get_waypoint(k).max_forward_speed for k in range(self._waypoints.num_waypoints)])
-        self._max_time = np.sum(lengths) / mean_vel
+        if self._duration is None:
+            self._duration = np.sum(lengths) / mean_vel
+        if self._start_time is None:
+            self._start_time = 0.0
 
         # Set a simple spline to interpolate heading offset, if existent
         self._heading_spline = splrep(self._s, heading, k=3, per=False)
@@ -104,7 +107,7 @@ class LIPBInterpolator(PathGenerator):
         if self._waypoints is None:
             return None
         s = np.arange(0, 1 + step, step)
-        t = s * self._max_time + self._start_time
+        t = s * self._duration + self._start_time
 
         pnts = list()
         for i in range(t.size):

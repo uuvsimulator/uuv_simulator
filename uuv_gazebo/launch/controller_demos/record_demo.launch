@@ -1,8 +1,9 @@
 <launch>
   <arg name="record" default="false"/>
+  <arg name="bag_filename" default="$(find uuv_evaluation)/bags/recording.bag"/>
 
   <node pkg="rosbag" type="record" name="recording"
-    args="record -O $(find uuv_evaluation)/bags/recording.bag
+    args="record -O $(arg bag_filename)
       /rexrov/dp_controller/trajectory
       /rexrov/dp_controller/reference
       /rexrov/pose_gt
