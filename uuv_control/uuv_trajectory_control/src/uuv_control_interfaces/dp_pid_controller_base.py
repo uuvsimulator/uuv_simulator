@@ -104,7 +104,7 @@ class DPPIDControllerBase(DPControllerBase):
         if not self.odom_is_init:
             return
         # Update integrator
-        self._int += 0.5 * (self.error_pose_euler - self._error_pose) * self._dt
+        self._int += 0.5 * (self.error_pose_euler + self._error_pose) * self._dt
         # Store current pose error
         self._error_pose = self.error_pose_euler
         return np.dot(self._Kp, self.error_pose_euler) \
