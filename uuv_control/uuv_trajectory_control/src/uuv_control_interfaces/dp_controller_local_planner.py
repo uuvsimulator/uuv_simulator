@@ -256,8 +256,8 @@ class DPControllerLocalPlanner(object):
             self._traj_interpolator.set_waypoints(wp_set)
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             if request.duration > 0:
-                if self._traj_interpolator.set_max_time(request.duration):
-                    self._logger.info('Setting a maximum duration')
+                if self._traj_interpolator.set_duration(request.duration):
+                    self._logger.info('Setting a maximum duration, duration=%.2f s' % request.duration)
                 else:
                     self._logger.error('Setting maximum duration failed')
             self._update_trajectory_info()
@@ -312,8 +312,8 @@ class DPControllerLocalPlanner(object):
             self._traj_interpolator.set_waypoints(wp_set)
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             if request.duration > 0:
-                if self._traj_interpolator.set_max_time(request.duration):
-                    self._logger.info('Setting a maximum duration')
+                if self._traj_interpolator.set_duration(request.duration):
+                    self._logger.info('Setting a maximum duration, duration=%.2f s' % request.duration)
                 else:
                     self._logger.error('Setting maximum duration failed')
             self._update_trajectory_info()
@@ -369,6 +369,7 @@ class DPControllerLocalPlanner(object):
             print '==========================================================='
             print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
             print 'Starting time =', (t.to_sec() if not request.start_now else rospy.get_time())
+            print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
             print '==========================================================='
             return InitWaypointsFromFileResponse(True)
         else:
@@ -471,14 +472,14 @@ class DPControllerLocalPlanner(object):
                 # Generate extra waypoint before the initial waypoint
                 self._calc_smooth_approach()
                 self._smooth_approach_on = False
+                self._logger.info('Adding waypoints to approach the given waypoint trajectory')
             # Get interpolated reference from the reference trajectory
             self._this_ref_pnt = self._traj_interpolator.interpolate(t)
 
             if not self._traj_running:
                 self._traj_running = True
 
-            if (self._this_ref_pnt is None and self._traj_running) or \
-               (self._traj_running and self._traj_interpolator.has_finished()):
+            if self._traj_running and self._traj_interpolator.has_finished():
                 # Trajectory ended, start station keeping mode
                 self._logger.info('Trajectory completed!')
                 self._this_ref_pnt.vel = np.zeros(6)
