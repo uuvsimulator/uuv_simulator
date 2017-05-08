@@ -1,0 +1,43 @@
+<launch>
+    <!-- If you want to generate a ROS bag with the recorded simulated data, set this flag to true -->
+    <arg name="record" default="false"/>
+
+    <!-- Start the a underwater world simulation scenario -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="worlds/ocean_waves.world"/>
+        <arg name="paused" value="false"/>
+    </include>
+
+    <!-- Add the RexROV vehicle to the simulation (namespace: rexrov) -->
+    <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
+        <arg name="x" default="20"/>
+        <arg name="y" default="0"/>
+        <arg name="z" default="-20"/>
+        <arg name="yaw" default="0"/>
+    </include>
+
+    <!-- Start the controller -->
+    <include file="$(find uuv_tutorial_dp_controller)/launch/start_tutorial_dp_controller.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="model_name" value="rexrov"/>
+    </include>
+
+    <!-- Start the recording node  -->
+    <include file="$(find uuv_gazebo)/launch/controller_demos/record_demo.launch">
+      <arg name="record" value="$(arg record)"/>
+    </include>
+
+    <!-- Open RViz for visualization of sensor data and visualization markers -->
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/controller_demo.rviz"/>
+
+
+    <!--
+    You can run this demo as
+
+    >> roslaunch uuv_tutorial_dp_controller start_tutorial_dp_controller_demo.launch
+
+    and you can then send some waypoints to the vehicle to see it working
+
+    >> roslaunch uuv_control_utils send_waypoints_file.launch uuv_name:=rexrov
+    -->
+</launch>
