@@ -3,3 +3,8 @@
 *.swp
 .clang_complete
 .idea
+smac3-*
+results
+comparative_analysis
+best_results
+scenario_*.txt
