@@ -1,0 +1,53 @@
+<launch>
+    <!-- Setup for a timeout for the simulation run -->
+    <arg name="set_timeout" default="false"/>
+    <arg name="timeout" default="105"/>
+
+    <!-- Vehicle's initial position -->
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="-20"/>
+    <arg name="yaw" default="0"/>
+
+    <!-- Controller parameters -->
+    <arg name="K" default="5,5,5,5,5,5"/>
+    <arg name="Kd" default="4118.98,4118.98,4118.98,8000.0,8000.0,8000.0"/>
+    <arg name="Ki" default="0.06144,0.06144,0.06144,0.078,0.078,0.078"/>
+    <arg name="slope" default="0.182,0.182,0.182,3.348,3.348,3.348"/>
+
+    <include file="$(find uuv_descriptions)/launch/empty_underwater_world.launch">
+        <arg name="set_timeout" value="true"/>
+        <arg name="timeout" value="$(arg timeout)"/>
+    </include>
+
+    <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
+        <arg name="x" default="$(arg x)"/>
+        <arg name="y" default="$(arg y)"/>
+        <arg name="z" default="$(arg z)"/>
+        <arg name="yaw" default="$(arg yaw)"/>
+    </include>
+
+    <include file="$(find uuv_trajectory_control)/launch/rov_nmb_sm_controller.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="model_name" value="rexrov"/>
+        <arg name="K" value="$(arg K)"/>
+        <arg name="Kd" value="$(arg Kd)"/>
+        <arg name="Ki" value="$(arg Ki)"/>
+        <arg name="slope" value="$(arg slope)"/>
+    </include>
+
+    <include file="$(find uuv_control_utils)/launch/start_circular_trajectory.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="radius" value="5"/>
+        <arg name="center_z" value="-25"/>
+        <arg name="max_forward_speed" value="0.6"/>
+    </include>
+
+    <include file="$(find uuv_control_utils)/launch/start_disturbance_manager.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="use_file" value="true"/>
+        <arg name="disturbance_file" value="$(find uuv_tutorial_disturbances)/config/disturbances.yaml"/>
+    </include>
+
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/controller_demo.rviz"/>
+</launch>
