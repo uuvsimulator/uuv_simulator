@@ -18,7 +18,7 @@
   <group ns="$(arg uuv_name)">
     <node pkg="uuv_control_utils"
       type="apply_body_wrench.py"
-      name="apply_body_wrench"
+      name="apply_body_wrench_$(arg starting_time)_$(arg force_x)_$(arg force_y)_$(arg force_z)_$(arg torque_x)_$(arg torque_y)_$(arg torque_z)"
       output="screen">
 
       <rosparam subst_value="true">
