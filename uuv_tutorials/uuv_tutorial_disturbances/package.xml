@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <name>uuv_tutorial_disturbances</name>
+  <version>0.0.0</version>
+  <description>
+      Tutorial that shows how to use the uuv_control_utils tools to schedule disturbances to be applied during
+      the simulation
+  </description>
+
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="Sebastian.Scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>uuv_control_utils</run_depend>
+  <run_depend>uuv_trajectory_control</run_depend>
+  <run_depend>uuv_descriptions</run_depend>
+  <run_depend>uuv_thruster_manager</run_depend>
+  <run_depend>uuv_gazebo</run_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
