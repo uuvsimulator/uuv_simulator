@@ -61,7 +61,7 @@ if __name__ == '__main__':
     print 'Torque [N]=', torque
 
     try:
-        rospy.wait_for_service('/gazebo/apply_body_wrench', timeout=2)
+        rospy.wait_for_service('/gazebo/apply_body_wrench', timeout=10)
     except rospy.ROSException:
         print 'Service not available! Closing node...'
         sys.exit(-1)
@@ -76,6 +76,11 @@ if __name__ == '__main__':
 
     body_name = '%s/base_link' % ns
 
+    if starting_time >= 0:
+        rate = rospy.Rate(100)
+        while rospy.get_time() < starting_time:
+            rate.sleep()
+
     wrench = Wrench()
     wrench.force = Vector3(*force)
     wrench.torque = Vector3(*torque)
@@ -84,10 +89,14 @@ if __name__ == '__main__':
         'world',
         Point(0, 0, 0),
         wrench,
-        rospy.Time(secs=starting_time),
+        rospy.Time().now(),
         rospy.Duration(duration))
 
     if success:
-        print 'Perturbation applied!'
+        print 'Body wrench perturbation applied!'
+        print '\tFrame: ', body_name
+        print '\tDuration [s]: ', duration
+        print '\tForce [N]: ', force
+        print '\tTorque [Nm]: ', torque
     else:
         print 'Failed!'
