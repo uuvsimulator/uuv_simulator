@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import rospy
-import sys
 from uuv_gazebo_ros_plugins_msgs.srv import SetThrusterState
 
 
@@ -58,7 +57,7 @@ if __name__ == '__main__':
 
     vehicle_name = rospy.get_namespace().replace('/', '')
 
-    srv_name = '/%s/thruster_%d/set_thruster_state' % (vehicle_name, thruster_id)
+    srv_name = '/%s/thrusters/%d/set_thruster_state' % (vehicle_name, thruster_id)
 
     try:
         rospy.wait_for_service(srv_name, timeout=2)
