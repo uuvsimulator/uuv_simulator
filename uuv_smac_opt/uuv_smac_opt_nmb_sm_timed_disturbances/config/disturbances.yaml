@@ -1,0 +1,44 @@
+disturbances:
+  -
+    type: wrench
+    starting_time: 25
+    duration: 50
+    force:
+      - 3000
+      - 0
+      - -3000
+    torque:
+      - 0
+      - 0
+      - 0
+  -
+    type: current
+    starting_time: 75
+    velocity: 1.2
+    horizontal_angle: 0
+    vertical_angle: 0
+    duration: 50
+  -
+    type: wrench
+    starting_time: 125
+    duration: 25
+    force:
+      - 0
+      - 0
+      - 0
+    torque:
+      - 0
+      - 0
+      - 3000
+  -
+    type: wrench
+    starting_time: 150
+    duration: 25
+    force:
+      - 0
+      - 0
+      - 0
+    torque:
+      - 0
+      - 0
+      - -3000
