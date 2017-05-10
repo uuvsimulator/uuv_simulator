@@ -24,7 +24,7 @@ from bag_evaluation import Evaluation
 
 import roslib
 import rospy
-roslib.load_manifest('uuv_control_evaluation')
+roslib.load_manifest('uuv_evaluation')
 
 
 if __name__ == "__main__":
