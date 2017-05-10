@@ -1,0 +1,9 @@
+id: opt_nmb_sm_controller_timed_disturbances
+execute:
+  cmd: "roslaunch uuv_smac_opt_pid_timed_disturbances start_pid_smac_simultech.launch"
+  params:
+    record: true
+    # Set this flag to true to allow Gazebo to start its front end. Otherwise, the simulation will run without the
+    # 3D visualization
+    gui: false
+    timeout: 205
