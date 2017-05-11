@@ -1,5 +1,5 @@
 <launch>
-    <arg name="record" default="true"/>
+    <arg name="record" default="false"/>
     <arg name="gui" default="true"/>
     <arg name="timeout" default="205"/>
     <arg name="bag_filename" default="recording.bag"/>
