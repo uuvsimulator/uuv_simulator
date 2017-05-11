@@ -1,6 +1,6 @@
 <launch>
     <arg name="record" default="false"/>
-    <arg name="bag_filename" default="/home/mam0box/Documents/recording.bag"/>
+    <arg name="bag_filename" default="recording.bag"/>
     <arg name="gui" default="true"/>
     <arg name="timeout" default="105"/>
 
