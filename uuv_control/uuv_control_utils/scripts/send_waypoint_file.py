@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     # If no start time is provided: start *now*.
     start_time = rospy.Time.now().to_sec()
-    start_now = False
+    start_now = True
     if rospy.has_param('~start_time'):
         start_time = rospy.get_param('~start_time')
         if start_time < 0.0:
