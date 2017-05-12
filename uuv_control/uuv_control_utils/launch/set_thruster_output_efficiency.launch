@@ -8,7 +8,7 @@
   <group ns="$(arg uuv_name)">
     <node pkg="uuv_control_utils"
       type="set_thruster_output_efficiency.py"
-      name="set_thruster_output_efficiency_$(arg uuv_name)_thruster_$(arg thruster_id)"
+      name="set_thruster_output_efficiency_$(arg starting_time)_thruster_$(arg thruster_id)"
       output="screen">
       <rosparam subst_value="true">
         starting_time: $(arg starting_time)
