@@ -172,6 +172,7 @@ class WPTrajectoryGenerator(object):
 
     def init_waypoints(self, waypoint_set):
         """Initialize the waypoint set."""
+        self.reset()
         self.interpolator.reset()
         return self.interpolator.init_waypoints(waypoint_set)
 
@@ -362,7 +363,7 @@ class WPTrajectoryGenerator(object):
             self._cur_s = 0
             self._has_started = True
             self._has_ended = False
-            self._logger.info('Waypoint interpolator initialiazed!')
+            self._logger.info('Waypoint interpolator initialized! Start time: %.2f s' % self.interpolator.start_time)
 
         if t > self.interpolator.max_time or t - self.interpolator.start_time < 0:
             if t > self.interpolator.max_time:

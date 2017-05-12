@@ -16,6 +16,7 @@
 import rospy
 import numpy as np
 from copy import deepcopy
+from geometry_msgs.msg import Vector3, PoseStamped, Quaternion
 import uuv_control_msgs.msg as uuv_control_msgs
 from nav_msgs.msg import Path
 from .wp_trajectory_generator import WPTrajectoryGenerator
@@ -216,24 +217,25 @@ class TrajectoryGenerator(object):
             for p in self._points:
                 p_msg = uuv_control_msgs.TrajectoryPoint()
                 p_msg.header.stamp = rospy.Time(p.t)
-                p_msg.pose.position = geometry_msgs.Vector3(*p.p)
-                p_msg.pose.orientation = geometry_msgs.Quaternion(*p.q)
-                p_msg.velocity.linear = geometry_msgs.Vector3(*p.v)
-                p_msg.velocity.angular = geometry_msgs.Vector3(*p.w)
-                p_msg.acceleration.linear = geometry_msgs.Vector3(*p.a)
-                p_msg.acceleration.angular = geometry_msgs.Vector3(*p.alpha)
+                p_msg.pose.position = Vector3(*p.p)
+                p_msg.pose.orientation = Quaternion(*p.q)
+                p_msg.velocity.linear = Vector3(*p.v)
+                p_msg.velocity.angular = Vector3(*p.w)
+                p_msg.acceleration.linear = Vector3(*p.a)
+                p_msg.acceleration.angular = Vector3(*p.alpha)
                 msg.point.append(p_msg)
         else:
             dt = 0.05 * self._wp_interp.get_max_time()
             for ti in np.arange(0, self._wp_interp.get_max_time(), dt):
                 pnt = self._wp_interp.interpolate(ti)
-                p_msg.header.stamp = rospy.Time(p.t)
-                p_msg.pose.position = geometry_msgs.Vector3(*p.p)
-                p_msg.pose.orientation = geometry_msgs.Quaternion(*p.q)
-                p_msg.velocity.linear = geometry_msgs.Vector3(*p.v)
-                p_msg.velocity.angular = geometry_msgs.Vector3(*p.w)
-                p_msg.acceleration.linear = geometry_msgs.Vector3(*p.a)
-                p_msg.acceleration.angular = geometry_msgs.Vector3(*p.alpha)
+                p_msg = uuv_control_msgs.TrajectoryPoint()
+                p_msg.header.stamp = rospy.Time(pnt.t)
+                p_msg.pose.position = Vector3(*pnt.p)
+                p_msg.pose.orientation = Quaternion(*pnt.q)
+                p_msg.velocity.linear = Vector3(*pnt.v)
+                p_msg.velocity.angular = Vector3(*pnt.w)
+                p_msg.acceleration.linear = Vector3(*pnt.a)
+                p_msg.acceleration.angular = Vector3(*pnt.alpha)
                 msg.point.append(p_msg)
         return msg
 
