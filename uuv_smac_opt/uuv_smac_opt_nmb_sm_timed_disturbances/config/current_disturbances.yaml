@@ -1,0 +1,22 @@
+disturbances:
+  -
+    type: current
+    starting_time: 25
+    velocity: 1.2
+    horizontal_angle: 0
+    vertical_angle: 0
+    duration: 40
+  -
+    type: current
+    starting_time: 75
+    velocity: 0.8
+    horizontal_angle: 0.65
+    vertical_angle: 0
+    duration: 40
+  -
+    type: current
+    starting_time: 125
+    velocity: 0.9
+    horizontal_angle: -0.52
+    vertical_angle: 0
+    duration: 40

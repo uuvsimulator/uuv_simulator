@@ -7,7 +7,9 @@ catkin_python_setup()
 
 catkin_package()
 
-catkin_install_python(PROGRAMS scripts/trajectory_eval.py                               
+catkin_install_python(PROGRAMS scripts/trajectory_eval.py
+                               scripts/smac_wrapper.py
+                               scripts/run_best_worst_comparison.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch

@@ -1,0 +1,33 @@
+kpis:
+  mean_abs_thrust:
+    title: Mean absolute thrust
+    var: Thrust
+    unit: N
+  mean_error_position:
+    title: Mean absolute error
+    var: Position
+    unit: m
+  max_error_yaw:
+    title: Maximum absolute error
+    var: Yaw
+    factor: 57.29577951308232
+    var: Yaw
+    unit: degrees
+  mean_error_yaw:
+    title: Mean absolute error
+    var: Yaw
+    factor: 57.29577951308232
+    unit: degrees
+  rmse_position:
+    title: RMS error
+    var: Position
+    unit: m
+  max_error_linear_velocity:
+    title: Maximum absolute error
+    var: Linear velocity
+    unit: m/s
+cost_fcn:
+  rmse_position: 0.2
+  rmse_roll: 3.183098861837907  # 1 / (pi / 10)
+  rmse_pitch: 3.183098861837907 # 1 / (pi / 10)
+  rmse_yaw: 1.9098593171027443  # 1 / (pi / 6)
