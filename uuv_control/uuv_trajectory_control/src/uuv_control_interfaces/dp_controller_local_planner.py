@@ -357,7 +357,8 @@ class DPControllerLocalPlanner(object):
         self.set_station_keeping(True)
         self._traj_interpolator.set_interp_method('lipb_interpolator')
         if self._traj_interpolator.init_from_waypoint_file(request.filename.data):
-            self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
+            t = (t.to_sec() if not request.start_now else rospy.get_time())
+            self._traj_interpolator.set_start_time(t)
             self._update_trajectory_info()
             self.set_station_keeping(False)
             self.set_automatic_mode(True)
@@ -368,12 +369,12 @@ class DPControllerLocalPlanner(object):
             print 'IMPORT WAYPOINTS FROM FILE'
             print '==========================================================='
             print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-            print 'Starting time =', (t.to_sec() if not request.start_now else rospy.get_time())
+            print 'Starting time =', t
             print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
             print '==========================================================='
             return InitWaypointsFromFileResponse(True)
         else:
-            self._logger.info('Error occured while parsing waypoint file')
+            self._logger.info('Error occurred while parsing waypoint file')
             return InitWaypointsFromFileResponse(False)
 
     def go_to(self, request):
