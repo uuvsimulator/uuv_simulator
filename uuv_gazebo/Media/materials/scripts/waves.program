@@ -1,0 +1,9 @@
+vertex_program SimpleWavesVS glsl
+{
+  source SimpleWaves.vert
+}
+
+fragment_program SimpleWavesFS glsl
+{
+  source SimpleWaves.frag
+}
