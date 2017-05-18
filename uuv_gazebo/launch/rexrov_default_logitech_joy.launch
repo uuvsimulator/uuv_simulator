@@ -17,5 +17,8 @@
     <arg name="axis_x" default="1"/>
     <arg name="axis_y" default="0"/>
     <arg name="axis_z" default="5"/>
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="-2"/>
   </include>
 </launch>
