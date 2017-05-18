@@ -89,14 +89,14 @@ class WorldPublisher:
                     if len(models[model]['plane']) == 3:
                         new_model['plane'] = models[model]['plane']
                     else:
-                        print('Invalid scale vector for ', model)
+                        print('Invalid scale vector for ' + model)
             else:
                 continue
 
             self._model_paths[model] = new_model
             print('New model being published: %s' % model)
-            print('\t Position: ', str(self._model_paths[model]['position']))
-            print('\t Orientation: ', str(self._model_paths[model]['orientation']))
+            print('\t Position: ' + str(self._model_paths[model]['position']))
+            print('\t Orientation: ' + str(self._model_paths[model]['orientation']))
 
     def publish_meshes(self):
         markers = MarkerArray()
