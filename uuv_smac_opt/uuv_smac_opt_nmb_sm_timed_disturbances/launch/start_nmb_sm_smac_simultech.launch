@@ -9,7 +9,7 @@
     <arg name="Ki" default="0.06144,0.06144,0.06144,0.078,0.078,0.078"/>
     <arg name="slope" default="0.182,0.182,0.182,3.348,3.348,3.348"/>
 
-    <include file="$(find uuv_descriptions)/launch/empty_underwater_world.launch">
+    <include file="$(find uuv_gazebo)/launch/worlds/empty_underwater_world.launch">
         <arg name="gui" value="$(arg gui)"/>
         <arg name="paused" value="false"/>
         <arg name="set_timeout" value="true"/>

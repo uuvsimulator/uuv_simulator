@@ -8,7 +8,7 @@
     <arg name="Kd" default="9077.459,9077.459,9077.459,18880.925,18880.925,18880.925"/>
     <arg name="Ki" default="321.417,321.417,321.417,2096.951,2096.951,2096.951"/>
 
-    <include file="$(find uuv_descriptions)/launch/empty_underwater_world.launch">
+    <include file="$(find uuv_gazebo)/launch/worlds/empty_underwater_world.launch">
         <arg name="gui" value="$(arg gui)"/>
         <arg name="paused" value="false"/>
         <arg name="set_timeout" value="true"/>
