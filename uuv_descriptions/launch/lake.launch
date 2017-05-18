@@ -14,6 +14,18 @@
         <arg name="verbose" value="true"/>
     </include>
 
+    <node name="publish_world_models"
+        pkg="uuv_assistants"
+        type="publish_world_models.py"
+        output="screen">
+        <rosparam subst_value="true">
+            meshes:
+                lake:
+                    mesh: package://uuv_descriptions/world_models/lake/meshes/LakeBottom.dae
+                    model: lake             
+        </rosparam>
+    </node>
+
     <group if="$(arg set_timeout)">
         <include file="$(find uuv_assistants)/launch/set_simulation_timer.launch">
             <arg name="timeout" value="$(arg timeout)"/>
