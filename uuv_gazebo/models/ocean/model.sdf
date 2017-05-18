@@ -20,28 +20,34 @@
   <static>true</static>
   <link name="ocean_link">
 
-  <visual name="ocean_visual1">
+  <visual name="ocean_surface">
     <pose>0 0 0 0 0 0</pose>
     <geometry>
-      <mesh><uri>model://ocean/mesh.dae</uri><scale>2 2 2</scale></mesh>
+      <mesh>
+        <uri>file://Media/models/sea_surface_1000m_x_1000m.dae</uri>
+        <scale>2 2 2</scale>
+      </mesh>
     </geometry>
     <material>
       <script>
-        <uri>model://ocean/materials/scripts/ocean.material</uri>
-        <name>Waves_GLSL</name>
+        <uri>file://Media/materials/scripts/waves.material</uri>
+        <name>UUVSimulator/SimpleWaves</name>
       </script>
     </material>
   </visual>
 
   <visual name="ocean_below">
-    <pose>0 0 0 0 0 0</pose>
+    <pose>0 0 0 3.14 0 0</pose>
     <geometry>
-      <mesh><uri>model://ocean/mesh_below.dae</uri><scale>2 2 2</scale></mesh>
+      <mesh>
+        <uri>file://Media/models/sea_surface_1000m_x_1000m.dae</uri>
+        <scale>2 2 2</scale>
+      </mesh>
     </geometry>
     <material>
       <script>
-        <uri>model://ocean/materials/scripts/ocean.material</uri>
-        <name>Waves_GLSL</name>
+        <uri>file://Media/materials/scripts/water.material</uri>
+        <name>UUVSimulator/StaticWater</name>
       </script>
     </material>
   </visual>
@@ -56,9 +62,8 @@
     </geometry>
     <material>
       <script>
-        <uri>model://ocean/materials/scripts</uri>
-        <uri>model://ocean/materials/textures</uri>
-        <name>Sand</name>
+        <uri>file://Media/materials/scripts/sand.material</uri>
+        <name>UUVSimulator/SandAndStones</name>
       </script>
     </material>
   </visual>
@@ -77,8 +82,8 @@
     <geometry><plane><normal>0 0 1</normal><size>100 2000</size></plane></geometry>
     <material>
       <script>
-        <uri>model://ocean/materials/scripts/ocean.material</uri>
-        <name>Seabox</name>
+        <uri>file://Media/materials/scripts/water.material</uri>
+        <name>UUVSimulator/SeaWall</name>
       </script>
     </material>
   </visual>
@@ -88,8 +93,8 @@
     <geometry><plane><normal>0 0 1</normal><size>100 2000</size></plane></geometry>
     <material>
       <script>
-        <uri>model://ocean/materials/scripts/ocean.material</uri>
-        <name>Seabox</name>
+        <uri>file://Media/materials/scripts/water.material</uri>
+        <name>UUVSimulator/SeaWall</name>
       </script>
     </material>
   </visual>
@@ -99,8 +104,8 @@
     <geometry><plane><normal>0 0 1</normal><size>2000 100</size></plane></geometry>
     <material>
       <script>
-        <uri>model://ocean/materials/scripts/ocean.material</uri>
-        <name>Seabox</name>
+        <uri>file://Media/materials/scripts/water.material</uri>
+        <name>UUVSimulator/SeaWall</name>
       </script>
     </material>
   </visual>
@@ -110,8 +115,8 @@
     <geometry><plane><normal>0 0 1</normal><size>2000 100</size></plane></geometry>
     <material>
       <script>
-        <uri>model://ocean/materials/scripts/ocean.material</uri>
-        <name>Seabox</name>
+        <uri>file://Media/materials/scripts/water.material</uri>
+        <name>UUVSimulator/SeaWall</name>
       </script>
     </material>
   </visual>
