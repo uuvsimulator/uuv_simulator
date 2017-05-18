@@ -28,6 +28,7 @@ class DPPIDControllerBase(DPControllerBase):
     def __init__(self, *args):
         # Start the super class
         DPControllerBase.__init__(self, *args)
+        self._logger.info('Initializing: PID controller')
         # Proportional gains
         self._Kp = np.zeros(shape=(6, 6))
         # Derivative gains
@@ -47,7 +48,7 @@ class DPPIDControllerBase(DPControllerBase):
                 raise rospy.ROSException('Kp matrix error: 6 coefficients '
                                          'needed')
 
-        print "Kp=", [self._Kp[i, i] for i in range(6)]
+        self._logger.info('Kp=' + str([self._Kp[i, i] for i in range(6)]))
 
         if rospy.has_param('~Kd'):
             Kd_diag = rospy.get_param('~Kd')
@@ -57,7 +58,7 @@ class DPPIDControllerBase(DPControllerBase):
                 raise rospy.ROSException('Kd matrix error: 6 coefficients '
                                          'needed')
 
-        print "Kd=", [self._Kd[i, i] for i in range(6)]
+        self._logger.info('Kd=' + str([self._Kd[i, i] for i in range(6)]))
 
         if rospy.has_param('~Ki'):
             Ki_diag = rospy.get_param('~Ki')
@@ -67,7 +68,7 @@ class DPPIDControllerBase(DPControllerBase):
                 raise rospy.ROSException('Ki matrix error: 6 coefficients '
                                          'needed')
 
-        print "Ki=", [self._Ki[i, i] for i in range(6)]
+        self._logger.info('Ki=' + str([self._Ki[i, i] for i in range(6)]))
 
         self._services['set_pid_params'] = rospy.Service(
             'set_pid_params',
@@ -77,6 +78,8 @@ class DPPIDControllerBase(DPControllerBase):
             'get_pid_params',
             GetPIDParams,
             self.get_pid_params_callback)
+
+        self._logger.info('PID controller ready!')
 
     def _reset_controller(self):
         super(DPPIDControllerBase, self)._reset_controller()

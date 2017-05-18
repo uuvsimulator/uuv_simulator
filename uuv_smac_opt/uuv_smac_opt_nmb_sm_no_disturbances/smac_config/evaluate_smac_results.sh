@@ -24,4 +24,4 @@ if [ ! -d "$DIRECTORY" ]; then
 fi
 
 # Set the folder with all partial results from SMAC as an input for the comparison
-rosrun uuv_evaluation run_best_worst_comparison.py --input_dir ./best_results --input_dir_labels "SMAC PID" --output_dir ${DIRECTORY} --config_file analysis_configuration.yaml
+rosrun uuv_evaluation run_best_worst_comparison.py --input_dir ./best_results --input_dir_labels "SMAC NMB SM" --output_dir ${DIRECTORY} --config_file analysis_configuration.yaml

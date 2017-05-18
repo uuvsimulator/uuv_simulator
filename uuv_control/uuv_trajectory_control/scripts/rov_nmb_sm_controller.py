@@ -37,7 +37,7 @@ class ROV_NMB_SMController(DPControllerBase):
 
     def __init__(self):
         DPControllerBase.__init__(self, is_model_based=False)
-
+        self._logger.info('Initializing: Non-model-based sliding mode controller')
         self._first_pass = True
         self._t_init = 0.0
         self._s_linear_b_init = np.array([0, 0, 0])
@@ -60,7 +60,7 @@ class ROV_NMB_SMController(DPControllerBase):
                 raise rospy.ROSException('K coefficients: 6 coefficients '
                                          'needed')
 
-        print 'K=', self._K
+        self._logger.info('K=' + str(self._K))
 
         if rospy.has_param('~Kd'):
             coefs = rospy.get_param('~Kd')
@@ -70,7 +70,7 @@ class ROV_NMB_SMController(DPControllerBase):
                 raise rospy.ROSException('Kd coefficients: 6 coefficients '
                                          'needed')
 
-        print 'Kd=', self._Kd
+        self._logger.info('Kd=' + str(self._Kd))
 
         if rospy.has_param('~Ki'):
             coefs = rospy.get_param('~Ki')
@@ -79,7 +79,7 @@ class ROV_NMB_SMController(DPControllerBase):
             else:
                 raise rospy.ROSException('Ki coeffcients: 6 coefficients '
                                          'needed')
-        print 'Ki=', self._Ki
+        self._logger.info('Ki=' + str(self._Ki))
 
         if rospy.has_param('~slope'):
             coefs = rospy.get_param('~slope')
@@ -89,7 +89,7 @@ class ROV_NMB_SMController(DPControllerBase):
                 raise rospy.ROSException('Slope coefficients: 6 coefficients '
                                          'needed')
 
-        print 'slope=', self._slope
+        self._logger.info('slope=' + str(self._slope))
 
         self._prev_t = -1.0
 
@@ -109,6 +109,8 @@ class ROV_NMB_SMController(DPControllerBase):
             'get_sm_controller_params',
             GetSMControllerParams,
             self.get_sm_controller_params_callback)
+
+        self._logger.info('Non-model based sliding mode controller ready!')
 
     def _reset_controller(self):
         super(ROV_NMB_SMController, self)._reset_controller()
