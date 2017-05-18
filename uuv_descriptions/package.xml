@@ -16,4 +16,11 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+
+  <run_depend>gazebo_ros</run_depend>
+
+  <export>
+    <gazebo_ros gazebo_media_path="${prefix}"
+                gazebo_model_path="${prefix}/world_models"/>
+  </export>
 </package>

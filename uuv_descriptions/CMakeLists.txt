@@ -15,10 +15,10 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-install(DIRECTORY models
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-        PATTERN "*~" EXCLUDE)
-
 # Install python scripts
 catkin_install_python(PROGRAMS scripts/spawn_model.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY launch Media worlds models world_models
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        PATTERN "*~" EXCLUDE)
