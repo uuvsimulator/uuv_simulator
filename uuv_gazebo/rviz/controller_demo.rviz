@@ -8,6 +8,7 @@ Panels:
         - /TF1/Frames1
         - /Grid1
         - /Odometry1
+        - /MarkerArray1
       Splitter Ratio: 0.721476018
     Tree Height: 552
   - Class: rviz/Selection
@@ -341,7 +342,7 @@ Visualization Manager:
       Marker Topic: /world_models
       Name: MarkerArray
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
   Enabled: true
@@ -368,7 +369,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10
+      Distance: 72.1729279
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -382,10 +383,10 @@ Visualization Manager:
       Focal Shape Size: 0.0500000007
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.785398185
+      Pitch: 0.595397472
       Target Frame: rexrov/base_link
       Value: Orbit (rviz)
-      Yaw: 0.785398185
+      Yaw: 4.06857872
     Saved: ~
 Window Geometry:
   Displays:
