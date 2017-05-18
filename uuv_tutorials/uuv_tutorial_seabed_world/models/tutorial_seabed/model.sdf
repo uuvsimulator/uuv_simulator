@@ -29,9 +29,8 @@
     </geometry>
     <material>
       <script>
-        <uri>model://ocean_box/materials/scripts</uri>
-        <uri>model://ocean_box/materials/textures</uri>
-        <name>UUV/Water</name>
+        <uri>file://Media/materials/scripts/water.material</uri>
+        <name>UUVSimulator/StaticWater</name>
       </script>
     </material>
   </visual>
@@ -39,13 +38,12 @@
   <visual name="seafloor">
     <pose>0 0 0 0 0 0</pose>
     <geometry>
-      <mesh><uri>model://seabed/seabed.stl</uri><scale>1 1 1</scale></mesh>
+      <mesh><uri>model://tutorial_seabed/meshes/seabed.stl</uri><scale>1 1 1</scale></mesh>
     </geometry>
     <material>
       <script>
-        <uri>model://ocean/materials/scripts</uri>
-        <uri>model://ocean/materials/textures</uri>
-        <name>Sand</name>
+        <uri>file://Media/materials/scripts/sand.material</uri>
+        <name>UUVSimulator/SandAndStones</name>
       </script>
     </material>
   </visual>
@@ -53,7 +51,7 @@
   <collision name="seafloor">
     <pose>0 0 0 0 0 0</pose>
     <geometry>
-      <mesh><uri>model://seabed/seabed.stl</uri><scale>1 1 1</scale></mesh>
+      <mesh><uri>model://tutorial_seabed/meshes/seabed.stl</uri><scale>1 1 1</scale></mesh>
     </geometry>
   </collision>
 
