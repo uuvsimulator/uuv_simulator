@@ -151,13 +151,13 @@
       <selfCollide>false</selfCollide>
     </gazebo>
 
-    <link name="${namespace}/forearm_axis"/>
+    <link name="${namespace}/forearm"/>
 
-    <gazebo reference="${namespace}/forearm_axis">
+    <gazebo reference="${namespace}/forearm">
       <selfCollide>false</selfCollide>
     </gazebo>
 
-    <link name="${namespace}/forearm">
+    <link name="${namespace}/forearm_dummy">
       <inertial>
       <origin xyz="0.045 0 -0.043" rpy="0 0 0"/>
       <mass value="${forearm_mass}"/>
@@ -296,7 +296,7 @@
 
     <joint name="${namespace}/elbow" type="revolute">
       <parent link="${namespace}/upper_arm"/>
-      <child link="${namespace}/forearm_axis"/>
+      <child link="${namespace}/forearm"/>
       <origin xyz="0.579 0.0 0" rpy="0 1.5707963267948966 0"/>
       <dynamics damping="50" friction="120"/>
       <axis xyz="0 -1 0"/>
@@ -304,14 +304,14 @@
     </joint>
 
     <joint name="${namespace}/elbow_dummy" type="fixed">
-      <parent link="${namespace}/forearm_axis"/>
-      <child link="${namespace}/forearm"/>
+      <parent link="${namespace}/forearm"/>
+      <child link="${namespace}/forearm_dummy"/>
       <origin xyz="0.0 0.0 0.135" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
     </joint>
 
     <joint name="${namespace}/roll" type="revolute">
-      <parent link="${namespace}/forearm"/>
+      <parent link="${namespace}/forearm_dummy"/>
       <child link="${namespace}/wrist_1"/>
       <origin xyz="0.139 0.0 0" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>

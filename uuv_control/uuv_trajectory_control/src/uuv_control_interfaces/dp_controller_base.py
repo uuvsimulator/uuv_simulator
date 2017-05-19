@@ -17,6 +17,8 @@ from copy import deepcopy
 
 import numpy as np
 import rospy
+import logging
+import sys
 from geometry_msgs.msg import Wrench, PoseStamped, TwistStamped, Vector3, \
     Quaternion, Pose
 from std_msgs.msg import Time
@@ -41,11 +43,23 @@ class DPControllerBase(object):
     _LABEL = ''
 
     def __init__(self, is_model_based=False, list_odometry_callbacks=[]):
+        self._logger = logging.getLogger('dp_controller')
+        out_hdlr = logging.StreamHandler(sys.stdout)
+        out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+        out_hdlr.setLevel(logging.INFO)
+        self._logger.addHandler(out_hdlr)
+        self._logger.setLevel(logging.INFO)
+
         # Reading current namespace
         self._namespace = rospy.get_namespace()
 
         # Configuration for the vehicle dynamic model
         self._is_model_based = is_model_based
+
+        if self._is_model_based:
+            self._logger.info('Setting controller as model-based')
+        else:
+            self._logger.info('Setting controller as non-model-based')
 
         # Instance of the local planner for local trajectory generation
         self._local_planner = LocalPlanner(full_dof=False)
@@ -66,8 +80,6 @@ class DPControllerBase(object):
             self._thrust_saturation = rospy.get_param('~saturation')
             if self._control_saturation <= 0:
                 raise rospy.ROSException('Invalid control saturation forces')
-
-        print 'Control saturation=', self._control_saturation
 
         # Remap the following topics, if needed
         # Publisher for thruster allocator
@@ -105,6 +117,13 @@ class DPControllerBase(object):
 
         # Time stamp for the received trajectory
         self._stamp_trajectory_received = rospy.get_time()
+
+        self._logger.info('DP controller successfully initialized')
+
+    def __del__(self):
+        # Removing logging message handlers
+        while self._logger.handlers:
+            self._logger.handlers.pop()
 
     @staticmethod
     def get_controller(name, *args):
@@ -242,6 +261,7 @@ class DPControllerBase(object):
 
     def update_errors(self):
         if not self.odom_is_init:
+            self._logger.warning('Odometry topic has not been update yet')
             return
         self._update_reference()
         # Calculate error in the BODY frame

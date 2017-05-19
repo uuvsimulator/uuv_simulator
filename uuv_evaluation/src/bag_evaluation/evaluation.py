@@ -40,17 +40,17 @@ class Evaluation(object):
                                 labelpad=10,
                                 legend=dict(loc='upper right',
                                             fontsize=18)),
-                     trajectories=dict(figsize=[12, 8],
+                     trajectories=dict(figsize=[12, 16],
                                        linewidth=2,
-                                       label_fontsize=18,
-                                       title_fontsize=20,
+                                       label_fontsize=24,
+                                       title_fontsize=26,
                                        xlim=None,
                                        ylim=None,
                                        zlim=None,
-                                       tick_labelsize=16,
+                                       tick_labelsize=22,
                                        labelpad=10,
                                        legend=dict(loc='upper right',
-                                                   fontsize=18)),
+                                                   fontsize=20)),
                      errors=dict(figsize=[12, 8],
                                  linewidth=2,
                                  label_fontsize=18,
@@ -422,6 +422,23 @@ class Evaluation(object):
             fig = plt.figure(figsize=(self._plot_configs['trajectories']['figsize'][0],
                                       self._plot_configs['trajectories']['figsize'][1]))
             ax = fig.add_subplot(211)
+
+            min_value = np.min([np.min([e.p_act.p[0] for e in self._error_set.errors]),
+                                np.min([e.p_des.p[0] for e in self._error_set.errors]),
+                                np.min([e.p_act.p[1] for e in self._error_set.errors]),
+                                np.min([e.p_des.p[1] for e in self._error_set.errors]),
+                                np.min([e.p_act.p[2] for e in self._error_set.errors]),
+                                np.min([e.p_des.p[2] for e in self._error_set.errors])])
+
+            max_value = np.max([np.max([e.p_act.p[0] for e in self._error_set.errors]),
+                                np.max([e.p_des.p[0] for e in self._error_set.errors]),
+                                np.max([e.p_act.p[1] for e in self._error_set.errors]),
+                                np.max([e.p_des.p[1] for e in self._error_set.errors]),
+                                np.max([e.p_act.p[2] for e in self._error_set.errors]),
+                                np.max([e.p_des.p[2] for e in self._error_set.errors])])
+
+            self.add_disturbance_activation_spans(ax, min_value, max_value)
+
             ax.set_title('Position',
                          fontsize=self._plot_configs['trajectories']['title_fontsize'])
             ax.plot(t, [e.p_des.p[0] for e in self._error_set.errors], 'r--',
@@ -445,7 +462,7 @@ class Evaluation(object):
                     label=r'$Z$')
 
             ax.legend(fancybox=True,
-                      framealpha=0.9,
+                      framealpha=0.7,
                       loc=self._plot_configs['trajectories']['legend']['loc'],
                       fontsize=self._plot_configs['trajectories']['legend']['fontsize'])
             ax.grid(True)
@@ -456,8 +473,26 @@ class Evaluation(object):
             ax.set_ylabel('Position [m]',
                           fontsize=self._plot_configs['trajectories']['label_fontsize'])
             ax.set_xlim(np.min(t), np.max(t))
+            ax.set_ylim(1.05 * min_value, 1.05 * max_value)
 
             ax = fig.add_subplot(212)
+
+            min_value = np.min([np.min([trans.euler_from_quaternion(e.p_act.q)[0] for e in self._error_set.errors]),
+                                np.min([trans.euler_from_quaternion(e.p_des.q)[0] for e in self._error_set.errors]),
+                                np.min([trans.euler_from_quaternion(e.p_act.q)[1] for e in self._error_set.errors]),
+                                np.min([trans.euler_from_quaternion(e.p_des.q)[1] for e in self._error_set.errors]),
+                                np.min([trans.euler_from_quaternion(e.p_act.q)[2] for e in self._error_set.errors]),
+                                np.min([trans.euler_from_quaternion(e.p_des.q)[2] for e in self._error_set.errors])])
+
+            max_value = np.max([np.max([trans.euler_from_quaternion(e.p_act.q)[0] for e in self._error_set.errors]),
+                                np.max([trans.euler_from_quaternion(e.p_des.q)[0] for e in self._error_set.errors]),
+                                np.max([trans.euler_from_quaternion(e.p_act.q)[1] for e in self._error_set.errors]),
+                                np.max([trans.euler_from_quaternion(e.p_des.q)[1] for e in self._error_set.errors]),
+                                np.max([trans.euler_from_quaternion(e.p_act.q)[2] for e in self._error_set.errors]),
+                                np.max([trans.euler_from_quaternion(e.p_des.q)[2] for e in self._error_set.errors])])
+
+            self.add_disturbance_activation_spans(ax, min_value, max_value)
+
             ax.set_title('Orientation', fontsize=self._plot_configs['trajectories']['title_fontsize'])
             ax.plot(t, [trans.euler_from_quaternion(e.p_des.q)[0] for e in self._error_set.errors], 'r--',
                     linewidth=self._plot_configs['trajectories']['linewidth'], label=r'$\phi_d$')
@@ -473,7 +508,7 @@ class Evaluation(object):
             ax.plot(t, [trans.euler_from_quaternion(e.p_act.q)[2] for e in self._error_set.errors], 'b',
                     linewidth=self._plot_configs['trajectories']['linewidth'], label=r'$\psi$')
 
-            ax.legend(fancybox=True, framealpha=0.9,
+            ax.legend(fancybox=True, framealpha=0.7,
                       loc=self._plot_configs['trajectories']['legend']['loc'],
                       fontsize=self._plot_configs['trajectories']['legend']['fontsize'])
             ax.grid(True)
@@ -484,6 +519,7 @@ class Evaluation(object):
             ax.set_ylabel('Angles [rad]',
                           fontsize=self._plot_configs['trajectories']['label_fontsize'])
             ax.set_xlim(np.min(t), np.max(t))
+            ax.set_ylim(1.05 * min_value, 1.05 * max_value)
 
             plt.tight_layout()
             plt.savefig(os.path.join(output_path, 'trajectories_pose.pdf'))
@@ -688,6 +724,36 @@ class Evaluation(object):
         except Exception, e:
             self._logger.error('Error plotting thrust forces, message=' + str(e))
 
+    def add_disturbance_activation_spans(self, ax, min_value, max_value):
+        try:
+            t, vel = self._bag.get_current_vel()
+            if len(t) > 0:
+                v = np.array([np.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2) for v in vel])
+                if v.max() > 0:
+                    v[v > 0] = 1.05
+                    ax.fill_between(t, v * min_value, v * max_value, facecolor='blue', alpha=0.2,
+                                    label='Current disturbance activated')
+
+            t, force, torque = self._bag.get_wrench_dist()
+
+            if len(t) > 0:
+                f = np.array([np.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2) for v in force])
+                tau = np.array([np.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2) for v in torque])
+
+                if f.max() > 0:
+                    f[f > 0] = 1.05
+                    ax.fill_between(t, f * min_value, f * max_value, facecolor='red',
+                                    alpha=0.2,
+                                    label='Force disturbance activated')
+
+                if tau.max() > 0:
+                    tau[tau > 0] = 1.05
+                    ax.fill_between(t, tau * min_value, tau * max_value, facecolor='green',
+                                    alpha=0.2,
+                                    label='Torque disturbance activated')
+        except Exception, e:
+            self._logger.error('Error while adding disturbance activation time spans, message=' + str(e))
+
     def plot_error_dist(self, output_dir=None):
         if output_dir is not None:
             if not os.path.isdir(output_dir):
@@ -702,30 +768,7 @@ class Evaluation(object):
 
             error = KPI.get_error(self._error_set.get_data('position'))
 
-            t, vel = self._bag.get_current_vel()
-            if len(t) > 0:
-                v = np.array([np.sqrt(v[0]**2 + v[1]**2 + v[2]**2) for v in vel])
-                if v.max() > 0:
-                    v[v > 0] = 1.05
-                    ax.fill_between(t, 0, v * error.max(), facecolor='blue', alpha=0.2, label='Current disturbance activated')
-
-            t, force, torque = self._bag.get_wrench_dist()
-
-            if len(t) > 0:
-                f = np.array([np.sqrt(v[0]**2 + v[1]**2 + v[2]**2) for v in force])
-                tau = np.array([np.sqrt(v[0]**2 + v[1]**2 + v[2]**2) for v in torque])
-
-                if f.max() > 0:
-                    f[f > 0] = 1.05
-                    ax.fill_between(t, 0, f * error.max(), facecolor='red',
-                                    alpha=0.2,
-                                    label='Force disturbance activated')
-
-                if tau.max() > 0:
-                    tau[tau > 0] = 1.05
-                    ax.fill_between(t, 0, tau * error.max(), facecolor='green',
-                                    alpha=0.2,
-                                    label='Torque disturbance activated')
+            self.add_disturbance_activation_spans(ax, 0, error.max())
 
             t = self._error_set.get_time()
             ax.plot(t, error, color='#003300',
@@ -749,28 +792,7 @@ class Evaluation(object):
 
             error = self._error_set.get_data('yaw')
 
-            t, vel = self._bag.get_current_vel()
-            if len(t) > 0:
-                v = np.array([np.sqrt(v[0]**2 + v[1]**2 + v[2]**2) for v in vel])
-                if v.max() > 0:
-                    v[v > 0] = 1.05
-                    ax.fill_between(t, v * np.min(error), v * np.max(error),
-                                    facecolor='blue', alpha=0.2,
-                                    label='Current disturbance activated')
-
-            t, force, torque = self._bag.get_wrench_dist()
-
-            if len(t) > 0:
-                f = np.array([np.sqrt(v[0]**2 + v[1]**2 + v[2]**2) for v in force])
-                tau = np.array([np.sqrt(v[0]**2 + v[1]**2 + v[2]**2) for v in torque])
-
-                if f.max() > 0:
-                    f[f > 0] = 1.05
-                    ax.fill_between(t, f * np.min(error), f * np.max(error), facecolor='red', alpha=0.2, label='Force disturbance activated')
-
-                if tau.max() > 0:
-                    tau[tau > 0] = 1.05
-                    ax.fill_between(t, tau * np.min(error), tau * np.max(error), facecolor='green', alpha=0.2, label='Torque disturbance activated')
+            self.add_disturbance_activation_spans(ax, np.min(error), np.max(error))
 
             t = self._error_set.get_time()
             ax.plot(t, error, color='#003300',
