@@ -17,7 +17,7 @@ file is available, for this default mode the thruster is modelled as
 -->
 <arg name="thruster_rotor_gain" default="0.0009"/>
 <arg name="max_thrust" default="200"/>
-<arg name="thruster_topic" default="thruster/input"/>
+<arg name="thruster_topic" default="thrusters/0/input"/>
 <arg name="fin_topic_prefix" default="fins/"/>
 <arg name="fin_topic_suffix" default="/input"/>
 <!--
