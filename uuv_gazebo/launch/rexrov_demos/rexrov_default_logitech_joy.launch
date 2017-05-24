@@ -1,0 +1,27 @@
+<launch>
+  <!-- Remember to first launch Gazebo with a underwater world model
+  Example:
+  >> roslaunch uuv_description ocean_waves.launch
+    or
+  >> roslaunch uuv_description empty_underwater_world.launch
+
+  The default joystick configuration is set for the Logitech Extreme 3D Pro
+  -->
+  <arg name="namespace" default="rexrov"/>
+  <arg name="joy_id" default="0"/>
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-70"/>
+
+  <include file="$(find uuv_gazebo)/launch/rexrov_demos/rexrov_default.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="joy_id" value="$(arg joy_id)"/>
+    <arg name="axis_yaw" value="2"/>
+    <arg name="axis_x" value="1"/>
+    <arg name="axis_y" value="0"/>
+    <arg name="axis_z" value="5"/>
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
+  </include>
+</launch>

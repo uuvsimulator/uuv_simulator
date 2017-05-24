@@ -1,0 +1,90 @@
+<launch>
+  <!-- Remember to first launch Gazebo with a underwater world model
+  Example:
+  >> roslaunch uuv_description ocean_waves.launch
+    or
+  >> roslaunch uuv_description empty_underwater_world.launch
+
+  The default joystick configuration is set for the XBox 360 controller
+  -->
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-70"/>
+  <arg name="joy_id" default="0"/>
+  <arg name="namespace" default="rexrov"/>
+
+  <!-- Default joystick mapping for controlling the vehicle (XBox 360 controller) -->
+  <arg name="axis_x" default="4"/>
+  <arg name="axis_y" default="3"/>
+  <arg name="axis_z" default="1"/>
+  <arg name="axis_yaw" default="0"/>
+  <arg name="deadman_button" default="-1"/>
+  <arg name="exclusion_buttons" default="4,5"/>
+
+  <arg name="axis_oberon_azimuth" default="0"/>
+  <arg name="axis_oberon_shoulder" default="1"/>
+  <arg name="axis_oberon_wrist" default="3"/>
+
+  <arg name="oberon_exclusion_button" default="4"/>
+  <arg name="oberon_deadman_button" default="5"/>
+  <arg name="oberon_home_button" default="7"/>
+
+  <arg name="gripper_open_button" default="1"/>
+  <arg name="gripper_close_button" default="2"/>
+
+  <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov_oberon4.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
+  </include>
+
+  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+    <arg name="uuv_name" value="$(arg namespace)" />
+    <arg name="model_name" value="rexrov" />
+  </include>
+
+  <group ns="$(arg namespace)">
+    <rosparam file="$(find uuv_control_cascaded_pid)/config/rexrov/inertial.yaml" command="load"/>
+    <rosparam file="$(find uuv_control_cascaded_pid)/config/rexrov/vel_pid_control.yaml" command="load"/>
+
+    <node pkg="uuv_control_cascaded_pid" type="AccelerationControl.py" name="acceleration_control"
+            output="screen">
+      <param name="tf_prefix" type="string" value="$(arg namespace)/" />
+    </node>
+
+    <node pkg="uuv_control_cascaded_pid" type="VelocityControl.py" name="velocity_control"
+          output="screen">
+      <remap from="odom" to="/$(arg namespace)/pose_gt"/>
+      <remap from="cmd_accel" to="/$(arg namespace)/cmd_accel"/>
+    </node>
+  </group>
+
+  <include file="$(find uuv_teleop)/launch/uuv_teleop.launch">
+    <arg name="uuv_name" value="$(arg namespace)"/>
+    <arg name="joy_id" value="$(arg joy_id)"/>
+    <arg name="output_topic" value="cmd_vel"/>
+    <arg name="message_type" value="twist"/>
+    <arg name="axis_yaw" value="$(arg axis_yaw)"/>
+    <arg name="axis_x" value="$(arg axis_x)"/>
+    <arg name="axis_y" value="$(arg axis_y)"/>
+    <arg name="axis_z" value="$(arg axis_z)"/>
+    <arg name="deadman_button" value="$(arg deadman_button)"/>
+    <arg name="exclusion_buttons" value="$(arg exclusion_buttons)"/>
+  </include>
+
+  <include file="$(find oberon4_control)/launch/joint_control.launch">
+    <arg name="uuv_name" value="$(arg namespace)"/>
+    <arg name="arm_name" value="oberon4"/>
+    <arg name="deadman_button" value="$(arg oberon_deadman_button)"/>
+    <arg name="exclusion_button" value="$(arg oberon_exclusion_button)"/>
+    <arg name="home_button" value="$(arg oberon_home_button)"/>
+    <arg name="gripper_open_button" value="$(arg gripper_open_button)"/>
+    <arg name="gripper_close_button" value="$(arg gripper_close_button)"/>
+    <arg name="axis_azimuth" value="$(arg axis_oberon_azimuth)"/>
+    <arg name="axis_shoulder" value="$(arg axis_oberon_shoulder)"/>
+    <arg name="axis_wrist" value="$(arg axis_oberon_wrist)"/>
+  </include>
+
+  <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/rexrov_default.rviz"/>
+</launch>

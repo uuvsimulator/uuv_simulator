@@ -28,9 +28,8 @@
         </geometry>
         <material>
           <script>
-            <uri>model://ocean_box/materials/scripts</uri>
-            <uri>model://ocean_box/materials/textures</uri>
-            <name>UUV/Sand</name>
+            <uri>file://Media/materials/scripts/sand.material</uri>
+            <name>UUVSimulator/SandAndStones</name>
           </script>
         </material>
       </visual>
@@ -54,9 +53,8 @@
         </geometry>
         <material>
           <script>
-            <uri>model://ocean_box/materials/scripts</uri>
-            <uri>model://ocean_box/materials/textures</uri>
-            <name>UUV/Water</name>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/StaticDeepWater</name>
           </script>
         </material>
       </visual>
@@ -71,9 +69,8 @@
         </geometry>
         <material>
           <script>
-            <uri>model://ocean_box/materials/scripts</uri>
-            <uri>model://ocean_box/materials/textures</uri>
-            <name>UUV/Water</name>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/SeaWall</name>
           </script>
         </material>
       </visual>
@@ -88,9 +85,8 @@
         </geometry>
         <material>
           <script>
-            <uri>model://ocean_box/materials/scripts</uri>
-            <uri>model://ocean_box/materials/textures</uri>
-            <name>UUV/Water</name>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/SeaWall</name>
           </script>
         </material>
       </visual>
@@ -105,9 +101,8 @@
         </geometry>
         <material>
           <script>
-            <uri>model://ocean_box/materials/scripts</uri>
-            <uri>model://ocean_box/materials/textures</uri>
-            <name>UUV/Water</name>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/SeaWall</name>
           </script>
         </material>
       </visual>
@@ -122,9 +117,8 @@
         </geometry>
         <material>
           <script>
-            <uri>model://ocean_box/materials/scripts</uri>
-            <uri>model://ocean_box/materials/textures</uri>
-            <name>UUV/Water</name>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/SeaWall</name>
           </script>
         </material>
       </visual>

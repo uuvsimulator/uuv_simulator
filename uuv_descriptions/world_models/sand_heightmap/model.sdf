@@ -21,16 +21,22 @@
       <collision name="ground">
         <pose>0 0 0 0 0 0</pose>
         <geometry>
-          <mesh><uri>model://sand_heightmap/heightmap.dae</uri></mesh>
+          <mesh><uri>model://sand_heightmap/meshes/heightmap.dae</uri></mesh>
         </geometry>
       </collision>
 
       <visual name="ground_sand">
-        <cast_shadows>false</cast_shadows>
+        <cast_shadows>true</cast_shadows>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
-          <mesh><uri>model://sand_heightmap/heightmap.dae</uri></mesh>
+          <mesh><uri>model://sand_heightmap/meshes/heightmap.dae</uri></mesh>
         </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/sand.material</uri>
+            <name>UUVSimulator/SandAndStones</name>
+          </script>
+        </material>
       </visual>
     </link>
   </model>

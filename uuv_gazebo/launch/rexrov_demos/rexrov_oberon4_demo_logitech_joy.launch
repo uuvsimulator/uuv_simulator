@@ -1,0 +1,42 @@
+<launch>
+  <!-- Remember to first launch Gazebo with a underwater world model
+  Example:
+  >> roslaunch uuv_description ocean_waves.launch
+    or
+  >> roslaunch uuv_description empty_underwater_world.launch
+
+  The default joystick configuration is set for the Logitech Extreme 3D Pro
+  -->
+  <arg name="namespace" default="rexrov"/>
+  <arg name="joy_id" default="0"/>
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-20"/>
+
+  <include file="$(find uuv_gazebo)/launch/rexrov_demos/rexrov_oberon4_demo.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="joy_id" value="$(arg joy_id)"/>
+    <!-- Starting position -->
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
+    <!-- Joystick mapping for the vehicle control -->
+    <arg name="axis_yaw" value="2"/>
+    <arg name="axis_x" value="1"/>
+    <arg name="axis_y" value="0"/>
+    <arg name="axis_z" value="5"/>
+    <arg name="deadman_button" value="-1"/>
+    <arg name="exclusion_buttons" value="1"/>
+    <!-- Joystick mapping for the joint control node -->
+    <arg name="axis_oberon_azimuth" value="2"/>
+    <arg name="axis_oberon_shoulder" value="1"/>
+    <arg name="axis_oberon_wrist" value="0"/>
+
+    <arg name="oberon_exclusion_button" value="0"/>
+    <arg name="oberon_deadman_button" value="1"/>
+    <arg name="oberon_home_button" value="6"/>
+
+    <arg name="gripper_open_button" value="11"/>
+    <arg name="gripper_close_button" value="10"/>
+  </include>
+</launch>

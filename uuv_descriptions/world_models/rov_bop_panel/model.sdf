@@ -33,7 +33,7 @@
       <collision name="panel_collision">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/BOP_Panel.dae</uri>
+            <uri>model://rov_bop_panel/meshes/meshes/BOP_Panel.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -41,7 +41,7 @@
       <visual name="panel_visual">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/BOP_Panel.dae</uri>
+            <uri>model://rov_bop_panel/meshes/meshes/BOP_Panel.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -66,7 +66,7 @@
       <collision name="valve_1_collision">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/Valve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/meshes/Valve.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -74,7 +74,7 @@
       <visual name="valve_1_visual">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/Valve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/meshes/Valve.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -115,7 +115,7 @@
       <collision name="valve_2_collision">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/Valve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/Valve.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -123,7 +123,7 @@
       <visual name="valve_2_visual">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/Valve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/Valve.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -165,7 +165,7 @@
       <collision name="valve_3_collision">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/Valve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/Valve.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -173,7 +173,7 @@
       <visual name="valve_3_visual">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/Valve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/Valve.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -215,7 +215,7 @@
       <collision name="valve_4_collision">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/SmallValve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/SmallValve.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -223,7 +223,7 @@
       <visual name="valve_4_visual">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/SmallValve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/SmallValve.dae</uri>
           </mesh>
         </geometry>
       </visual>
@@ -265,7 +265,7 @@
       <collision name="valve_5_collision">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/SmallValve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/SmallValve.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -273,7 +273,7 @@
       <visual name="valve_5_visual">
         <geometry>
           <mesh>
-            <uri>model://rov_bop_panel/SmallValve.dae</uri>
+            <uri>model://rov_bop_panel/meshes/SmallValve.dae</uri>
           </mesh>
         </geometry>
       </visual>

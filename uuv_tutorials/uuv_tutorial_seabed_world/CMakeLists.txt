@@ -6,11 +6,6 @@ find_package(gazebo REQUIRED) # this is only required to get gazebo's directorie
 
 catkin_package()
 
-# Install models and world descriptions
-add_subdirectory(world_models)
-add_subdirectory(worlds)
-
-# Install launch files
-install(DIRECTORY launch/
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+install(DIRECTORY launch worlds models
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)

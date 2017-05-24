@@ -1,0 +1,21 @@
+material UUVSimulator/SandAndStones
+{
+  receive_shadows on
+  technique
+  {
+    pass
+    {
+      ambient 0.5 0.5 0.5 1.0
+      diffuse 0.5 0.5 0.5 1.0
+      specular 0.2 0.2 0.2 1.0 12.5
+
+      texture_unit
+      {
+        texture soil_sand_0045_01.jpg
+        filtering anistropic
+        max_anisotropy 16
+        scale 0.5 0.5
+      }
+    }
+  }
+}

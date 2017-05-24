@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version="1.5">
+<model name="seabed">
+  <static>true</static>
+  <link name="seabed_link">
+
+  <visual name="surface">
+    <cast_shadows>false</cast_shadows>
+    <pose>0 0 0 0 0 0</pose>
+    <geometry>
+      <box>
+        <size>60 60 .1</size>
+      </box>
+    </geometry>
+    <material>
+      <script>
+        <uri>file://Media/materials/scripts/water.material</uri>
+        <name>UUVSimulator/StaticWater</name>
+      </script>
+    </material>
+  </visual>
+
+  <visual name="seafloor">
+    <pose>0 0 0 0 0 0</pose>
+    <geometry>
+      <mesh><uri>model://tutorial_seabed/meshes/seabed.stl</uri><scale>1 1 1</scale></mesh>
+    </geometry>
+    <material>
+      <script>
+        <uri>file://Media/materials/scripts/sand.material</uri>
+        <name>UUVSimulator/SandAndStones</name>
+      </script>
+    </material>
+  </visual>
+
+  <collision name="seafloor">
+    <pose>0 0 0 0 0 0</pose>
+    <geometry>
+      <mesh><uri>model://tutorial_seabed/meshes/seabed.stl</uri><scale>1 1 1</scale></mesh>
+    </geometry>
+  </collision>
+
+  </link>
+</model>
+</sdf>

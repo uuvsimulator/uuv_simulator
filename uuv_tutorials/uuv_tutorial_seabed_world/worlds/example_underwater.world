@@ -44,7 +44,7 @@
     </include>
 
     <include>
-      <uri>model://seabed</uri>
+      <uri>model://tutorial_seabed</uri>
       <pose>0 0 0 0 0 0</pose>
     </include>
 

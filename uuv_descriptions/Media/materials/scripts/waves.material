@@ -1,0 +1,47 @@
+material UUVSimulator/SimpleWaves
+{
+  technique GLSL
+  {
+    pass
+    {
+      scene_blend alpha_blend
+      vertex_program_ref SimpleWavesVS
+      {
+        param_named_auto eyePos camera_position_object_space
+        param_named_auto time time_0_x 100.0
+        param_named rescale float 0.5
+        param_named bumpScale float2 25 25
+        param_named bumpSpeed float2 0.01 0.01
+        param_named frequency float 0.01
+        param_named amplitude float 0.01
+        param_named steepness float 1.0
+      }
+
+      fragment_program_ref SimpleWavesFS
+      {
+        param_named deepColor float4 0 0.05 0.2 1.0
+        param_named shallowColor float4 0 0.6 1 1.0
+        param_named fresnelPower float 5
+        param_named hdrMultiplier float 0.4
+        param_named bumpMap int 0
+        param_named cubeMap int 1
+      }
+
+      texture_unit
+      {
+        texture wave_normals.dds
+        tex_coord_set 0
+        scale 0.1 0.1
+        filtering linear linear linear
+      }
+
+      texture_unit
+      {
+        cubic_texture clouds.jpg combinedUVW
+        tex_address_mode clamp
+        tex_coord_set 1
+        filtering linear linear linear
+      }
+    }
+  }
+}

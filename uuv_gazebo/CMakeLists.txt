@@ -10,6 +10,6 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-install(DIRECTORY rviz launch
+install(DIRECTORY rviz launch config
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
