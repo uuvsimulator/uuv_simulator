@@ -23,11 +23,13 @@ if(CATKIN_ENABLE_TESTING)
 
   foreach(UNIT_TESTS
     test/test_arm_interface.py
+    test/test_jacobian.py
     catkin_add_nosetests(${UNIT_TESTS}))
   endforeach()
 
   foreach(TEST_LAUNCHERS
     test/test_kinematic_interfaces.launch
+    test/test_start_simulation.launch
     add_rostest(${TEST_LAUNCHERS}))
   endforeach()
 endif()

@@ -1,0 +1,13 @@
+<launch>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="world_name" value="worlds/ocean_waves.world"/>
+      <arg name="paused" value="false"/>
+  </include>
+
+  <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov_oberon.launch">
+      <arg name="x" default="20"/>
+      <arg name="y" default="0"/>
+      <arg name="z" default="-20"/>
+      <arg name="yaw" default="0"/>
+  </include>
+</launch>

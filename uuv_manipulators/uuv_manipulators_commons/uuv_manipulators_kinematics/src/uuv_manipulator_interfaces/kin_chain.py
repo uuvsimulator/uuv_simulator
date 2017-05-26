@@ -267,7 +267,7 @@ class KinChainInterface(object):
             kdl_array = PyKDL.JntArray(self.n_joints)
         else:
             if last_joint not in self.joint_names:
-                raise rospy.ROSException('Invalid joint name')
+                raise rospy.ROSException('Invalid joint name, joint_name=' + str(last_joint))
             last_idx = self.joint_names.index(last_joint)
             kdl_array = PyKDL.JntArray(last_idx + 1)
         for idx in range(last_idx + 1):
@@ -280,11 +280,14 @@ class KinChainInterface(object):
 
     def jacobian(self, joint_values=None, last_joint=None):
         """Compute the Jacobian for the current joint positions."""
-        jnt_array = self.joints_to_kdl('positions', joint_values, last_joint)
+        jnt_array = self.joints_to_kdl('positions')
         jac = PyKDL.Jacobian(jnt_array.rows())
         self._jac_kdl.JntToJac(
             jnt_array, jac)
-        return self.kdl_to_mat(jac)
+        mat = self.kdl_to_mat(jac)
+
+        jnt_array = self.joints_to_kdl('positions', joint_values, last_joint)
+        return mat[:, 0:jnt_array.rows()]
 
     def jacobian_transpose(self, joint_values=None, last_joint=None):
         """Return the Jacobian transpose."""
@@ -292,11 +295,11 @@ class KinChainInterface(object):
             joint_values = self.joint_angles
         return self.jacobian(joint_values, last_joint).T
 
-    def jacobian_pseudo_inverse(self, joint_values=None):
+    def jacobian_pseudo_inverse(self, joint_values=None, last_joint=None):
         """Return the pseudo-inverse of the Jacobian matrix."""
         if joint_values is None:
             joint_values = self.joint_angles
-        return np.linalg.pinv(self.jacobian(joint_values))
+        return np.linalg.pinv(self.jacobian(joint_values, last_joint))
 
     def forward_position_kinematics(self, joint_values=None, segment_idx=-1):
         """Computation of the forward kinematics for this chain."""
