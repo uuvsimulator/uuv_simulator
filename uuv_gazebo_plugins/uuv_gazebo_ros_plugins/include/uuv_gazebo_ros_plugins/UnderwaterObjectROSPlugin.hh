@@ -32,6 +32,8 @@
 #include <std_msgs/Bool.h>
 #include <visualization_msgs/Marker.h>
 #include <uuv_gazebo_ros_plugins_msgs/SetUseGlobalCurrentVel.h>
+#include <uuv_gazebo_ros_plugins_msgs/UnderwaterObjectModel.h>
+#include <uuv_gazebo_ros_plugins_msgs/GetModelProperties.h>
 
 #include <map>
 
@@ -63,6 +65,10 @@ namespace uuv_simulator_ros
     public: bool SetUseGlobalCurrentVel(
       uuv_gazebo_ros_plugins_msgs::SetUseGlobalCurrentVel::Request& _req,
       uuv_gazebo_ros_plugins_msgs::SetUseGlobalCurrentVel::Response& _res);
+
+    public: bool GetModelProperties(
+      uuv_gazebo_ros_plugins_msgs::GetModelProperties::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetModelProperties::Response& _res);
 
     /// \brief Publish restoring force
     /// \param[in] _link Pointer to the link where the force information will
