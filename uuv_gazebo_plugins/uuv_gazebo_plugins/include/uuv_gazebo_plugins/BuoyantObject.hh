@@ -91,6 +91,9 @@ class BuoyantObject
   /// \brief Returns true if the robot is completely submerged
   public: bool IsSubmerged(const math::Pose &_pose);
 
+  /// \brief Returns true if the link was set to be neutrally buoyant
+  public: bool IsNeutrallyBuoyant();
+
   /// \brief Returns the debug flag
   public: bool GetDebugFlag();
 
