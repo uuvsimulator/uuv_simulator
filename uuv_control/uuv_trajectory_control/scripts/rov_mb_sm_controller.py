@@ -249,18 +249,21 @@ class ROV_MB_SMController(DPControllerBase):
 
         # Acceleration estimate
         self._rotBtoI_dot = np.dot(cross_product_operator(self._vehicle_model._vel[3:6]), self._vehicle_model.rotBtoI)
-        self._accel_linear_estimate_b = np.dot(self._vehicle_model.rotItoB, (self._reference['acc'][0:3] -
-                                               np.dot(self._rotBtoI_dot, self._vehicle_model._vel[0:3]))) + \
-                                        np.multiply(self._lambda[0:3], e_v_linear_b) + \
-                                        self._sliding_int * np.multiply(np.square(self._lambda[0:3])/4, e_p_linear_b)
+        self._accel_linear_estimate_b = np.dot(
+            self._vehicle_model.rotItoB, (self._reference['acc'][0:3] - \
+                                          np.dot(self._rotBtoI_dot, self._vehicle_model._vel[0:3]))) + \
+                                          np.multiply(self._lambda[0:3], e_v_linear_b) + \
+                                          self._sliding_int * np.multiply(np.square(self._lambda[0:3]) / 4, e_p_linear_b)
         self._accel_angular_estimate_b = np.dot(self._vehicle_model.rotItoB, (self._reference['acc'][3:6] -
-                                               np.dot(self._rotBtoI_dot, self._vehicle_model._vel[3:6]))) + \
-                                        np.multiply(self._lambda[3:6], e_v_angular_b) + \
-                                         self._sliding_int * np.multiply(np.square(self._lambda[3:6])/4, e_p_angular_b)
-        self._accel_estimate_b =  np.hstack((self._accel_linear_estimate_b, self._accel_angular_estimate_b))
+                                                np.dot(self._rotBtoI_dot, self._vehicle_model._vel[3:6]))) + \
+                                                np.multiply(self._lambda[3:6], e_v_angular_b) + \
+                                                self._sliding_int * np.multiply(np.square(self._lambda[3:6]) / 4,
+                                                                                e_p_angular_b)
+        self._accel_estimate_b = np.hstack((self._accel_linear_estimate_b, self._accel_angular_estimate_b))
 
         # Equivalent control
-        self._f_eq = self._vehicle_model.compute_force(self._accel_estimate_b, self._vehicle_model._vel)
+        acc = self._vehicle_model.to_SNAME(self._accel_estimate_b)
+        self._f_eq = self._vehicle_model.compute_force(acc, use_sname=False)
 
         # Linear control
         self._f_lin = - np.multiply(self._k, self._s_b)
@@ -273,10 +276,10 @@ class ROV_MB_SMController(DPControllerBase):
                           (self._adapt_slope[0] * np.abs(self._s_b) +
                           (self._adapt_slope[1] * np.abs(self._s_b) * np.abs(e_p_b) * np.abs(e_p_b)) +
                           (self._adapt_slope[2] * np.abs(self._s_b) * np.abs(e_v_b) * np.abs(e_v_b)) +
-                           self._drift_prevent * (self._rho_0 - self._rho_adapt) ) * dt
+                           self._drift_prevent * (self._rho_0 - self._rho_adapt)) * dt
 
         # Robust control
-        self._f_robust =  - np.multiply(self._rho_total, (2/np.pi)*np.arctan(np.multiply(self._c, self._s_b)))
+        self._f_robust = - np.multiply(self._rho_total, (2 / np.pi) * np.arctan(np.multiply(self._c, self._s_b)))
 
         # Compute required forces and torques wrt body frame
         self._tau = self._ctrl_eq * self._f_eq + self._ctrl_lin * self._f_lin + self._ctrl_robust * self._f_robust
