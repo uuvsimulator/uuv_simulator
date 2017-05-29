@@ -129,7 +129,7 @@ class WorldPublisher:
             marker.pose.orientation.y = self._model_paths[model]['orientation'][1]
             marker.pose.orientation.z = self._model_paths[model]['orientation'][2]
             marker.pose.orientation.w = self._model_paths[model]['orientation'][3]
-            marker.color.a = 0.3
+            marker.color.a = 1.0
             marker.color.r = 0.1
             marker.color.g = float(i) / total_models
             marker.color.b = 0.5 * float(i) / total_models
