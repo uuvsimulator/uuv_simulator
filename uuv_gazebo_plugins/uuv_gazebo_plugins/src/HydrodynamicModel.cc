@@ -407,11 +407,72 @@ void HMFossen::ComputeDampingMatrix(const Eigen::Vector6d& _vel,
 
   _D = -1 * this->DLin - _vel[0] * this->DLinForwardSpeed;
 
-  for (int row = 0; row < 6; row++)
-    for (int col = 0; col < 6; col++)
-    {
-      _D(row, col) += -1 * this->DNonLin(row, col) * std::fabs(_vel[row]);
-    }
+  // Nonlinear damping matrix is considered as a diagonal matrix
+  for (int i = 0; i < 6; i++)
+  {
+    _D(i, i) += -1 * this->DNonLin(i, i) * std::fabs(_vel[i]);
+  }
+}
+
+/////////////////////////////////////////////////
+bool HMFossen::GetParam(std::string _tag, std::vector<double>& _output)
+{
+  _output = std::vector<double>();
+  if (!_tag.compare("added_mass"))
+  {
+    for (int i = 0; i < 6; i++)
+      for (int j = 0; j < 6; j++)
+        _output.push_back(this->Ma(i, j));
+  }
+  else if (!_tag.compare("linear_damping"))
+  {
+    for (int i = 0; i < 6; i++)
+      for (int j = 0; j < 6; j++)
+        _output.push_back(this->DLin(i, j));
+  }
+  else if (!_tag.compare("linear_damping_forward_speed"))
+  {
+    for (int i = 0; i < 6; i++)
+      for (int j = 0; j < 6; j++)
+        _output.push_back(this->DLinForwardSpeed(i, j));
+  }
+  else if (!_tag.compare("quadratic_damping"))
+  {
+    for (int i = 0; i < 6; i++)
+      for (int j = 0; j < 6; j++)
+        _output.push_back(this->DNonLin(i, j));
+  }
+  else if (!_tag.compare("center_of_buoyancy"))
+  {
+    _output.push_back(this->centerOfBuoyancy.x);
+    _output.push_back(this->centerOfBuoyancy.y);
+    _output.push_back(this->centerOfBuoyancy.z);
+  }
+  else
+    return false;
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool HMFossen::GetParam(std::string _tag, double& _output)
+{
+  _output = -1.0;
+  if (!_tag.compare("volume"))
+    _output = this->volume;
+  else if (!_tag.compare("fluid_density"))
+    _output = this->fluidDensity;
+  else if (!_tag.compare("bbox_height"))
+    _output = this->boundingBox.GetZLength();
+  else if (!_tag.compare("bbox_width"))
+    _output = this->boundingBox.GetYLength();
+  else if (!_tag.compare("bbox_length"))
+    _output = this->boundingBox.GetXLength();
+  else
+  {
+    _output = -1.0;
+    return false;
+  }
+  return true;
 }
 
 /////////////////////////////////////////////////

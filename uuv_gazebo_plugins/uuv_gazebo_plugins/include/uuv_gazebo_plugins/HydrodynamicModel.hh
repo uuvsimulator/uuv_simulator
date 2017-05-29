@@ -53,7 +53,15 @@ class HydrodynamicModel : public BuoyantObject
 
   /// \brief Prints parameters
   public: virtual void Print(std::string _paramName,
-                             std::string _message = std::string()) = 0;
+    std::string _message = std::string()) = 0;
+
+  /// \brief Return paramater in vector form for the given tag
+  public: virtual bool GetParam(std::string _tag,
+    std::vector<double>& _output) = 0;
+
+  /// \brief Return paramater in vector form for the given tag
+  public: virtual bool GetParam(std::string _tag,
+    double& _output) = 0;
 
   /// \brief Filter acceleration (fix due to the update structure of Gazebo)
   protected: void ComputeAcc(Eigen::Vector6d _velRel,
@@ -151,6 +159,13 @@ class HMFossen : public HydrodynamicModel
   /// \brief Prints parameters
   public: virtual void Print(std::string _paramName,
                              std::string _message = std::string());
+
+  /// \brief Return paramater in vector form for the given tag
+  public: virtual bool GetParam(std::string _tag,
+                                std::vector<double>& _output);
+
+  /// \brief Return paramater in vector form for the given tag
+  public: virtual bool GetParam(std::string _tag, double& _output);
 
   /// \brief Register this model with the factory.
   protected: REGISTER_HYDRODYNAMICMODEL(HMFossen);
