@@ -164,9 +164,9 @@ bool UnderwaterWorldROSPlugin::UpdateCurrentVelocity(
     uuv_world_ros_plugins_msgs::SetCurrentVelocity::Request& _req,
     uuv_world_ros_plugins_msgs::SetCurrentVelocity::Response& _res)
 {
-  if(this->currentVelModel.SetMean(_req.velocity) &&
-     this->currentHorzAngleModel.SetMean(_req.horizontal_angle) &&
-     this->currentVertAngleModel.SetMean(_req.vertical_angle))
+  if (this->currentVelModel.SetMean(_req.velocity) &&
+      this->currentHorzAngleModel.SetMean(_req.horizontal_angle) &&
+      this->currentVertAngleModel.SetMean(_req.vertical_angle))
   {
     gzmsg << "Current velocity [m/s] = " << _req.velocity << std::endl;
     gzmsg << "Current horizontal angle [rad] = " << _req.horizontal_angle
