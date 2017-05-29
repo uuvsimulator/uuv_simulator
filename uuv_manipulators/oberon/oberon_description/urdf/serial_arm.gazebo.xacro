@@ -66,80 +66,80 @@
   <gazebo reference="${namespace}/wrist">
     <implicitSpringDamper>1</implicitSpringDamper>
   </gazebo>
+</xacro:macro>
 
-  <gazebo>
-    <plugin name="uuv_plugin_oberon" filename="libunderwater_object_plugin.so">
-      <fluid_density>1028.0</fluid_density>
-      <flow_velocity_topic>/hydrodynamics/flow_velocity</flow_velocity_topic>
-      <link name="${namespace}/base">
-        <volume>${x1*y1*z1}</volume>
-        <box>
-          <width>${y1}</width>
-          <length>${x1}</length>
-          <height>${z1}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-      <link name="${namespace}/shoulder_link">
-        <volume>${x2*y2*z2}</volume>
-        <box>
-          <width>${y2}</width>
-          <length>${x2}</length>
-          <height>${z2}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-      <link name="${namespace}/upper_arm">
-        <volume>${x3*y3*z3}</volume>
-        <box>
-          <width>${y3}</width>
-          <length>${x3}</length>
-          <height>${z3}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-      <link name="${namespace}/forearm">
-        <volume>${x4*y4*z4}</volume>
-        <box>
-          <width>${y4}</width>
-          <length>${x4}</length>
-          <height>${z4}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-      <link name="${namespace}/wrist_1">
-        <volume>${x5*y5*z5}</volume>
-        <box>
-          <width>${y5}</width>
-          <length>${x5}</length>
-          <height>${z5}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-      <link name="${namespace}/wrist_2">
-        <volume>${x6*y6*z6}</volume>
-        <box>
-          <width>${y6}</width>
-          <length>${x6}</length>
-          <height>${z6}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-    </plugin>
-  </gazebo>
-
+<!--
+  Parameters for the uuv_underwater_object_plugin that includes the implementation
+  of Fossen's equations of motion for underwater vehicles. This parameters will
+  be loaded by the vehicle where it is installed.
+-->
+<xacro:macro name="oberon_hydro_model" params="namespace">
+  <link name="${namespace}/base">
+    <volume>${x1*y1*z1}</volume>
+    <box>
+      <width>${y1}</width>
+      <length>${x1}</length>
+      <height>${z1}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
+  <link name="${namespace}/shoulder_link">
+    <volume>${x2*y2*z2}</volume>
+    <box>
+      <width>${y2}</width>
+      <length>${x2}</length>
+      <height>${z2}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
+  <link name="${namespace}/upper_arm">
+    <volume>${x3*y3*z3}</volume>
+    <box>
+      <width>${y3}</width>
+      <length>${x3}</length>
+      <height>${z3}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
+  <link name="${namespace}/forearm">
+    <volume>${x4*y4*z4}</volume>
+    <box>
+      <width>${y4}</width>
+      <length>${x4}</length>
+      <height>${z4}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
+  <link name="${namespace}/wrist_1">
+    <volume>${x5*y5*z5}</volume>
+    <box>
+      <width>${y5}</width>
+      <length>${x5}</length>
+      <height>${z5}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
+  <link name="${namespace}/wrist_2">
+    <volume>${x6*y6*z6}</volume>
+    <box>
+      <width>${y6}</width>
+      <length>${x6}</length>
+      <height>${z6}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
 </xacro:macro>
 
 </robot>
