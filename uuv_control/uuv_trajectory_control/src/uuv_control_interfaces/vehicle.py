@@ -38,7 +38,7 @@ class Vehicle(object):
 
     INSTANCE = None
 
-    def __init__(self, list_odometry_callbacks=[], sub_to_odometry=True):
+    def __init__(self, list_odometry_callbacks=list(), sub_to_odometry=True):
         """Class constructor."""
         # Reading current namespace
         self._namespace = rospy.get_namespace()
@@ -141,13 +141,30 @@ class Vehicle(object):
         self._g = np.zeros(6)
 
         # Loading the linear damping coefficients
-        self._linear_damping = np.zeros(6)
+        self._linear_damping = np.zeros(shape=(6, 6))
         if rospy.has_param('~linear_damping'):
-            self._linear_damping = rospy.get_param('~linear_damping')
+            self._linear_damping = np.array(rospy.get_param('~linear_damping'))
+            if self._linear_damping.shape == (6,):
+                self._linear_damping = np.diag(self._linear_damping)
+            if self._linear_damping.shape != (6, 6):
+                raise rospy.ROSException('Linear damping must be given as a 6x6 matrix or the diagonal coefficients')
 
-        self._quad_damping = np.zeros(6)
+        # Loading the nonlinear damping coefficients
+        self._quad_damping = np.zeros(shape=(6,))
         if rospy.has_param('~quad_damping'):
-            self._quad_damping = rospy.get_param('~quad_damping')
+            self._quad_damping = np.array(rospy.get_param('~quad_damping'))
+            if self._quad_damping.shape != (6,):
+                raise rospy.ROSException('Quadratic damping must be given defined with 6 coefficients')
+
+        # Loading the linear damping coefficients proportional to the forward speed
+        self._linear_damping_forward_speed = np.zeros(shape=(6, 6))
+        if rospy.has_param('~linear_damping_forward_speed'):
+            self._linear_damping_forward_speed = np.array(rospy.get_param('~linear_damping_forward_speed'))
+            if self._linear_damping_forward_speed.shape == (6,):
+                self._linear_damping_forward_speed = np.diag(self._linear_damping_forward_speed)
+            if self._linear_damping_forward_speed.shape != (6, 6):
+                raise rospy.ROSException('Linear damping proportional to the forward speed must be given as a 6x6 '
+                                         'matrix or the diagonal coefficients')
 
         # Initialize damping matrix
         self._D = np.zeros((6, 6))
@@ -371,6 +388,20 @@ class Vehicle(object):
         )
         return T
 
+    def to_SNAME(self, x):
+        try:
+            if x.shape == (3,):
+                return np.array([x[0], -1 * x[1], -1 * x[2]])
+            elif x.shape == (6,):
+                return np.array([x[0], -1 * x[1], -1 * x[2],
+                                 x[3], -1 * x[4], -1 * x[5]])
+        except:
+            print('Invalid input vector, v=' + str(x))
+            return None
+
+    def from_SNAME(self, x):
+        return self.to_SNAME(x)
+
     def print_info(self):
         """Print the vehicle's parameters."""
         print 'Namespace: {}'.format(self._namespace)
@@ -394,7 +425,8 @@ class Vehicle(object):
                                          'dimension')
             nu = vel
         else:
-            nu = self._vel
+            nu = self.to_SNAME(self._vel)
+
         self._C = np.zeros((6, 6))
 
         S_12 = - cross_product_operator(
@@ -413,13 +445,14 @@ class Vehicle(object):
             if vel.shape != (6,):
                 raise rospy.ROSException('Velocity vector has the wrong '
                                          'dimension')
+            # Assume the input velocity is already given in the SNAME convention
             nu = vel
         else:
-            nu = self._vel
-        self._D = np.zeros(shape=(6, 6))
+            nu = self.to_SNAME(self._vel)
+
+        self._D = -1 * self._linear_damping - nu[0] * self._linear_damping_forward_speed
         for i in range(6):
-            self._D[i, i] = -self._linear_damping[i] - \
-                self._quad_damping[i] * np.abs(nu[i])
+            self._D[i, i] += -1 * self._quad_damping[i] * np.abs(nu[i])
 
     def _calc_inertial_tensor(self):
         return np.array(
@@ -430,7 +463,7 @@ class Vehicle(object):
              [self._inertial['ixz'], self._inertial['iyz'],
               self._inertial['izz']]])
 
-    def _update_restoring(self):
+    def _update_restoring(self, use_sname=False):
         """
         Update the restoring forces for the current orientation.
         """
@@ -441,6 +474,9 @@ class Vehicle(object):
         self._g[0:3] = -1 * np.dot(self.rotItoB, Fg + Fb)
         self._g[3:6] = -1 * np.dot(self.rotItoB,
                                    np.cross(self._cog, Fg) + np.cross(self._cob, Fb))
+
+        if use_sname:
+            self._g = self.to_SNAME(self._g)
 
     def set_added_mass(self, Ma):
         """Set added-mass matrix coefficients."""
@@ -460,7 +496,7 @@ class Vehicle(object):
         self._quad_damping = np.array(quad_damping, copy=True)
         return True
 
-    def compute_force(self, acc=None, vel=None, with_restoring=True):
+    def compute_force(self, acc=None, vel=None, with_restoring=True, use_sname=True):
         """Return the sum of forces acting on the vehicle.
 
         Given acceleration and velocity vectors, this function returns the
@@ -471,20 +507,25 @@ class Vehicle(object):
             if acc.shape != (6,):
                 raise rospy.ROSException('Acceleration vector must have 6 '
                                          'elements')
+            # It is assumed the input acceleration is given in the SNAME convention
             nu_dot = acc
         else:
-            nu_dot = self._acc
+            # Convert the acceleration vector to the SNAME convention since the odometry is usually given using the
+            # ENU convention
+            nu_dot = self.to_SNAME(self._acc)
+
         if vel is not None:
             if vel.shape != (6,):
                 raise rospy.ROSException('Velocity vector must have 6 '
                                          'elements')
+            # It is assumed the input velocity is given in the SNAME convention
             nu = vel
         else:
-            nu = self.vel
+            nu = self.to_SNAME(self._vel)
 
         self._update_damping(nu)
         self._update_coriolis(nu)
-        self._update_restoring()
+        self._update_restoring(use_sname=True)
 
         if with_restoring:
             g = deepcopy(self._g)
@@ -494,26 +535,34 @@ class Vehicle(object):
         f = np.dot(self._Mtotal, nu_dot) + np.dot(self._C, nu) + \
             np.dot(self._D, nu) + g
 
+        if not use_sname:
+            f = self.from_SNAME(f)
+
         return f
 
-    def compute_acc(self, gen_forces=None):
+    def compute_acc(self, gen_forces=None, use_sname=True):
         """Calculate inverse dynamics to obtain the acceleration vector."""
+        self._gen_forces = np.zeros(shape=(6,))
         if gen_forces is not None:
+            # It is assumed the generalized forces are given in the SNAME convention
             self._gen_forces = gen_forces
-        else:
-            self._gen_forces = np.zeros(6)
         # Check if the mass and inertial parameters were set
         if self._Mtotal.sum() == 0:
             self._acc = np.zeros(6)
         else:
+            nu = self.to_SNAME(self._vel)
+
             self._update_damping()
             self._update_coriolis()
-            self._update_restoring()
+            self._update_restoring(use_sname=True)
             # Compute the vehicle's acceleration
             self._acc = np.linalg.solve(self._Mtotal, self._gen_forces -
-                                  np.dot(self._C, self.vel) -
-                                  np.dot(self._D, self.vel) -
-                                  self._g)
+                                        np.dot(self._C, nu) -
+                                        np.dot(self._D, nu) -
+                                        self._g)
+        if not use_sname:
+            self._acc = self.from_SNAME(self._acc)
+
         return self._acc
 
     def get_jacobian(self):

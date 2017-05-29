@@ -44,6 +44,8 @@ class ROV_NLPIDController(DPPIDControllerBase):
                 self._Hm = self._vehicle_model.Mtotal +  np.diag(hm)
             else:
                 raise rospy.ROSException('Invalid feedback acceleration gain coefficients')
+
+        self._tau = np.zeros(6)
         # Acceleration feedback term
         self._accel_ff = np.zeros(6)
         # PID control vector
@@ -58,13 +60,13 @@ class ROV_NLPIDController(DPPIDControllerBase):
         # Calculating the feedback acceleration vector for the control forces
         # from last iteration
         acc = self._vehicle_model.compute_acc(
-            self._pid_control + self._accel_ff)
+            self._vehicle_model.to_SNAME(self._tau), use_sname=False)
         self._accel_ff = np.dot(self._Hm, acc)
         # Update PID control action
         self._pid_control = self.update_pid()
         # Publish control forces and torques
-        self.publish_control_wrench(self._pid_control - self._accel_ff + \
-            self._vehicle_model.restoring_forces)
+        self._tau = self._pid_control - self._accel_ff + self._vehicle_model.restoring_forces
+        self.publish_control_wrench(self._tau)
         return True
 
 if __name__ == '__main__':
