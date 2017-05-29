@@ -21,6 +21,7 @@
 
 #include <boost/scoped_ptr.hpp>
 #include <map>
+#include <string>
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/transport/TransportTypes.hh>
