@@ -21,10 +21,24 @@
   <xacro:arg name="namespace" default="rexrov"/>
   <!-- Include the ROV macro file -->
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov_base.xacro"/>
+  <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov.gazebo.xacro"/>
   <xacro:include filename="$(find oberon_description)/robots/oberon_parallel.xacro" />
 
   <!-- Create the ROV -->
-  <xacro:rexrov_base namespace="$(arg namespace)" debug="$(arg debug)"/>
+  <xacro:rexrov_base namespace="$(arg namespace)">
+    <!-- The underwater object plugin is given as an input block parameter to
+     allow the addition of external models of manipulator units -->
+    <gazebo>
+      <plugin name="uuv_plugin" filename="libunderwater_object_ros_plugin.so">
+        <fluid_density>1028.0</fluid_density>
+        <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+        <debug>$(arg debug)</debug>
+        <!-- Adding the hydrodynamic and hydrostatic parameters for the vehicle-->
+        <xacro:rexrov_hydro_model namespace="$(arg namespace)"/>
+        <xacro:oberon_hydro_model namespace="oberon"/>
+      </plugin>
+    </gazebo>
+  </xacro:rexrov_base>
 
   <xacro:oberon namespace="oberon" parent="$(arg namespace)/base_link">
     <origin xyz="1.3 -0.5 -0.615" rpy="0 0 0"/>

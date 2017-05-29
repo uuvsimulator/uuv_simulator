@@ -73,69 +73,69 @@
   <gazebo reference="${namespace}/jaw_1_joint">
     <implicitSpringDamper>1</implicitSpringDamper>
   </gazebo>
+</xacro:macro>
 
-  <gazebo>
-    <plugin name="uuv_plugin_oberon4" filename="libunderwater_object_plugin.so">
-      <fluid_density>1028.0</fluid_density>
-      <flow_velocity_topic>/hydrodynamics/flow_velocity</flow_velocity_topic>
-      <link name="${namespace}/base">
-        <volume>${base_volume}</volume>
-        <box>
-          <width>${base_y}</width>
-          <length>${base_x}</length>
-          <height>${base_z}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-      <link name="${namespace}/azimuth_link">
-        <volume>${azimuth_volume}</volume>
-        <box>
-          <width>${azimuth_y}</width>
-          <length>${azimuth_x}</length>
-          <height>${azimuth_z}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-      <link name="${namespace}/arm">
-        <volume>${arm_volume}</volume>
-        <box>
-          <width>${arm_y}</width>
-          <length>${arm_x}</length>
-          <height>${arm_z}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-      <link name="${namespace}/wrist">
-        <volume>${wrist_volume}</volume>
-        <box>
-          <width>${wrist_y}</width>
-          <length>${wrist_x}</length>
-          <height>${wrist_z}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-      <link name="${namespace}/gripper_base">
-        <volume>${gripper_base_volume}</volume>
-        <box>
-          <width>${gripper_base_y}</width>
-          <length>${gripper_base_x}</length>
-          <height>${gripper_base_z}</height>
-        </box>
-        <hydrodynamic_model>
-          <type>fossen</type>
-        </hydrodynamic_model>
-      </link>
-    </plugin>
-  </gazebo>
-
+<!--
+  Parameters for the uuv_underwater_object_plugin that includes the implementation
+  of Fossen's equations of motion for underwater vehicles. This parameters will
+  be loaded by the vehicle where it is installed.
+-->
+<xacro:macro name="oberon4_hydro_model" params="namespace">
+  <link name="${namespace}/base">
+    <volume>${base_volume}</volume>
+    <box>
+      <width>${base_y}</width>
+      <length>${base_x}</length>
+      <height>${base_z}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
+  <link name="${namespace}/azimuth_link">
+    <volume>${azimuth_volume}</volume>
+    <box>
+      <width>${azimuth_y}</width>
+      <length>${azimuth_x}</length>
+      <height>${azimuth_z}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
+  <link name="${namespace}/arm">
+    <volume>${arm_volume}</volume>
+    <box>
+      <width>${arm_y}</width>
+      <length>${arm_x}</length>
+      <height>${arm_z}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
+  <link name="${namespace}/wrist">
+    <volume>${wrist_volume}</volume>
+    <box>
+      <width>${wrist_y}</width>
+      <length>${wrist_x}</length>
+      <height>${wrist_z}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
+  <link name="${namespace}/gripper_base">
+    <volume>${gripper_base_volume}</volume>
+    <box>
+      <width>${gripper_base_y}</width>
+      <length>${gripper_base_x}</length>
+      <height>${gripper_base_z}</height>
+    </box>
+    <hydrodynamic_model>
+      <type>fossen</type>
+    </hydrodynamic_model>
+  </link>
 </xacro:macro>
 
 </robot>

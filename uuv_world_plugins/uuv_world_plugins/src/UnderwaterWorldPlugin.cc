@@ -119,7 +119,8 @@ void UnderwaterWorldPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
 
   if (currentVelocityParams->HasElement("horizontal_angle"))
   {
-    sdf::ElementPtr elem = currentVelocityParams->GetElement("horizontal_angle");
+    sdf::ElementPtr elem =
+      currentVelocityParams->GetElement("horizontal_angle");
 
     if (elem->HasElement("mean"))
       this->currentHorzAngleModel.mean = elem->Get<double>("mean");

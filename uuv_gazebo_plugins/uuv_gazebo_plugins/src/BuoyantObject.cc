@@ -228,4 +228,10 @@ bool BuoyantObject::IsSubmerged(const math::Pose &_pose)
   else
     return true;
 }
+
+/////////////////////////////////////////////////
+bool BuoyantObject::IsNeutrallyBuoyant()
+{
+  return this->neutrallyBuoyant;
+}
 }

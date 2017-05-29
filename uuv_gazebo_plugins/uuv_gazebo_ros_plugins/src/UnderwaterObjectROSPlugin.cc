@@ -69,6 +69,11 @@ void UnderwaterObjectROSPlugin::Load(gazebo::physics::ModelPtr _parent,
       _parent->GetName() + "/set_use_global_current_velocity",
       &UnderwaterObjectROSPlugin::SetUseGlobalCurrentVel, this);
 
+  this->services["get_model_properties"] =
+    this->rosNode->advertiseService(
+      _parent->GetName() + "/get_model_properties",
+      &UnderwaterObjectROSPlugin::GetModelProperties, this);
+
   this->rosHydroPub["current_velocity_marker"] =
     this->rosNode->advertise<visualization_msgs::Marker>
     (_parent->GetName() + "/current_velocity_marker", 0);
@@ -268,6 +273,75 @@ bool UnderwaterObjectROSPlugin::SetUseGlobalCurrentVel(
         "::Using the current velocity under the namespace " <<
         this->model->GetName() << std::endl;
     _res.success = true;
+  }
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool UnderwaterObjectROSPlugin::GetModelProperties(
+  uuv_gazebo_ros_plugins_msgs::GetModelProperties::Request& _req,
+  uuv_gazebo_ros_plugins_msgs::GetModelProperties::Response& _res)
+{
+  for (std::map<gazebo::physics::LinkPtr,
+       gazebo::HydrodynamicModelPtr>::iterator it = models.begin();
+       it != models.end(); ++it)
+  {
+    gazebo::physics::LinkPtr link = it->first;
+    gazebo::HydrodynamicModelPtr hydro = it->second;
+
+    _res.link_names.push_back(link->GetName());
+
+    uuv_gazebo_ros_plugins_msgs::UnderwaterObjectModel model;
+    double param;
+    std::vector<double> mat;
+
+    hydro->GetParam("volume", param);
+    model.volume = param;
+
+    hydro->GetParam("fluid_density", param);
+    model.fluid_density = param;
+
+    hydro->GetParam("bbox_height", param);
+    model.bbox_height = param;
+
+    hydro->GetParam("bbox_length", param);
+    model.bbox_length = param;
+
+    hydro->GetParam("bbox_width", param);
+    model.bbox_width = param;
+
+    hydro->GetParam("added_mass", mat);
+    model.added_mass = mat;
+
+    hydro->GetParam("linear_damping", mat);
+    model.linear_damping = mat;
+
+    hydro->GetParam("linear_damping_forward_speed", mat);
+    model.linear_damping_forward_speed = mat;
+
+    hydro->GetParam("quadratic_damping", mat);
+    model.quadratic_damping = mat;
+
+    model.neutrally_buoyant = hydro->IsNeutrallyBuoyant();
+
+    hydro->GetParam("center_of_buoyancy", mat);
+    model.cob.x = mat[0];
+    model.cob.y = mat[1];
+    model.cob.z = mat[2];
+
+    model.inertia.m = link->GetInertial()->GetMass();
+    model.inertia.ixx = link->GetInertial()->GetIXX();
+    model.inertia.ixy = link->GetInertial()->GetIXY();
+    model.inertia.ixz = link->GetInertial()->GetIXZ();
+    model.inertia.iyy = link->GetInertial()->GetIYY();
+    model.inertia.iyz = link->GetInertial()->GetIYZ();
+    model.inertia.izz = link->GetInertial()->GetIZZ();
+
+    model.inertia.com.x = link->GetInertial()->GetCoG().x;
+    model.inertia.com.y = link->GetInertial()->GetCoG().y;
+    model.inertia.com.z = link->GetInertial()->GetCoG().z;
+
+    _res.models.push_back(model);
   }
   return true;
 }
