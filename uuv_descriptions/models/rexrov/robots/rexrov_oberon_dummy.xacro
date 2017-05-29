@@ -24,7 +24,7 @@
   <xacro:include filename="$(find oberon_description)/robots/oberon_dummy.xacro" />
 
   <!-- Create the ROV -->
-  <xacro:rexrov_base namespace="$(arg namespace)" debug="$(arg debug)">
+  <xacro:rexrov_base namespace="$(arg namespace)">
     <!-- The underwater object plugin is given as an input block parameter to
      allow the addition of external models of manipulator units -->
     <gazebo>

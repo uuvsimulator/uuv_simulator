@@ -20,8 +20,9 @@
   <!-- Include the ROV macro file -->
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov_base.xacro"/>
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov.gazebo.xacro"/>
-  <!-- Create the rexrov -->
-  <xacro:rexrov_base namespace="$(arg namespace)" debug="$(arg debug)">
+
+  <!-- Create the RexROV vehicle -->
+  <xacro:rexrov_base namespace="$(arg namespace)">
     <!-- The underwater object plugin is given as an input block parameter to
      allow the addition of external models of manipulator units -->
     <gazebo>

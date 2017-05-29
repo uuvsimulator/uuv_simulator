@@ -23,7 +23,7 @@
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov.gazebo.xacro"/>
 
   <!-- Create the rexrov -->
-  <xacro:rexrov_base namespace="$(arg namespace)" debug="$(arg debug)">
+  <xacro:rexrov_base namespace="$(arg namespace)">
     <!-- The underwater object plugin is given as an input block parameter to
      allow the addition of external models of manipulator units -->
     <gazebo>
