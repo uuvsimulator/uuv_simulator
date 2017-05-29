@@ -20,8 +20,10 @@
       The RexROV meshes and hydrodynamic parameters are based on the parameters and dimensions
       from the SF 30k.
 
-      Reference:
-        Dukan, Fredrik. "ROV Motion Control Systems." PhD Thesis, NTNU, 2014.
+      References:
+        [1] Dukan, Fredrik. "ROV Motion Control Systems." PhD Thesis, NTNU, 2014.
+        [2] Berg, Viktor. Development and Commissioning of a DP system for ROV SF 30k. MS
+            thesis. Institutt for marin teknikk, 2012.
   -->
   <!-- includes -->
   <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
