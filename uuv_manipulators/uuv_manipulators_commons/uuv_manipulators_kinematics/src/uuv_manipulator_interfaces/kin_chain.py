@@ -278,22 +278,20 @@ class KinChainInterface(object):
             kdl_array = PyKDL.JntArrayVel(kdl_array)
         return kdl_array
 
-    def jacobian(self, joint_values=None, last_joint=None):
+    def jacobian(self, joint_values=None):
         """Compute the Jacobian for the current joint positions."""
         jnt_array = self.joints_to_kdl('positions')
         jac = PyKDL.Jacobian(jnt_array.rows())
         self._jac_kdl.JntToJac(
             jnt_array, jac)
         mat = self.kdl_to_mat(jac)
+        return mat
 
-        jnt_array = self.joints_to_kdl('positions', joint_values, last_joint)
-        return mat[:, 0:jnt_array.rows()]
-
-    def jacobian_transpose(self, joint_values=None, last_joint=None):
+    def jacobian_transpose(self, joint_values=None):
         """Return the Jacobian transpose."""
         if joint_values is None:
             joint_values = self.joint_angles
-        return self.jacobian(joint_values, last_joint).T
+        return self.jacobian(joint_values).T
 
     def jacobian_pseudo_inverse(self, joint_values=None, last_joint=None):
         """Return the pseudo-inverse of the Jacobian matrix."""
@@ -335,7 +333,7 @@ class KinChainInterface(object):
 
         return end_frame.GetTwist()
 
-    def inverse_kinematics(self, position, orientation=None, seed=None):        
+    def inverse_kinematics(self, position, orientation=None, seed=None):
         pos = PyKDL.Vector(position[0], position[1], position[2])
         if orientation is not None:
             rot = PyKDL.Rotation()
