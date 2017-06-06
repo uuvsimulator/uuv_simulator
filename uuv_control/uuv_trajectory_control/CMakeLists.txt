@@ -20,7 +20,7 @@ catkin_install_python(PROGRAMS scripts/rov_nl_pid_controller.py
                                scripts/demo_wp_trajectory_generator.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-install(DIRECTORY config
+install(DIRECTORY launch config
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
 
