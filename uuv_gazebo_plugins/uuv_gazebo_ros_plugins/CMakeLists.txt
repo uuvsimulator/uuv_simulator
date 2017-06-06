@@ -13,11 +13,19 @@ find_package(gazebo REQUIRED)
 
 catkin_package(
  INCLUDE_DIRS include
+  ${PROJECT_SOURCE_DIR}/include
+  ${catkin_INCLUDE_DIRS}
+  ${GAZEBO_INCLUDE_DIRS}
+  ${GAZEBO_MSG_INCLUDE_DIRS}
  LIBRARIES fin_ros_plugin
-           thruster_ros_plugin
-           underwater_object_ros_plugin
-           joint_state_publisher
-#  CATKIN_DEPENDS other_catkin_pkg
+  thruster_ros_plugin
+  underwater_object_ros_plugin
+  joint_state_publisher
+ CATKIN_DEPENDS uuv_gazebo_plugins
+  sensor_msgs
+  geometry_msgs
+  std_msgs
+  uuv_gazebo_ros_plugins_msgs
 #  DEPENDS system_lib
 )
 
@@ -25,6 +33,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${catkin_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
+  ${GAZEBO_MSG_INCLUDE_DIRS}
 )
 
 link_directories(
@@ -35,12 +44,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 add_library(fin_ros_plugin src/FinROSPlugin.cc)
 target_link_libraries(fin_ros_plugin ${catkin_LIBRARIES})
-add_dependencies(fin_ros_plugin fin_plugin)
+add_dependencies(fin_ros_plugin
+  fin_plugin
+  uuv_gazebo_plugins_msgs
+  ${catkin_EXPORTED_TARGETS})
 
 add_library(thruster_ros_plugin src/ThrusterROSPlugin.cc)
 target_link_libraries(thruster_ros_plugin ${catkin_LIBRARIES})
 add_dependencies(thruster_ros_plugin
   thruster_plugin
+  uuv_gazebo_plugins_msgs
   ${catkin_EXPORTED_TARGETS})
 
 add_library(underwater_object_ros_plugin src/UnderwaterObjectROSPlugin.cc)
