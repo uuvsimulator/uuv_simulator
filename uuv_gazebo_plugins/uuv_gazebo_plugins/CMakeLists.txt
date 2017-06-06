@@ -114,7 +114,13 @@ target_link_libraries(umbilical_plugin
 ## Install ##
 #############
 
-install(TARGETS dynamics fin_plugin underwater_object_plugin thruster_plugin umbilical_plugin
+install(TARGETS
+    dynamics
+    fin_plugin
+    thruster_plugin
+    umbilical_plugin
+    underwater_object_plugin
+    uuv_gazebo_plugins_msgs
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
