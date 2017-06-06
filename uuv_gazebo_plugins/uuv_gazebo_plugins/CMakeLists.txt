@@ -36,13 +36,9 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${msgs})
 add_library(uuv_gazebo_plugins_msgs SHARED ${PROTO_SRCS})
 target_link_libraries(uuv_gazebo_plugins_msgs ${PROTOBUF_LIBRARY} ${GAZEBO_LIBRARIES})
 
-file(COPY ${CMAKE_CURRENT_BINARY_DIR}/ DESTINATION ${CATKIN_DEVEL_PREFIX}/include/${PACKAGE_NAME} FILES_MATCHING PATTERN "*.pb.*")
-
-message(STATUS "Copying UUV Gazebo message headers from = " ${CMAKE_CURRENT_BINARY_DIR} " to " ${CATKIN_DEVEL_PREFIX}/include/${PACKAGE_NAME})
-
-
 catkin_package(
   INCLUDE_DIRS include
+               ${CMAKE_CURRENT_BINARY_DIR} # for generated messages
                ${PROJECT_BINARY_DIR}/msgs
                ${Boost_INCLUDE_DIR}
                ${catkin_INCLUDE_DIRS}
@@ -54,7 +50,7 @@ catkin_package(
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/include
-                    ${CMAKE_CURRENT_BINARY_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR} # for generated messages
                     ${Boost_INCLUDE_DIR}
                     ${catkin_INCLUDE_DIRS}
                     ${GAZEBO_INCLUDE_DIRS}

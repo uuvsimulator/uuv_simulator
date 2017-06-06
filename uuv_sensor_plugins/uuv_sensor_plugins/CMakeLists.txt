@@ -50,7 +50,7 @@ message(STATUS "Copying sensor message headers from = " ${CMAKE_CURRENT_BINARY_D
 
 catkin_package(
     INCLUDE_DIRS include
-      ${PROJECT_BINARY_DIR}/msgs
+      ${CMAKE_CURRENT_BINARY_DIR} # for generated messages
       ${GAZEBO_MSG_INCLUDE_DIRS}
       ${OGRE_INCLUDE_DIRS}
       ${OGRE_Paging_INCLUDE_DIRS}
@@ -65,6 +65,7 @@ catkin_package(
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_BINARY_DIR} # for generated messages
   ${EIGEN3_INCLUDE_DIR}
   ${GAZEBO_INCLUDE_DIRS}
   ${GAZEBO_MSG_INCLUDE_DIRS}
