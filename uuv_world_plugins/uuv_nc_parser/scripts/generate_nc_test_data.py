@@ -110,6 +110,24 @@ if __name__ == '__main__':
                           axis=u'Salinity [ppt]'))
     nc_fid.variables['salinity'][:] = 35.0 + np.random.rand(*shape)
 
+    # Turbidity
+    nc_var = nc_fid.createVariable('turbidity', np.float64, ('time', 'zc', 'yc', 'xc'))
+    nc_var.setncatts(dict(long_name=u'Water turbidity in the test volume',
+                          var_desc=u'Turbidity',
+                          standard_name='Turbidity',
+                          units=u'ppt',
+                          axis=u'Turbidity [NTU]'))
+    nc_fid.variables['turbidity'][:] = 60.0 + np.random.rand(*shape)
+
+    # H2S Concentration
+    nc_var = nc_fid.createVariable('h2s', np.float64, ('time', 'zc', 'yc', 'xc'))
+    nc_var.setncatts(dict(long_name=u'H2S concentration salinity in the test volume',
+                          var_desc=u'H2S',
+                          standard_name='H2S',
+                          units=u'ppt',
+                          axis=u'H2S concentration [ml/l]'))
+    nc_fid.variables['h2s'][:] = 2.25 + np.random.rand(*shape)
+
     # Current velocity
     nc_var = nc_fid.createVariable('u_east', np.float64, ('time', 'zc', 'yc', 'xc'))
     nc_var.setncatts(dict(long_name=u'Eastward current velocity',
