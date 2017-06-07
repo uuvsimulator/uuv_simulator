@@ -16,6 +16,7 @@
   <arg name="axis_x" default="4"/>
   <arg name="axis_y" default="3"/>
   <arg name="axis_z" default="1"/>
+  <arg name="launch_rviz" default="1"/>
 
   <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
     <arg name="mode" value="default"/>
@@ -57,6 +58,7 @@
     <arg name="axis_z" value="$(arg axis_z)"/>
   </include>
 
-  <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/rexrov_default.rviz"/>
-
+  <group if="$(arg launch_rviz)">
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/rexrov_default.rviz"/>
+  </group>
 </launch>
