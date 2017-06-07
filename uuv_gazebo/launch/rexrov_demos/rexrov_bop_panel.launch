@@ -8,7 +8,7 @@
       <arg name="angle" value="3.14"/>
   </include>
 
-  <include file="$(find uuv_gazebo)/launch/rexrov_oberon_arms_demo.launch">
+  <include file="$(find uuv_gazebo)/launch/rexrov_demos/rexrov_oberon_arms_demo.launch">
     <arg name="x" value="0"/>
     <arg name="y" value="0"/>
     <arg name="z" value="-4"/>
