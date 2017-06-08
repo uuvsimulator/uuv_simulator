@@ -41,8 +41,10 @@
         w_east: $(arg w_east_label)
         w_north: $(arg w_north_label)
       variables:
+      - h2s
       - salinity
       - temperature
+      - turbidity
     </rosparam>
   </node>
 

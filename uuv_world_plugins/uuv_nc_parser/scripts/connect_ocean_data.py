@@ -178,136 +178,142 @@ class OceanDataPlayBack:
                                       self.publish_variables)
 
     def update_vehicle_pos(self, msg):
-        # Removing vehicles that have been removed
-        remove_names = list()
-        for name in self._vehicle_pos:
-            if name not in msg.name:
-                remove_names.append(name)
+        with self._lock:
+            # Removing vehicles that have been removed
+            remove_names = list()
+            for name in self._vehicle_pos:
+                if name not in msg.name:
+                    remove_names.append(name)
 
-        if len(remove_names):
-            for name in remove_names:
-                del self._vehicle_pos[name]
-                del self._topics[name]
+            if len(remove_names):
+                for name in remove_names:
+                    del self._vehicle_pos[name]
+                    del self._topics[name]
 
-        # Checking in any new objects are available
-        new_vehicles = list()
-        for name in msg.name:
-            if name not in self._vehicle_pos and name not in self._static_objs:
-                new_vehicles.append(name)
+            # Checking in any new objects are available
+            new_vehicles = list()
+            for name in msg.name:
+                if name not in self._vehicle_pos and name not in self._static_objs:
+                    new_vehicles.append(name)
 
-        if len(new_vehicles) > 0:
-            for name in new_vehicles:
-                resp = self._model_prop_srv(name)
-                if not resp.is_static and rospy.has_param('/%s/robot_description' % name):
-                    print 'NEW VEHICLE DETECTED:', name
-                    self._vehicle_pos[name] = np.zeros(3)
-                    # Create the topics for the new vehicle
-                    self._topics[name] = dict()
+            if len(new_vehicles) > 0:
+                for name in new_vehicles:
+                    resp = self._model_prop_srv(name)
+                    if not resp.is_static and rospy.has_param('/%s/robot_description' % name):
+                        print 'NEW VEHICLE DETECTED:', name
+                        self._vehicle_pos[name] = np.zeros(3)
+                        # Create the topics for the new vehicle
+                        self._topics[name] = dict()
 
-                    self._topics[name]['current_velocity'] = rospy.Publisher('/%s/current_velocity' % name, Vector3, queue_size=1)
-                    self._topics[name]['wind_velocity'] = rospy.Publisher('/%s/wind_velocity' % name, Vector3, queue_size=1)
+                        self._topics[name]['current_velocity'] = rospy.Publisher('/%s/current_velocity' % name, Vector3, queue_size=1)
+                        self._topics[name]['wind_velocity'] = rospy.Publisher('/%s/wind_velocity' % name, Vector3, queue_size=1)
 
-                    for var in self._variables:
-                        if 'temperature' in var.lower():
-                            self._topics[name][var] = rospy.Publisher('/%s/%s' % (name, var), Temperature, queue_size=1)
-                        else:
-                            self._topics[name][var] = rospy.Publisher('/%s/%s' % (name, var), FloatStamped, queue_size=1)
-                else:
-                    print 'Static object found:', name
-                    self._static_objs.append(name)
+                        for var in self._variables:
+                            if 'temperature' in var.lower():
+                                self._topics[name][var] = rospy.Publisher('/%s/%s' % (name, var), Temperature, queue_size=1)
+                            else:
+                                self._topics[name][var] = rospy.Publisher('/%s/%s' % (name, var), FloatStamped, queue_size=1)
+                    else:
+                        print 'Static object found:', name
+                        self._static_objs.append(name)
 
-        # Updating the position of the non-static objects in the simulation
-        for name in self._vehicle_pos:
-            for i in range(len(msg.name)):
-                if name == msg.name[i]:
-                    self._vehicle_pos[name] = np.array([msg.pose[i].position.x,
-                                                        msg.pose[i].position.y,
-                                                        msg.pose[i].position.z])
-                    break
+            # Updating the position of the non-static objects in the simulation
+            for name in self._vehicle_pos:
+                for i in range(len(msg.name)):
+                    if name == msg.name[i]:
+                        self._vehicle_pos[name] = np.array([msg.pose[i].position.x,
+                                                            msg.pose[i].position.y,
+                                                            msg.pose[i].position.z])
+                        break
 
     def publish_wind_velocity(self, event):
         if self._wind_vel_config is None:
             return True
+
         t = rospy.get_time()
-        for name in self._vehicle_pos:
-            w_east = self._interpolate(
-                self._wind_vel_config['w_east'],
-                self._vehicle_pos[name][0],
-                self._vehicle_pos[name][1],
-                self._vehicle_pos[name][2],
-                t)
-            w_north = self._interpolate(
-                self._wind_vel_config['w_north'],
-                self._vehicle_pos[name][0],
-                self._vehicle_pos[name][1],
-                self._vehicle_pos[name][2],
-                t)
-            nedVel = np.array([w_north, w_east, 0])
-            enuVel = np.dot(self._toNEDrot.T, nedVel)
-            output = Vector3(*enuVel)
-            self._topics[name]['wind_velocity'].publish(output)
+        with self._lock:
+            for name in self._vehicle_pos:
+                w_east = self._interpolate(
+                    self._wind_vel_config['w_east'],
+                    self._vehicle_pos[name][0],
+                    self._vehicle_pos[name][1],
+                    self._vehicle_pos[name][2],
+                    t)
+                w_north = self._interpolate(
+                    self._wind_vel_config['w_north'],
+                    self._vehicle_pos[name][0],
+                    self._vehicle_pos[name][1],
+                    self._vehicle_pos[name][2],
+                    t)
+                nedVel = np.array([w_north, w_east, 0])
+                enuVel = np.dot(self._toNEDrot.T, nedVel)
+                output = Vector3(*enuVel)
+                self._topics[name]['wind_velocity'].publish(output)
         return True
 
     def publish_current_velocity(self, event):
         if self._current_vel_config is None:
             return True
-        t = rospy.get_time()
-        for name in self._vehicle_pos:
-            u_east = self._interpolate(
-                self._current_vel_config['u_east'],
-                self._vehicle_pos[name][0],
-                self._vehicle_pos[name][1],
-                self._vehicle_pos[name][2],
-                t)
-            v_north = self._interpolate(
-                self._current_vel_config['v_north'],
-                self._vehicle_pos[name][0],
-                self._vehicle_pos[name][1],
-                self._vehicle_pos[name][2],
-                t)
 
-            nedVel = np.array([v_north, u_east, 0])
-            enuVel = np.dot(self._toNEDrot.T, nedVel)
-            output = Vector3(*enuVel)
-            self._topics[name]['current_velocity'].publish(output)
-        return True
-
-    def publish_variables(self, event):
         t = rospy.get_time()
-        for var in self._variables:
-            pc_msg = PointCloud()
-            pc_msg.header.stamp = rospy.Time.now()
-            pc_msg.header.frame_id = 'world'
+        with self._lock:
             for name in self._vehicle_pos:
-                value = self._interpolate(
-                    var,
+                u_east = self._interpolate(
+                    self._current_vel_config['u_east'],
                     self._vehicle_pos[name][0],
                     self._vehicle_pos[name][1],
                     self._vehicle_pos[name][2],
                     t)
-                # Updating the point cloud for this variable
-                pc_msg.points.append(Point32(self._vehicle_pos[name][0],
-                                             self._vehicle_pos[name][1],
-                                             self._vehicle_pos[name][2]))
-                pc_msg.channels.append(ChannelFloat32())
-                pc_msg.channels[-1].name = 'intensity'
-                pc_msg.channels[-1].values.append(value)
+                v_north = self._interpolate(
+                    self._current_vel_config['v_north'],
+                    self._vehicle_pos[name][0],
+                    self._vehicle_pos[name][1],
+                    self._vehicle_pos[name][2],
+                    t)
 
-                # Create the message objects
-                if 'temperature' in var.lower():
-                    msg = Temperature()
-                    msg.header.stamp = rospy.Time.now()
-                    msg.header.frame_id = '%s/base_link' % name
-                    # TODO Read from the unit of temperature from NC file
-                    # Converting to Celsius
-                    msg.temperature = value - 273.15
-                else:
-                    msg = FloatStamped()
-                    msg.header.stamp = rospy.Time.now()
-                    msg.header.frame_id = '%s/base_link' % name
-                    msg.data = value
-                self._topics[name][var].publish(msg)
-            self._pc_variables[var].publish(pc_msg)
+                nedVel = np.array([v_north, u_east, 0])
+                enuVel = np.dot(self._toNEDrot.T, nedVel)
+                output = Vector3(*enuVel)
+                self._topics[name]['current_velocity'].publish(output)
+        return True
+
+    def publish_variables(self, event):
+        with self._lock:
+            t = rospy.get_time()
+            for var in self._variables:
+                pc_msg = PointCloud()
+                pc_msg.header.stamp = rospy.Time.now()
+                pc_msg.header.frame_id = 'world'
+                for name in self._vehicle_pos:
+                    value = self._interpolate(
+                        var,
+                        self._vehicle_pos[name][0],
+                        self._vehicle_pos[name][1],
+                        self._vehicle_pos[name][2],
+                        t)
+                    # Updating the point cloud for this variable
+                    pc_msg.points.append(Point32(self._vehicle_pos[name][0],
+                                                 self._vehicle_pos[name][1],
+                                                 self._vehicle_pos[name][2]))
+                    pc_msg.channels.append(ChannelFloat32())
+                    pc_msg.channels[-1].name = 'intensity'
+                    pc_msg.channels[-1].values.append(value)
+
+                    # Create the message objects
+                    if 'temperature' in var.lower():
+                        msg = Temperature()
+                        msg.header.stamp = rospy.Time.now()
+                        msg.header.frame_id = '%s/base_link' % name
+                        # TODO Read from the unit of temperature from NC file
+                        # Converting to Celsius
+                        msg.temperature = value - 273.15
+                    else:
+                        msg = FloatStamped()
+                        msg.header.stamp = rospy.Time.now()
+                        msg.header.frame_id = '%s/base_link' % name
+                        msg.data = value
+                    self._topics[name][var].publish(msg)
+                self._pc_variables[var].publish(pc_msg)
         return True
 
     def _get_all_variables(self):
@@ -383,27 +389,26 @@ class OceanDataPlayBack:
                               request.time))
 
     def _interpolate(self, variable, x, y, z, time):
-        with self._lock:
-            ENUpos = np.array([x, y, z])
-            # Since the odometry given by Gazebo is in ENU standard, transform into
-            # NED to interpolate on the ocean data
-            pos = np.dot(self._toNEDrot, ENUpos)
-            # Add x and y offsets
-            x = pos[0] + self._x_offset
-            y = pos[1] + self._y_offset
-            z = pos[2]
+        ENUpos = np.array([x, y, z])
+        # Since the odometry given by Gazebo is in ENU standard, transform into
+        # NED to interpolate on the ocean data
+        pos = np.dot(self._toNEDrot, ENUpos)
+        # Add x and y offsets
+        x = pos[0] + self._x_offset
+        y = pos[1] + self._y_offset
+        z = pos[2]
 
-            if not self._loop_time:
-                # Use fixed or simulation time
-                t = (time if self._fixed_time is None else self._fixed_time)
-            else:
-                # Loop the time vector, if needed
-                t = time % self._ocean_data.end_time
-            t += float(self._time_offset)
+        if not self._loop_time:
+            # Use fixed or simulation time
+            t = (time if self._fixed_time is None else self._fixed_time)
+        else:
+            # Loop the time vector, if needed
+            t = time % self._ocean_data.end_time
+        t += float(self._time_offset)
 
-            # Interpolate the given variables on the current position and time
-            output = self._ocean_data.interpolate(
-                variable, x, y, z, t)
+        # Interpolate the given variables on the current position and time
+        output = self._ocean_data.interpolate(
+            variable, x, y, z, t)
         return output
 
 if __name__ == '__main__':
