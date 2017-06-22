@@ -16,11 +16,10 @@
 
 import numpy
 import rospy
-import tf
-import tf.transformations as trans
 from dynamic_reconfigure.server import Server
 import geometry_msgs.msg as geometry_msgs
 from nav_msgs.msg import Odometry
+import tf.transformations as trans
 from rospy.numpy_msg import numpy_msg
 
 # Modules included in this package
@@ -42,7 +41,6 @@ class VelocityControllerNode:
         self.pid_linear = PIDRegulator(1, 0, 0, 1)
 
         # ROS infrastructure
-        self.listener = tf.TransformListener()
         self.sub_cmd_vel = rospy.Subscriber('cmd_vel', numpy_msg(geometry_msgs.Twist), self.cmd_vel_callback)
         self.sub_odometry = rospy.Subscriber('odom', numpy_msg(Odometry), self.odometry_callback)
         self.pub_cmd_accel = rospy.Publisher('cmd_accel', geometry_msgs.Accel, queue_size=10)

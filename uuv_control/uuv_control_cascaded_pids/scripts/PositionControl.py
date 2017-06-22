@@ -16,7 +16,6 @@
 
 import numpy
 import rospy
-import tf
 import tf.transformations as trans
 from PID import PIDRegulator
 
@@ -25,7 +24,6 @@ from uuv_control_cascaded_pid.cfg import PositionControlConfig
 import geometry_msgs.msg as geometry_msgs
 from nav_msgs.msg import Odometry
 from rospy.numpy_msg import numpy_msg
-
 
 class PositionControllerNode:
     def __init__(self):
@@ -43,7 +41,6 @@ class PositionControllerNode:
         self.pid_pos = PIDRegulator(1, 0, 0, 1)
 
         # ROS infrastructure
-        self.listener = tf.TransformListener()
         self.sub_cmd_pose = rospy.Subscriber('cmd_pose', numpy_msg(geometry_msgs.PoseStamped), self.cmd_pose_callback)
         self.sub_odometry = rospy.Subscriber('odom', numpy_msg(Odometry), self.odometry_callback)
         self.pub_cmd_vel = rospy.Publisher('cmd_vel', geometry_msgs.Twist, queue_size=10)

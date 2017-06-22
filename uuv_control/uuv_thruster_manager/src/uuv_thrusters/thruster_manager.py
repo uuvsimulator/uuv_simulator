@@ -66,8 +66,6 @@ class ThrusterManager:
         if self.config['update_rate'] < 0:
             self.config['update_rate'] = 50
 
-        self.listener = tf.TransformListener()
-
         rospy.loginfo(
           'ThrusterManager::update_rate=' + str(self.config['update_rate']))
 
@@ -182,15 +180,17 @@ class ThrusterManager:
         print 'conversion_fcn=', self.config['conversion_fcn']
         print 'conversion_fcn_params=', self.config['conversion_fcn_params']
 
+
+        listener = tf.TransformListener()
         for i in range(self.MAX_THRUSTERS):
             frame = self.namespace + \
                 self.config['thruster_frame_base'] + str(i)
             try:
                 # try to get thruster pose with respect to base frame via tf
                 print('transform: ' + base + ' -> ' + frame)
-                self.listener.waitForTransform(base, frame,
+                listener.waitForTransform(base, frame,
                                                now, rospy.Duration(20.0))
-                [pos, quat] = self.listener.lookupTransform(base, frame, now)
+                [pos, quat] = listener.lookupTransform(base, frame, now)
 
                 topic = self.config['thruster_topic_prefix'] + str(i) + \
                     self.config['thruster_topic_suffix']
