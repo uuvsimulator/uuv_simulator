@@ -129,7 +129,7 @@
   <gazebo reference="${namespace}/sonar${suffix}_link">
     <sensor type="gpu_ray" name="sonar${suffix}">
       <pose>0 0 0 0 0 0</pose>
-      <visualize>true</visualize>
+      <visualize>false</visualize>
       <update_rate>${update_rate}</update_rate>
       <ray>
         <scan>
