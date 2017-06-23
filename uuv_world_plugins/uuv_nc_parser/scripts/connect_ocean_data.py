@@ -38,6 +38,7 @@ class OceanDataPlayBack:
         q = quaternion_about_axis(np.pi, (1, 0, 0))
         self._toNEDrot = quaternion_matrix(q)[0:3, 0:3]
         self._lock = Lock()
+        self._last_vehicle_pos = rospy.Time(0)
 
         self._filename = ''
         if rospy.has_param('~filename'):
@@ -135,7 +136,7 @@ class OceanDataPlayBack:
                                                       queue_size=1)
 
         try:
-            rospy.wait_for_service('/gazebo/get_model_properties', timeout=2)
+            rospy.wait_for_service('/gazebo/get_model_properties', timeout=30)
         except rospy.ROSException:
             print 'Service not available! Closing node...'
             sys.exit(-1)
@@ -178,6 +179,11 @@ class OceanDataPlayBack:
                                       self.publish_variables)
 
     def update_vehicle_pos(self, msg):
+        now = rospy.get_rostime()
+        dt = now - self._last_vehicle_pos
+        if dt.to_sec() < 1 / self._update_rate:
+            return
+
         with self._lock:
             # Removing vehicles that have been removed
             remove_names = list()
@@ -225,6 +231,7 @@ class OceanDataPlayBack:
                                                             msg.pose[i].position.y,
                                                             msg.pose[i].position.z])
                         break
+            self._last_vehicle_pos = now
 
     def publish_wind_velocity(self, event):
         if self._wind_vel_config is None:
