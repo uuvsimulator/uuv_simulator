@@ -15,10 +15,6 @@
     <selfCollide>false</selfCollide>
   </gazebo>
 
-  <gazebo reference="${namespace}/forearm_axis">
-    <selfCollide>false</selfCollide>
-  </gazebo>
-
   <gazebo reference="${namespace}/forearm">
     <selfCollide>false</selfCollide>
   </gazebo>
@@ -48,10 +44,6 @@
   </gazebo>
 
   <gazebo reference="${namespace}/elbow">
-    <implicitSpringDamper>1</implicitSpringDamper>
-  </gazebo>
-
-  <gazebo reference="${namespace}/elbow_dummy">
     <implicitSpringDamper>1</implicitSpringDamper>
   </gazebo>
 
