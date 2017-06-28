@@ -16,14 +16,11 @@
 
 import numpy
 import rospy
-import tf
-import tf.transformations as trans
 
 from dynamic_reconfigure.server import Server
 from geometry_msgs.msg import Accel
 from geometry_msgs.msg import Wrench
 from rospy.numpy_msg import numpy_msg
-
 
 class AccelerationControllerNode:
     def __init__(self):
@@ -35,7 +32,6 @@ class AccelerationControllerNode:
         self.mass_inertial_matrix = numpy.zeros((6, 6))
 
         # ROS infrastructure
-        self.listener = tf.TransformListener()
         self.sub_accel = rospy.Subscriber(
           'cmd_accel', numpy_msg(Accel), self.accel_callback)
         self.sub_force = rospy.Subscriber(
@@ -49,12 +45,8 @@ class AccelerationControllerNode:
         if not rospy.has_param("pid/inertial"):
             raise rospy.ROSException("UUV's inertial was not provided")
 
-        if not rospy.has_param("~tf_prefix"):
-            raise rospy.ROSException("UUV's TF label not provided")
-
         self.mass = rospy.get_param("pid/mass")
         self.inertial = rospy.get_param("pid/inertial")
-        self.tf_prefix = rospy.get_param("~tf_prefix")
 
         # update mass, moments of inertia
         self.inertial_tensor = numpy.array(

@@ -24,6 +24,7 @@
     <!-- Publish robot model for ROS -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen">
       <param name="robot_description" value="/$(arg namespace)/robot_description" />
+      <param name="publish_frequency" value="5" />
     </node>
   </group>
 

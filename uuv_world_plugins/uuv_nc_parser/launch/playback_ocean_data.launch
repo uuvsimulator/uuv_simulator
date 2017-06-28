@@ -21,6 +21,7 @@
     name="connect_ocean_data"
     output="screen">
     <rosparam subst_value="true">
+      update_rate: 1
       filename: $(arg filename)
       labels:
         x: $(arg x_label)
