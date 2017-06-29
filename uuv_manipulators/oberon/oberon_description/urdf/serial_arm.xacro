@@ -78,10 +78,6 @@
       </collision>
     </link>
 
-    <gazebo reference="${namespace}/base">
-      <selfCollide>false</selfCollide>
-    </gazebo>
-
     <link name="${namespace}/shoulder_link">
       <inertial>
         <origin xyz="0.055 0 0.025" rpy="0 0 0"/>
@@ -110,10 +106,6 @@
         </geometry>
       </collision>
     </link>
-
-    <gazebo reference="${namespace}/shoulder_link">
-      <selfCollide>false</selfCollide>
-    </gazebo>
 
     <link name="${namespace}/upper_arm">
       <inertial>
@@ -147,17 +139,7 @@
       </collision>
     </link>
 
-    <gazebo reference="${namespace}/upper_arm">
-      <selfCollide>false</selfCollide>
-    </gazebo>
-
-    <link name="${namespace}/forearm"/>
-
-    <gazebo reference="${namespace}/forearm">
-      <selfCollide>false</selfCollide>
-    </gazebo>
-
-    <link name="${namespace}/forearm_dummy">
+    <link name="${namespace}/forearm">
       <inertial>
       <origin xyz="0.045 0 -0.043" rpy="0 0 0"/>
       <mass value="${forearm_mass}"/>
@@ -185,10 +167,6 @@
         </geometry>
       </collision>
     </link>
-
-    <gazebo reference="${namespace}/forearm">
-      <selfCollide>false</selfCollide>
-    </gazebo>
 
     <link name="${namespace}/wrist_1">
       <inertial>
@@ -222,10 +200,6 @@
       </collision>
     </link>
 
-    <gazebo reference="${namespace}/wrist_1">
-      <selfCollide>false</selfCollide>
-    </gazebo>
-
     <link name="${namespace}/wrist_2">
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -258,15 +232,7 @@
       </collision>
     </link>
 
-    <gazebo reference="${namespace}/wrist_2">
-      <selfCollide>false</selfCollide>
-    </gazebo>
-
     <xacro:dummy_link name="${namespace}/end_effector"/>
-
-    <gazebo reference="${namespace}/end_effector">
-      <selfCollide>false</selfCollide>
-    </gazebo>
 
     <!-- All the joints -->
     <joint name="${namespace}/anchor" type="revolute">
@@ -289,31 +255,24 @@
         <parent link="${namespace}/shoulder_link"/>
         <child link="${namespace}/upper_arm"/>
         <origin xyz="0.07 0.0 0.028" rpy="0 0 0"/>
-        <axis xyz="0 -1 0"/>
+        <axis xyz="0 1 0"/>
         <dynamics damping="50" friction="120"/>
-        <limit lower="-0.55850536063818546" upper="1.5707963267948966" velocity=".17" effort="10000"/>
+        <limit lower="${-0.5*PI}" upper="${0.5*PI}" velocity=".17" effort="10000"/>
     </joint>
 
     <joint name="${namespace}/elbow" type="revolute">
       <parent link="${namespace}/upper_arm"/>
       <child link="${namespace}/forearm"/>
-      <origin xyz="0.579 0.0 0" rpy="0 1.5707963267948966 0"/>
+      <origin xyz="0.579 0 0" rpy="0 0 0"/>
       <dynamics damping="50" friction="120"/>
       <axis xyz="0 -1 0"/>
       <limit lower="-1.5358897417550099" upper="0.76794487087750496" velocity=".13" effort="10000"/>
     </joint>
 
-    <joint name="${namespace}/elbow_dummy" type="fixed">
-      <parent link="${namespace}/forearm"/>
-      <child link="${namespace}/forearm_dummy"/>
-      <origin xyz="0.0 0.0 0.135" rpy="0 0 0"/>
-      <axis xyz="1 0 0"/>
-    </joint>
-
     <joint name="${namespace}/roll" type="revolute">
-      <parent link="${namespace}/forearm_dummy"/>
+      <parent link="${namespace}/forearm"/>
       <child link="${namespace}/wrist_1"/>
-      <origin xyz="0.139 0.0 0" rpy="0 0 0"/>
+      <origin xyz="0.139 0 -0.14" rpy="0 ${PI*0.5} 0"/>
       <axis xyz="1 0 0"/>
       <dynamics damping="50" friction="120"/>
       <limit lower="-2.3911010752322315" upper="2.3212879051524582" velocity=".085" effort="10000"/>
@@ -323,9 +282,9 @@
       <parent link="${namespace}/wrist_1"/>
       <child link="${namespace}/wrist_2"/>
       <origin xyz="0.362 0.0 0" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
+      <axis xyz="0 -1 0"/>
       <dynamics damping="50" friction="120"/>
-      <limit lower="-1.6406094968746698" upper="0.4537856055185257" velocity=".26" effort="10000"/>
+      <limit lower="-0.4537856055185257" upper="1.6406094968746698" velocity=".26" effort="10000"/>
     </joint>
 
     <joint name="${namespace}/wrist" type="continuous">

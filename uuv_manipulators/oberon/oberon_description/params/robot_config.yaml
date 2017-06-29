@@ -7,8 +7,8 @@ tip_link: end_effector
 default_configs:
   home:
     azimuth: 0
-    elbow: -1.5358
-    pitch: -1.6406
+    elbow:  -1.5358
+    pitch: 1.6406
     roll: 0
-    shoulder: 1.5707
+    shoulder: -1.5707
     wrist: 0
