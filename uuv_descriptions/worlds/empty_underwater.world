@@ -45,6 +45,12 @@
       </fog>
     </scene>
 
+    <!-- Origin placed somewhere in the middle of the North Sea  -->
+    <spherical_coordinates>
+      <latitude_deg>56.71897669633431</latitude_deg>
+      <longitude_deg>3.515625</longitude_deg>
+    </spherical_coordinates>
+
     <!-- Global light source -->
     <include>
       <uri>model://sun</uri>
