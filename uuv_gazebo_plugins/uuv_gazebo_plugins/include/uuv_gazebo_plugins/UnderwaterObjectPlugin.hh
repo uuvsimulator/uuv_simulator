@@ -60,6 +60,9 @@ class UnderwaterObjectPlugin : public gazebo::ModelPlugin
   /// \brief Publish current velocity marker
   protected: virtual void PublishCurrentVelocityMarker();
 
+  /// \brief Publishes the state of the vehicle (is submerged)
+  protected: virtual void PublishIsSubmerged();
+
   /// \brief Publish restoring force
   /// \param[in] _link Pointer to the link where the force information will
   /// be extracted from
@@ -105,6 +108,9 @@ class UnderwaterObjectPlugin : public gazebo::ModelPlugin
 
   /// \brief Gazebo node
   protected: gazebo::transport::NodePtr node;
+
+  /// \brief Name of vehicle's base_link
+  protected: std::string baseLinkName;
 
   /// \brief Subcriber to flow message
   protected: gazebo::transport::SubscriberPtr flowSubscriber;

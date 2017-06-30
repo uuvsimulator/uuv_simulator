@@ -36,6 +36,7 @@ BuoyantObject::BuoyantObject(physics::LinkPtr _link)
   this->g = 9.81;
   this->centerOfBuoyancy.Set(0, 0, 0);
   this->debugFlag = false;
+  this->isSubmerged = true;
 
   this->link = _link;
   // Retrieve the bounding box
@@ -77,9 +78,15 @@ math::Vector3 BuoyantObject::GetBuoyancyForce(const math::Pose &_pose)
   // TODO Consider the orientation of the object in the calculation of
   //      submerged volume
   if (z + height / 2 > 0 && z < 0)
+  {
+    this->isSubmerged = false;
     volume = this->volume * (std::fabs(z) + height / 2) / height;
+  }
   else if (z + height / 2 < 0)
+  {
+    this->isSubmerged = true;
     volume = this->volume;
+  }
 
   math::Vector3 restoring;
   if (!this->neutrallyBuoyant || volume != this->volume)
@@ -218,15 +225,9 @@ void BuoyantObject::StoreVector(std::string _tag, math::Vector3 _vec)
 }
 
 /////////////////////////////////////////////////
-bool BuoyantObject::IsSubmerged(const math::Pose &_pose)
+bool BuoyantObject::IsSubmerged()
 {
-  double height = this->boundingBox.GetZLength();
-  double z = _pose.pos.z;
-
-  if (z > (0.75 * height / 2))
-    return false;
-  else
-    return true;
+  return this->isSubmerged;
 }
 
 /////////////////////////////////////////////////

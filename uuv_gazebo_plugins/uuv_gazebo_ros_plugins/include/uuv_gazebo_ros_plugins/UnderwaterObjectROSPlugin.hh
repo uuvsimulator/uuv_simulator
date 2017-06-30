@@ -100,6 +100,9 @@ namespace uuv_simulator_ros
     /// \brief Publishes the current velocity marker
     protected: virtual void PublishCurrentVelocityMarker();
 
+    /// \brief Publishes the state of the vehicle (is submerged)
+    protected: virtual void PublishIsSubmerged();
+
     /// \brief Pointer to this ROS node's handle.
     private: boost::scoped_ptr<ros::NodeHandle> rosNode;
 

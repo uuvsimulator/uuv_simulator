@@ -89,7 +89,7 @@ class BuoyantObject
   public: void SetDebugFlag(bool _debugOn = true);
 
   /// \brief Returns true if the robot is completely submerged
-  public: bool IsSubmerged(const math::Pose &_pose);
+  public: bool IsSubmerged();
 
   /// \brief Returns true if the link was set to be neutrally buoyant
   public: bool IsNeutrallyBuoyant();
@@ -125,6 +125,9 @@ class BuoyantObject
 
   /// \brief Debug flag, storing all intermediate forces and torques
   protected: bool debugFlag;
+
+  /// \brief Is submerged flag
+  protected: bool isSubmerged;
 
   /// \brief Pointer to the correspondent robot link
   protected: physics::LinkPtr link;
