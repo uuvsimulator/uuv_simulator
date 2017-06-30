@@ -35,6 +35,8 @@
 #include <uuv_world_ros_plugins_msgs/GetCurrentModel.h>
 #include <uuv_world_ros_plugins_msgs/SetCurrentVelocity.h>
 #include <uuv_world_ros_plugins_msgs/SetCurrentDirection.h>
+#include <uuv_world_ros_plugins_msgs/SetOriginSphericalCoord.h>
+#include <uuv_world_ros_plugins_msgs/GetOriginSphericalCoord.h>
 
 namespace uuv_simulator_ros
 {
@@ -100,6 +102,16 @@ namespace uuv_simulator_ros
     public: bool UpdateVertAngle(
         uuv_world_ros_plugins_msgs::SetCurrentDirection::Request& _req,
         uuv_world_ros_plugins_msgs::SetCurrentDirection::Response& _res);
+
+    /// \brief Service call that returns the origin in WGS84 standard
+    public: bool GetOriginSphericalCoord(
+        uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Request& _req,
+        uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Response& _res);
+
+    /// \brief Service call that returns the origin in WGS84 standard
+    public: bool SetOriginSphericalCoord(
+        uuv_world_ros_plugins_msgs::SetOriginSphericalCoord::Request& _req,
+        uuv_world_ros_plugins_msgs::SetOriginSphericalCoord::Response& _res);
 
     /// \brief Publishes ROS topics
     private: void PublishROSTopics();
