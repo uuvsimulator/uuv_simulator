@@ -121,13 +121,13 @@ void UnderwaterWorldROSPlugin::Load(gazebo::physics::WorldPtr _world,
   // Advertise the service to get origin of the world in spherical coordinates
   this->worldServices["get_origin_spherical_coordinates"] =
     this->rosNode->advertiseService(
-      "/" + this->ns + "/get_origin_spherical_coordinates",
+      "/gazebo/get_origin_spherical_coordinates",
       &UnderwaterWorldROSPlugin::GetOriginSphericalCoord, this);
 
   // Advertise the service to get origin of the world in spherical coordinates
   this->worldServices["set_origin_spherical_coordinates"] =
     this->rosNode->advertiseService(
-      "/" + this->ns + "/set_origin_spherical_coordinates",
+      "/gazebo/set_origin_spherical_coordinates",
       &UnderwaterWorldROSPlugin::SetOriginSphericalCoord, this);
 
   this->rosPublishConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
