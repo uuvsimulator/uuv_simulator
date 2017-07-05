@@ -57,12 +57,19 @@ class WorldPublisher:
 
             new_model['position'] = [0, 0, 0]
             new_model['orientation'] = [0, 0, 0, 1]
+            new_model['scale'] = [1, 1, 1]
 
             if 'pose' in models[model]:
                 if 'position' in models[model]['pose']:
-                    new_model['position'] = models[model]['pose']['position']
-                if 'orientation' in models[model]:
-                    new_model['orientation'] = quaternion_from_euler(models[model]['pose']['orientation'])
+                    if len(models[model]['pose']['position']) == 3:
+                        new_model['position'] = models[model]['pose']['position']
+                if 'orientation' in models[model]['pose']:
+                    if len(models[model]['pose']['orientation']) == 3:
+                        new_model['orientation'] = quaternion_from_euler(*models[model]['pose']['orientation'])
+
+            if 'scale' in models[model]:
+                if len(models[model]['scale']) == 3:
+                    new_model['scale'] = models[model]['scale']
 
             if 'mesh' in models[model]:
                 new_model['mesh'] = models[model]['mesh']
@@ -82,7 +89,7 @@ class WorldPublisher:
                         print('Model %s not found in the current Gazebo scenario' % model)
                 else:
                     print('Information about the model %s for the mesh %s could not be '
-                          'retrieved' % (models[model]['model'], models[model]['mesh']))
+                          'retrieved' % (model, models[model]['mesh']))
             elif 'plane' in models[model]:
                 new_model['plane'] = [1, 1, 1]
                 if 'plane' in models[model]:
@@ -97,6 +104,7 @@ class WorldPublisher:
             print('New model being published: %s' % model)
             print('\t Position: ' + str(self._model_paths[model]['position']))
             print('\t Orientation: ' + str(self._model_paths[model]['orientation']))
+            print('\t Scale: ' + str(self._model_paths[model]['scale']))
 
     def publish_meshes(self):
         markers = MarkerArray()
@@ -108,9 +116,9 @@ class WorldPublisher:
             if 'mesh' in self._model_paths[model]:
                 marker.type = Marker.MESH_RESOURCE
                 marker.mesh_resource = self._model_paths[model]['mesh']
-                marker.scale.x = 1.0
-                marker.scale.y = 1.0
-                marker.scale.z = 1.0
+                marker.scale.x = self._model_paths[model]['scale'][0]
+                marker.scale.y = self._model_paths[model]['scale'][1]
+                marker.scale.z = self._model_paths[model]['scale'][2]
             elif 'plane' in self._model_paths[model]:
                 marker.type = Marker.CUBE
                 marker.scale.x = self._model_paths[model]['plane'][0]
