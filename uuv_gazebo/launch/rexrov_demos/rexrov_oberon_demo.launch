@@ -10,6 +10,7 @@
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>
   <arg name="z" default="-70"/>
+  <arg name="yaw" default="0.0"/>
   <arg name="joy_id" default="0"/>
   <arg name="namespace" default="rexrov"/>
   <arg name="gripper" default="parallel"/>
@@ -53,6 +54,7 @@
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
     <arg name="z" value="$(arg z)"/>
+    <arg name="yaw" value="$(arg yaw)"/>
   </include>
 
   <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
