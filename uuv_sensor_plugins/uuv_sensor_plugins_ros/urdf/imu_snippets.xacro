@@ -65,12 +65,6 @@
         <mass value="${mass_imu_sensor}" />  <!-- [kg] -->
         <origin xyz="0 0 0" rpy="0 0 0" />
       </inertial>
-      <visual>
-        <geometry>
-          <box size="0.1 0.1 0.1" />
-        </geometry>
-      </visual>
-      <xacro:no_collision/>
     </link>
 
     <!-- IMU joint -->
