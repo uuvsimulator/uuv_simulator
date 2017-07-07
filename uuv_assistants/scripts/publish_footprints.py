@@ -33,7 +33,7 @@ get_world_props = None
 
 get_model_props = None
 
-marker = np.array([[0, 0.75], [-0.5, -0.25], [0.5, -0.25]])
+marker = 20 * np.array([[0, 0.75], [-0.5, -0.25], [0.5, -0.25]])
 
 def rot(alpha):
     return np.array([[np.cos(alpha), -np.sin(alpha)],
@@ -124,7 +124,7 @@ def update_vehicle_list(event):
         print 'Service call failed: %s', e
 
 def main():
-    update_timer = rospy.Timer(rospy.Duration(1), update_vehicle_list)
+    update_timer = rospy.Timer(rospy.Duration(10), update_vehicle_list)
 
 if __name__ == '__main__':
     print('Start publishing vehicle footprints to RViz')
