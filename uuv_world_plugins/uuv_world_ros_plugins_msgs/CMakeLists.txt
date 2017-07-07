@@ -12,6 +12,8 @@ add_service_files(
   GetCurrentModel.srv
   SetCurrentVelocity.srv
   SetCurrentDirection.srv
+  SetOriginSphericalCoord.srv
+  GetOriginSphericalCoord.srv
 )
 
 generate_messages(

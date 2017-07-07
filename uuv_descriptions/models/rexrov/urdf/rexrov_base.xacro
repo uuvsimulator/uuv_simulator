@@ -222,5 +222,8 @@
       <origin xyz="1.15 0 0.4" rpy="0 0.6 0"/>
     </xacro:default_camera>
 
+    <!-- Mount a GPS. -->
+    <xacro:default_gps namespace="${namespace}" parent_link="${namespace}/base_link" />
+
   </xacro:macro>
 </robot>

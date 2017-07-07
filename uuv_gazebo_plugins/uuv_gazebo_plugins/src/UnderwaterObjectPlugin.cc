@@ -89,6 +89,7 @@ void UnderwaterObjectPlugin::Load(physics::ModelPtr _model,
 
   // g
   double gAcc = std::abs(this->world->GetPhysicsEngine()->GetGravity().z);
+  this->baseLinkName = std::string();
   if (_sdf->HasElement("link"))
   {
     for (sdf::ElementPtr linkElem = _sdf->GetElement("link"); linkElem;
@@ -100,6 +101,13 @@ void UnderwaterObjectPlugin::Load(physics::ModelPtr _model,
       if (linkElem->HasAttribute("name"))
       {
         linkName = linkElem->Get<std::string>("name");
+        std::size_t found = linkName.find("base_link");
+        if (found != std::string::npos)
+        {
+          this->baseLinkName = linkName;
+          gzmsg << "Name of the BASE_LINK: " << this->baseLinkName << std::endl;
+        }
+
         link = this->model->GetLink(linkName);
         if (!link)
         {
@@ -187,6 +195,7 @@ void UnderwaterObjectPlugin::Update(const common::UpdateInfo &_info)
       this->PublishRestoringForce(link);
       this->PublishHydrodynamicWrenches(link);
       this->PublishCurrentVelocityMarker();
+      this->PublishIsSubmerged();
     }
     else if (std::isnan(linearAccel))
     {
@@ -212,6 +221,13 @@ void UnderwaterObjectPlugin::Connect()
 
 /////////////////////////////////////////////////
 void UnderwaterObjectPlugin::PublishCurrentVelocityMarker()
+{
+  // Does nothing for now
+  return;
+}
+
+/////////////////////////////////////////////////
+void UnderwaterObjectPlugin::PublishIsSubmerged()
 {
   // Does nothing for now
   return;

@@ -118,6 +118,18 @@ void UnderwaterWorldROSPlugin::Load(gazebo::physics::WorldPtr _world,
       "/" + this->ns + "/set_current_vert_angle",
       &UnderwaterWorldROSPlugin::UpdateVertAngle, this);
 
+  // Advertise the service to get origin of the world in spherical coordinates
+  this->worldServices["get_origin_spherical_coordinates"] =
+    this->rosNode->advertiseService(
+      "/gazebo/get_origin_spherical_coordinates",
+      &UnderwaterWorldROSPlugin::GetOriginSphericalCoord, this);
+
+  // Advertise the service to get origin of the world in spherical coordinates
+  this->worldServices["set_origin_spherical_coordinates"] =
+    this->rosNode->advertiseService(
+      "/gazebo/set_origin_spherical_coordinates",
+      &UnderwaterWorldROSPlugin::SetOriginSphericalCoord, this);
+
   this->rosPublishConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
     boost::bind(&UnderwaterWorldROSPlugin::PublishROSTopics, this));
 }
@@ -264,6 +276,37 @@ bool UnderwaterWorldROSPlugin::UpdateCurrentVertAngleModel(
   gzmsg << "\tWARNING: Current velocity calculated in the ENU frame"
       << std::endl;
   this->currentVertAngleModel.Print();
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool UnderwaterWorldROSPlugin::GetOriginSphericalCoord(
+    uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Request& _req,
+    uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Response& _res)
+{
+  _res.latitude_deg =
+    this->world->GetSphericalCoordinates()->LatitudeReference().Degree();
+  _res.longitude_deg =
+    this->world->GetSphericalCoordinates()->LongitudeReference().Degree();
+  _res.altitude =
+    this->world->GetSphericalCoordinates()->GetElevationReference();
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool UnderwaterWorldROSPlugin::SetOriginSphericalCoord(
+    uuv_world_ros_plugins_msgs::SetOriginSphericalCoord::Request& _req,
+    uuv_world_ros_plugins_msgs::SetOriginSphericalCoord::Response& _res)
+{
+  ignition::math::Angle angle;
+  angle.Degree(_req.latitude_deg);
+  this->world->GetSphericalCoordinates()->SetLatitudeReference(angle);
+
+  angle.Degree(_req.longitude_deg);
+  this->world->GetSphericalCoordinates()->SetLongitudeReference(angle);
+
+  this->world->GetSphericalCoordinates()->SetElevationReference(_req.altitude);
+  _res.success = true;
   return true;
 }
 

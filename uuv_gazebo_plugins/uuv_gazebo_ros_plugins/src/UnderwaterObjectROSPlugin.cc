@@ -81,6 +81,10 @@ void UnderwaterObjectROSPlugin::Load(gazebo::physics::ModelPtr _parent,
   this->rosHydroPub["using_global_current_velocity"] =
     this->rosNode->advertise<std_msgs::Bool>
     (_parent->GetName() + "/using_global_current_velocity", 0);
+
+  this->rosHydroPub["is_submerged"] =
+    this->rosNode->advertise<std_msgs::Bool>
+    (_parent->GetName() + "/is_submerged", 0);
 }
 
 /////////////////////////////////////////////////
@@ -133,6 +137,16 @@ void UnderwaterObjectROSPlugin::PublishRestoringForce(
       gazebo::math::Vector3(0, 0, 0), msg);
     this->rosHydroPub[_link->GetName() + "/restoring"].publish(msg);
   }
+}
+
+/////////////////////////////////////////////////
+void UnderwaterObjectROSPlugin::PublishIsSubmerged()
+{
+  if (this->baseLinkName.empty())
+    gzwarn << "Base link name string is empty" << std::endl;
+  std_msgs::Bool isSubmerged;
+  isSubmerged.data = this->models[this->model->GetLink(this->baseLinkName)]->IsSubmerged();
+  this->rosHydroPub["is_submerged"].publish(isSubmerged);
 }
 
 /////////////////////////////////////////////////

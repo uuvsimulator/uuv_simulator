@@ -38,6 +38,12 @@
       <shadows>1</shadows>
     </scene>
 
+    <!-- Origin placed somewhere in the middle of the Bodensee (Germany)  -->
+    <spherical_coordinates>
+      <latitude_deg>47.6278771</latitude_deg>
+      <longitude_deg>9.334553</longitude_deg>
+    </spherical_coordinates>
+
       <!-- Global light source -->
     <light type="directional" name="sun1">
       <pose>50 0 150 0 0 0</pose>
