@@ -398,7 +398,8 @@ class DPControllerLocalPlanner(object):
             self._logger.error('Error while setting waypoints')
             return GoToResponse(False)
 
-        self._traj_interpolator.set_start_time(rospy.Time.now().to_sec())
+        t = rospy.Time.now().to_sec()
+        self._traj_interpolator.set_start_time(t)
         self._update_trajectory_info()
         self.set_station_keeping(False)
         self.set_automatic_mode(True)
@@ -409,7 +410,11 @@ class DPControllerLocalPlanner(object):
         print 'GO TO'
         print '==========================================================='
         print wp_set
-        print '# waypoints =', wp_set.num_waypoints
+        print 'Heading offset =', request.waypoint.heading_offset
+        print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
+        print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
+        print 'Start time [s]: ', t
+        print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
         print '==========================================================='
         return GoToResponse(True)
 
@@ -479,10 +484,11 @@ class DPControllerLocalPlanner(object):
 
             if not self._traj_running:
                 self._traj_running = True
+                self._logger.info(rospy.get_namespace() + ' - Trajectory running')
 
             if self._traj_running and self._traj_interpolator.has_finished():
                 # Trajectory ended, start station keeping mode
-                self._logger.info('Trajectory completed!')
+                self._logger.info(rospy.get_namespace() + ' - Trajectory completed!')
                 self._this_ref_pnt.vel = np.zeros(6)
                 self._this_ref_pnt.acc = np.zeros(6)
                 self.set_station_keeping(True)

@@ -28,8 +28,8 @@ from path_generator import PathGenerator
 class LIPBInterpolator(PathGenerator):
     """
     Linear interpolator with polynomial blends.
-    
-    [1] Biagiotti, Luigi, and Claudio Melchiorri. Trajectory planning for 
+
+    [1] Biagiotti, Luigi, and Claudio Melchiorri. Trajectory planning for
         automatic machines and robots. Springer Science & Business Media, 2008.
     """
     LABEL = 'lipb_interpolator'
@@ -97,9 +97,13 @@ class LIPBInterpolator(PathGenerator):
         if self._start_time is None:
             self._start_time = 0.0
 
-        # Set a simple spline to interpolate heading offset, if existent
-        self._heading_spline = splrep(self._s, heading, k=3, per=False)
-        self._interp_fcns['heading'] = lambda x: splev(x, self._heading_spline)
+        if self._waypoints.num_waypoints == 2:
+            head_offset_line = deepcopy(self._waypoints.get_waypoint(1).heading_offset)
+            self._interp_fcns['heading'] = lambda x: head_offset_line
+        else:
+            # Set a simple spline to interpolate heading offset, if existent
+            self._heading_spline = splrep(self._s, heading, k=3, per=False)
+            self._interp_fcns['heading'] = lambda x: splev(x, self._heading_spline)
 
         return True
 
