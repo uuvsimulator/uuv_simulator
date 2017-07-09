@@ -5,7 +5,7 @@ set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 find_package(catkin REQUIRED uuv_gazebo_plugins sensor_msgs uuv_sensor_plugins
                              uuv_sensor_plugins_ros_msgs)
-find_package(Boost REQUIRED COMPONENTS system)                             
+find_package(Boost REQUIRED COMPONENTS system)
 find_package(Eigen3 REQUIRED)
 find_package(gazebo REQUIRED)
 
@@ -63,6 +63,11 @@ add_dependencies(uuv_gazebo_ros_rpt
 add_library(uuv_gazebo_ros_gps src/GPSRosPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_gps ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_gps
+    ${catkin_EXPORTED_TARGETS})
+
+add_library(uuv_gazebo_ros_acoustic_sonar src/AcousticSonarROSPlugin.cc)
+target_link_libraries(uuv_gazebo_ros_acoustic_sonar ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(uuv_gazebo_ros_acoustic_sonar
     ${catkin_EXPORTED_TARGETS})
 
 add_library(uuv_gazebo_ros_subseapressure src/SubseapressureRosPlugin.cc)
