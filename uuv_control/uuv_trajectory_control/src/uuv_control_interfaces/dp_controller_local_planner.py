@@ -126,8 +126,12 @@ class DPControllerLocalPlanner(object):
             wps = self._traj_interpolator.get_waypoints()
             if wps is not None:
                 self._waypoints_msg = wps.to_message()
-        self._trajectory_msg = self._traj_interpolator.get_trajectory_as_message()
-        self._logger.info('Updating the trajectory information')
+        msg = self._traj_interpolator.get_trajectory_as_message()
+        if msg is not None:
+            self._trajectory_msg = msg
+            self._logger.info('Updating the trajectory information')
+        else:
+            self._logger.error('Error generating trajectory message')
 
     def _display_message(self, msg):
         print 'DP Local Planner - ' + str(msg)

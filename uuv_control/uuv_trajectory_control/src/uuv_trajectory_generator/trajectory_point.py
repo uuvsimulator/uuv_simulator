@@ -144,6 +144,7 @@ class TrajectoryPoint(object):
     def to_message(self):
         """Convert current data to a trajectory point message."""
         p_msg = TrajectoryPointMsg()
+        # FIXME Sometimes the time t stored is NaN
         p_msg.header.stamp = rospy.Time(self.t)
         p_msg.pose.position = geometry_msgs.Vector3(*self.p)
         p_msg.pose.orientation = geometry_msgs.Quaternion(*self.q)
