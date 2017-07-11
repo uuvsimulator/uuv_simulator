@@ -79,6 +79,9 @@ class GazeboSensorPlugin : public ModelPlugin {
 
   /// \brief Desired time between updates.
   protected: common::Time updatePeriod_;
+
+  /// \brief Flag to change state of sensor unit
+  protected: bool isActive;
 };
 }
 
