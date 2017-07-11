@@ -387,6 +387,9 @@ class DPControllerLocalPlanner(object):
         if self._vehicle_pose is None:
             self._logger.error('Current pose has not been initialized yet')
             return GoToResponse(False)
+        if request.waypoint.max_forward_speed <= 0.0:
+            self._logger.error('Max. forward speed must be greater than zero')
+            return GoToResponse(False) 
         self.set_station_keeping(True)
         wp_set = uuv_trajectory_generator.WaypointSet()
 
