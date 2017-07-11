@@ -217,7 +217,9 @@ class DPControllerLocalPlanner(object):
         """
         Service callback function to hold the vehicle's current position.
         """
-
+        self._this_ref_pnt = deepcopy(self._vehicle_pose)
+        self._this_ref_pnt.vel = np.zeros(6)
+        self._this_ref_pnt.acc = np.zeros(6)
         self.set_station_keeping(True)
         self.set_automatic_mode(False)
         self._smooth_approach_on = False
@@ -486,9 +488,12 @@ class DPControllerLocalPlanner(object):
                 self._traj_running = True
                 self._logger.info(rospy.get_namespace() + ' - Trajectory running')
 
-            if self._traj_running and self._traj_interpolator.has_finished():
+            if self._traj_running and (self._traj_interpolator.has_finished() or self._station_keeping_on):
                 # Trajectory ended, start station keeping mode
                 self._logger.info(rospy.get_namespace() + ' - Trajectory completed!')
+                if self._this_ref_pnt is None:
+                    # TODO Fix None value coming from the odometry
+                    self._this_ref_pnt = deepcopy(self._vehicle_pose)
                 self._this_ref_pnt.vel = np.zeros(6)
                 self._this_ref_pnt.acc = np.zeros(6)
                 self.set_station_keeping(True)
