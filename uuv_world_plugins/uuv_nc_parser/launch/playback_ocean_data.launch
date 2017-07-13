@@ -16,6 +16,8 @@
   <arg name="w_east_label" default="w_east"/>
   <arg name="w_north_label" default="w_north"/>
 
+
+  <arg name="max_size_pc" default="300"/>
   <node pkg="uuv_nc_parser"
     type="connect_ocean_data.py"
     name="connect_ocean_data"
@@ -23,6 +25,7 @@
     <rosparam subst_value="true">
       update_rate: 1
       filename: $(arg filename)
+      max_size_pc: $(arg max_size_pc)
       labels:
         x: $(arg x_label)
         y: $(arg y_label)

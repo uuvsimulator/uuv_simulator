@@ -165,38 +165,6 @@
       <origin xyz="0.412125 -0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${-135*d2r}"/>
     </xacro:thruster_macro>
 
-    <!-- Mount a 3D pose sensor -->
-    <link name="${namespace}/pose_sensor_link">
-      <xacro:box_inertial x="0" y="0" z="0" mass="0.01">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-      </xacro:box_inertial>
-      <visual>
-        <geometry>
-          <box size="0.1 0.1 0.1"/>
-        </geometry>
-      </visual>
-      <xacro:no_collision/>
-    </link>
-
-    <joint name="${namespace}/pose_sensor_joint" type="revolute">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <axis xyz="0 0 1"/>
-      <parent link="${namespace}/base_link"/>
-      <child link="${namespace}/pose_sensor_link"/>
-      <limit effort="0" lower="0" upper="0" velocity="0"/>
-    </joint>
-
-    <gazebo>
-      <plugin name="pose_3d_plugin" filename="libgazebo_ros_p3d.so">
-        <robotNamespace>${namespace}</robotNamespace>
-        <bodyName>${namespace}/base_link</bodyName>
-        <topicName>pose_gt</topicName>
-        <frameName>world</frameName>
-        <gaussianNoise>0.0</gaussianNoise>
-        <updateRate>30</updateRate>
-      </plugin>
-    </gazebo>
-
     <!-- DVL  -->
     <xacro:default_dvl namespace="${namespace}" parent_link="${namespace}/base_link">
       <origin xyz="-1.4 0 -0.312" rpy="0 ${0.5*pi} 0"/>
@@ -218,12 +186,23 @@
     </xacro:default_imu>
 
     <!-- Mount a camera -->
-    <xacro:default_camera namespace="${namespace}" parent_link="${namespace}/base_link">
+    <xacro:default_camera namespace="${namespace}" parent_link="${namespace}/base_link" suffix="">
       <origin xyz="1.15 0 0.4" rpy="0 0.6 0"/>
+    </xacro:default_camera>
+
+    <xacro:default_camera namespace="${namespace}" parent_link="${namespace}/base_link" suffix="right">
+      <origin xyz="1.15 -0.63 0.4" rpy="0 0.6 0.4"/>
+    </xacro:default_camera>
+
+    <xacro:default_camera namespace="${namespace}" parent_link="${namespace}/base_link" suffix="left">
+      <origin xyz="1.15 0.63 0.4" rpy="0 0.6 -0.4"/>
     </xacro:default_camera>
 
     <!-- Mount a GPS. -->
     <xacro:default_gps namespace="${namespace}" parent_link="${namespace}/base_link" />
+
+    <!-- Mount a Pose 3D sensor. -->
+    <xacro:default_pose_3d namespace="${namespace}" parent_link="${namespace}/base_link" />
 
   </xacro:macro>
 </robot>

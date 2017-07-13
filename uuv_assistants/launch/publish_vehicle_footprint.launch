@@ -1,0 +1,21 @@
+<launch>
+    <arg name="uuv_name" />
+    <arg name="scale_footprint" default="10"/>
+    <arg name="scale_label" default="10"/>
+    <arg name="label_x_offset" default="60"/>
+    <arg name="odom_topic" default="pose_gt"/>
+
+    <group ns="$(arg uuv_name)">
+        <node name="publish_footprints" 
+              pkg="uuv_assistants" 
+              type="publish_vehicle_footprint.py" 
+              output="screen">
+              <remap from="odom" to="$(arg odom_topic)"/>
+              <rosparam subst_value="true">
+                scale_footprint: $(arg scale_footprint)
+                scale_label: $(arg scale_label)
+                label_x_offset: $(arg label_x_offset)
+              </rosparam>
+        </node>
+    </group>
+</launch>

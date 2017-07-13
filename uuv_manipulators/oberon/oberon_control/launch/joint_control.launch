@@ -55,7 +55,7 @@
             topic: /$(arg uuv_name)/$(arg arm_name)/azimuth/controller/command
             controller:
               p: 1000
-              i: 2
+              i: 200
               d: 100
           shoulder:
             joint_input_axis: $(arg axis_shoulder)
@@ -63,7 +63,7 @@
             topic: /$(arg uuv_name)/$(arg arm_name)/shoulder/controller/command
             controller:
               p: 1000
-              i: 2
+              i: 200
               d: 100
           elbow:
             joint_input_axis: $(arg axis_elbow)
@@ -71,7 +71,7 @@
             topic: /$(arg uuv_name)/$(arg arm_name)/elbow/controller/command
             controller:
               p: 1000
-              i: 2
+              i: 200
               d: 100
           roll:
             joint_input_axis: $(arg axis_roll)

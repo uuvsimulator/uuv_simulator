@@ -126,8 +126,12 @@ class DPControllerLocalPlanner(object):
             wps = self._traj_interpolator.get_waypoints()
             if wps is not None:
                 self._waypoints_msg = wps.to_message()
-        self._trajectory_msg = self._traj_interpolator.get_trajectory_as_message()
-        self._logger.info('Updating the trajectory information')
+        msg = self._traj_interpolator.get_trajectory_as_message()
+        if msg is not None:
+            self._trajectory_msg = msg
+            self._logger.info('Updating the trajectory information')
+        else:
+            self._logger.error('Error generating trajectory message')
 
     def _display_message(self, msg):
         print 'DP Local Planner - ' + str(msg)
@@ -217,7 +221,9 @@ class DPControllerLocalPlanner(object):
         """
         Service callback function to hold the vehicle's current position.
         """
-
+        self._this_ref_pnt = deepcopy(self._vehicle_pose)
+        self._this_ref_pnt.vel = np.zeros(6)
+        self._this_ref_pnt.acc = np.zeros(6)
         self.set_station_keeping(True)
         self.set_automatic_mode(False)
         self._smooth_approach_on = False
@@ -381,6 +387,9 @@ class DPControllerLocalPlanner(object):
         if self._vehicle_pose is None:
             self._logger.error('Current pose has not been initialized yet')
             return GoToResponse(False)
+        if request.waypoint.max_forward_speed <= 0.0:
+            self._logger.error('Max. forward speed must be greater than zero')
+            return GoToResponse(False) 
         self.set_station_keeping(True)
         wp_set = uuv_trajectory_generator.WaypointSet()
 
@@ -398,7 +407,8 @@ class DPControllerLocalPlanner(object):
             self._logger.error('Error while setting waypoints')
             return GoToResponse(False)
 
-        self._traj_interpolator.set_start_time(rospy.Time.now().to_sec())
+        t = rospy.Time.now().to_sec()
+        self._traj_interpolator.set_start_time(t)
         self._update_trajectory_info()
         self.set_station_keeping(False)
         self.set_automatic_mode(True)
@@ -409,7 +419,11 @@ class DPControllerLocalPlanner(object):
         print 'GO TO'
         print '==========================================================='
         print wp_set
-        print '# waypoints =', wp_set.num_waypoints
+        print 'Heading offset =', request.waypoint.heading_offset
+        print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
+        print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
+        print 'Start time [s]: ', t
+        print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
         print '==========================================================='
         return GoToResponse(True)
 
@@ -479,10 +493,14 @@ class DPControllerLocalPlanner(object):
 
             if not self._traj_running:
                 self._traj_running = True
+                self._logger.info(rospy.get_namespace() + ' - Trajectory running')
 
-            if self._traj_running and self._traj_interpolator.has_finished():
+            if self._traj_running and (self._traj_interpolator.has_finished() or self._station_keeping_on):
                 # Trajectory ended, start station keeping mode
-                self._logger.info('Trajectory completed!')
+                self._logger.info(rospy.get_namespace() + ' - Trajectory completed!')
+                if self._this_ref_pnt is None:
+                    # TODO Fix None value coming from the odometry
+                    self._this_ref_pnt = deepcopy(self._vehicle_pose)
                 self._this_ref_pnt.vel = np.zeros(6)
                 self._this_ref_pnt.acc = np.zeros(6)
                 self.set_station_keeping(True)

@@ -11,6 +11,12 @@ add_message_files(
   PositionWithCovarianceStamped.msg
 )
 
+add_service_files(
+  FILES
+  ChangeSensorState.srv
+)
+
+
 generate_messages(
   DEPENDENCIES
   geometry_msgs

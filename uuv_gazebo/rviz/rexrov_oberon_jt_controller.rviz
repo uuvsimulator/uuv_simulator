@@ -12,8 +12,9 @@ Panels:
         - /JT Controller - Position Reference1
         - /JT Controller - Position Reference1/Namespaces1
         - /DVL - Sonar 01
+        - /World meshes1
       Splitter Ratio: 0.5
-    Tree Height: 496
+    Tree Height: 417
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -75,8 +76,6 @@ Visualization Manager:
           Value: true
         oberon/forearm:
           Value: true
-        oberon/forearm_axis:
-          Value: true
         oberon/shoulder_link:
           Value: true
         oberon/upper_arm:
@@ -102,6 +101,8 @@ Visualization Manager:
         rexrov/dvl_sonar2_link:
           Value: true
         rexrov/dvl_sonar3_link:
+          Value: true
+        rexrov/gps_link:
           Value: true
         rexrov/imu_link:
           Value: true
@@ -144,18 +145,17 @@ Visualization Manager:
                 oberon/base:
                   oberon/shoulder_link:
                     oberon/upper_arm:
-                      oberon/forearm_axis:
-                        oberon/forearm:
-                          oberon/wrist_1:
-                            oberon/wrist_2:
-                              oberon/end_effector:
-                                oberon/base_gripper:
-                                  oberon/finger_left:
-                                    oberon/finger_tip_left:
-                                      {}
-                                  oberon/finger_right:
-                                    oberon/finger_tip_right:
-                                      {}
+                      oberon/forearm:
+                        oberon/wrist_1:
+                          oberon/wrist_2:
+                            oberon/end_effector:
+                              oberon/base_gripper:
+                                oberon/finger_left:
+                                  oberon/finger_tip_left:
+                                    {}
+                                oberon/finger_right:
+                                  oberon/finger_tip_right:
+                                    {}
                 rexrov/camera_link:
                   {}
                 rexrov/dvl_link:
@@ -167,6 +167,8 @@ Visualization Manager:
                     {}
                   rexrov/dvl_sonar3_link:
                     {}
+                rexrov/gps_link:
+                  {}
                 rexrov/imu_link:
                   {}
                 rexrov/ned_link:
@@ -245,10 +247,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        oberon/forearm_axis:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         oberon/shoulder_link:
           Alpha: 1
           Show Axes: false
@@ -304,6 +302,10 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        rexrov/gps_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         rexrov/imu_link:
           Alpha: 1
           Show Axes: false
@@ -468,6 +470,14 @@ Visualization Manager:
       Topic: /rexrov/dvl_sonar3
       Unreliable: false
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /world_models
+      Name: World meshes
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -492,34 +502,34 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 76.1132736
+      Distance: 37.3574524
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.69776762
-        Y: -0.506940007
-        Z: -1.06084144
+        X: 3.72487783
+        Y: -0.587597013
+        Z: -3.74141526
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.0500000007
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.535398781
+      Pitch: 0.354796559
       Target Frame: rexrov/base_link
       Value: Orbit (rviz)
-      Yaw: 4.42360306
+      Yaw: 5.96860743
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1176
+  Height: 1056
   Hide Left Dock: false
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000021600000412fc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005e00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000002800000292000000d000fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d00610067006501000002c00000017a0000001600ffffff000000010000010f00000412fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000002800000412000000a800fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007530000003efc0100000002fb0000000800540069006d00650100000000000007530000028200fffffffb0000000800540069006d00650100000000000004500000000000000000000004220000041200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000021600000396fc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005e00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000002800000243000000d000fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d00610067006501000002710000014d0000001600ffffff000000010000010f00000396fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000002800000396000000a900fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d00650100000000000007800000030000fffffffb0000000800540069006d006501000000000000045000000000000000000000044f0000039600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -528,6 +538,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1875
-  X: 1965
+  Width: 1920
+  X: 0
   Y: 24

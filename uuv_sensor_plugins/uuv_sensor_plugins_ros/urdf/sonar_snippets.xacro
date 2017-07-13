@@ -155,6 +155,10 @@
         <topicName>${topic}</topicName>
         <frameName>sonar${suffix}_link</frameName>
       </plugin>
+      <plugin name="acoustic_sonar{suffix}_ros_interface" filename="libuuv_gazebo_ros_acoustic_sonar.so">
+          <namespace>${namespace}</namespace>
+          <input_topic>${topic}</input_topic>
+      </plugin>
     </sensor>
   </gazebo>
   </xacro:macro>

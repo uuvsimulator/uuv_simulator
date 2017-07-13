@@ -26,10 +26,10 @@
     </collision>
   </xacro:macro>
 
-  <xacro:macro name="default_camera" params="namespace parent_link *origin">
+  <xacro:macro name="default_camera" params="namespace parent_link suffix *origin">
     <xacro:regular_camera_plugin_macro
       namespace="${namespace}"
-      suffix=""
+      suffix="${suffix}"
       parent_link="${parent_link}"
       topic="camera"
       mass="0.001"
@@ -44,10 +44,10 @@
     </xacro:regular_camera_plugin_macro>
   </xacro:macro>
 
-  <xacro:macro name="wideangle_camera" params="namespace parent_link *origin">
+  <xacro:macro name="wideangle_camera" params="namespace parent_link suffix *origin">
     <xacro:regular_camera_plugin_macro
       namespace="${namespace}"
-      suffix=""
+      suffix="${suffix}"
       parent_link="${parent_link}"
       topic="camera"
       mass="0.015"

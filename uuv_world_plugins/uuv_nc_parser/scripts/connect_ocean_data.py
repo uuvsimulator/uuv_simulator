@@ -88,6 +88,11 @@ class OceanDataPlayBack:
         else:
             self._variables = None
 
+        self._max_pnts = 300
+        if rospy.has_param('~max_size_pc'):
+            if rospy.get_param('~max_size_pc'):
+                self._max_pnts = rospy.get_param('~max_size_pc')
+
         self._time_offset = 0
         if rospy.has_param('~time_offset'):
             offset = rospy.get_param('~time_offset')
@@ -129,11 +134,15 @@ class OceanDataPlayBack:
         self._static_objs = list()
         # Generate point clouds with all the sampled point variables
         self._pc_variables = dict()
+        self._pc_msgs = dict()
 
         for var in self._variables:
             self._pc_variables[var] = rospy.Publisher('/ocean_data/%s' % var,
                                                       PointCloud,
                                                       queue_size=1)
+            self._pc_msgs[var] = PointCloud()
+            self._pc_msgs[var].header.frame_id = 'world'
+            self._pc_msgs[var].channels.append(ChannelFloat32())
 
         try:
             rospy.wait_for_service('/gazebo/get_model_properties', timeout=30)
@@ -288,9 +297,7 @@ class OceanDataPlayBack:
         with self._lock:
             t = rospy.get_time()
             for var in self._variables:
-                pc_msg = PointCloud()
-                pc_msg.header.stamp = rospy.Time.now()
-                pc_msg.header.frame_id = 'world'
+                self._pc_msgs[var].header.stamp = rospy.Time.now()
                 for name in self._vehicle_pos:
                     value = self._interpolate(
                         var,
@@ -299,12 +306,15 @@ class OceanDataPlayBack:
                         self._vehicle_pos[name][2],
                         t)
                     # Updating the point cloud for this variable
-                    pc_msg.points.append(Point32(self._vehicle_pos[name][0],
-                                                 self._vehicle_pos[name][1],
-                                                 self._vehicle_pos[name][2]))
-                    pc_msg.channels.append(ChannelFloat32())
-                    pc_msg.channels[-1].name = 'intensity'
-                    pc_msg.channels[-1].values.append(value)
+                    self._pc_msgs[var].points.append(Point32(self._vehicle_pos[name][0],
+                                                             self._vehicle_pos[name][1],
+                                                             self._vehicle_pos[name][2]))
+                    self._pc_msgs[var].channels[0].name = 'intensity'
+                    self._pc_msgs[var].channels[0].values.append(value)
+
+                    if len(self._pc_msgs[var].points) >= self._max_pnts:
+                        self._pc_msgs[var].points = self._pc_msgs[var].points[1::]
+                        self._pc_msgs[var].channels[0].values = self._pc_msgs[var].channels[0].values[1::]
 
                     # Create the message objects
                     if 'temperature' in var.lower():
@@ -320,7 +330,7 @@ class OceanDataPlayBack:
                         msg.header.frame_id = '%s/base_link' % name
                         msg.data = value
                     self._topics[name][var].publish(msg)
-                self._pc_variables[var].publish(pc_msg)
+                self._pc_variables[var].publish(self._pc_msgs[var])
         return True
 
     def _get_all_variables(self):
