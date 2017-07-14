@@ -63,6 +63,9 @@
         <!-- Name of the joint between thruster and vehicle base link -->
         <jointName>${robot_namespace}/thruster_${thruster_id}_joint</jointName>
 
+        <!-- Make the thruster aware of its id -->
+        <thrusterId>${thruster_id}</thrusterId>
+
         <!-- Gain of the input command signal -->
         <gain>1</gain>
 
