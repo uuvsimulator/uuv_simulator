@@ -33,7 +33,7 @@ get_world_props = None
 
 get_model_props = None
 
-marker = 20 * np.array([[0, 0.75], [-0.5, -0.25], [0.5, -0.25]])
+marker = np.array([[0, 0.75], [-0.5, -0.25], [0.5, -0.25]])
 
 def rot(alpha):
     return np.array([[np.cos(alpha), -np.sin(alpha)],
