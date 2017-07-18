@@ -9,6 +9,8 @@ find_package(Boost REQUIRED COMPONENTS system)
 find_package(Eigen3 REQUIRED)
 find_package(gazebo REQUIRED)
 
+set(uuv_sensor_plugins_list "")
+
 catkin_package(
   INCLUDE_DIRS include
     ${EIGEN3_INCLUDE_DIR}
@@ -42,42 +44,55 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 add_library(uuv_gazebo_ros_camera src/UnderwaterCameraRosPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_camera ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_camera uuv_gazebo_camera ${catkin_EXPORTED_TARGETS})
+list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_camera)
 
 add_library(uuv_gazebo_ros_dvl src/DvlRosPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_dvl ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_dvl uuv_gazebo_dvl ${catkin_EXPORTED_TARGETS})
+list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_dvl)
 
 add_library(uuv_gazebo_ros_imu src/ImuRosPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_imu ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_imu uuv_gazebo_imu ${catkin_EXPORTED_TARGETS})
+list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_imu)
 
 add_library(uuv_gazebo_ros_magnetometer src/MagnetometerRosPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_magnetometer ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_magnetometer uuv_gazebo_magnetometer ${catkin_EXPORTED_TARGETS})
+list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_magnetometer)
 
 add_library(uuv_gazebo_ros_rpt src/RptRosPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_rpt ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_rpt
   uuv_gazebo_rpt ${catkin_EXPORTED_TARGETS})
+list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_rpt)
 
 add_library(uuv_gazebo_ros_gps src/GPSRosPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_gps ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_gps
     ${catkin_EXPORTED_TARGETS})
-
-add_library(uuv_gazebo_ros_acoustic_sonar src/AcousticSonarROSPlugin.cc)
-target_link_libraries(uuv_gazebo_ros_acoustic_sonar ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-add_dependencies(uuv_gazebo_ros_acoustic_sonar
-    ${catkin_EXPORTED_TARGETS})
+list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_gps)
 
 add_library(uuv_gazebo_ros_subseapressure src/SubseapressureRosPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_subseapressure ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_subseapressure uuv_gazebo_subseapressure ${catkin_EXPORTED_TARGETS})
+list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_subseapressure)
+
+# Gazebo ROS plugin adaptations with switch service function
+
+add_library(uuv_gazebo_ros_switchable_gpu_ray_sensor 
+  src/SwitchableROSGpuRaySensor.cc
+  src/SwitchableROSSensorPlugin.cc)
+target_link_libraries(uuv_gazebo_ros_switchable_gpu_ray_sensor 
+  ${catkin_LIBRARIES} 
+  ${GAZEBO_LIBRARIES} 
+  ${Boost_LIBRARIES})
+add_dependencies(uuv_gazebo_ros_switchable_gpu_ray_sensor
+  ${catkin_EXPORTED_TARGETS})
+list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_switchable_gpu_ray_sensor)
 
 # install plug-ins
-install(TARGETS uuv_gazebo_ros_camera uuv_gazebo_ros_dvl uuv_gazebo_ros_imu
-    uuv_gazebo_ros_gps uuv_gazebo_ros_magnetometer uuv_gazebo_ros_rpt
-    uuv_gazebo_ros_subseapressure
+install(TARGETS ${uuv_sensor_plugins_list}
     DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
