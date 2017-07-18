@@ -217,16 +217,23 @@ class DPControllerLocalPlanner(object):
         self._logger.info('New trajectory received at ' + str(self._stamp_trajectory_received) + 's')
         self._update_trajectory_info()
 
+    def start_station_keeping(self):
+        if self._vehicle_pose is not None:
+            self._this_ref_pnt = deepcopy(self._vehicle_pose)
+            self._this_ref_pnt.vel = np.zeros(6)
+            self._this_ref_pnt.acc = np.zeros(6)
+            self.set_station_keeping(True)
+            self.set_automatic_mode(False)
+            self._smooth_approach_on = False
+
     def hold_vehicle(self, request):
         """
         Service callback function to hold the vehicle's current position.
         """
-        self._this_ref_pnt = deepcopy(self._vehicle_pose)
-        self._this_ref_pnt.vel = np.zeros(6)
-        self._this_ref_pnt.acc = np.zeros(6)
-        self.set_station_keeping(True)
-        self.set_automatic_mode(False)
-        self._smooth_approach_on = False
+        if self._vehicle_pose is None:
+            self._logger.error('Current pose of the vehicle is invalid')
+            return HoldResponse(False)
+        self.start_station_keeping()
         return HoldResponse(True)
 
     def start_waypoint_list(self, request):
