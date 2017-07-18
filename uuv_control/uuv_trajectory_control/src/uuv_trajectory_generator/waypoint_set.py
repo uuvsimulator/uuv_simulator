@@ -81,6 +81,10 @@ class WaypointSet(object):
 
     def add_waypoint(self, waypoint, add_to_beginning=False):
         if len(self._waypoints):
+            # TODO: Test the current reference frame convention being used (default: Gazebo's ENU)
+            if waypoint.z > 0:
+                print 'Waypoint is above the sea surface, z=', waypoint.z
+                return False
             if self._waypoints[-1] != waypoint:
                 if not add_to_beginning:
                     self._waypoints.append(waypoint)

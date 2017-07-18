@@ -124,7 +124,7 @@ def update_vehicle_list(event):
         print 'Service call failed: %s', e
 
 def main():
-    update_timer = rospy.Timer(rospy.Duration(1), update_vehicle_list)
+    update_timer = rospy.Timer(rospy.Duration(10), update_vehicle_list)
 
 if __name__ == '__main__':
     print('Start publishing vehicle footprints to RViz')

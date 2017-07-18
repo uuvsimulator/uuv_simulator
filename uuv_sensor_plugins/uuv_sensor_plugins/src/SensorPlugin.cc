@@ -24,7 +24,11 @@
 
 namespace gazebo {
 
-GazeboSensorPlugin::GazeboSensorPlugin() : ModelPlugin() { }
+GazeboSensorPlugin::GazeboSensorPlugin() : ModelPlugin() 
+{ 
+    // Sensor is turned on per default
+    this->isActive = true;
+}
 
 GazeboSensorPlugin::~GazeboSensorPlugin()
 {
@@ -93,6 +97,6 @@ bool GazeboSensorPlugin::ShouldIGenerate(const common::UpdateInfo& _info) const
 {
     common::Time current_time  = _info.simTime;
     double dt = (current_time - this->lastMeasTime_).Double();
-    return dt >= this->updatePeriod_.Double();
+    return dt >= this->updatePeriod_.Double() && this->isActive;
 }
 }

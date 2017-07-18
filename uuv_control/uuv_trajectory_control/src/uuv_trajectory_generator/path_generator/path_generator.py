@@ -154,24 +154,6 @@ class PathGenerator(object):
             print 'Waypoint list has not been initialized'
             return False
 
-        # The interpolator needs at least 4 points. If only two points
-        # were given, add a middle point half way through.
-        if self._waypoints.num_waypoints == 2:
-            wp_first = self._waypoints.get_waypoint(0)
-            wp_last = self._waypoints.get_waypoint(1)
-
-            x_ls = np.linspace(wp_first.x, wp_last.x, 5)
-            y_ls = np.linspace(wp_first.y, wp_last.y, 5)
-            z_ls = np.linspace(wp_first.z, wp_last.z, 5)
-
-            for x, y, z in zip(x_ls, y_ls, z_ls):
-                wp = Waypoint(i * (x - wp_first.x) + wp_first.x,
-                              i * (y - wp_first.y) + wp_first.y,
-                              i * (z - wp_first.z) + wp_first.z,
-                              max_forward_speed=wp_last.max_forward_speed,
-                              heading_offset=wp_last.heading_offset)
-                self._waypoints.add_waypoint(wp)
-
         return self.init_interpolator()
 
     def interpolate(self, tag, s):

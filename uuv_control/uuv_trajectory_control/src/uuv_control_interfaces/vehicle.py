@@ -307,6 +307,10 @@ class Vehicle(object):
         return deepcopy(self._C)
 
     @property
+    def Dtotal(self):
+        return deepcopy(self._D)
+
+    @property
     def pose_euler(self):
         """Return pose as a vector, orientation in Euler angles."""
         roll, pitch, yaw = self.euler

@@ -70,15 +70,20 @@ class TrajectoryGenerator(object):
         are currently in use, then sample the interpolated path and return the
         poses only.
         """
-
-        if self.points is None:
+        
+        try:
+            if self.points is None:
+                return None
+            msg = uuv_control_msgs.Trajectory()
+            msg.header.stamp = rospy.Time.now()
+            msg.header.frame_id = 'world'
+            for pnt in self.points:
+                # FIXME Sometimes the time stamp of the point is NaN
+                msg.points.append(pnt.to_message())
+            return msg
+        except:
+            print 'Error during creation of trajectory message'
             return None
-        msg = uuv_control_msgs.Trajectory()
-        msg.header.stamp = rospy.Time.now()
-        msg.header.frame_id = 'world'
-        for pnt in self.points:
-            msg.points.append(pnt.to_message())
-        return msg
 
     def is_using_waypoints(self):
         """Return true if the waypoint interpolation is being used."""

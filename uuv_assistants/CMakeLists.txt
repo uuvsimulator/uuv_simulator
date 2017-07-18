@@ -8,6 +8,7 @@ catkin_package()
 catkin_install_python(PROGRAMS scripts/publish_footprints.py
                                scripts/set_simulation_timer.py
                                scripts/publish_world_models.py
+                               scripts/publish_vehicle_footprint.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch

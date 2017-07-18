@@ -213,25 +213,25 @@ class DPControllerBase(object):
 
         t = rospy.get_time()
         reference = self._local_planner.interpolate(t)
+        if reference is not None:
+            self._reference['pos'] = reference.p
+            self._reference['rot'] = reference.q
+            self._reference['vel'] = np.hstack((reference.v, reference.w))
+            self._reference['acc'] = np.hstack((reference.a, reference.alpha))
 
-        self._reference['pos'] = reference.p
-        self._reference['rot'] = reference.q
-        self._reference['vel'] = np.hstack((reference.v, reference.w))
-        self._reference['acc'] = np.hstack((reference.a, reference.alpha))
-
-        # Publish current reference
-        msg = TrajectoryPoint()
-        msg.header.stamp = rospy.Time.now()
-        msg.header.frame_id = 'world'
-        msg.pose.position = Vector3(*self._reference['pos'])
-        msg.pose.orientation = Quaternion(*self._reference['rot'])
-        msg.velocity.linear = Vector3(*self._reference['vel'][0:3])
-        msg.velocity.angular = Vector3(*self._reference['vel'][3:6])
-        msg.acceleration.linear = Vector3(*self._reference['acc'][0:3])
-        msg.acceleration.angular = Vector3(*self._reference['acc'][3:6])
-        self._reference_pub.publish(msg)
+            # Publish current reference
+            msg = TrajectoryPoint()
+            msg.header.stamp = rospy.Time.now()
+            msg.header.frame_id = 'world'
+            msg.pose.position = Vector3(*self._reference['pos'])
+            msg.pose.orientation = Quaternion(*self._reference['rot'])
+            msg.velocity.linear = Vector3(*self._reference['vel'][0:3])
+            msg.velocity.angular = Vector3(*self._reference['vel'][3:6])
+            msg.acceleration.linear = Vector3(*self._reference['acc'][0:3])
+            msg.acceleration.angular = Vector3(*self._reference['acc'][3:6])
+            self._reference_pub.publish(msg)
         return True
-
+    
     def _update_time_step(self):
         t = rospy.get_time()
         self._dt = t - self._prev_time

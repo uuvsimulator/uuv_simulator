@@ -14,9 +14,9 @@
   <arg name="gain_roll" default="0.0"/>
   <arg name="gain_pitch" default="0.0"/>
   <arg name="gain_yaw" default="0.2"/>
-  <arg name="gain_x" default="0.5"/>
-  <arg name="gain_y" default="0.5"/>
-  <arg name="gain_z" default="0.5"/>
+  <arg name="gain_x" default="0.3"/>
+  <arg name="gain_y" default="0.3"/>
+  <arg name="gain_z" default="0.3"/>
   <arg name="output_topic" default="cmd_vel"/>
   <!-- The type of message can also be geometry_msgs/Accel -->
   <arg name="message_type" default="twist"/>
