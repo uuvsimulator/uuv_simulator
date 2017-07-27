@@ -89,6 +89,28 @@
     <axis xyz="1 0 0"/>
   </joint>
 
+  <link name="${namespace}/camera${suffix}_link_optical">
+    <xacro:box_inertial x="0" y="0" z="0" mass="0.001">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:box_inertial>
+    <collision>
+      <!-- todo: gazebo needs a collision volume or it will ignore the pose of
+         the joint that leads to this link (and assume it to be the identity) -->
+      <geometry>
+        <cylinder length="0.000001" radius="0.000001"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+    </collision>
+  </link>
+
+  <joint name="${namespace}/camera${suffix}_optical_joint" type="revolute">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="${namespace}/camera${suffix}_link"/>
+    <child link="${namespace}/camera${suffix}_link_optical"/>
+    <limit upper="0" lower="0" effort="0" velocity="0" />
+    <axis xyz="1 0 0"/>
+  </joint>
+
   <gazebo reference="${namespace}/camera${suffix}_link">
     <sensor type="camera" name="camera${suffix}">
       <update_rate>${update_rate}</update_rate>
@@ -112,7 +134,7 @@
       <plugin name="camera${suffix}_controller" filename="libgazebo_ros_camera.so">
         <updateRate>${update_rate}</updateRate>
         <cameraName>${namespace}/camera${suffix}</cameraName>
-        <frameName>${namespace}/camera${suffix}_link</frameName>
+        <frameName>camera${suffix}_link_optical</frameName>
 
         <attenuationR>0.0</attenuationR>
         <attenuationG>0.0</attenuationG>
