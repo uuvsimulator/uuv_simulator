@@ -54,6 +54,7 @@ catkin_package(
       ${GAZEBO_MSG_INCLUDE_DIRS}
       ${OGRE_INCLUDE_DIRS}
       ${OGRE_Paging_INCLUDE_DIRS}
+      ${OpenCV_INCLUDE_DIRS}
     LIBRARIES uuv_gazebo_camera
       uuv_gazebo_dvl
       uuv_gazebo_imu
@@ -72,6 +73,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${OGRE_INCLUDE_DIRS}
   ${OGRE_Paging_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 link_directories(${GAZEBO_LIBRARY_DIRS})
@@ -92,7 +94,7 @@ add_library(uuv_gazebo_camera SHARED
   src/SensorPlugin.cc
   src/UnderwaterCameraPlugin.cc
 )
-target_link_libraries(uuv_gazebo_camera ${common_libraries}
+target_link_libraries(uuv_gazebo_camera ${common_libraries} ${OpenCV_LIBRARIES}
   gazebo_sensors DepthCameraPlugin)
 add_dependencies(uuv_gazebo_camera uuv_sensors_msgs ${catkin_EXPORTED_TARGETS})
 
