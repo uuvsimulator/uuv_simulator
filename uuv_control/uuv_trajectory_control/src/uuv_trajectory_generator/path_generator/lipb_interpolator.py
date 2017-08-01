@@ -50,10 +50,13 @@ class LIPBInterpolator(PathGenerator):
             return False
 
         self._interp_fcns['pos'] = list()
+        self._segment_to_wp_map = [0]
+        
         if self._waypoints.num_waypoints == 2:
             self._interp_fcns['pos'].append(
                 LineSegment(self._waypoints.get_waypoint(0).pos,
                             self._waypoints.get_waypoint(1).pos))
+            self._segment_to_wp_map.append(1)
             # Set a simple spline to interpolate heading offset, if existent
             heading = [self._waypoints.get_waypoint(k).heading_offset for k in range(self._waypoints.num_waypoints)]
 
@@ -73,23 +76,27 @@ class LIPBInterpolator(PathGenerator):
                         (q_seg, first_line.interpolate((first_line.get_length() - radius) / first_line.get_length())))
                     self._interp_fcns['pos'].append(LineSegment(q_start_line, q_seg[-1, :]))
                     heading.append(0)
+                    self._segment_to_wp_map.append(i)
                 if i == self._waypoints.num_waypoints - 1:
                     q_seg = np.vstack((q_seg, self._waypoints.get_waypoint(i).pos))
                     self._interp_fcns['pos'].append(LineSegment(q_seg[-2, :], q_seg[-1, :]))
                     heading.append(0)
+                    self._segment_to_wp_map.append(i)
                 elif i + 1 < self._waypoints.num_waypoints:
                     q_seg = np.vstack((q_seg, second_line.interpolate(radius / second_line.get_length())))
                     self._interp_fcns['pos'].append(
                         BezierCurve([q_seg[-2, :], self._waypoints.get_waypoint(i).pos, q_seg[-1, :]], 5))
                     heading.append(0)
+                    self._segment_to_wp_map.append(i)
                     q_start_line = deepcopy(q_seg[-1, :])
         else:
             return False
-
+        
         # Reparametrizing the curves
         lengths = [seg.get_length() for seg in self._interp_fcns['pos']]
         lengths = [0] + lengths
         self._s = np.cumsum(lengths) / np.sum(lengths)
+
         mean_vel = np.mean(
             [self._waypoints.get_waypoint(k).max_forward_speed for k in range(self._waypoints.num_waypoints)])
         if self._duration is None:
@@ -122,13 +129,7 @@ class LIPBInterpolator(PathGenerator):
         return pnts
 
     def generate_pos(self, s):
-        s = max(0, s)
-        s = min(s, 1)
-
-        if s == 1:
-            idx = self._s.size - 1
-        else:
-            idx = (self._s - s >= 0).nonzero()[0][0]
+        idx = self.get_segment_idx(s)
         if idx == 0:
             u_k = 0
             pos = self._interp_fcns['pos'][idx].interpolate(u_k)

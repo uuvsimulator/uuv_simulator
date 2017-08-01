@@ -45,10 +45,12 @@ class CSInterpolator(PathGenerator):
             return False
 
         self._interp_fcns['pos'] = list()
+        self._segment_to_wp_map = [0]
         if self._waypoints.num_waypoints == 2:
             self._interp_fcns['pos'].append(
                 LineSegment(self._waypoints.get_waypoint(0).pos,
                             self._waypoints.get_waypoint(1).pos))
+            self._segment_to_wp_map.append(1)
         elif self._waypoints.num_waypoints > 2:
             tangents = [np.zeros(3) for _ in range(self._waypoints.num_waypoints)]
             lengths = [self._waypoints.get_waypoint(i + 1).dist(
@@ -79,6 +81,7 @@ class CSInterpolator(PathGenerator):
                     BezierCurve(
                         [self._waypoints.get_waypoint(i).pos,
                          self._waypoints.get_waypoint(i + 1).pos], 3, tangents[i:i + 2]))
+                self._segment_to_wp_map.append(i + 1)
         else:
             return False
 
@@ -115,13 +118,7 @@ class CSInterpolator(PathGenerator):
         return pnts
 
     def generate_pos(self, s):
-        s = max(0, s)
-        s = min(s, 1)
-
-        if s == 1:
-            idx = self._s.size - 1
-        else:
-            idx = (self._s - s >= 0).nonzero()[0][0]
+        idx = self.get_segment_idx(s)
         if idx == 0:
             u_k = 0
             pos = self._interp_fcns['pos'][idx].interpolate(u_k)

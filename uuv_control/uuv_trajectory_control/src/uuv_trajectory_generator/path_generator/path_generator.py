@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import rospy
 import scipy
 import numpy as np
 from copy import deepcopy
@@ -39,6 +40,7 @@ class PathGenerator(object):
 
         # The parametric variable to use as input for the interpolator
         self._s = list()
+        self._segment_to_wp_map = list()
         self._cur_s = 0
         self._s_step = 0.0001
 
@@ -116,11 +118,34 @@ class PathGenerator(object):
 
     def reset(self):
         self._s = list()
+        self._segment_to_wp_map = list()
         self._cur_s = 0
         self._s_step = 0.0001
 
         self._start_time = None
         self._duration = None
+
+    def get_segment_idx(self, s):
+        if len(self._s) == 0:
+            return 0
+        # Ensure the parameter s is 0 <= s <= 1
+        s = max(0, s)
+        s = min(s, 1)
+
+        if s == 1:
+            idx = self._s.size - 1
+        else:
+            idx = (self._s - s >= 0).nonzero()[0][0]
+        return idx
+
+    def get_remaining_waypoints_idx(self, s):
+        idx = self.get_segment_idx(s)
+        try:
+            wps = self._segment_to_wp_map[idx::]
+            return np.unique(wps)
+        except:
+            print 'Invalid index'
+            return None
 
     def is_full_dof(self):
         return self._is_full_dof
