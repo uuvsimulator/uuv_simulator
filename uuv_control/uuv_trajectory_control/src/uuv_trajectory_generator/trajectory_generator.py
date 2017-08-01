@@ -25,13 +25,14 @@ from .trajectory_point import TrajectoryPoint
 
 
 class TrajectoryGenerator(object):
-    def __init__(self, full_dof=False):
+    def __init__(self, full_dof=False, stamped_pose_only=False):
         self._points = None
         self._time = None
         self._this_pnt = None
         self._is_full_dof = full_dof
+        self._stamped_pose_only = stamped_pose_only
         self._wp_interp_on = False
-        self._wp_interp = WPTrajectoryGenerator(full_dof)
+        self._wp_interp = WPTrajectoryGenerator(full_dof=full_dof, stamped_pose_only=stamped_pose_only)
 
         self._has_started = False
         self._is_finished = False
@@ -50,6 +51,12 @@ class TrajectoryGenerator(object):
 
     def is_using_finite_diff(self):
         return self._wp_interp.use_finite_diff
+
+    def set_stamped_pose_only(self, flag):
+        self._wp_interp.stamped_pose_only = flag
+
+    def is_using_stamped_pose_only(self):
+        return self._wp_interp.stamped_pose_only 
 
     def set_interp_method(self, method):
         return self._wp_interp.set_interpolation_method(method)
