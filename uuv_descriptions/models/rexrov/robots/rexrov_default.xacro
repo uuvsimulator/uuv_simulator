@@ -38,6 +38,6 @@
   </xacro:rexrov_base>
 
   <!-- Joint state publisher plugin -->
-  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="500"/>
+  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="10"/>
 
 </robot>

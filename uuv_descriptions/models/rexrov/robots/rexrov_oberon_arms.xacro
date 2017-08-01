@@ -60,7 +60,7 @@
   <!-- Joint state publisher plugin -->
   <xacro:custom_joint_state_publisher
     namespace="$(arg namespace)"
-    update_rate="200"
+    update_rate="10"
     joints="oberon/azimuth
             oberon/shoulder
             oberon/elbow
