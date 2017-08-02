@@ -10,6 +10,7 @@
 
   <arg name="mode" default="default"/>
   <arg name="namespace" default="rexrov"/>
+  <arg name="odom_source" default="pose_gt"/>
   <arg name="world_frame" default="world"/> <!-- This should actually be "/world". See https://github.com/ros-simulation/gazebo_ros_pkgs/pull/324 -->
 
   <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov_$(arg mode).launch">
@@ -22,6 +23,7 @@
     <arg name="yaw" value="$(arg yaw)"/>
 
     <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="odom_source" value="$(arg odom_source)"/>
   </include>
 
 </launch>

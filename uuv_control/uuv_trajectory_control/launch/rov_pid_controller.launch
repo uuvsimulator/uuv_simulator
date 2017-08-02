@@ -3,6 +3,8 @@
   <arg name="uuv_name"/>
   <!-- Name of the vehicle model -->
   <arg name="model_name" default="$(arg uuv_name)"/>
+  <!-- Odometry source -->
+  <arg name="odom_source" default="pose_gt"/>
   <!-- Thruster saturation -->
   <arg name="saturation" default="1200"/>
   <!-- Flag set as true to use load controller the parameters from the file  -->
@@ -44,7 +46,7 @@
             name="rov_pid_controller"
             output="screen">
         <!-- Remap necessary topics -->
-        <remap from="odom" to="pose_gt"/>
+        <remap from="odom" to="$(arg odom_source)"/>
         <remap from="trajectory" to="dp_controller/trajectory"/>
         <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
         <remap from="waypoints" to="dp_controller/waypoints"/>
@@ -63,7 +65,7 @@
             name="rov_pid_controller"
             output="screen">
         <!-- Remap necessary topics -->
-        <remap from="odom" to="pose_gt"/>
+        <remap from="odom" to="$(arg odom_source)"/>
         <remap from="trajectory" to="dp_controller/trajectory"/>
         <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
         <remap from="waypoints" to="dp_controller/waypoints"/>
