@@ -165,7 +165,7 @@
       <origin xyz="0.412125 -0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${-135*d2r}"/>
     </xacro:thruster_macro>
 
-    <!-- Mount a 3D pose sensor -->
+    <!-- Mount a 3D pose sensor (Groung truth values) -->
     <link name="${namespace}/pose_sensor_link">
       <xacro:box_inertial x="0" y="0" z="0" mass="0.01">
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -193,6 +193,38 @@
         <topicName>pose_gt</topicName>
         <frameName>world</frameName>
         <gaussianNoise>0.0</gaussianNoise>
+        <updateRate>30</updateRate>
+      </plugin>
+    </gazebo>
+
+    <!-- Mount a noisy 3D pose sensor -->
+    <link name="${namespace}/pose_noisy_sensor_link">
+      <xacro:box_inertial x="0" y="0" z="0" mass="0.01">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </xacro:box_inertial>
+      <visual>
+        <geometry>
+          <box size="0.1 0.1 0.1"/>
+        </geometry>
+      </visual>
+      <xacro:no_collision/>
+    </link>
+
+    <joint name="${namespace}/pose_noisy_sensor_joint" type="revolute">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <parent link="${namespace}/base_link"/>
+      <child link="${namespace}/pose_noisy_sensor_link"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+    <gazebo>
+      <plugin name="pose_noise_3d_plugin" filename="libgazebo_ros_p3d.so">
+        <robotNamespace>${namespace}</robotNamespace>
+        <bodyName>${namespace}/base_link</bodyName>
+        <topicName>pose_noisy</topicName>
+        <frameName>world</frameName>
+        <gaussianNoise>0.02</gaussianNoise>
         <updateRate>30</updateRate>
       </plugin>
     </gazebo>
