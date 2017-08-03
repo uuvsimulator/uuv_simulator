@@ -32,7 +32,7 @@
       suffix="${suffix}"
       parent_link="${parent_link}"
       topic="camera"
-      mass="0.001"
+      mass="0.1"
       update_rate="30"
       hfov="1.5125"
       width="768"
@@ -40,7 +40,7 @@
       stddev="0.02"
       scale="1.0">
       <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
-      <xacro:insert_block name="origin" />>
+      <xacro:insert_block name="origin" />
     </xacro:regular_camera_plugin_macro>
   </xacro:macro>
 
@@ -90,7 +90,7 @@
   </joint>
 
   <link name="${namespace}/camera${suffix}_link_optical">
-    <xacro:box_inertial x="0" y="0" z="0" mass="0.001">
+    <xacro:box_inertial x="0.0001" y="0.0001" z="0.0001" mass="0.001">
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:box_inertial>
     <collision>
@@ -178,6 +178,7 @@
     <xacro:insert_block name="origin" />
     <parent link="${parent_link}" />
     <child link="${namespace}/camera${suffix}_link" />
+    <axis xyz="1 0 0"/>
     <limit upper="0" lower="0" effort="0" velocity="0" />
   </joint>
 
