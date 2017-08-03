@@ -18,6 +18,7 @@ from uuv_manipulator_interfaces import ArmInterface
 from geometry_msgs.msg import Twist, PoseStamped, Quaternion, Vector3
 from visualization_msgs.msg import Marker
 from std_msgs.msg import Float64, Bool
+from copy import deepcopy
 import numpy as np
 import tf
 import tf.transformations as trans
@@ -118,23 +119,25 @@ class CartesianController(object):
 
     def _get_goal(self):
         if self._command is None or rospy.get_time() - self._last_reference_update > 0.1:
-            return self._last_goal
+            return self._last_goal       
+        
+        next_goal = deepcopy(self._last_goal)
+        next_goal.p += PyKDL.Vector(self._command[0], self._command[1], self._command[2]) 
 
-        # Compute the step from the input velocity
-        step_frame = PyKDL.Frame(
-            PyKDL.Rotation.RPY(self._command[3],
-                               self._command[4],
-                               self._command[5]),
-            PyKDL.Vector(self._command[0],
-                         self._command[1],
-                         self._command[2]))
-        next_goal = self._last_goal * step_frame
+        q_step = trans.quaternion_from_euler(self._command[3],
+                                             self._command[4],
+                                             self._command[5])
+        q_last = trans.quaternion_from_euler(*self._last_goal.M.GetRPY())
+        q_next = trans.quaternion_multiply(q_last, q_step)
+
+        next_goal.M = PyKDL.Rotation.Quaternion(*q_next)
 
         g_pos = [next_goal.p.x(), next_goal.p.y(), next_goal.p.z()]
         g_quat = next_goal.M.GetQuaternion()
         if self._arm_interface.inverse_kinematics(g_pos, g_quat) is not None:
             return next_goal
         else:
+            print 'Next goal could not be resolved by the inv. kinematics solver.'
             return self._last_goal
 
     def _home_button_pressed(self, msg):
@@ -151,7 +154,7 @@ class CartesianController(object):
 
         if self._command is None:
             self._command = np.zeros(6)
-
+        
         self._command[0] = self._filter_input(self._command[0], msg.linear.x, dt) * dt
         self._command[1] = self._filter_input(self._command[1], msg.linear.y, dt) * dt
         self._command[2] = self._filter_input(self._command[2], msg.linear.z, dt) * dt
