@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Include parallel gripper's parameters -->
+  <xacro:include filename="$(find oberon7_description)/urdf/parameters/parallel_gripper.xacro" />
+
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="d2r" value="0.017453293" />
+
+  <xacro:macro name="link_box_inertial" params="mass width length height *origin">
+      <inertial>
+      <xacro:insert_block name="origin"/>
+      <mass value="${mass}"/>
+      <inertia ixx="${0.083333333 * mass * (width * width + height * height)}" ixy="0.0" ixz="0.0"
+               iyy="${0.083333333 * mass * (length * length + height * height)}" iyz="0.0"
+               izz="${0.083333333 * mass * (width * width + length * length)}"/>
+    </inertial>
+  </xacro:macro>
+  <!-- 
+    BASE
+
+    Mesh Bounding Box Size 0.282087 0.198133 0.155615
+    Mesh Bounding Box Diag 0.378214 
+    Mesh Volume is 0.002325
+    Mesh Surface is 0.487803
+    Thin shell barycenter -0.107470 -0.006304 0.000594
+    Center of Mass is -0.101581 -0.001371 -0.009781
+    Inertia Tensor is :
+    | 0.000009 -0.000001 -0.000000 |
+    | -0.000001 0.000021 -0.000000 |
+    | -0.000000 -0.000000 0.000016 |
+    Principal axes are :
+    | 0.997501 -0.064601 -0.028597 |
+    | 0.064852 0.997864 0.007918 |
+    | 0.028024 -0.009753 0.999560 |
+    axis momenta are :
+    | 0.000008 0.000022 0.000016 |
+  -->
+
+  <xacro:property name="base_width" value="0.198133"/>
+  <xacro:property name="base_length" value="0.282087"/>
+  <xacro:property name="base_height" value="0.155615"/>
+  <xacro:property name="base_volume" value="${base_width * base_length * base_height}" />
+  <xacro:property name="base_com" value="-0.101581 -0.001371 -0.009781"/>
+
+  <!--  
+    SHOULDER_LINK
+
+    Mesh Bounding Box Size 0.184936 0.136368 0.239627
+    Mesh Bounding Box Diag 0.331992 
+    Mesh Volume is 0.001429
+    Mesh Surface is 0.288886
+    Thin shell barycenter 0.036609 0.005679 0.020522
+    Center of Mass is 0.039670 0.005441 0.017383
+    Inertia Tensor is :
+    | 0.000005 0.000000 0.000001 |
+    | 0.000000 0.000006 0.000000 |
+    | 0.000001 0.000000 0.000004 |
+    Principal axes are :
+    | 0.560392 0.683266 -0.468091 |
+    | -0.763732 0.644964 0.027116 |
+    | 0.320429 0.342300 0.883264 |
+    axis momenta are :
+    | 0.000006 0.000006 0.000003 |
+  -->
+
+  <xacro:property name="shoulder_link_width" value="0.136368"/>
+  <xacro:property name="shoulder_link_length" value="0.184936"/>
+  <xacro:property name="shoulder_link_height" value="0.239627"/>
+  <xacro:property name="shoulder_link_volume" value="${shoulder_link_width * shoulder_link_length * shoulder_link_height}"/>
+  <xacro:property name="shoulder_link_com" value="0.039670 0.005441 0.017383"/>
+  
+  <!--  
+    UPPER ARM
+
+    Mesh Bounding Box Size 0.616809 0.141889 0.127829
+    Mesh Bounding Box Diag 0.645698 
+    Mesh Volume is 0.001505
+    Mesh Surface is 0.899623
+    Thin shell barycenter 0.288444 0.022849 0.000011
+    Center of Mass is 0.312501 0.017478 -0.000002
+    Inertia Tensor is :
+    | 0.000009 0.000013 -0.000000 |
+    | 0.000013 0.000053 -0.000000 |
+    | -0.000000 -0.000000 0.000051 |
+    Principal axes are :
+    | 0.966612 0.256246 0.000061 |
+    | -0.256246 0.966611 0.000814 |
+    | 0.000150 -0.000803 1.000000 |
+    axis momenta are :
+    | 0.000005 0.000056 0.000051 |
+  -->
+
+  <xacro:property name="upper_arm_width" value="0.141889"/>
+  <xacro:property name="upper_arm_length" value="0.616809"/>
+  <xacro:property name="upper_arm_height" value="0.127829"/>
+  <xacro:property name="upper_arm_volume" value="${upper_arm_width * upper_arm_length * upper_arm_height}" />
+  <xacro:property name="upper_arm_com" value="0.312501 0.017478 -0.000002"/>
+
+  <!--  
+    ELBOW LINK
+
+    Mesh Bounding Box Size 0.245312 0.243672 0.155124
+    Mesh Bounding Box Diag 0.378969 
+    Mesh Volume is 0.009154
+    Mesh Surface is 0.456305
+    Thin shell barycenter 0.097098 -0.063346 0.000000
+    Center of Mass is 0.125269 -0.074675 0.000000
+    Inertia Tensor is :
+    | 0.000054 0.000003 -0.000000 |
+    | 0.000003 0.000035 0.000000 |
+    | -0.000000 0.000000 0.000063 |
+    Principal axes are :
+    | 0.984419 -0.175836 -0.000000 |
+    | 0.175836 0.984419 -0.000000 |
+    | 0.000000 -0.000000 1.000000 |
+    axis momenta are :
+    | 0.000055 0.000034 0.000063 |
+  -->
+
+  <xacro:property name="elbow_link_width" value="0.243672"/>
+  <xacro:property name="elbow_link_length" value="0.245312"/>
+  <xacro:property name="elbow_link_height" value="0.155124"/>
+  <xacro:property name="elbow_link_volume" value="${elbow_link_width * elbow_link_length * elbow_link_height}" />
+  <xacro:property name="elbow_link_com" value="0.125269 -0.074675 0.0"/>
+
+  <!--   
+    FOREARM
+
+    Mesh Bounding Box Size 0.151505 0.151455 0.334827
+    Mesh Bounding Box Diag 0.397494 
+    Mesh Volume is -nan
+    Mesh Surface is 0.520458
+    Thin shell barycenter -0.007291 -0.000030 0.122565
+  -->
+
+  <xacro:property name="forearm_width" value="0.151455"/>
+  <xacro:property name="forearm_length" value="0.151505"/>
+  <xacro:property name="forearm_height" value="0.334827"/>
+  <xacro:property name="forearm_volume" value="${forearm_width * forearm_length * forearm_height}" />
+  <xacro:property name="forearm_com" value="0 0 ${0.5*0.31595760629823427}"/>
+
+  <!--
+    WRIST 
+
+    Mesh Bounding Box Size 0.219204 0.122758 0.130373
+    Mesh Bounding Box Diag 0.283049 
+    Mesh Volume is 0.003565
+    Mesh Surface is 0.539961
+    Thin shell barycenter 0.088012 0.005072 0.000117
+    Center of Mass is 0.104016 0.003308 -0.000027
+    Inertia Tensor is :
+    | 0.000008 0.000001 -0.000000 |
+    | 0.000001 0.000014 0.000000 |
+    | -0.000000 0.000000 0.000013 |
+    Principal axes are :
+    | 0.991806 0.127750 -0.000505 |
+    | -0.127750 0.991806 0.000070 |
+    | 0.000510 -0.000005 1.000000 |
+    axis momenta are :
+    | 0.000008 0.000014 0.000013 |
+  -->
+
+  <xacro:property name="wrist_width" value="0.122758"/>
+  <xacro:property name="wrist_length" value="0.219204"/>
+  <xacro:property name="wrist_height" value="0.130374"/>
+  <xacro:property name="wrist_volume" value="${wrist_width * wrist_length * wrist_height}" />
+  <xacro:property name="wrist_com" value="0.104016 0.003308 -0.000027"/>
+
+  <!-- Inertial macros for all serial arm links  -->
+
+  <xacro:property name="total_mass" value="54"/>
+  <xacro:property name="total_volume" value="0.015564"/>
+  <xacro:property name="total_volume_bbox" value="${base_volume + 
+                                                    shoulder_link_volume +
+                                                    upper_arm_volume + 
+                                                    elbow_link_volume + 
+                                                    forearm_volume + 
+                                                    wrist_volume +
+                                                    gripper_base_volume +
+                                                    2 * finger_volume + 
+                                                    2 * finger_tip_volume}" />
+
+  
+</robot>
