@@ -13,7 +13,6 @@
   <arg name="yaw" default="0.0"/>
   <arg name="joy_id" default="0"/>
   <arg name="namespace" default="rexrov"/>
-  <arg name="gripper" default="parallel"/>
   <arg name="use_jt" default="0"/>
 
   <!-- Default joystick mapping for controlling the vehicle (XBox 360 controller) -->
@@ -48,9 +47,8 @@
   <arg name="gripper_open_button" default="1"/>
   <arg name="gripper_close_button" default="2"/>
 
-  <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov_oberon.launch">
+  <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov_oberon7.launch">
     <arg name="namespace" value="$(arg namespace)"/>
-    <arg name="gripper" value="$(arg gripper)"/>
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
     <arg name="z" value="$(arg z)"/>
@@ -92,10 +90,9 @@
   </include>
 
   <group if="$(arg use_jt)">
-    <include file="$(find oberon_control)/launch/jt_cartesian_controller.launch">
+    <include file="$(find oberon7_control)/launch/jt_cartesian_controller.launch">
       <arg name="uuv_name" value="$(arg namespace)"/>
-      <arg name="arm_name" value="oberon"/>
-      <arg name="gripper" value="$(arg gripper)"/>
+      <arg name="arm_name" value="oberon7"/>
       <arg name="axis_x" value="$(arg axis_oberon_jt_x)"/>
       <arg name="axis_y" value="$(arg axis_oberon_jt_y)"/>
       <arg name="axis_z" value="$(arg axis_oberon_jt_z)"/>
@@ -113,10 +110,9 @@
   </group>
 
   <group unless="$(arg use_jt)">
-    <include file="$(find oberon_control)/launch/joint_control.launch">
+    <include file="$(find oberon7_control)/launch/joint_control.launch">
       <arg name="uuv_name" value="$(arg namespace)"/>
-      <arg name="arm_name" value="oberon"/>
-      <arg name="gripper" value="$(arg gripper)"/>
+      <arg name="arm_name" value="oberon7"/>
       <arg name="axis_azimuth" value="$(arg axis_oberon_jc_azimuth)"/>
       <arg name="axis_shoulder" value="$(arg axis_oberon_jc_shoulder)"/>
       <arg name="axis_elbow" value="$(arg axis_oberon_jc_elbow)"/>
