@@ -54,7 +54,7 @@
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0"/>
                 <geometry>
-                    <mesh filename="file://$(find oberon7_description)/meshes/serial_arm/visual/Base.dae"/>
+                    <mesh filename="file://$(find oberon7_description)/meshes/serial_arm/collision/Base.stl"/>
                 </geometry>
             </collision>
         </link>
@@ -161,7 +161,7 @@
             <origin xyz="0.55616 -0.01229 0" rpy="0 0 0"/>
             <dynamics damping="50" friction="120"/>
             <axis xyz="0 0 1"/>
-            <limit lower="${-90 * d2r}" upper="${60 * d2r}" velocity=".13" effort="200"/>
+            <limit lower="${-90 * d2r}" upper="${60 * d2r}" velocity=".13" effort="300"/>
         </joint>
 
         <xacro:simple_transmission joint="${namespace}/elbow" />  
