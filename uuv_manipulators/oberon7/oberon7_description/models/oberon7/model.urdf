@@ -22,22 +22,12 @@
   <!--
     GRIPPER BASE
 
-    Mesh Bounding Box Size 0.117427 0.114298 0.074326
+    Mesh Bounding Box Size 0.074326 0.117427 0.114298
     Mesh Bounding Box Diag 0.179938 
     Mesh Volume is 0.000699
     Mesh Surface is 0.160112
-    Thin shell barycenter 0.000000 0.000018 0.025369
-    Center of Mass is 0.000000 0.000014 0.024426
-    Inertia Tensor is :
-    | 0.000001 -0.000000 0.000000 |
-    | -0.000000 0.000001 -0.000000 |
-    | 0.000000 -0.000000 0.000001 |
-    Principal axes are :
-    | 1.000000 -0.000000 0.000001 |
-    | 0.000000 1.000000 -0.000842 |
-    | -0.000001 0.000842 1.000000 |
-    axis momenta are :
-    | 0.000001 0.000001 0.000001 |
+    Thin shell barycenter 0.025369 -0.000000 -0.000018
+    Center of Mass is 0.024426 -0.000000 -0.000014
   -->
   <!--  
     FINGER
@@ -48,16 +38,6 @@
     Mesh Surface is 0.034727
     Thin shell barycenter 0.030139 -0.002041 -0.000073
     Center of Mass is 0.025268 -0.001931 -0.000079
-    Inertia Tensor is :
-    | 0.000000 -0.000000 -0.000000 |
-    | -0.000000 0.000000 -0.000000 |
-    | -0.000000 -0.000000 0.000000 |
-    Principal axes are :
-    | 0.992844 -0.119416 -0.000723 |
-    | 0.119417 0.992843 0.001760 |
-    | 0.000507 -0.001834 0.999998 |
-    axis momenta are :
-    | 0.000000 0.000000 0.000000 |
   -->
   <!--  
     FINGER TIP
@@ -68,16 +48,6 @@
     Mesh Surface is 0.054039
     Thin shell barycenter 0.025479 0.015748 -0.000000
     Center of Mass is 0.027744 0.017278 -0.000000
-    Inertia Tensor is :
-    | 0.000000 -0.000000 -0.000000 |
-    | -0.000000 0.000000 0.000000 |
-    | -0.000000 0.000000 0.000000 |
-    Principal axes are :
-    | 0.933245 -0.359241 -0.000000 |
-    | 0.359241 0.933245 -0.000000 |
-    | 0.000000 0.000000 1.000000 |
-    axis momenta are :
-    | 0.000000 0.000000 0.000000 |
   -->
   <!-- 
     BASE
@@ -224,9 +194,9 @@
       </geometry>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0.039670 0.005441 0.017383"/>
       <geometry>
-        <mesh filename="file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/ShoulderLink.dae"/>
+        <cylinder length="0.239627" radius="0.068184"/>
       </geometry>
     </collision>
   </link>
@@ -261,9 +231,9 @@
       </geometry>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.312501 0.017478 -0.000002"/>
       <geometry>
-        <mesh filename="file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/UpperArm.dae"/>
+        <cylinder length="0.616809" radius="0.0709445"/>
       </geometry>
     </collision>
   </link>
@@ -299,9 +269,9 @@
       </geometry>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 1.57079632679 1.57079632679" xyz="0.125269 -0.074675 0.0"/>
       <geometry>
-        <mesh filename="file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/ElbowLink.dae"/>
+        <cylinder length="0.245312" radius="0.077562"/>
       </geometry>
     </collision>
   </link>
@@ -311,7 +281,7 @@
     <origin rpy="0 0 0" xyz="0.55616 -0.01229 0"/>
     <dynamics damping="50" friction="120"/>
     <axis xyz="0 0 1"/>
-    <limit effort="200" lower="-1.57079637" upper="1.04719758" velocity=".13"/>
+    <limit effort="300" lower="-1.57079637" upper="1.04719758" velocity=".13"/>
   </joint>
   <transmission name="/elbow_trans">
     <type>transmission_interface/SimpleTransmission</type>
@@ -337,9 +307,9 @@
       </geometry>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0.157978803149"/>
       <geometry>
-        <mesh filename="file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/Forearm.dae"/>
+        <cylinder length="0.334827" radius="0.0757275"/>
       </geometry>
     </collision>
   </link>
@@ -375,9 +345,9 @@
       </geometry>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.104016 0.003308 -0.000027"/>
       <geometry>
-        <mesh filename="file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/Wrist.dae"/>
+        <cylinder length="0.219204" radius="0.065187"/>
       </geometry>
     </collision>
   </link>
@@ -402,9 +372,9 @@
   <!-- Ground base -->
   <link name="/end_effector">
     <inertial>
-      <origin rpy="0 0 0" xyz="0.000000 0.000014 0.024426"/>
+      <origin rpy="0 0 0" xyz="0.024426 -0.000000 -0.000014"/>
       <mass value="3.46114581082"/>
-      <inertia ixx="0.0055705568526" ixy="0.0" ixz="0.0" iyy="0.00536142648454" iyz="0.0" izz="0.00774521740658"/>
+      <inertia ixx="0.00774521740658" ixy="0.0" ixz="0.0" iyy="0.00536142648454" iyz="0.0" izz="0.0055705568526"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -413,9 +383,9 @@
       </geometry>
     </visual>
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0.024426 -0.000000 -0.000014"/>
       <geometry>
-        <mesh filename="file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/parallel_gripper/visual/BaseGripper.dae"/>
+        <box size="0.074326 0.117427 0.114298"/>
       </geometry>
     </collision>
   </link>

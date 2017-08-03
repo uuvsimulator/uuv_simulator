@@ -22,29 +22,19 @@
   <!--
     GRIPPER BASE
 
-    Mesh Bounding Box Size 0.117427 0.114298 0.074326
+    Mesh Bounding Box Size 0.074326 0.117427 0.114298
     Mesh Bounding Box Diag 0.179938 
     Mesh Volume is 0.000699
     Mesh Surface is 0.160112
-    Thin shell barycenter 0.000000 0.000018 0.025369
-    Center of Mass is 0.000000 0.000014 0.024426
-    Inertia Tensor is :
-    | 0.000001 -0.000000 0.000000 |
-    | -0.000000 0.000001 -0.000000 |
-    | 0.000000 -0.000000 0.000001 |
-    Principal axes are :
-    | 1.000000 -0.000000 0.000001 |
-    | 0.000000 1.000000 -0.000842 |
-    | -0.000001 0.000842 1.000000 |
-    axis momenta are :
-    | 0.000001 0.000001 0.000001 |
+    Thin shell barycenter 0.025369 -0.000000 -0.000018
+    Center of Mass is 0.024426 -0.000000 -0.000014
   -->
   
   <xacro:property name="gripper_base_width" value="0.117427" />
-  <xacro:property name="gripper_base_length" value="0.114298" />
-  <xacro:property name="gripper_base_height" value="0.074326" />
+  <xacro:property name="gripper_base_length" value="0.074326" />
+  <xacro:property name="gripper_base_height" value="0.114298" />
   <xacro:property name="gripper_base_volume" value="${gripper_base_width * gripper_base_length * gripper_base_height}"/>
-  <xacro:property name="gripper_base_com" value="0.000000 0.000014 0.024426" />
+  <xacro:property name="gripper_base_com" value="0.024426 -0.000000 -0.000014" />
 
   <!--  
     FINGER
@@ -55,16 +45,6 @@
     Mesh Surface is 0.034727
     Thin shell barycenter 0.030139 -0.002041 -0.000073
     Center of Mass is 0.025268 -0.001931 -0.000079
-    Inertia Tensor is :
-    | 0.000000 -0.000000 -0.000000 |
-    | -0.000000 0.000000 -0.000000 |
-    | -0.000000 -0.000000 0.000000 |
-    Principal axes are :
-    | 0.992844 -0.119416 -0.000723 |
-    | 0.119417 0.992843 0.001760 |
-    | 0.000507 -0.001834 0.999998 |
-    axis momenta are :
-    | 0.000000 0.000000 0.000000 |
   -->
 
   <xacro:property name="finger_width" value="0.052970" />
@@ -82,16 +62,6 @@
     Mesh Surface is 0.054039
     Thin shell barycenter 0.025479 0.015748 -0.000000
     Center of Mass is 0.027744 0.017278 -0.000000
-    Inertia Tensor is :
-    | 0.000000 -0.000000 -0.000000 |
-    | -0.000000 0.000000 0.000000 |
-    | -0.000000 0.000000 0.000000 |
-    Principal axes are :
-    | 0.933245 -0.359241 -0.000000 |
-    | 0.359241 0.933245 -0.000000 |
-    | 0.000000 0.000000 1.000000 |
-    axis momenta are :
-    | 0.000000 0.000000 0.000000 |
   -->
 
   <xacro:property name="finger_tip_width" value="0.050457" />

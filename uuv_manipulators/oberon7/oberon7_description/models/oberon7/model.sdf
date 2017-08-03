@@ -84,12 +84,12 @@
         </inertia>
       </inertial>
       <collision name='/shoulder_link_collision'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose frame=''>0.03967 0.005441 0.017383 0 -0 0</pose>
         <geometry>
-          <mesh>
-            <scale>1 1 1</scale>
-            <uri>file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/ShoulderLink.dae</uri>
-          </mesh>
+          <cylinder>
+            <length>0.239627</length>
+            <radius>0.068184</radius>
+          </cylinder>
         </geometry>
         <surface>
           <contact>
@@ -155,12 +155,12 @@
         </inertia>
       </inertial>
       <collision name='/upper_arm_collision'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose frame=''>0.312501 0.017478 -2e-06 3.14159 1.57079 3.14159</pose>
         <geometry>
-          <mesh>
-            <scale>1 1 1</scale>
-            <uri>file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/UpperArm.dae</uri>
-          </mesh>
+          <cylinder>
+            <length>0.616809</length>
+            <radius>0.0709445</radius>
+          </cylinder>
         </geometry>
       </collision>
       <visual name='/upper_arm_visual'>
@@ -208,12 +208,12 @@
         </inertia>
       </inertial>
       <collision name='/elbow_link_collision'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose frame=''>0.125269 -0.074675 0 3.14159 1.57079 -1.57079</pose>
         <geometry>
-          <mesh>
-            <scale>1 1 1</scale>
-            <uri>file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/ElbowLink.dae</uri>
-          </mesh>
+          <cylinder>
+            <length>0.245312</length>
+            <radius>0.077562</radius>
+          </cylinder>
         </geometry>
         <surface>
           <contact>
@@ -252,7 +252,7 @@
         <limit>
           <lower>-1.5708</lower>
           <upper>1.0472</upper>
-          <effort>200</effort>
+          <effort>300</effort>
           <velocity>0.13</velocity>
         </limit>
         <dynamics>
@@ -279,12 +279,12 @@
         </inertia>
       </inertial>
       <collision name='/forearm_collision'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose frame=''>0 0 0.157979 0 -0 0</pose>
         <geometry>
-          <mesh>
-            <scale>1 1 1</scale>
-            <uri>file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/Forearm.dae</uri>
-          </mesh>
+          <cylinder>
+            <length>0.334827</length>
+            <radius>0.0757275</radius>
+          </cylinder>
         </geometry>
         <surface>
           <contact>
@@ -350,12 +350,12 @@
         </inertia>
       </inertial>
       <collision name='/wrist_link_collision'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose frame=''>0.104016 0.003308 -2.7e-05 3.14159 1.57079 3.14159</pose>
         <geometry>
-          <mesh>
-            <scale>1 1 1</scale>
-            <uri>file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/Wrist.dae</uri>
-          </mesh>
+          <cylinder>
+            <length>0.219204</length>
+            <radius>0.065187</radius>
+          </cylinder>
         </geometry>
         <surface>
           <contact>
@@ -409,24 +409,23 @@
     <link name='/end_effector'>
       <pose frame=''>0.760611 0.00015 0.800446 -2.67794 1.57079 2.03445</pose>
       <inertial>
-        <pose frame=''>0 1.4e-05 0.024426 0 -0 0</pose>
+        <pose frame=''>0.024426 -0 -1.4e-05 0 -0 0</pose>
         <mass>3.46115</mass>
         <inertia>
-          <ixx>0.00557056</ixx>
+          <ixx>0.00774522</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
           <iyy>0.00536143</iyy>
           <iyz>0</iyz>
-          <izz>0.00774522</izz>
+          <izz>0.00557056</izz>
         </inertia>
       </inertial>
       <collision name='/end_effector_collision'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose frame=''>0.024426 -0 -1.4e-05 0 -0 0</pose>
         <geometry>
-          <mesh>
-            <scale>1 1 1</scale>
-            <uri>file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/parallel_gripper/visual/BaseGripper.dae</uri>
-          </mesh>
+          <box>
+            <size>0.074326 0.117427 0.114298</size>
+          </box>
         </geometry>
       </collision>
       <visual name='/end_effector_visual'>

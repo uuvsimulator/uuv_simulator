@@ -34,9 +34,9 @@
         </visual>
 
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="${gripper_base_com}" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="file://$(find oberon7_description)/meshes/parallel_gripper/visual/BaseGripper.dae"/>
+                <box size="${gripper_base_length} ${gripper_base_width} ${gripper_base_height}"/>
             </geometry>
         </collision>
     </link>
