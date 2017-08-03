@@ -206,7 +206,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/visual/Base.dae"/>
+        <mesh filename="file:///home/mam0box/catkin_ws/src/uuv_simulator/uuv_manipulators/oberon7/oberon7_description/meshes/serial_arm/collision/Base.stl"/>
       </geometry>
     </collision>
   </link>
@@ -422,8 +422,8 @@
   <joint name="/wrist" type="continuous">
     <parent link="/wrist_link"/>
     <child link="/end_effector"/>
-    <origin rpy="0 1.57079632679 0" xyz="0.19304 0 0"/>
-    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 0" xyz="0.19304 0 0"/>
+    <axis xyz="1 0 0"/>
     <dynamics damping="10" friction="5"/>
   </joint>
   <transmission name="/wrist_trans">
@@ -459,7 +459,7 @@
   <joint name="/finger_left_joint" type="revolute">
     <parent link="/end_effector"/>
     <child link="/finger_left"/>
-    <origin rpy="0 -1.57079632679 0" xyz="0 0.0391376 0.0444267"/>
+    <origin rpy="0 0 0" xyz="0.0444267 0.0391376 0"/>
     <axis xyz="0 0 1"/>
     <dynamics damping="5" friction="10"/>
     <limit effort="30" lower="0" upper="1.04709283144" velocity="0.15"/>
@@ -525,10 +525,10 @@
   <joint name="/finger_right_joint" type="revolute">
     <parent link="/end_effector"/>
     <child link="/finger_right"/>
-    <origin rpy="3.14159265359 -1.57079632679 3.14159265359" xyz="0 -0.0391376 0.0444267"/>
+    <origin rpy="3.14159265359 3.14159265359 3.14159265359" xyz="0.0444267 -0.0391376 0"/>
     <axis xyz="0 0 -1"/>
     <dynamics damping="5" friction="10"/>
-    <limit effort="30" lower="-1.04709283144" upper="0" velocity="0.15"/>
+    <limit effort="30" lower="0" upper="1.04709283144" velocity="0.15"/>
   </joint>
   <transmission name="/finger_right_joint_trans">
     <type>transmission_interface/SimpleTransmission</type>
