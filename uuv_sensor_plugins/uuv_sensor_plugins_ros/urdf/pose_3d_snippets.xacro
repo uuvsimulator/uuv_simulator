@@ -16,9 +16,9 @@
 -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="pose_3d_macro" params="namespace parent_link topic update_rate *origin">
+  <xacro:macro name="pose_3d_macro" params="namespace suffix parent_link topic update_rate *origin noise">
     <!-- Mount a 3D pose sensor -->
-    <link name="${namespace}/pose_sensor_link">
+    <link name="${namespace}/pose_sensor_link_${suffix}">
       <inertial>
         <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
         <mass value="0.01" />  <!-- [kg] -->
@@ -26,11 +26,11 @@
       </inertial>
     </link>
 
-    <joint name="${namespace}/pose_sensor_joint" type="revolute">
+    <joint name="${namespace}/pose_sensor_${suffix}_joint" type="revolute">
       <xacro:insert_block name="origin" />
       <axis xyz="0 0 1"/>
       <parent link="${parent_link}"/>
-      <child link="${namespace}/pose_sensor_link"/>
+      <child link="${namespace}/pose_sensor_link_${suffix}"/>
       <limit effort="0" lower="0" upper="0" velocity="0"/>
     </joint>
 
@@ -40,10 +40,23 @@
         <bodyName>${namespace}/base_link</bodyName>
         <topicName>${topic}</topicName>
         <frameName>world</frameName>
-        <gaussianNoise>0.0</gaussianNoise>
+        <gaussianNoise>${noise}</gaussianNoise>
         <updateRate>${update_rate}</updateRate>
       </plugin>
     </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="pose_3d_sensor" params="namespace suffix parent_link gaussian_noise topic">
+    <!-- Default GPS. -->
+    <xacro:pose_3d_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      topic="${topic}"
+      update_rate="30"
+      noise="${gaussian_noise}"
+      suffix="${suffix}">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:pose_3d_macro>
   </xacro:macro>
 
   <xacro:macro name="default_pose_3d" params="namespace parent_link">
@@ -52,8 +65,12 @@
       namespace="${namespace}"
       parent_link="${parent_link}"
       topic="pose_gt"
-      update_rate="30">
+      update_rate="30"
+      noise="0.0"
+      suffix="default">
       <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:pose_3d_macro>
   </xacro:macro>
+
+  
 </robot>
