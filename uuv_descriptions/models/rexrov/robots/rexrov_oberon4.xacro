@@ -54,7 +54,7 @@
   <!-- Joint state publisher plugin -->
   <xacro:custom_joint_state_publisher
     namespace="$(arg namespace)"
-    update_rate="200"
+    update_rate="50"
     joints="oberon4/azimuth
             oberon4/shoulder
             oberon4/wrist_joint

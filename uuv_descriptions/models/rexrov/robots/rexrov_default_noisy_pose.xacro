@@ -40,7 +40,7 @@
   </xacro:rexrov_base>
 
   <!-- Joint state publisher plugin -->
-  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="10"/>
+  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="50"/>
 
   <!-- Add pose_gt with Gaussian noise -->
   <xacro:pose_3d_sensor namespace="$(arg namespace)" 
