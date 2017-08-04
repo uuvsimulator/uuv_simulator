@@ -1,0 +1,4 @@
+Project:         	AprilTags Visual Fiducial System
+License: 	        BSD
+Current Version: 	2015-03-18
+Source Download: 	https://april.eecs.umich.edu/software/apriltag/

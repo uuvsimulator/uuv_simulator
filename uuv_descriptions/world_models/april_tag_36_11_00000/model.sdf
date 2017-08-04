@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version="1.5">
+  <model name="april_tag/tag36_11_00000">    
+    <link name="tag36_11_00000">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <mass>0.0001</mass>
+        <inertia>
+          <ixx>0.00001</ixx>
+          <iyy>0.00001</iyy>
+          <izz>0.00001</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="tag36_11_00000_collision">
+        <geometry>
+            <box>
+              <size>0.15 0.15 0.001</size>
+            </box>
+        </geometry>
+      </collision>
+
+      <visual name="tag36_11_00000_visual">
+        <pose>0 0 0 0 0 1.57</pose>
+        <geometry>
+            <box>
+              <size>0.15 0.15 0.001</size>
+            </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/fiducials.material</uri>
+            <name>AprilTag/Tag36_11_00000</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
