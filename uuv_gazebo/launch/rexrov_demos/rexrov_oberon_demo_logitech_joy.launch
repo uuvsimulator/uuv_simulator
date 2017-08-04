@@ -9,7 +9,6 @@
   -->
   <arg name="namespace" default="rexrov"/>
   <arg name="joy_id" default="0"/>
-  <arg name="gripper" default="parallel"/>
   <arg name="use_jt" default="0"/>
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>

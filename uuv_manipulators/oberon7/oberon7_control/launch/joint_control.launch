@@ -1,0 +1,101 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="arm_name" default="oberon7"/>
+  <!-- Arm will only move while the RB button (XBox 360 controller) is pressed -->
+  <arg name="deadman_button" default="5"/>
+  <!-- The arm will not move if the LB button (XBox 360 controller) is pressed -->
+  <arg name="exclusion_button" default="4"/>
+
+  <!-- Default joystick mapping (XBox 360 controller) -->
+  <arg name="axis_azimuth" default="3"/>
+  <arg name="axis_shoulder" default="4"/>
+  <arg name="axis_elbow" default="1"/>
+  <arg name="axis_roll" default="6"/>
+  <arg name="axis_pitch" default="7"/>
+  <arg name="axis_yaw" default="0"/>
+  <arg name="gripper_open_button" default="1"/>
+  <arg name="gripper_close_button" default="2"/>
+  <arg name="home_button" default="7"/>
+
+  <!-- Initialize effort controllers -->
+  <include file="$(find oberon7_control)/launch/joint_effort_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+  </include>
+
+  <!-- Initialize gripper controllers -->
+  <include file="$(find oberon7_control)/launch/gripper_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+    <arg name="exclusion_button" value="$(arg exclusion_button)"/>
+    <arg name="deadman_button" value="$(arg deadman_button)"/>
+    <arg name="open_button" value="$(arg gripper_open_button)"/>
+    <arg name="close_button" value="$(arg gripper_close_button)"/>
+  </include>
+
+  <group ns="/$(arg uuv_name)/$(arg arm_name)">
+    <!-- Starting the kinematics service node -->
+    <node name="kinematics_service" pkg="uuv_manipulators_kinematics" type="kinematics_service.py"
+      output="screen"/>
+
+    <!-- Starting direct joint position control node -->
+    <node name="joint_position_controller_$(arg arm_name)" pkg="uuv_manipulators_control" type="joint_position_controller.py"
+      output="screen">
+      <remap from="joy" to="/$(arg uuv_name)/joy"/>
+      <rosparam subst_value="true">
+        exclusion_buttons: $(arg exclusion_button)
+        deadman_button: $(arg deadman_button)
+        home_button: $(arg home_button)
+        controller_config:
+          azimuth:
+            joint_input_axis: $(arg axis_azimuth)
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/azimuth/controller/command
+            controller:
+              p: 1000
+              i: 20
+              d: 50
+          shoulder:
+            joint_input_axis: $(arg axis_shoulder)
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/shoulder/controller/command
+            controller:
+              p: 1000
+              i: 20
+              d: 50
+          elbow:
+            joint_input_axis: $(arg axis_elbow)
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/elbow/controller/command
+            controller:
+              p: 1000
+              i: 20
+              d: 50
+          roll:
+            joint_input_axis: $(arg axis_roll)
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/roll/controller/command
+            controller:
+              p: 300
+              i: 10
+              d: 20
+          pitch:
+            joint_input_axis: $(arg axis_pitch)
+            axis_gain: 0.1
+            topic: /$(arg uuv_name)/$(arg arm_name)/pitch/controller/command
+            controller:
+              p: 300
+              i: 10
+              d: 0
+          wrist:
+            joint_input_axis: $(arg axis_yaw)
+            axis_gain: 0.01
+            topic: /$(arg uuv_name)/$(arg arm_name)/wrist/controller/command
+            controller:
+              p: 200
+              i: 10
+              d: 0
+      </rosparam>
+    </node>
+  </group>
+</launch>

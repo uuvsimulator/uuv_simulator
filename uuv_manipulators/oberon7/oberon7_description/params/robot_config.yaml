@@ -1,0 +1,14 @@
+# Main parameters for all Oberon 7P manipulator instances
+# To emulate the conditions for a real controller, the link parameters are
+# loaded in this parameter file instead of being read from Gazebo topics.
+joint_names: [azimuth, shoulder, elbow, roll, pitch, wrist]
+base_link: base
+tip_link: end_effector
+default_configs:
+  home:
+    azimuth: 0
+    shoulder: 1.57
+    elbow:  -1.57
+    pitch: 1.57
+    roll: 0    
+    wrist: 0

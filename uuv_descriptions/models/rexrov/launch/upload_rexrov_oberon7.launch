@@ -9,11 +9,10 @@
   <arg name="yaw" default="0.0"/>
 
   <arg name="namespace" default="rexrov"/>
-  <arg name="gripper" default="dummy"/>
   <arg name="world_frame" default="world"/> <!-- This should actually be "/world". See https://github.com/ros-simulation/gazebo_ros_pkgs/pull/324 -->
 
   <group ns="$(arg namespace)">
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find uuv_descriptions)/models/rexrov/robots/rexrov_oberon_$(arg gripper).xacro' debug:=$(arg debug) namespace:=$(arg namespace)" />
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find uuv_descriptions)/models/rexrov/robots/rexrov_oberon7.xacro' debug:=$(arg debug) namespace:=$(arg namespace)" />
 
     <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
     <node name="urdf_spawner" pkg="uuv_descriptions" type="spawn_model.py" respawn="false" output="screen"
@@ -32,11 +31,11 @@
   </rosparam>
 
   <rosparam param="$(arg namespace)/arms/names">
-    [oberon,]
+    [oberon7,]
   </rosparam>
 
-  <group ns="$(arg namespace)/arms/oberon">
-    <rosparam file="$(find oberon_description)/params/robot_config.yaml" command="load"/>
+  <group ns="$(arg namespace)/arms/oberon7">
+    <rosparam file="$(find oberon7_description)/params/robot_config.yaml" command="load"/>
   </group>
 
   <include file="$(find uuv_descriptions)/models/common/launch/message_to_tf.launch">

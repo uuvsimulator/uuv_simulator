@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="gripper_effort" value="30" />
+  <xacro:property name="gripper_velocity" value="0.15" />
+
+  <!--
+    GRIPPER BASE
+
+    Mesh Bounding Box Size 0.074326 0.117427 0.114298
+    Mesh Bounding Box Diag 0.179938 
+    Mesh Volume is 0.000699
+    Mesh Surface is 0.160112
+    Thin shell barycenter 0.025369 -0.000000 -0.000018
+    Center of Mass is 0.024426 -0.000000 -0.000014
+  -->
+  
+  <xacro:property name="gripper_base_width" value="0.117427" />
+  <xacro:property name="gripper_base_length" value="0.074326" />
+  <xacro:property name="gripper_base_height" value="0.114298" />
+  <xacro:property name="gripper_base_volume" value="${gripper_base_width * gripper_base_length * gripper_base_height}"/>
+  <xacro:property name="gripper_base_com" value="0.024426 -0.000000 -0.000014" />
+
+  <!--  
+    FINGER
+
+    Mesh Bounding Box Size 0.098653 0.052970 0.048524
+    Mesh Bounding Box Diag 0.122036 
+    Mesh Volume is 0.000209
+    Mesh Surface is 0.034727
+    Thin shell barycenter 0.030139 -0.002041 -0.000073
+    Center of Mass is 0.025268 -0.001931 -0.000079
+  -->
+
+  <xacro:property name="finger_width" value="0.052970" />
+  <xacro:property name="finger_length" value="0.098653" />
+  <xacro:property name="finger_height" value="0.048524" />
+  <xacro:property name="finger_volume" value="${finger_width * finger_length * finger_height}" />
+  <xacro:property name="finger_com" value="0.025268 -0.001931 -0.000079" />
+
+  <!--  
+    FINGER TIP
+
+    Mesh Bounding Box Size 0.102050 0.050457 0.063000
+    Mesh Bounding Box Diag 0.130112 
+    Mesh Volume is 0.000204
+    Mesh Surface is 0.054039
+    Thin shell barycenter 0.025479 0.015748 -0.000000
+    Center of Mass is 0.027744 0.017278 -0.000000
+  -->
+
+  <xacro:property name="finger_tip_width" value="0.050457" />
+  <xacro:property name="finger_tip_length" value="0.102050" />
+  <xacro:property name="finger_tip_height" value="0.063000" />
+  <xacro:property name="finger_tip_volume" value="${finger_tip_width * finger_tip_length * finger_tip_height}" />
+  <xacro:property name="finger_tip_com" value="0.027744 0.017278 0.0" />
+</robot>
