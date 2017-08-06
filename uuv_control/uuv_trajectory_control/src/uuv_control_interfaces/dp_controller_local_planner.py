@@ -186,12 +186,17 @@ class DPControllerLocalPlanner(object):
             if speed > self._max_forward_speed:
                 vel[0] *= self._max_forward_speed / speed
                 vel[1] *= self._max_forward_speed / speed
+
+            vel = np.dot(self._vehicle_pose.rot_matrix, vel)
+            
+            step = uuv_trajectory_generator.TrajectoryPoint()
+            step.pos = np.dot(self._vehicle_pose.rot_matrix, vel * self._dt)
+            step.rotq = quaternion_about_axis(self._teleop_vel_ref.angular.z * self._dt, [0, 0, 1])
             
             ref_pnt = uuv_trajectory_generator.TrajectoryPoint()
-            ref_pnt.pos = self._vehicle_pose.pos + vel * self._dt
+            ref_pnt.pos = self._vehicle_pose.pos + step.pos 
 
-            q_step = quaternion_about_axis(self._teleop_vel_ref.angular.z, self._dt)
-            ref_pnt.rotq = quaternion_multiply(self._vehicle_pose.rotq, q_step)
+            ref_pnt.rotq = quaternion_multiply(self._vehicle_pose.rotq, step.rotq)
             ref_pnt.vel = [vel[0], vel[1], vel[2], 0, 0, self._teleop_vel_ref.angular.z]
             ref_pnt.acc = np.zeros(6)
         else:

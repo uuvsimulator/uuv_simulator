@@ -1,5 +1,11 @@
 <launch>
     <arg name="record" default="false"/>
+    <arg name="joy_id" default="0"/>
+    <arg name="axis_yaw" default="0"/>
+    <arg name="axis_x" default="4"/>
+    <arg name="axis_y" default="3"/>
+    <arg name="axis_z" default="1"/>
+    <arg name="use_teleop" default="false"/>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="worlds/ocean_waves.world"/>
@@ -22,6 +28,22 @@
       <arg name="record" value="$(arg record)"/>
     </include>
 
+    <group if="$(arg use_teleop)">
+        <include file="$(find uuv_teleop)/launch/uuv_teleop.launch">
+            <arg name="uuv_name" value="rexrov"/>
+            <arg name="joy_id" value="$(arg joy_id)"/>
+            <arg name="output_topic" value="cmd_vel"/>
+            <arg name="message_type" value="twist"/>
+            <arg name="axis_yaw" value="$(arg axis_yaw)"/>
+            <arg name="axis_x" value="$(arg axis_x)"/>
+            <arg name="axis_y" value="$(arg axis_y)"/>
+            <arg name="axis_z" value="$(arg axis_z)"/>
+            <arg name="gain_yaw" default="0.2"/>
+            <arg name="gain_x" default="0.5"/>
+            <arg name="gain_y" default="0.5"/>
+            <arg name="gain_z" default="0.5"/>
+        </include> 
+    </group>
     <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/controller_demo.rviz"/>
 
 </launch>
