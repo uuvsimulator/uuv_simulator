@@ -22,7 +22,7 @@
   <!-- Include the ROV macro file -->
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov_base.xacro"/>
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov.gazebo.xacro"/>
-  <xacro:include filename="$(find oberon_description)/robots/oberon_dummy.xacro" />
+  <xacro:include filename="$(find oberon7_description)/robots/oberon7_default.xacro" />
 
   <!-- Create the ROV -->
   <xacro:rexrov_base namespace="$(arg namespace)">
@@ -35,14 +35,14 @@
         <debug>$(arg debug)</debug>
         <!-- Adding the hydrodynamic and hydrostatic parameters for the vehicle-->
         <xacro:rexrov_hydro_model namespace="$(arg namespace)"/>
-        <xacro:oberon_hydro_model namespace="oberon"/>
+        <xacro:oberon7_hydro_model namespace="oberon7"/>
       </plugin>
     </gazebo>
   </xacro:rexrov_base>
 
-  <xacro:oberon namespace="oberon" parent="$(arg namespace)/base_link">
+  <xacro:oberon7 namespace="oberon7" parent="$(arg namespace)/base_link">
     <origin xyz="1.3 -0.5 -0.615" rpy="0 0 0"/>
-  </xacro:oberon>
+  </xacro:oberon7>
 
   <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
@@ -55,11 +55,15 @@
   <xacro:custom_joint_state_publisher
     namespace="$(arg namespace)"
     update_rate="50"
-    joints="oberon/azimuth
-            oberon/shoulder
-            oberon/elbow
-            oberon/roll
-            oberon/pitch
-            oberon/wrist"/>
+    joints="oberon7/azimuth
+            oberon7/shoulder
+            oberon7/elbow
+            oberon7/roll
+            oberon7/pitch
+            oberon7/wrist
+            oberon7/finger_left_joint
+            oberon7/finger_tip_left_joint
+            oberon7/finger_right_joint
+            oberon7/finger_tip_right_joint"/>
 
 </robot>

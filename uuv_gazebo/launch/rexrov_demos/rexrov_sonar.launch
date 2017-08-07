@@ -11,6 +11,7 @@
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>
   <arg name="z" default="-85"/>
+  <arg name="yaw" default="0.0"/>
   <arg name="joy_id" default="0"/>
   <arg name="axis_yaw" default="0"/>
   <arg name="axis_x" default="4"/>
@@ -23,6 +24,7 @@
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
     <arg name="z" value="$(arg z)"/>
+    <arg name="yaw" value="$(arg yaw)"/>
   </include>
 
   <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">

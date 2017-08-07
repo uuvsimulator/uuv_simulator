@@ -1,0 +1,101 @@
+<launch>
+  <arg name="uuv_name" default=""/>
+  <arg name="arm_name" default="oberon7"/>
+  <!-- Default joystick mapping set for the XBox 360 controller -->
+  <arg name="exclusion_button" default="4"/>
+  <arg name="deadman_button" default="5"/>
+  <arg name="home_button" default="7"/>
+  <arg name="axis_x" default="4"/>
+  <arg name="axis_y" default="3"/>
+  <arg name="axis_z" default="1"/>
+  <arg name="axis_roll" default="6"/>
+  <arg name="axis_pitch" default="7"/>
+  <arg name="axis_yaw" default="0"/>
+
+  <arg name="gain_roll" default="0.05"/>
+  <arg name="gain_pitch" default="0.05"/>
+  <arg name="gain_yaw" default="0.05"/>
+  <arg name="gain_x" default="0.05"/>
+  <arg name="gain_y" default="0.05"/>
+  <arg name="gain_z" default="0.05"/>
+
+  <arg name="gripper_open_button" default="1"/>
+  <arg name="gripper_close_button" default="2"/>
+
+  <!-- Initialize effort controllers -->
+  <include file="$(find oberon7_control)/launch/joint_effort_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+  </include>
+
+  <!-- Initialize gripper controllers -->
+  <include file="$(find oberon7_control)/launch/gripper_controllers.launch">
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="arm_name" value="$(arg arm_name)"/>
+    <arg name="exclusion_button" value="$(arg exclusion_button)"/>
+    <arg name="deadman_button" value="$(arg deadman_button)"/>
+    <arg name="open_button" value="$(arg gripper_open_button)"/>
+    <arg name="close_button" value="$(arg gripper_close_button)"/>
+  </include>
+
+  <group ns="/$(arg uuv_name)/$(arg arm_name)">
+    <node pkg="uuv_teleop" type="vehicle_teleop.py" name="joy_$(arg arm_name)_input">
+      <remap from="output" to="jt_vel_input"/>
+      <remap from="joy" to="/$(arg uuv_name)/joy"/>
+      <rosparam subst_value="true">
+        type: twist
+        deadman_button: $(arg deadman_button)
+        exclusion_buttons: [$(arg exclusion_button)]
+        mapping:
+          x:
+            axis: $(arg axis_x)
+            gain: $(arg gain_x)
+          y:
+            axis: $(arg axis_y)
+            gain: $(arg gain_y)
+          z:
+            axis: $(arg axis_z)
+            gain: $(arg gain_z)
+          roll:
+            axis: $(arg axis_roll)
+            gain: $(arg gain_roll)
+          pitch:
+            axis: $(arg axis_pitch)
+            gain: $(arg gain_pitch)
+          yaw:
+            axis: $(arg axis_yaw)
+            gain: $(arg gain_yaw)
+      </rosparam>
+    </node>
+
+    <!-- Starting the kinematics service node -->
+    <node name="kinematics_service" pkg="uuv_manipulators_kinematics" type="kinematics_service.py"
+      output="screen"/>
+
+    <!-- Starting the Jacobian transpose controller node -->
+    <node name="cartesian_controller" pkg="uuv_manipulators_control" type="jt_cartesian_controller.py"
+      respawn="false" output="screen">
+      <remap from="cmd_vel" to="jt_vel_input"/>
+      <rosparam subst_value="true">
+          publish_rate: 50
+          Kp:
+            - 8000.0
+            - 8000.0
+            - 8000.0
+            - 300.0
+            - 300.0
+            - 300.0
+          Kd:
+            - 100.0
+            - 100.0
+            - 100.0
+            - 2.0
+            - 2.0
+            - 2.0
+      </rosparam>
+    </node>
+
+  </group>
+
+
+</launch>

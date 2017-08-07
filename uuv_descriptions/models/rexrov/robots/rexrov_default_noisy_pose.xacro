@@ -16,15 +16,15 @@
 -->
 
 <robot name="rexrov" xmlns:xacro="http://www.ros.org/wiki/xacro" >
-
   <xacro:arg name="debug" default="0"/>
   <xacro:arg name="namespace" default="rexrov"/>
+  <xacro:arg name="noise" default="0.02"/>
+
   <!-- Include the ROV macro file -->
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov_base.xacro"/>
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov.gazebo.xacro"/>
-  <xacro:include filename="$(find oberon_description)/robots/oberon_parallel.xacro" />
 
-  <!-- Create the ROV -->
+  <!-- Create the rexrov -->
   <xacro:rexrov_base namespace="$(arg namespace)">
     <!-- The underwater object plugin is given as an input block parameter to
      allow the addition of external models of manipulator units -->
@@ -35,35 +35,18 @@
         <debug>$(arg debug)</debug>
         <!-- Adding the hydrodynamic and hydrostatic parameters for the vehicle-->
         <xacro:rexrov_hydro_model namespace="$(arg namespace)"/>
-        <xacro:oberon_hydro_model namespace="oberon"/>
       </plugin>
     </gazebo>
   </xacro:rexrov_base>
 
-  <xacro:oberon namespace="oberon" parent="$(arg namespace)/base_link">
-    <origin xyz="1.3 -0.5 -0.615" rpy="0 0 0"/>
-  </xacro:oberon>
-
-  <gazebo>
-      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <robotNamespace>/$(arg namespace)</robotNamespace>
-        <robotParam>/$(arg namespace)/robot_description</robotParam>
-      </plugin>
-  </gazebo>
-
   <!-- Joint state publisher plugin -->
-  <xacro:custom_joint_state_publisher
-    namespace="$(arg namespace)"
-    update_rate="50"
-    joints="oberon/azimuth
-            oberon/shoulder
-            oberon/elbow
-            oberon/roll
-            oberon/pitch
-            oberon/wrist
-            oberon/finger_left_joint
-            oberon/finger_tip_left_joint
-            oberon/finger_right_joint
-            oberon/finger_tip_right_joint"/>
+  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="50"/>
+
+  <!-- Add pose_gt with Gaussian noise -->
+  <xacro:pose_3d_sensor namespace="$(arg namespace)" 
+                        suffix="noisy"
+                        parent_link="$(arg namespace)/base_link" 
+                        gaussian_noise="$(arg noise)"
+                        topic="pose_gt_noisy" />
 
 </robot>

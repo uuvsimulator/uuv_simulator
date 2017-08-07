@@ -1,0 +1,19 @@
+material AprilTag/Tag36_11_00000
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      specular 0 0 0 0
+
+      texture_unit
+      {
+        texture fiducials/tag36_11_00000.jpg
+        filtering anistropic
+        max_anisotropy 16
+      }
+    }
+  }
+}

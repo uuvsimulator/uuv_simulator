@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot name="oberon7" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Import serial arm -->
+  <xacro:include filename="$(find oberon7_description)/urdf/serial_arm.xacro" />
+  <!-- Import Gazebo specific macros -->
+  <xacro:include filename="$(find oberon7_description)/urdf/serial_arm.gazebo.xacro" />
+
+  <xacro:macro name="oberon7" params="namespace parent *origin">
+    <xacro:oberon7_serial_arm namespace="${namespace}"/>
+
+    <joint name="${namespace}/anchor" type="revolute">
+      <parent link="${parent}"/>
+      <child link="${namespace}/base"/>
+      <xacro:insert_block name="origin"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+  </xacro:macro>
+
+</robot>

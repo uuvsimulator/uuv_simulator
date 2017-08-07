@@ -11,6 +11,7 @@
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>
   <arg name="z" default="-20"/>
+  <arg name="yaw" default="0.0"/>
   <arg name="joy_id" default="0"/>
   <arg name="namespace" default="rexrov"/>
 
@@ -22,6 +23,7 @@
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
     <arg name="z" value="$(arg z)"/>
+    <arg name="yaw" value="$(arg yaw)"/>
 
     <!-- Joystick mapping for the vehicle control -->
     <arg name="axis_yaw" value="2"/>

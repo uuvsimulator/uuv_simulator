@@ -1,0 +1,16 @@
+gripper:
+  type: parallel
+  base: end_effector
+  links: [finger_left, finger_tip_left, finger_right, finger_tip_right]
+  control_joint: finger_left_joint
+  mimic_joint: finger_right_joint
+  mimic_joint_gain: -1
+  closed_limit: lower
+  full_open_limit: upper
+  groups:
+    left_finger:
+      links: [finger_left, finger_tip_left]
+      ee: finger_tip_left
+    right_finger:
+      links: [finger_right, finger_tip_right]
+      ee: finger_tip_right

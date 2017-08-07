@@ -31,11 +31,11 @@
   </rosparam>
 
   <rosparam param="$(arg namespace)/arms/names">
-    [oberon, oberon4]
+    [oberon7, oberon4]
   </rosparam>
 
-  <group ns="$(arg namespace)/arms/oberon">
-    <rosparam file="$(find oberon_description)/params/robot_config.yaml" command="load"/>
+  <group ns="$(arg namespace)/arms/oberon7">
+    <rosparam file="$(find oberon7_description)/params/robot_config.yaml" command="load"/>
   </group>
 
   <group ns="$(arg namespace)/arms/oberon4">

@@ -1,0 +1,56 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="arm_name" default="oberon7"/>
+  <!-- Default joystick mapping set for the XBox 360 controller -->
+  <arg name="deadman_button" default="5"/>
+  <arg name="exclusion_button" default="4"/>
+  <arg name="open_button" default="1"/>
+  <arg name="close_button" default="2"/>
+
+  <rosparam subst_value="true">
+    $(arg uuv_name):
+      $(arg arm_name):
+        finger_left_joint:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/finger_left_joint
+            pid: {p: 50.0, i: 0, d: 0}
+        finger_right_joint:
+          controller:
+            type: effort_controllers/JointEffortController
+            joint: $(arg arm_name)/finger_right_joint
+            pid: {p: 50.0, i: 0, d: 0}
+  </rosparam>
+
+  <group ns="$(arg uuv_name)">
+    <!-- load the controllers -->
+    <node name="controller_spawner_$(arg arm_name)_gripper"
+          pkg="controller_manager"
+          type="spawner"
+          respawn="false"
+          output="screen"
+          ns="/$(arg uuv_name)"
+          args="/$(arg uuv_name)/$(arg arm_name)/finger_left_joint/controller
+                /$(arg uuv_name)/$(arg arm_name)/finger_right_joint/controller"/>
+  </group>
+
+  <group ns="/$(arg uuv_name)/$(arg arm_name)">
+    <node name="gripper_controller_$(arg arm_name)"
+            pkg="uuv_manipulators_control"
+            type="gripper_controller.py"
+            output="screen">
+            <rosparam command="load" file="$(find oberon7_description)/params/parallel_gripper_config.yaml"/>
+            <remap from="joy" to="/$(arg uuv_name)/joy"/>
+            <rosparam subst_value="true">
+              exclusion_buttons: $(arg exclusion_button)
+              deadman_button: $(arg deadman_button)
+              open_button: $(arg open_button)
+              close_button: $(arg close_button)
+              kp: 100
+              ki: 4
+              kd: 1
+            </rosparam>
+      </node>
+  </group>
+
+</launch>

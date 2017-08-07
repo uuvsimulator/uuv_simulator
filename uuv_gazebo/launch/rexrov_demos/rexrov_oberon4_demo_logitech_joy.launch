@@ -12,6 +12,7 @@
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>
   <arg name="z" default="-20"/>
+  <arg name="yaw" default="0.0"/>
 
   <include file="$(find uuv_gazebo)/launch/rexrov_demos/rexrov_oberon4_demo.launch">
     <arg name="namespace" value="$(arg namespace)"/>
@@ -20,6 +21,7 @@
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
     <arg name="z" value="$(arg z)"/>
+    <arg name="yaw" value="$(arg yaw)"/>
     <!-- Joystick mapping for the vehicle control -->
     <arg name="axis_yaw" value="2"/>
     <arg name="axis_x" value="1"/>
