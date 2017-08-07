@@ -1,0 +1,55 @@
+<launch>
+    <!-- Flag to start recoding a rosbag  -->
+    <arg name="record" default="false"/>
+    <!-- 
+        ID of the joystick (to find out the joystick's index, open jstest-gtk)
+        Default joystick mapping set for the XBox 360 controller. 
+    -->
+    <arg name="joy_id" default="0"/>
+    <arg name="axis_yaw" default="0"/>
+    <arg name="axis_x" default="4"/>
+    <arg name="axis_y" default="3"/>
+    <arg name="axis_z" default="1"/>
+
+    <!-- Initialize the Gazebo world  -->
+    <include file="$(find uuv_descriptions)/launch/ocean_waves.launch"/>
+
+    <!-- Add the RexROV vehicle to the world  -->
+    <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
+        <arg name="x" default="20"/>
+        <arg name="y" default="0"/>
+        <arg name="z" default="-20"/>
+        <arg name="yaw" default="0"/>
+    </include>
+
+    <!-- Start the model-free sliding mode controller with its default parameters for the RexROV vehicle  -->
+    <include file="$(find uuv_trajectory_control)/launch/rov_nmb_sm_controller.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="model_name" value="rexrov"/>
+    </include>
+
+    <!-- Initialize the recording fo the simulation according to the record flag  -->
+    <include file="$(find uuv_gazebo)/launch/controller_demos/record_demo.launch">
+      <arg name="record" value="$(arg record)"/>
+    </include>
+
+    <!-- Start joystick teleop node  -->
+    <include file="$(find uuv_teleop)/launch/uuv_teleop.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="joy_id" value="$(arg joy_id)"/>
+        <arg name="output_topic" value="cmd_vel"/>
+        <arg name="message_type" value="twist"/>
+        <arg name="axis_yaw" value="$(arg axis_yaw)"/>
+        <arg name="axis_x" value="$(arg axis_x)"/>
+        <arg name="axis_y" value="$(arg axis_y)"/>
+        <arg name="axis_z" value="$(arg axis_z)"/>
+        <arg name="gain_yaw" default="0.2"/>
+        <arg name="gain_x" default="0.5"/>
+        <arg name="gain_y" default="0.5"/>
+        <arg name="gain_z" default="0.5"/>
+    </include> 
+    
+    <!-- Start RViz  -->
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/controller_demo.rviz"/>
+
+</launch>
