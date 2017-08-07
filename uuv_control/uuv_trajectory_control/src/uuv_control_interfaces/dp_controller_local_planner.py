@@ -131,11 +131,14 @@ class DPControllerLocalPlanner(object):
             'go_to_incremental', GoToIncremental, self.go_to_incremental)
 
     def __del__(self):
-        # Removing logging message handlers
+        """Remove logging message handlers"""
         while self._logger.handlers:
             self._logger.handlers.pop()
 
     def _publish_trajectory_info(self, event):
+        """
+        Publish messages for the waypoints, trajectory and internal flags.
+        """
         if self._waypoints_msg is not None:
             self._waypoints_pub.publish(self._waypoints_msg)
         if self._trajectory_msg is not None:
@@ -159,45 +162,75 @@ class DPControllerLocalPlanner(object):
             self._logger.error('Error generating trajectory message')
 
     def _update_teleop(self, msg):
+        """
+        Callback to the twist teleop subscriber.
+        """
+        # Test whether the vehicle is in automatic mode (following a given trajectory)
         if self._is_automatic:
             self._teleop_vel_ref = None
             return 
+
+        # If this is the first twist message since the last time automatic mode was turned off,
+        # then just update the teleop timestamp and wait for the next message to allow computing 
+        # pose and velocity reference.
         if self._last_teleop_update is None:
             self._teleop_vel_ref = None
             self._last_teleop_update = rospy.get_time()
             return
 
+        # Store twist reference message
         self._teleop_vel_ref = msg
 
+        # Set the teleop mode is active only if any of the linear velocity components and 
+        # yaw rate are non-zero
         vel = np.array([self._teleop_vel_ref.linear.x, self._teleop_vel_ref.linear.y, self._teleop_vel_ref.linear.z, self._teleop_vel_ref.angular.z])
-
         self._is_teleop_active = np.abs(vel).sum() > 0
        
+        # Store time stamp
         self._last_teleop_update = rospy.get_time()
 
-    def _calc_teleop_reference(self):        
+    def _calc_teleop_reference(self):       
+        """
+        Compute pose and velocity reference using the joystick linear and angular velocity input.
+        """
+        # Check if there is already a timestamp for the last received reference message 
+        # from the teleop node 
         if self._last_teleop_update is None:
             self._is_teleop_active = False
 
+        # Compute time step
         self._dt = rospy.get_time() - self._last_teleop_update
+
+        # Compute the pose and velocity reference if the computed time step is positive and
+        # the twist teleop message is valid
         if self._dt > 0 and self._teleop_vel_ref is not None and self._dt < 0.1:                        
             speed = np.sqrt(self._teleop_vel_ref.linear.x**2 + self._teleop_vel_ref.linear.y**2)
             vel = np.array([self._teleop_vel_ref.linear.x, self._teleop_vel_ref.linear.y, self._teleop_vel_ref.linear.z])
+            # Cap the forward speed if needed
             if speed > self._max_forward_speed:
                 vel[0] *= self._max_forward_speed / speed
                 vel[1] *= self._max_forward_speed / speed
 
             vel = np.dot(self._vehicle_pose.rot_matrix, vel)
             
+            # Compute pose step
             step = uuv_trajectory_generator.TrajectoryPoint()
             step.pos = np.dot(self._vehicle_pose.rot_matrix, vel * self._dt)
             step.rotq = quaternion_about_axis(self._teleop_vel_ref.angular.z * self._dt, [0, 0, 1])
             
+            # Compute new reference 
             ref_pnt = uuv_trajectory_generator.TrajectoryPoint()
             ref_pnt.pos = self._vehicle_pose.pos + step.pos 
 
             ref_pnt.rotq = quaternion_multiply(self._vehicle_pose.rotq, step.rotq)
-            ref_pnt.vel = [vel[0], vel[1], vel[2], 0, 0, self._teleop_vel_ref.angular.z]
+            
+            # Cap the pose reference in Z to stay underwater
+            if ref_pnt.z > 0:
+                ref_pnt.z = 0.0                
+                ref_pnt.vel = [vel[0], vel[1], 0, 0, 0, self._teleop_vel_ref.angular.z]
+            else:
+                ref_pnt.vel = [vel[0], vel[1], vel[2], 0, 0, self._teleop_vel_ref.angular.z]
+
             ref_pnt.acc = np.zeros(6)
         else:
             self._is_teleop_active = False
