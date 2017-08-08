@@ -38,7 +38,8 @@ class WPTrajectoryGenerator(object):
     """
 
     def __init__(self, full_dof=False, use_finite_diff=True,
-                 interpolation_method='cubic_interpolator'):
+                 interpolation_method='cubic_interpolator',
+                 stamped_pose_only=False):
         """Class constructor."""
         self._logger = logging.getLogger('wp_trajectory_generator')
         out_hdlr = logging.StreamHandler(sys.stdout)
@@ -58,6 +59,9 @@ class WPTrajectoryGenerator(object):
         # Last interpolated point
         self._last_pnt = None
         self._this_pnt = None
+
+        # Flag to generate only stamped pose, no velocity profiles
+        self._stamped_pose_only = stamped_pose_only
 
         self._t_step = 0.001
 
@@ -120,6 +124,14 @@ class WPTrajectoryGenerator(object):
     def use_finite_diff(self, flag):
         assert type(flag) == bool
         self._use_finite_diff = flag
+
+    @property
+    def stamped_pose_only(self):
+        return self._stamped_pose_only
+
+    @stamped_pose_only.setter
+    def stamped_pose_only(self, flag):
+        self._stamped_pose_only = flag
 
     def get_interpolation_method(self):
         return self._interp_method
@@ -317,12 +329,18 @@ class WPTrajectoryGenerator(object):
                 pnts.append(dict(pos=self.interpolator.generate_pos(si),
                                  rot=self.interpolator.generate_quat(si),
                                  t=ti))
-            vel, acc = self._motion_regression_6d(pnts, pnt.rotq, pnt.t)
-            pnt.vel = vel
-            pnt.acc = acc
+            if not self._stamped_pose_only:
+                vel, acc = self._motion_regression_6d(pnts, pnt.rotq, pnt.t)
+                pnt.vel = vel
+                pnt.acc = acc
+            else:
+                pnt.vel = np.zeros(6)
+                pnt.acc = np.zeros(6)
         return pnt
 
     def _generate_vel(self, s=None):
+        if self._stamped_pose_only:
+            return np.zeros(6)
         cur_s = (self._cur_s if s is None else s)
         last_s = cur_s - self.interpolator.s_step
 
@@ -368,6 +386,7 @@ class WPTrajectoryGenerator(object):
         if t > self.interpolator.max_time or t - self.interpolator.start_time < 0:
             if t > self.interpolator.max_time:
                 self._has_ended = True
+                self._cur_s = 1
             else:
                 self._this_pnt = self.generate_pnt(0)
                 self._this_pnt.vel = np.zeros(6)

@@ -1,25 +1,35 @@
 <launch>
+    <!-- Flag to start recoding a rosbag  -->
     <arg name="record" default="false"/>
+    <!-- Initial position and heading of the vehicle (wrt Gazebo's inertial frame)  -->
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="-20"/> 
+    <arg name="yaw" default="0"/>
 
+    <!-- Initialize the Gazebo world  -->
     <include file="$(find uuv_descriptions)/launch/ocean_waves.launch"/>
         
+    <!-- Add the RexROV vehicle to the world  -->
     <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
-        <arg name="x" default="20"/>
-        <arg name="y" default="0"/>
-        <arg name="z" default="-20"/>
-        <arg name="yaw" default="0"/>
+        <arg name="x" default="$(arg x)"/>
+        <arg name="y" default="$(arg y)"/>
+        <arg name="z" default="$(arg z)"/>
+        <arg name="yaw" default="$(arg yaw)"/>
     </include>
 
+    <!-- Start the PID controller with its default parameters for the RexROV vehicle  -->
     <include file="$(find uuv_trajectory_control)/launch/rov_pid_controller.launch">
         <arg name="uuv_name" value="rexrov"/>
         <arg name="model_name" value="rexrov"/>
     </include>
 
-
+    <!-- Initialize the recording fo the simulation according to the record flag  -->
     <include file="$(find uuv_gazebo)/launch/controller_demos/record_demo.launch">
       <arg name="record" value="$(arg record)"/>
     </include>
 
+    <!-- Start RViz  -->
     <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/controller_demo.rviz"/>
 
 </launch>

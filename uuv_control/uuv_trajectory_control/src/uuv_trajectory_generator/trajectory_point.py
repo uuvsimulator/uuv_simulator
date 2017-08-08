@@ -76,15 +76,27 @@ class TrajectoryPoint(object):
         """Return X coordinate from the position vector."""
         return self._pos[0]
 
+    @x.setter
+    def x(self, x):
+        self._pos[0] = x
+
     @property
     def y(self):
         """Return Y coordinate from the position vector."""
         return self._pos[1]
 
+    @y.setter
+    def y(self, y):
+        self._pos[1] = y
+
     @property
     def z(self):
         """Return Z coordinate from the position vector."""
         return self._pos[2]
+
+    @z.setter
+    def z(self, z):
+        self._pos[2] = z
 
     @property
     def t(self):
