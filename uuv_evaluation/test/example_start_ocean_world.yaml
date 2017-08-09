@@ -1,0 +1,9 @@
+id: test_run_task_ocean_world
+execute:
+  cmd: "roslaunch uuv_evaluation example_start_ocean_world.launch"
+  params:
+    record: true
+    # Set this flag to true to allow Gazebo to start its front end. Otherwise, the simulation will run without the
+    # 3D visualization
+    gui: false
+    timeout: 1

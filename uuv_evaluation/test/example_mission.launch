@@ -1,0 +1,43 @@
+<launch>
+    <arg name="record" default="false"/>
+    <arg name="timeout" default="20"/>
+    <arg name="gui" default="false"/>
+    <arg name="bag_filename" default="recording.bag"/>
+
+    <!-- Controller parameters -->
+    <arg name="Kp" default="11993.888,11993.888,11993.888,19460.069,19460.069,19460.069"/>
+    <arg name="Kd" default="9077.459,9077.459,9077.459,18880.925,18880.925,18880.925"/>
+    <arg name="Ki" default="321.417,321.417,321.417,2096.951,2096.951,2096.951"/>
+
+    <include file="$(find uuv_descriptions)/launch/ocean_waves.launch">
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="set_timeout" value="true"/>
+        <arg name="timeout" value="$(arg timeout)"/>
+    </include>
+        
+    <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
+        <arg name="x" default="20"/>
+        <arg name="y" default="0"/>
+        <arg name="z" default="-20"/>
+        <arg name="yaw" default="0"/>
+    </include>
+
+    <include file="$(find uuv_trajectory_control)/launch/rov_pid_controller.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="model_name" value="rexrov"/>
+        <arg name="Kp" value="$(arg Kp)"/>
+        <arg name="Kd" value="$(arg Kd)"/>
+        <arg name="Ki" value="$(arg Ki)"/>
+    </include>
+
+    <include file="$(find uuv_control_utils)/launch/start_helical_trajectory.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="duration" value="100"/>
+        <arg name="radius" value="5"/>
+    </include>
+
+    <include file="$(find uuv_gazebo)/launch/controller_demos/record_demo.launch">
+      <arg name="record" value="$(arg record)"/>
+      <arg name="bag_filename" value="$(arg bag_filename)"/>
+    </include>
+</launch>
