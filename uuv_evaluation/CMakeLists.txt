@@ -15,3 +15,20 @@ catkin_install_python(PROGRAMS scripts/trajectory_eval.py
 install(DIRECTORY launch
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest)
+  foreach(T
+      test/example_mission.launch
+      test/example_start_ocean_world.launch
+      )
+     add_rostest(${T})
+  endforeach()
+
+  foreach(UNIT_TESTS
+    test/test_run_task.py
+    test/test_evaluation_trajectory.py
+    catkin_add_nosetests(${UNIT_TESTS}))
+  endforeach()
+  
+endif()
