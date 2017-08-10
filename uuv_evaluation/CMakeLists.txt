@@ -21,6 +21,7 @@ install(DIRECTORY launch
 
 install(PROGRAMS
     scripts/run_smac
+    scripts/clean_port_locks
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
