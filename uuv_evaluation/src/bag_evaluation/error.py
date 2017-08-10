@@ -19,6 +19,14 @@ from recording import Recording
 
 
 class TrajectoryError(object):
+    TAGS = ['position',
+            'linear_velocity',
+            'angular_velocity',
+            'angle',
+            'roll',
+            'pitch',
+            'yaw']
+
     def __init__(self, p_des, p_act):
         self.p_des = p_des
         self.p_act = p_act
@@ -106,7 +114,7 @@ class ErrorSet(object):
 
     def get_tags(self):
         if len(self._errors):
-            return self._errors[0].tags
+            return self._errors[0].TAGS
         else:
             return list()
 
