@@ -123,7 +123,7 @@ if __name__ == '__main__':
         with open(smac_file, 'r') as s_file:
             for line in s_file:
                 smac_result = json.loads(line)
-                sub_result_folder = os.path.join(args.output_dir, '%d' % idx)
+                sub_result_folder = os.path.join(os.getcwd(), args.output_dir, '%d' % idx)
 
                 cost.append(smac_result['cost'])
                 evals.append(smac_result['evaluations'])
