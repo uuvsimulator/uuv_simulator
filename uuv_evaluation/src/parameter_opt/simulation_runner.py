@@ -220,7 +220,11 @@ class SimulationRunner(object):
                 cmd = task['execute']['cmd'] + ' '
                 for param in task['execute']['params']:
                     # Adding parameters to the command line string
-                    cmd = cmd + param + ':=' + str(task['execute']['params'][param]) + ' '
+                    cmd += param + ':='
+                    if type(task['execute']['params'][param]) == bool:
+                        cmd += str(int(task['execute']['params'][param])) + ' '
+                    else:
+                        cmd += str(task['execute']['params'][param]) + ' '
                     if 'timeout' in param:
                         # Setting the process timeout
                         if task['execute']['params'][param] > 0 and timeout is None:         
