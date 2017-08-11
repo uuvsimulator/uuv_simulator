@@ -150,4 +150,4 @@ class KPI(object):
         return True
 
     def compute(self):
-        return None
+        raise NotImplementedError()

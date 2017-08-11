@@ -1,0 +1,275 @@
+#!/usr/bin/env python
+# Copyright (c) 2016 The UUV Simulator Authors.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import roslib
+import bag_evaluation
+import os
+import yaml
+import rospy
+import argparse
+import sys
+
+roslib.load_manifest('uuv_evaluation')
+
+KPIS = list()
+for kpi in bag_evaluation.metrics.KPI.get_all_kpi_tags():
+    if bag_evaluation.metrics.KPI.get_kpi_target(kpi) == 'error':
+        for error_tag in bag_evaluation.TrajectoryError.TAGS:
+            KPIS.append('%s_%s' % (kpi, error_tag))
+    else:
+        KPIS.append(kpi)
+
+PARAMETERS = ['var1', 'var2', 'var3', 'var4']
+
+INPUT_MAP = dict(mat1=['var1', 'var1', 'var1', 'var2', 'var2', 'var2'],
+                 mat2=['var3', 'var3', 'var3', 'var4', 'var4', 'var4'])
+
+LAUNCH_FILE_TEMPLATE = \
+"""
+<launch>
+    <!-- In this launch file, all necessary nodes for the simulation should be started
+         given that they all have to be terminaed together by the optimizer by the end
+         of each iteration
+    -->
+
+    <!-- Start the launch file with record:=false if it is not being used by the optimizer -->
+    <arg name="record" default="false"/>
+    <arg name="bag_filename" default="recording.bag"/>
+    <arg name="gui" default="true"/>
+    <arg name="timeout" default="10"/>
+
+    <!-- Vehicle's initial position -->
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="-20"/>
+    <arg name="yaw" default="0"/>
+
+    <!-- Input arguments to be optimized, mat1 and mat2 are listed under the
+         item <input_map> in the opt_config.yml file. The length of the lists
+         must be the same as the map in that file.
+    -->
+    <arg name="mat1" default="0,0,0,0,0,0"/>
+    <arg name="mat2" default="0,0,0,0,0,0"/>
+
+    <!-- Start the Gazebo world scenario 
+         Replace this block with any Gazebo world that allows to turn off
+         the front end. If you use a world launch file that does not contain 
+         the simulation timeout node, add the following to this launch file
+
+         <include file="$(find uuv_assistants)/launch/set_simulation_timer.launch">
+            <arg name="timeout" value="$(arg timeout)"/>
+        </include>
+    -->
+    <include file="$(find uuv_descriptions)/launch/empty_underwater_world.launch">
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="paused" value="false"/>
+        <arg name="set_timeout" value="true"/>
+        <arg name="timeout" value="$(arg timeout)"/>
+    </include>
+
+    <!-- Initialize the vehicle to be used
+         Replace the name of the vehicle's namespace below  
+    -->
+    <include file="$(find <vehicle_catkin_pkg>)/launch/<launch_file>.launch">
+        <arg name="x" default="$(arg x)"/>
+        <arg name="y" default="$(arg y)"/>
+        <arg name="z" default="$(arg z)"/>
+        <arg name="yaw" default="$(arg yaw)"/>
+    </include>
+
+    <!-- Start controller, in this template the controller parameters are 
+         optimized 
+    -->
+    <include file="$(find <control_catkin_pkg>)/launch/<controller_launch_file>.launch">
+        <arg name="uuv_name" value="<vehicle_namespace>"/>
+        <arg name="model_name" value="<vehicle_model_name>"/>
+        <!-- Add/edit the input parameters here -->
+        <arg name="mat1" value="$(arg mat1)"/>
+        <arg name="mat2" value="$(arg mat2)"/>
+    </include>
+
+    <!-- Start some trajectory or waypoint generator node -->
+    <include file="$(find uuv_control_utils)/launch/<trajectory_launch_file>.launch">
+        <arg name="uuv_name" value="<vehicle_namespace>"/>
+        <!-- Add necessary parameters here -->
+    </include>
+
+    <!-- Start the recording, the example below is only valid for 
+         the topics generated for the RexROV vehicle 
+    -->
+    <node pkg="rosbag" type="record" name="recording"
+        args="record -O $(arg bag_filename)
+        /<vehicle_namespace>/dp_controller/trajectory
+        /<vehicle_namespace>/dp_controller/reference
+        /<vehicle_namespace>/pose_gt
+        /hydrodynamics/current_velocity
+        /<vehicle_namespace>/thruster_manager/input
+        /<vehicle_namespace>/wrench_perturbation
+        /<vehicle_namespace>/thrusters/0/thrust
+        /<vehicle_namespace>/thrusters/1/thrust
+        /<vehicle_namespace>/thrusters/2/thrust
+        /<vehicle_namespace>/thrusters/3/thrust
+        /<vehicle_namespace>/thrusters/4/thrust
+        /<vehicle_namespace>/thrusters/5/thrust
+        /<vehicle_namespace>/thrusters/6/thrust
+        /<vehicle_namespace>/thrusters/7/thrust"
+        if="$(arg record)"/>
+</launch>
+"""
+
+INTRUCTIONS = \
+"""
+To run the SMAC optimization after setting up the configurations, run
+
+```bash
+>> cd <path_to_config>/smac_config
+>> rosrun uuv_evaluation run_smac -n <max_number_of_iterations>
+```
+
+After the optimization is finished, the folders smac_<timestamp> and results
+should be generated. To process the SMAC results and plot the results, run
+
+```bash
+>> cd <path_to_config>/smac_config
+>> rosrun uuv_evaluation evaluate_smac_best_results.py 
+```
+"""
+
+
+class Template:
+    __slots__ = ['filename', 'data', 'dir']
+    
+    def __init__(self, output_dir):
+        self.dir = output_dir
+
+    def save(self):
+        if self.data is None or self.filename is None:
+            print('Nothing to save')
+            return
+        with open(os.path.join(self.dir, self.filename), 'w') as f:
+            if ('.yml' in self.filename or '.yaml' in self.filename) and type(self.data) == dict:
+                yaml.dump(self.data, f, default_flow_style=False)
+            else:
+                f.write(self.data)                
+            print('File stored - ' + os.path.join(self.dir, self.filename))
+
+class TemplateOptConfig(Template):
+    def __init__(self, output_dir):
+        Template.__init__(self, output_dir)
+        self.filename = 'opt_config.yml'
+        self.data = dict(cost_fcn=dict(),
+                         task='task.yml',
+                         output_dir='./results',
+                         store_all_results=True,
+                         store_kpis_only=False,
+                         parameters=PARAMETERS,
+                         input_map=INPUT_MAP)
+        for kpi in KPIS:
+            self.data['cost_fcn'][kpi] = 0.0            
+
+class TemplateParameterConfig(Template):
+    def __init__(self, output_dir):
+        Template.__init__(self, output_dir)
+        self.filename = 'parameter_config.pcs'
+        self.data = str()
+        for p in PARAMETERS:
+            self.data += '%s [<min>, <max>] [<initial_value>]\n' % p
+
+class TemplateTask(Template):
+    def __init__(self, output_dir, name='smac_opt', catkin_pkg=None, launch_file=None):
+        Template.__init__(self, output_dir)
+        self.filename = 'task.yml'
+        self.data = dict(id=name,
+                         execute=dict(cmd='',
+                                      params=dict(record=True,
+                                                  gui=True,
+                                                  timeout=10)))
+        self.data['execute']['cmd'] = 'roslaunch '
+        if type(catkin_pkg) == str:
+            self.data['execute']['cmd'] += catkin_pkg
+        else:
+            self.data['execute']['cmd'] += '<catkin_png>'
+        self.data['execute']['cmd'] += ' '
+        if type(launch_file) == str:
+            self.data['execute']['cmd'] += launch_file
+        else:
+            self.data['execute']['cmd'] += '<launch_file>'
+
+class TemplateLaunchFile(Template):
+    def __init__(self, output_dir, launch_file=None):
+        Template.__init__(self, output_dir)
+        self.filename = launch_file
+        self.data = LAUNCH_FILE_TEMPLATE
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Create template files for SMAC")
+    parser.add_argument('--output_dir', type=str, default='smac_config')
+    parser.add_argument('--name', type=str, default='smac_config')
+    parser.add_argument('--catkin_pkg', type=str)
+    parser.add_argument('--launch_file', type=str, default='start_smac_task.launch')
+
+    args = parser.parse_args(rospy.myargv()[1:])
+
+    if args.catkin_pkg is None:
+        print('No catkin_pkg name given!')
+        sys.exit(1)
+
+    print('Creating the template files for SMAC optimization use-case')
+    print('Name = ' + args.name)
+    print('Output directory = ' + args.output_dir)
+
+    catkin_pkg = args.catkin_pkg
+    launch_file = None if len(args.launch_file) == 0 else args.launch_file
+    output_dir = args.output_dir
+    launch_file_dir = None
+
+    if catkin_pkg is not None:
+        if os.path.exists(catkin_pkg):
+            print('Catkin package already exists!')
+            sys.exit(1)
+        print('Optimization catkin_package = ' + catkin_pkg)
+        os.system('catkin_create_pkg ' + catkin_pkg)
+        if not os.path.isdir(catkin_pkg):
+            print('Catkin package could not be created')
+            sys.exit(1)
+        else:
+            output_dir = os.path.join(catkin_pkg, output_dir)        
+            launch_file_dir = os.path.join(catkin_pkg, 'launch')
+            if not os.path.isdir(launch_file_dir):
+                os.makedirs(launch_file_dir)
+            print('Created launch directory')
+
+    if None not in [launch_file, catkin_pkg]:
+        print('Optimization launch file = ' + launch_file)
+    else:
+        launch_file = None
+
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
+        print('Output directory <%s> created' % output_dir)
+
+    files = [TemplateOptConfig(output_dir),
+             TemplateParameterConfig(output_dir),
+             TemplateTask(output_dir, args.name, catkin_pkg, launch_file)]
+    
+    if catkin_pkg is not None:
+        files.append(TemplateLaunchFile(launch_file_dir, launch_file))
+
+    for f in files:
+        f.save()
+
+    with open(os.path.join(output_dir, 'INTRUCTIONS.md'), 'w') as f:
+        f.write(INTRUCTIONS)

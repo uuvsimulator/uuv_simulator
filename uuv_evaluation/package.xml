@@ -18,6 +18,8 @@
 
   <build_depend>rospy</build_depend>
   <run_depend>rospy</run_depend>
+  
+  <test_depend>rosunit</test_depend>
 
   <export>
   </export>
