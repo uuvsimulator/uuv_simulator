@@ -69,7 +69,8 @@ echo "paramfile = ${PARAM_FILE}" >> ${SCENARIO_FILE}
 echo "run_obj = ${RUN_OBJ}" >> ${SCENARIO_FILE}
 echo "runcount_limit = $2" >> ${SCENARIO_FILE}
 echo "deterministic = ${DETERMINISTIC}" >> ${SCENARIO_FILE}
+echo "abort_on_first_run_crash = false" >> ${SCENARIO_FILE}
 
 # Run SMAC for the scenario created, change the verbose flag to DEBUG, if necessary
 printf "Running SMAC"
-python3 ${SMAC_SCRIPT} --scenario ${SCENARIO_FILE} --verbose INFO
+python3 ${SMAC_SCRIPT} --scenario ${SCENARIO_FILE} --verbose DEBUG

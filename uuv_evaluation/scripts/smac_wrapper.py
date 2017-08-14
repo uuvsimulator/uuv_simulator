@@ -124,6 +124,6 @@ if __name__ == '__main__':
     except Exception, e:
         print('Error occurred in this iteration, setting simulation status to CRASHED, message=' + str(e))
         status = 'CRASHED'
-        cost = 0.0
+        cost = 1e7
 
     print('Result for SMAC: %s, 0, 0, %f, %s' % (status, cost, args.seed))
