@@ -28,20 +28,23 @@ display_help() {
     exit 1
 }
 
-
-case $1 in
-  "-n" | "--num_iterations" ) 
-    if [ -z "${2##[0-9]*}" ] && [ -n "$2" ] 2> /dev/null; then
-      echo Number of simulation runs requested: $2
-    else
-      echo Input argument must be a positive integer!
-      exit 1
-    fi         
-    ;;
-  -*) display_help
+if [ $# -eq 0 ];
+  then
+    display_help
     exit 1
-    ;;
-esac
+fi
+
+if [ "$1" = "-n" ]; then  
+  if [ -z "${2##[0-9]*}" ] && [ -n "$2" ] 2> /dev/null; then
+    echo Number of simulation runs requested: $2
+  else
+    echo Input argument must be a positive integer!
+    exit 1
+  fi    
+else
+  display_help
+  exit 1     
+fi
 
 
 # Path to the SMAC script
@@ -60,7 +63,7 @@ printf "SMAC runner script = %s\n" "${SMAC_SCRIPT}"
 printf "SMAC wrapper script = %s\n" "${SMAC_WRAPPER}"
 
 SCENARIO_FILE="scenario_$TODAY.txt"
-
+SEED=$(($RANDOM % 1000 + 1))
 printf "Creating the scenario configuration file, file=%s\n" "${SCENARIO_FILE}"
 
 # Fill the scenario configuration file
@@ -72,5 +75,5 @@ echo "deterministic = ${DETERMINISTIC}" >> ${SCENARIO_FILE}
 echo "abort_on_first_run_crash = false" >> ${SCENARIO_FILE}
 
 # Run SMAC for the scenario created, change the verbose flag to DEBUG, if necessary
-printf "Running SMAC"
-python3 ${SMAC_SCRIPT} --scenario ${SCENARIO_FILE} --verbose DEBUG
+printf "Running SMAC in parallel mode, start multiple instances of the optimization for use-case to use parallel resources."
+python3 ${SMAC_SCRIPT} --scenario ${SCENARIO_FILE} --verbose DEBUG 
