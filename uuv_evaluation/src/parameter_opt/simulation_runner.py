@@ -18,6 +18,7 @@ import os
 import sys
 import yaml
 import time
+import random
 import shutil
 import psutil
 import datetime
@@ -141,8 +142,7 @@ class SimulationRunner(object):
     def _get_port_lock_file(self, port):
         return os.path.join('/tmp', '%s-%d.lock' % (PORT_LOCK_FILE, port))
     
-    def _get_random_open_port(self, start=1000, end=3000, timeout=10):
-        import random
+    def _get_random_open_port(self, start=1000, end=3000, timeout=10):        
         start_time = time.time()
         while (time.time() - start_time) < timeout:
             port = random.randrange(start, end, 1)
@@ -188,7 +188,8 @@ class SimulationRunner(object):
 
         if self._add_folder_timestamp:
             self._sim_results_dir = os.path.join(
-                self._results_folder, strftime("%Y-%m-%d %H:%M:%S", gmtime())).replace(' ', '_')
+                self._results_folder, 
+                strftime("%Y-%m-%d %H:%M:%S", gmtime()) + '_' + str(random.randrange(0, 1000, 1))).replace(' ', '_')
         else:
             self._sim_results_dir = self._results_folder
 
