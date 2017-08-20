@@ -44,7 +44,7 @@ add_library(uuv_underwater_world
 target_link_libraries(uuv_underwater_world
   ${GAZEBO_LIBRARIES}
   ${Boost_LIBRARIES}
-  ${catkin_INCLUDE_DIRS})
+  ${catkin_LIBRARIES})
 
 #############
 ## Install ##
