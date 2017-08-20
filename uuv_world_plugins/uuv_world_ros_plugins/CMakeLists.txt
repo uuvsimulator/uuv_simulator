@@ -28,9 +28,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 add_library(uuv_underwater_world_ros_plugin src/UnderwaterWorldROSPlugin.cc)
 target_link_libraries(uuv_underwater_world_ros_plugin ${catkin_LIBRARIES})
-add_dependencies(uuv_underwater_world_ros_plugin
-  uuv_underwater_world
-  ${catkin_EXPORTED_TARGETS})
+add_dependencies(uuv_underwater_world_ros_plugin ${catkin_EXPORTED_TARGETS})
 
 ## Mark executables and/or libraries for installation
 install(TARGETS uuv_underwater_world_ros_plugin
