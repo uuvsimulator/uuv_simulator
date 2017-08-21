@@ -37,6 +37,7 @@ if(CATKIN_ENABLE_TESTING)
   foreach(UNIT_TESTS
     test/test_run_task.py
     test/test_evaluation_trajectory.py
+    test/test_kpis.py
     catkin_add_nosetests(${UNIT_TESTS}))
   endforeach()
   
