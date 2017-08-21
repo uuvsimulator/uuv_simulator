@@ -60,8 +60,13 @@ void UnderwaterCameraPlugin::Load(sensors::SensorPtr _sensor,
     getSdfParam<unsigned char>(_sdf, "backgroundB", background[2], 0);
 
     // Compute camera intrinsics fx, fy from FOVs:
+#if GAZEBO_MAJOR_VERSION >= 7
+    math::Angle hfov = math::Angle(this->depthCamera->HFOV().Radian());
+    math::Angle vfov = math::Angle(this->depthCamera->VFOV().Radian());
+#else
     math::Angle hfov = this->depthCamera->GetHFOV();
     math::Angle vfov = this->depthCamera->GetVFOV();
+#endif
 
     double fx = (0.5*this->width)/tan(0.5*hfov.Radian());
     double fy = (0.5*this->height)/tan(0.5*vfov.Radian());
