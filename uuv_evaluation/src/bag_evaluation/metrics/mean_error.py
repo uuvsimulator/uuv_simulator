@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import numpy as np
 from .kpi import KPI
 
 
@@ -22,13 +23,22 @@ class MeanError(KPI):
     UNIT = 'm'
     TARGET = 'error'
 
-    def __init__(self, error_elem='position'):
-        KPI.__init__(self)
-        assert error_elem in self._error_set.get_tags(), 'Error element given does not exist'
-        # Initialize the data structure for this KPI
+    def __init__(self, error_elem='position', use_bag=True):
+        KPI.__init__(self, use_bag)
         self._kpi_arg = error_elem
-        self._input_values = dict(error=self._error_set.get_data(error_elem))
 
-    def compute(self):
+        if self._error_set is not None:
+            assert error_elem in self._error_set.get_tags(), 'Error element given does not exist'
+            # Initialize the data structure for this KPI
+            self._input_values = dict(error=self._error_set.get_data(error_elem))
+        else:
+            self._input_values = None
+
+    def compute(self, input_values=None):
+        assert input_values is not None or self._input_values is not None, 'No input data to process'
+        if self._input_values is None:
+            assert self.is_iterable(input_values), 'Invalid input data'
+            self._input_values = dict(error=np.array(input_values))
+
         self._kpi_value = self.get_mean_error(self._input_values['error'])
         return self._kpi_value
