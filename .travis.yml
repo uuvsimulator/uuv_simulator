@@ -1,47 +1,13 @@
-dist: xenial
-sudo: required
-language:
-  - generic
-cache:
-  - apt
-
+sudo: required 
+dist: trusty 
+language: generic 
+compiler:
+  - gcc
 env:
-  global:
-    - ROS_DISTRO=kinetic
-    - ROS_CI_DESKTOP=xenial #"`lsb_release -cs`"  # e.g. [precise|trusty|...]
-    - CI_SOURCE_PATH=$(pwd)
-    - ROS_PARALLEL_JOBS='-j8 -l6'
-
-before_install:
-  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main" > /etc/apt/sources.list.d/ros-latest.list'
-  - sudo apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
-  - sudo apt-get update -qq
-  - sudo apt-get install -y python-catkin-tools python-rosdep python-wstool ros-$ROS_DISTRO-catkin ros-$ROS_DISTRO-desktop
-  - source /opt/ros/$ROS_DISTRO/setup.bash
-  # Prepare rosdep to install dependencies.
-  - sudo rosdep init
-  - rosdep update
-
+  matrix:
+    - USE_DEB=true  ROS_DISTRO="kinetic" ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu
+    - USE_DEB=true  ROS_DISTRO="kinetic" ROS_REPOSITORY_PATH=http://packages.ros.org/ros-shadow-fixed/ubuntu
 install:
-  - mkdir -p ~/catkin_ws/src
-  - cd ~/catkin_ws/src
-  - catkin_init_workspace
-  - cd ~/catkin_ws
-  - source devel/setup.bash
-  - cd ~/catkin_ws/src
-  - ln -s $CI_SOURCE_PATH .
-
-before_script:
-  # source dependencies: install using wstool.
-  - cd ~/catkin_ws/src
-  - wstool init
-  - wstool up
-  # package depdencies: install using rosdep.
-  - cd ~/catkin_ws
-  - rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
-
-script:
-  - source /opt/ros/$ROS_DISTRO/setup.bash
-  - source /usr/share/gazebo-7/setup.sh
-  - cd ~/catkin_ws
-  - catkin build
+  - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config  
+script: 
+  - source .ci_config/travis.sh
