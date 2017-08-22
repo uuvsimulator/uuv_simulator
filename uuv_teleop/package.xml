@@ -18,11 +18,23 @@
 
   <build_depend>joy</build_depend>
   <build_depend>joy_teleop</build_depend>
+  <build_depend>python-numpy</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>uuv_gazebo_ros_plugins_msgs</build_depend>
+  <build_depend>uuv_thruster_manager</build_depend>
 
   <run_depend>joy</run_depend>
   <run_depend>joy_teleop</run_depend>
-
-  <export>
-
-  </export>
+  <run_depend>python-numpy</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>uuv_gazebo_ros_plugins_msgs</run_depend>
+  <run_depend>uuv_thruster_manager</run_depend>
 </package>

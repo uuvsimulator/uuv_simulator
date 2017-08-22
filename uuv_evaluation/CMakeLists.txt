@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_evaluation)
 
-find_package(catkin REQUIRED COMPONENTS rospy)
+find_package(catkin REQUIRED COMPONENTS 
+  rospy
+  roslib
+  rosbag
+  tf
+  uuv_trajectory_control)
 
 catkin_python_setup()
 

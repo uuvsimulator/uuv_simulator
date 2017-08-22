@@ -12,4 +12,13 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <run_depend>uuv_manipulators_kinematics</run_depend>
+  <run_depend>uuv_manipulators_control</run_depend>
+  <run_depend>controller_manager</run_depend>
+  <run_depend>uuv_teleop</run_depend>
+  <run_depend>ros_controllers</run_depend>
+  <run_depend>ros_control</run_depend>
+  <run_depend>gazebo_ros_control</run_depend>
+  <run_depend>effort_controllers</run_depend>
+
 </package>

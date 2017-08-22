@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_world_ros_plugins)
 
-find_package(catkin REQUIRED
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  gazebo_msgs
+  geometry_msgs
   uuv_world_plugins
   uuv_world_ros_plugins_msgs)
 

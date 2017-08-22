@@ -13,12 +13,31 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>gazebo_ros</build_depend>
-  <build_depend>roscpp</build_depend>
   <build_depend>control_toolbox</build_depend>
-  <build_depend>rostest</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>orocos_kdl</build_depend>
+  <build_depend>python-numpy</build_depend>
+  <build_depend>python-lxml</build_depend>
+  <build_depend>python-yaml</build_depend>
+  <build_depend>uuv_manipulators_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>tf</build_depend>
 
   <run_depend>gazebo_ros</run_depend>
-  <run_depend>roscpp</run_depend>
   <run_depend>control_toolbox</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>orocos_kdl</run_depend>
+  <run_depend>python-numpy</run_depend>
+  <run_depend>python-lxml</run_depend>
+  <run_depend>python-yaml</run_depend>
+  <run_depend>uuv_manipulators_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend> 
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>std_msgs</run_depend> 
+  <run_depend>tf</run_depend>
 
+  <test_depend>rosunit</test_depend>
+  <test_depend>rostest</test_depend>
 </package>

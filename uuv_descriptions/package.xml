@@ -18,7 +18,10 @@
 
   <run_depend>gazebo_ros</run_depend>
   <run_depend>gazebo_ros_control</run_depend>
-
+  <run_depend>message_to_tf</run_depend>
+  <run_depend>uuv_sensor_plugins_ros</run_depend>
+  <run_depend>uuv_gazebo_ros_plugins</run_depend>
+  
   <export>
     <gazebo_ros gazebo_media_path="${prefix}"
                 gazebo_model_path="${prefix}/world_models"/>
