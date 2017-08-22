@@ -41,7 +41,7 @@ class CartesianController(object):
 
         # Retrieve the publish rate
         self._publish_rate = 25
-        if not rospy.has_param('~publish_rate'):
+        if rospy.has_param('~publish_rate'):
             self._publish_rate = rospy.get_param('~publish_rate')
 
         if self._publish_rate <= 0:

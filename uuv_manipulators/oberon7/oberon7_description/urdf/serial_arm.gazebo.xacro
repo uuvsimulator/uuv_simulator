@@ -106,7 +106,8 @@
         <height>${base_height}</height>
       </box>
       <hydrodynamic_model>
-        <type>fossen</type>
+        <type>cylinder</type>
+        <axis>i</axis>
       </hydrodynamic_model>
     </link>
 
@@ -118,7 +119,8 @@
         <height>${shoulder_link_height}</height>
       </box>
       <hydrodynamic_model>
-        <type>fossen</type>
+        <type>cylinder</type>
+        <axis>i</axis>
       </hydrodynamic_model>
     </link>
 
@@ -130,7 +132,8 @@
         <height>${upper_arm_height}</height>
       </box>
       <hydrodynamic_model>
-        <type>fossen</type>
+        <type>cylinder</type>
+        <axis>i</axis>
       </hydrodynamic_model>
     </link>
 
@@ -142,7 +145,8 @@
         <height>${elbow_link_height}</height>
       </box>
       <hydrodynamic_model>
-        <type>fossen</type>
+        <type>cylinder</type>
+        <axis>i</axis>
       </hydrodynamic_model>
     </link>
 
@@ -154,7 +158,8 @@
         <height>${forearm_height}</height>
       </box>
       <hydrodynamic_model>
-        <type>fossen</type>
+        <type>cylinder</type>
+        <axis>i</axis>
       </hydrodynamic_model>
     </link>
 
@@ -166,7 +171,8 @@
         <height>${wrist_height}</height>
       </box>
       <hydrodynamic_model>
-        <type>fossen</type>
+        <type>cylinder</type>
+        <axis>i</axis>
       </hydrodynamic_model>
     </link>
   </xacro:macro>

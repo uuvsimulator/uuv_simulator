@@ -24,14 +24,29 @@ class MaxAbsThrust(KPI):
     TARGET = 'thruster'
 
 
-    def __init__(self):
-        KPI.__init__(self)
-        # Initialize the data structure for this KPI
-        self._input_values = dict()
-        for i in range(self._bag.n_thrusters):
-            t, thrusts = self._bag.get_thruster_data(i)
-            self._input_values[i] = thrusts
+    def __init__(self, use_bag=True):
+        KPI.__init__(self, use_bag)
 
-    def compute(self):
+        if self._bag is not None:
+            # Initialize the data structure for this KPI
+            self._input_values = dict()
+            for i in range(self._bag.n_thrusters):
+                t, thrusts = self._bag.get_thruster_data(i)
+                self._input_values[i] = thrusts
+        else:
+            self._input_values = None
+
+    def compute(self, input_values=None):
+        assert input_values is not None or self._input_values is not None, 'No input data to process'
+
+        if self._input_values is None:
+            assert type(input_values) is dict, 'Input dict is not a dictionary'
+            assert len(input_values.keys()) > 0, 'Dictionary is empty'
+            self._input_values = dict()
+            for i, tag in enumerate(input_values.keys()):
+                assert i == tag, 'Thruster indexes must be the keys of the dictionary'
+                assert self.is_iterable(input_values[tag]), 'No valid thrust force data'
+                self._input_values[tag] = np.array(input_values)
+
         self._kpi_value = np.max([np.max(np.abs(self._input_values[i])) for i in self._input_values])
         return self._kpi_value
