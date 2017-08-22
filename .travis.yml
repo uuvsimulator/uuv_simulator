@@ -1,0 +1,48 @@
+dist: xenial
+sudo: required
+language:
+  - generic
+cache:
+  - apt
+
+env:
+  global:
+    - ROS_DISTRO=kinetic
+    - ROS_CI_DESKTOP="`lsb_release -cs`"  # e.g. [precise|trusty|...]
+    - CI_SOURCE_PATH=$(pwd)
+    - ROS_PARALLEL_JOBS='-j8 -l6'
+
+before_install:
+  - sudo sh -c "echo \"deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main\" > /etc/apt/sources.list.d/ros-latest.list"
+  - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+  - sudo apt-get update -qq
+  - sudo apt-get install -y python-netcdf4 python-catkin-tools python-rosdep python-wstool ros-$ROS_DISTRO-catkin ros-$ROS_DISTRO-desktop-full
+  - source /opt/ros/$ROS_DISTRO/setup.bash
+  # Prepare rosdep to install dependencies.
+  - sudo rosdep init
+  - rosdep update
+
+install:
+  - mkdir -p ~/catkin_ws/src
+  - cd ~/catkin_ws/src
+  - catkin_init_workspace
+  - cd ~/catkin_ws
+  - source devel/setup.bash
+  - cd ~/catkin_ws/src
+  - ln -s $CI_SOURCE_PATH .
+
+before_script:
+  # source dependencies: install using wstool.
+  - cd ~/catkin_ws/src
+  - wstool init
+  - if [[ -f $ROSINSTALL_FILE ]] ; then wstool merge $ROSINSTALL_FILE ; fi
+  - wstool up
+  # package depdencies: install using rosdep.
+  - cd ~/catkin_ws
+  - rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
+
+script:
+  - source /opt/ros/$ROS_DISTRO/setup.bash
+  - source /usr/share/gazebo-7/setup.sh
+  - cd ~/catkin_ws
+  - catkin build
