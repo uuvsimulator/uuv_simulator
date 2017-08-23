@@ -696,9 +696,9 @@ HMCylinder::HMCylinder(sdf::ElementPtr _sdf,
   if (modelParams->HasElement("axis"))
   {
     this->axis = modelParams->Get<std::string>("axis");
-    // GZ_ASSERT(this->axis.compare("i") != 0 &&
-    //           this->axis.compare("j") != 0 &&
-    //           this->axis.compare("k") != 0, "Invalid axis of rotation");
+    GZ_ASSERT(this->axis.compare("i") == 0 ||
+              this->axis.compare("j") == 0 ||
+              this->axis.compare("k") == 0, "Invalid axis of rotation");
   }
   else
   {
@@ -746,9 +746,9 @@ HMCylinder::HMCylinder(sdf::ElementPtr _sdf,
       this->Ma(4, 4) = -MaLengthTorque;
       this->Ma(5, 5) = -MaLengthTorque;
 
-      this->quadDampCoef[0] = DCirc;
-      this->quadDampCoef[1] = DLength;
-      this->quadDampCoef[2] = DLength;
+      this->DNonLin(0, 0) = DCirc;
+      this->DNonLin(1, 1) = DLength;
+      this->DNonLin(2, 2) = DLength;
   }
   else if (this->axis.compare("j") == 0)
   {
@@ -759,9 +759,9 @@ HMCylinder::HMCylinder(sdf::ElementPtr _sdf,
       this->Ma(3, 3) = -MaLengthTorque;
       this->Ma(5, 5) = -MaLengthTorque;
 
-      this->quadDampCoef[0] = DLength;
-      this->quadDampCoef[1] = DCirc;
-      this->quadDampCoef[2] = DLength;
+      this->DNonLin(0, 0) = DLength;
+      this->DNonLin(1, 1) = DCirc;
+      this->DNonLin(2, 2) = DLength;
   }
   else
   {
@@ -772,9 +772,9 @@ HMCylinder::HMCylinder(sdf::ElementPtr _sdf,
       this->Ma(3, 3) = -MaLengthTorque;
       this->Ma(4, 4) = -MaLengthTorque;
 
-      this->quadDampCoef[0] = DLength;
-      this->quadDampCoef[1] = DLength;
-      this->quadDampCoef[2] = DCirc;
+      this->DNonLin(0, 0) = DLength;
+      this->DNonLin(1, 1) = DLength;
+      this->DNonLin(2, 2) = DCirc;
   }
 }
 

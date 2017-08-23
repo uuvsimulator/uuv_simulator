@@ -1,7 +1,16 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_nc_parser)
 
-find_package(catkin REQUIRED std_msgs geometry_msgs message_generation)
+find_package(catkin REQUIRED COMPONENTS 
+  std_msgs 
+  geometry_msgs 
+  message_generation
+  gazebo_msgs
+  rospy
+  rostopic
+  rosgraph
+  roslib
+  uuv_gazebo_ros_plugins_msgs)
 
 catkin_python_setup()
 

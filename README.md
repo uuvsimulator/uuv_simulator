@@ -24,3 +24,7 @@ UUV Simulator is open-sourced under the Apache-2.0 license. See the
 
 For a list of other open source components included in UUV Simulator, see the
 file [3rd-party-licenses.txt](3rd-party-licenses.txt).
+
+## Status for the master branch
+
+[![Build Status](https://travis-ci.org/uuvsimulator/uuv_simulator.svg?branch=master)](https://travis-ci.org/uuvsimulator/uuv_simulator)

@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_thruster_manager)
 
-find_package(catkin REQUIRED std_msgs message_generation)
+find_package(catkin REQUIRED COMPONENTS
+  std_msgs 
+  message_generation
+  tf
+  rospy
+  uuv_gazebo_ros_plugins_msgs
+  geometry_msgs)
 
 catkin_python_setup()
 

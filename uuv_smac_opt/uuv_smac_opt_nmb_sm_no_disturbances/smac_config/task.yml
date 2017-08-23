@@ -5,5 +5,5 @@ execute:
     record: true
     # Set this flag to true to allow Gazebo to start its front end. Otherwise, the simulation will run without the
     # 3D visualization
-    gui: true
+    gui: false
     timeout: 105

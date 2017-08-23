@@ -7,6 +7,8 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   std_msgs
   uuv_gazebo_ros_plugins_msgs
+  roscpp
+  visualization_msgs
 )
 
 find_package(gazebo REQUIRED)
@@ -45,20 +47,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 add_library(fin_ros_plugin src/FinROSPlugin.cc)
 target_link_libraries(fin_ros_plugin ${catkin_LIBRARIES})
 add_dependencies(fin_ros_plugin
-  fin_plugin
-  uuv_gazebo_plugins_msgs
   ${catkin_EXPORTED_TARGETS})
 
 add_library(thruster_ros_plugin src/ThrusterROSPlugin.cc)
 target_link_libraries(thruster_ros_plugin ${catkin_LIBRARIES})
 add_dependencies(thruster_ros_plugin
-  thruster_plugin
-  uuv_gazebo_plugins_msgs
   ${catkin_EXPORTED_TARGETS})
 
 add_library(underwater_object_ros_plugin src/UnderwaterObjectROSPlugin.cc)
 target_link_libraries(underwater_object_ros_plugin ${catkin_LIBRARIES})
-add_dependencies(underwater_object_ros_plugin underwater_object_plugin)
+add_dependencies(underwater_object_ros_plugin 
+  ${catkin_EXPORTED_TARGETS})
 
 add_library(joint_state_publisher src/JointStatePublisher.cc)
 target_link_libraries(joint_state_publisher ${catkin_LIBRARIES})

@@ -61,8 +61,13 @@ class DPControllerBase(object):
         else:
             self._logger.info('Setting controller as non-model-based')
 
+        self._use_stamped_poses_only = False
+        if rospy.has_param('~use_stamped_poses_only'):
+            self._use_stamped_poses_only = rospy.get_param('~use_stamped_poses_only')
+
         # Instance of the local planner for local trajectory generation
-        self._local_planner = LocalPlanner(full_dof=False)
+        self._local_planner = LocalPlanner(full_dof=False, 
+                                           stamped_pose_only=self._use_stamped_poses_only)
 
         # Instance of the vehicle model
         self._vehicle_model = None
@@ -76,11 +81,12 @@ class DPControllerBase(object):
         self._create_vehicle_model()
 
         self._control_saturation = 5000
+
         if rospy.has_param('~saturation'):
             self._thrust_saturation = rospy.get_param('~saturation')
             if self._control_saturation <= 0:
                 raise rospy.ROSException('Invalid control saturation forces')
-
+        
         # Remap the following topics, if needed
         # Publisher for thruster allocator
         self._thrust_pub = rospy.Publisher('thruster_output',

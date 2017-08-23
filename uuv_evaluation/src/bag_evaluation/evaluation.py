@@ -26,8 +26,11 @@ import matplotlib.pyplot as plt
 import logging
 from mpl_toolkits.mplot3d import Axes3D
 
-plt.rc('text', usetex=True)
-plt.rc('font', family='sans-serif')
+try:
+    plt.rc('text', usetex=True)
+    plt.rc('font', family='sans-serif')
+except Exception, e:
+    print 'Cannot use Latex configuration with matplotlib, message=', str(e)
 
 class Evaluation(object):
     PLOT_CONFIG = dict(paths=dict(figsize=[12, 8],

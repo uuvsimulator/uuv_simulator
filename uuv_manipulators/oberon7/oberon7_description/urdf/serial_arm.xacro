@@ -161,7 +161,7 @@
             <origin xyz="0.55616 -0.01229 0" rpy="0 0 0"/>
             <dynamics damping="50" friction="120"/>
             <axis xyz="0 0 1"/>
-            <limit lower="${-90 * d2r}" upper="${60 * d2r}" velocity=".13" effort="300"/>
+            <limit lower="${-90 * d2r}" upper="${60 * d2r}" velocity=".13" effort="1000"/>
         </joint>
 
         <xacro:simple_transmission joint="${namespace}/elbow" />  
@@ -197,7 +197,7 @@
             <origin xyz="0.1349014 -0.1936267 0" rpy="${0.5*PI} 0 0"/>
             <axis xyz="0 0 1"/>
             <dynamics damping="50" friction="120"/>
-            <limit lower="${-135 * d2r}" upper="${135 * d2r}" velocity=".085" effort="200"/>
+            <limit lower="${-135 * d2r}" upper="${135 * d2r}" velocity=".085" effort="1000"/>
         </joint>
 
         <xacro:simple_transmission joint="${namespace}/roll" />  
@@ -233,7 +233,7 @@
             <origin xyz="0 0 0.31595760629823427" rpy="${-0.5*PI} ${-0.5*PI} 0"/>
             <axis xyz="0 0 1"/>
             <dynamics damping="50" friction="120"/>
-            <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".26" effort="200"/>
+            <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".26" effort="1000"/>
         </joint>
 
         <xacro:simple_transmission joint="${namespace}/pitch" />  

@@ -23,13 +23,17 @@ class KPI(object):
     UNIT = ''
     TARGET = ''
 
-    def __init__(self):
+    def __init__(self, use_bag=True):
         self._input_values = dict()
 
-        self._bag = Recording.get_instance()
-        assert self._bag is not None, 'No recording found, data has not been parsed'
-        self._error_set = ErrorSet.get_instance()
-        assert self._error_set is not None, 'Error set has not been initialized'
+        self._bag = None
+        self._error_set = None
+
+        if use_bag:
+            self._bag = Recording.get_instance()
+            assert self._bag is not None, 'No recording found, data has not been parsed'
+            self._error_set = ErrorSet.get_instance()
+            assert self._error_set is not None, 'Error set has not been initialized'
 
         self._kpi_value = None
         self._kpi_arg = ''
@@ -141,6 +145,14 @@ class KPI(object):
     def get_mean_error(values):
         return KPI.get_error(values).mean()
 
+    def is_iterable(self, input_values):
+        try:
+            it = iter(input_values)
+        except TypeError:
+            print 'Input values are not iterable'
+            return False
+        return True
+
     def set_input_values(self, values):
         for tag in self._input_values:
             if tag not in values:
@@ -150,4 +162,4 @@ class KPI(object):
         return True
 
     def compute(self):
-        return None
+        raise NotImplementedError()

@@ -83,6 +83,13 @@ class KinChainInterface(object):
         self._chain = self._kdl_tree.getChain(self._base_link,
                                               self._tip_link)
 
+        # Partial tree from base to each link
+        self._chain_part = dict()
+        for link in self._robot_description.links:
+            if link.name in self.link_names:
+                self._chain_part[link.name] = self._kdl_tree.getChain(
+                    self._base_link, link.name)
+
         # Get joint names from the chain
         # Joint names
         self._joint_names = list()
@@ -98,6 +105,12 @@ class KinChainInterface(object):
 
         # Jacobian solvers
         self._jac_kdl = PyKDL.ChainJntToJacSolver(self._chain)
+        # Jacobian solver dictionary for partial trees
+        self._jac_kdl_part = dict()
+        for link in self._robot_description.links:
+            if link.name in self.link_names:
+                self._jac_kdl_part[link.name] = PyKDL.ChainJntToJacSolver(
+                    self._chain_part[link.name])
         # Forward position kinematics solvers
         self._fk_p_kdl = PyKDL.ChainFkSolverPos_recursive(self._chain)
         # Forward velocity kinematics solvers
@@ -278,26 +291,46 @@ class KinChainInterface(object):
             kdl_array = PyKDL.JntArrayVel(kdl_array)
         return kdl_array
 
-    def jacobian(self, joint_values=None):
-        """Compute the Jacobian for the current joint positions."""
+    def inertia(self):
         jnt_array = self.joints_to_kdl('positions')
-        jac = PyKDL.Jacobian(jnt_array.rows())
-        self._jac_kdl.JntToJac(
-            jnt_array, jac)
-        mat = self.kdl_to_mat(jac)
+        M_x_ee = PyKDL.JntSpaceInertiaMatrix(self.n_joints)
+        self._dyn_kdl.JntToMass(jnt_array, M_x_ee)
+        mat = self.kdl_to_mat(M_x_ee)
         return mat
 
-    def jacobian_transpose(self, joint_values=None):
+    def jacobian(self, joint_values=None, end_link=None):
+        """Compute the Jacobian for the current joint positions."""
+        if end_link is not None:
+            jnt_array = self.joints_to_kdl('positions', last_joint=self.joint_names[self.link_names.index(end_link)])
+            jac = PyKDL.Jacobian(jnt_array.rows())
+            jac_kdl_part = self._jac_kdl_part[end_link]
+            jac_kdl_part.JntToJac(jnt_array, jac)
+            mat = self.kdl_to_mat(jac)
+            mat_add = np.matrix(np.zeros((mat.shape[0], mat.shape[0]-mat.shape[1])))
+            mat = np.concatenate((mat,mat_add), axis=1)
+        else:
+            jnt_array = self.joints_to_kdl('positions')
+            jac = PyKDL.Jacobian(jnt_array.rows())
+            self._jac_kdl.JntToJac(
+                jnt_array, jac)
+            mat = self.kdl_to_mat(jac)
+        return mat
+
+    def jacobian_transpose(self, joint_values=None, end_link=None):
         """Return the Jacobian transpose."""
         if joint_values is None:
             joint_values = self.joint_angles
+        if end_link is not None:
+            return self.jacobian(end_link=end_link).T
         return self.jacobian(joint_values).T
 
-    def jacobian_pseudo_inverse(self, joint_values=None, last_joint=None):
+    def jacobian_pseudo_inverse(self, joint_values=None, end_link=None):
         """Return the pseudo-inverse of the Jacobian matrix."""
         if joint_values is None:
             joint_values = self.joint_angles
-        return np.linalg.pinv(self.jacobian(joint_values, last_joint))
+        if end_link is not None:
+            return np.linalg.pinv(self.jacobian(end_link=end_link))
+        return np.linalg.pinv(self.jacobian(joint_values))
 
     def forward_position_kinematics(self, joint_values=None, segment_idx=-1):
         """Computation of the forward kinematics for this chain."""
