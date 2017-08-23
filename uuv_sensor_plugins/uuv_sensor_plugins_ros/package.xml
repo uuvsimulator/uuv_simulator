@@ -16,12 +16,22 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <build_depend>gazebo</build_depend>
+  <build_depend>gazebo_plugins</build_depend>
   <build_depend>sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
   <build_depend>uuv_gazebo_plugins</build_depend>
   <build_depend>uuv_sensor_plugins</build_depend>
   <build_depend>uuv_sensor_plugins_ros_msgs</build_depend>
 
+  <run_depend>gazebo</run_depend>
+  <run_depend>gazebo_plugins</run_depend>
   <run_depend>sensor_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>roscpp</run_depend>
   <run_depend>uuv_gazebo_plugins</run_depend>
   <run_depend>uuv_sensor_plugins</run_depend>
   <run_depend>uuv_sensor_plugins_ros_msgs</run_depend>

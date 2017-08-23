@@ -1,7 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_control_utils)
 
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+        rospy
+        gazebo_msgs
+        geometry_msgs
+        uuv_world_ros_plugins_msgs
+        uuv_gazebo_ros_plugins_msgs
+        uuv_control_msgs
+        std_msgs
+        visualization_msgs
+        nav_msgs
+        uuv_trajectory_control)
 
 catkin_package()
 

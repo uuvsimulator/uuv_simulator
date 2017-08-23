@@ -4,7 +4,15 @@ project(uuv_trajectory_control)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  rospy 
+  roslib
+  geometry_msgs
+  uuv_control_msgs
+  tf
+  std_msgs
+  nav_msgs
+  visualization_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -25,6 +33,7 @@ install(DIRECTORY launch config
         PATTERN "*~" EXCLUDE)
 
 if (CATKIN_ENABLE_TESTING)
+  find_package(rostest)
   catkin_add_nosetests(tests/test_waypoint.py)
   catkin_add_nosetests(tests/test_trajectory_point.py)
   catkin_add_nosetests(tests/test_waypoint_set.py)

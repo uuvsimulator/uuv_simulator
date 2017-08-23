@@ -8,7 +8,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
     uuv_manipulators_kinematics
+    uuv_manipulators_msgs
+    uuv_control_cascaded_pid
+    rospy
+    geometry_msgs
+    std_msgs
+    visualization_msgs
+    sensor_msgs
+    tf
 )
+
+find_package(orocos_kdl REQUIRED)
 
 catkin_python_setup()
 

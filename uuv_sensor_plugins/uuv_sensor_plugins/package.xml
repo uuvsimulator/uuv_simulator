@@ -16,9 +16,13 @@
 
   <buildtool_depend>catkin</buildtool_depend>  
 
-  <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- Other tools can request additional information be placed here -->
+  <build_depend>gazebo</build_depend>
+  <build_depend>eigen</build_depend>
+  <build_depend>libopencv-dev</build_depend>
+  <build_depend>protobuf-dev</build_depend>
 
-  </export>
+  <run_depend>gazebo</run_depend>
+  <run_depend>eigen</run_depend>
+  <run_depend>libopencv-dev</run_depend>
+  <run_depend>protobuf-dev</run_depend>
 </package>

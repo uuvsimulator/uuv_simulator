@@ -28,8 +28,11 @@ from mpl_toolkits.mplot3d import Axes3D
 
 from bag_evaluation import Evaluation
 
-plt.rc('text', usetex=True)
-plt.rc('font', family='sans-serif')
+try:
+    plt.rc('text', usetex=True)
+    plt.rc('font', family='sans-serif')
+except Exception, e:
+    print 'Cannot use Latex configuration with matplotlib, message=', str(e)
 
 roslib.load_manifest('uuv_evaluation')
 

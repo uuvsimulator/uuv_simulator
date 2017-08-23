@@ -3,8 +3,15 @@ project(uuv_sensor_plugins_ros)
 
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
-find_package(catkin REQUIRED uuv_gazebo_plugins sensor_msgs uuv_sensor_plugins
-                             uuv_sensor_plugins_ros_msgs)
+find_package(catkin REQUIRED COMPONENTS
+  uuv_gazebo_plugins 
+  sensor_msgs 
+  geometry_msgs
+  std_msgs
+  roscpp
+  gazebo_plugins
+  uuv_sensor_plugins
+  uuv_sensor_plugins_ros_msgs)
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(Eigen3 REQUIRED)
 find_package(gazebo REQUIRED)
