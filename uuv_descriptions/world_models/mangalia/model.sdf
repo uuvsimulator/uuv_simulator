@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="mangalia_terrain">
+    <static>true</static>
+    <link name="link">
+      <collision name="seabed">
+        <pose>0 0 -5 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mangalia/meshes/MangaliaTerrain.dae</uri>
+            <scale>1.0 1.0 2.0</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="seabed">
+        <cast_shadows>false</cast_shadows>
+        <pose>0 0 -5 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mangalia/meshes/MangaliaTerrain.dae</uri>
+            <scale>1.0 1.0 2.0</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="ocean_link">
+      <visual name="ocean_surface">
+        <pose>1572.54103 348.600098 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>file://Media/models/sea_surface_1000m_x_1000m.dae</uri>
+            <scale>4.124 2.853 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/waves.material</uri>
+            <name>UUVSimulator/SimpleWaves</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="ocean_below">
+        <pose>1572.54103 348.600098 0 3.14 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>file://Media/models/sea_surface_1000m_x_1000m.dae</uri>
+            <scale>4.124 2.853 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/StaticWater</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

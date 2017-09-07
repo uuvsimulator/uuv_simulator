@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="aurora">
+    <static>true</static>
+    <link name="link">
+      <collision name="aurora_collision">
+        <pose>0 0 0 0 0 1.57</pose>
+        <geometry>
+          <mesh><uri>model://aurora_static/meshes/aurora_collision.stl</uri></mesh>
+        </geometry>
+      </collision>
+
+      <visual name="aurora_visual">
+        <cast_shadows>false</cast_shadows>
+        <pose>0 0 0 0 0 1.57</pose>
+        <geometry>
+          <mesh><uri>model://aurora_static/meshes/aurora.dae</uri></mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

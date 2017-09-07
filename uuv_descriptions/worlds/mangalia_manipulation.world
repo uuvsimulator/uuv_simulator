@@ -1,0 +1,200 @@
+<?xml version="1.0" ?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version="1.4">
+  <world name="mangalia_manipulation">
+    <physics name="default_physics" default="true" type="ode">
+      <max_step_size>0.002</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>500</real_time_update_rate>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>50</iters>
+          <sor>0.7</sor>
+        </solver>
+      </ode>
+    </physics>
+    <scene>
+      <ambient>0.01 0.01 0.01 1.0</ambient>
+      <sky>
+        <clouds>
+          <speed>12</speed>
+        </clouds>
+      </sky>
+      <shadows>1</shadows>
+    </scene>
+
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>497.098 287.014 -11.2553 0 0.700222 1.4479</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+
+    <!-- Origin of the Mangalia world in GPS coordinates -->
+    <spherical_coordinates>
+      <latitude_deg>43.802911</latitude_deg>
+      <longitude_deg>28.591915</longitude_deg>
+    </spherical_coordinates>
+
+    <!-- Global light source -->
+    <light type="directional" name="sun1">
+      <pose>50 0 20 0 0 0</pose>
+      <diffuse>1 1 1 1</diffuse>
+      <specular>.1 .1 .1 1</specular>
+      <direction>0.3 0.3 -1</direction>
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <!-- Global light source -->
+    <light type="directional" name="sun_diffuse_1">
+      <pose>0 0 800 0 0 0</pose>
+      <diffuse>0.6 0.6 0.6 1</diffuse>
+      <specular>0 0 0 1</specular>
+      <direction>-0.3 -0.3 -1</direction>
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <light type="directional" name="sun_diffuse_2">
+      <pose>-2000 50 800 0 0 0</pose>
+      <diffuse>0.6 0.6 0.6 1</diffuse>
+      <specular>0 0 0 1</specular>
+      <direction>-0.3 -0.3 -1</direction>
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <!-- Virtual NED frame -->
+    <include>
+      <uri>model://ned_frame</uri>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <!-- Mangalia terrain model -->
+    <include>
+      <uri>model://mangalia</uri>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <!-- Aurora on the surface -->
+    <include>
+      <uri>model://aurora_static</uri>
+      <pose>484.0 315.0 0.0 0.0 0.0 -0.4</pose>
+      <name>aurora_swimming</name>
+    </include>
+
+    <!-- Sunken Aurora -->
+    <include>
+      <uri>model://aurora_static</uri>
+      <pose>484.0 315.0 -30.0 1.7 0 0.4</pose>
+      <name>aurora_sunken</name>
+    </include>
+
+    <!-- A population of rocks -->
+    <population name="rock_population">
+      <model name="rock">
+        <include>
+          <static>false</static>
+          <uri>model://rock</uri>
+        </include>
+      </model>
+      <pose>497.5 305.0 -28 0 0 0</pose>
+      <box>
+        <size>5 5 0.01</size>
+      </box>
+      <model_count>20</model_count>
+      <distribution>
+        <type>random</type>
+      </distribution>
+    </population>
+
+    <!-- A population of beer cans -->
+    <population name="beer_population">
+      <model name="beer">
+        <include>
+          <static>false</static>
+          <uri>model://beer</uri>
+        </include>
+      </model>
+      <pose>497.5 303.0 -28 0 0 0</pose>
+      <box>
+        <size>5 5 0.01</size>
+      </box>
+      <model_count>10</model_count>
+      <distribution>
+        <type>random</type>
+      </distribution>
+    </population>
+
+    <!-- wind turbines
+    <include>
+      <uri>model://wind_turbine_biofouling</uri>
+      <pose>850 350 -30 0 0 2.0</pose>
+      <name>wind_turbine_biofouling</name>
+    </include>
+
+    <include>
+      <uri>model://wind_turbine_biofouling</uri>
+      <pose>850 200 -30 0 0 2.0</pose>
+      <name>wind_turbine_biofouling2</name>
+    </include>
+
+    <include>
+      <uri>model://wind_turbine</uri>
+      <pose>1000 200 -30 0 0 2.0</pose>
+      <name>wind_turbine</name>
+    </include> -->
+
+    <plugin name="underwater_world" filename="libuuv_underwater_world_ros_plugin.so">
+      <namespace>hydrodynamics</namespace>
+      <constant_current>
+        <topic>current_velocity</topic>
+        <velocity>
+          <mean>0</mean>
+          <min>-5</min>
+          <max>5</max>
+          <mu>0.0</mu>
+          <noiseAmp>0.0</noiseAmp>
+        </velocity>
+
+        <horizontal_angle>
+          <mean>0</mean>
+          <min>-1.5707963267948966</min>
+          <max>1.5707963267948966</max>
+          <mu>0.0</mu>
+          <noiseAmp>0.0</noiseAmp>
+        </horizontal_angle>
+
+        <vertical_angle>
+          <mean>0</mean>
+          <min>-1.5707963267948966</min>
+          <max>1.5707963267948966</max>
+          <mu>0.0</mu>
+          <noiseAmp>0.0</noiseAmp>
+        </vertical_angle>
+      </constant_current>
+    </plugin>
+
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>34.6042 32.2383 20 0 0.528384 1.41245</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+  </world>
+</sdf>
