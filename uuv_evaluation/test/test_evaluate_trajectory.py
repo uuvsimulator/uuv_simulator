@@ -38,48 +38,44 @@ ROSPACK_INST = RosPack()
 ROOT_PATH = os.path.join(ROSPACK_INST.get_path(PKG), 'test')
 TASK = os.path.join(ROOT_PATH, 'example_task.yaml')
 RESULTS_DIR = os.path.join(ROOT_PATH, 'results')
+ROSBAG = os.path.join(ROOT_PATH, 'recording.bag')
 
 class TestEvaluateTrajectory(unittest.TestCase):
+    def setUp(self):
+        if not os.path.isdir(RESULTS_DIR):
+            os.makedirs(RESULTS_DIR)
+            
     def tearDown(self):
         if os.path.isdir(RESULTS_DIR):
             shutil.rmtree(RESULTS_DIR)
     
     def test_generate_kpis(self):        
-        runner = SimulationRunner(PARAMS, TASK, RESULTS_DIR, True)
-        runner.run(PARAMS)
+        self.assertIn('recording.bag', os.listdir(ROOT_PATH),'recording.bag cannot be found')
 
-        self.assertIn('recording.bag', os.listdir(runner.current_sim_results_dir),'recording.bag cannot be found')
-
-        sim_eval = Evaluation(runner.recording_filename, runner.current_sim_results_dir)        
+        sim_eval = Evaluation(ROSBAG, RESULTS_DIR)        
         sim_eval.compute_kpis()
 
         self.assertTrue(type(sim_eval.get_kpis()) == dict, 'KPIs structure is not a dictionary')
 
     def test_store_kpis(self):
-        runner = SimulationRunner(PARAMS, TASK, RESULTS_DIR, True)
-        runner.run(PARAMS)
+        self.assertIn('recording.bag', os.listdir(ROOT_PATH),'recording.bag cannot be found')
 
-        self.assertIn('recording.bag', os.listdir(runner.current_sim_results_dir),'recording.bag cannot be found')
-
-        sim_eval = Evaluation(runner.recording_filename, runner.current_sim_results_dir)        
+        sim_eval = Evaluation(ROSBAG, RESULTS_DIR)        
         sim_eval.compute_kpis()
         sim_eval.save_kpis()
 
-        self.assertIn('computed_kpis.yaml', os.listdir(runner.current_sim_results_dir), 'KPIs were not stored in file computed_kpis.yaml')
-        self.assertIn('kpi_labels.yaml', os.listdir(runner.current_sim_results_dir), 'KPIs labels were not stored in file kpis_labels.yaml')
+        self.assertIn('computed_kpis.yaml', os.listdir(RESULTS_DIR), 'KPIs were not stored in file computed_kpis.yaml')
+        self.assertIn('kpi_labels.yaml', os.listdir(RESULTS_DIR), 'KPIs labels were not stored in file kpis_labels.yaml')
 
     def test_store_images(self):
-        runner = SimulationRunner(PARAMS, TASK, RESULTS_DIR, True)
-        runner.run(PARAMS)
+        self.assertIn('recording.bag', os.listdir(ROOT_PATH),'recording.bag cannot be found')
 
-        self.assertIn('recording.bag', os.listdir(runner.current_sim_results_dir),'recording.bag cannot be found')
-
-        sim_eval = Evaluation(runner.recording_filename, runner.current_sim_results_dir)        
+        sim_eval = Evaluation(ROSBAG, RESULTS_DIR)  
         sim_eval.compute_kpis()
         sim_eval.save_evaluation()
 
         pdf_files = list()
-        for f in os.listdir(runner.current_sim_results_dir):
+        for f in os.listdir(RESULTS_DIR):
             if '.pdf' in f:
                 pdf_files.append(f)
 

@@ -1,0 +1,7 @@
+<launch>
+    <test test-name="test_evaluate_trajectory" pkg="uuv_evaluation" type="test_evaluate_trajectory.py"/>
+
+    <test test-name="test_kpis" pkg="uuv_evaluation" type="test_kpis.py"/>
+
+    <test test-name="test_run_task" pkg="uuv_evaluation" type="test_run_task.py"/>
+</launch>

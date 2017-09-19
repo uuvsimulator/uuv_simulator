@@ -33,8 +33,7 @@ install(PROGRAMS
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest)
   foreach(T
-      test/example_mission.launch
-      test/example_start_ocean_world.launch
+      test/test_all.launch      
       )
      add_rostest(${T})
   endforeach()
