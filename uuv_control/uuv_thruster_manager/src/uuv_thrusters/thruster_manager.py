@@ -20,7 +20,7 @@ import tf
 import tf.transformations as trans
 from os.path import isdir, join
 import yaml
-
+from time import sleep
 from models import Thruster
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from geometry_msgs.msg import Wrench
@@ -144,6 +144,8 @@ class ThrusterManager:
                 yaml_file.write(
                     yaml.safe_dump(
                         dict(tam=self.configuration_matrix.tolist())))
+        else:
+            print 'Invalid output directory for the TAM matrix, dir=', self.output_dir
 
         self.ready = True
         print ('ThrusterManager: ready')
@@ -180,16 +182,18 @@ class ThrusterManager:
         print 'conversion_fcn=', self.config['conversion_fcn']
         print 'conversion_fcn_params=', self.config['conversion_fcn_params']
 
-
         listener = tf.TransformListener()
+        sleep(5)
+
         for i in range(self.MAX_THRUSTERS):
             frame = self.namespace + \
                 self.config['thruster_frame_base'] + str(i)
             try:
                 # try to get thruster pose with respect to base frame via tf
                 print('transform: ' + base + ' -> ' + frame)
+                now = rospy.Time.now() + rospy.Duration(1.0)
                 listener.waitForTransform(base, frame,
-                                               now, rospy.Duration(20.0))
+                                               now, rospy.Duration(30.0))
                 [pos, quat] = listener.lookupTransform(base, frame, now)
 
                 topic = self.config['thruster_topic_prefix'] + str(i) + \
@@ -256,6 +260,11 @@ class ThrusterManager:
                 yaml_file.write(
                     yaml.safe_dump(
                         dict(tam=self.configuration_matrix.tolist())))
+            print 'TAM saved in <%s>' % join(self.output_dir, 'TAM.yaml')
+        elif recalculate:
+            print 'Recalculate flag on, matrix will not be stored in TAM.yaml'
+        else:
+            print 'Invalid output directory for the TAM matrix, dir=', self.output_dir
 
         self.ready = True
         print ('ThrusterManager: ready')
