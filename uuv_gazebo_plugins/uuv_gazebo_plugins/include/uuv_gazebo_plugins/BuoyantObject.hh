@@ -43,7 +43,8 @@ class BuoyantObject
   public: ~BuoyantObject();
 
   /// \brief Returns the buoyancy force vector in the world frame
-  public: math::Vector3 GetBuoyancyForce(const math::Pose &_pose);
+  public: void GetBuoyancyForce(const math::Pose &_pose,
+    math::Vector3 &buoyancyForce, math::Vector3 &buoyancyTorque);
 
   /// \brief Applies buoyancy force on link
   public: void ApplyBuoyancyForce();
@@ -135,6 +136,25 @@ class BuoyantObject
   /// \brief If true, the restoring force will be equal to the gravitational
   // force
   protected: bool neutrallyBuoyant;
+
+  // \brief Metacentric width of the robot, used only for surface vessels and
+  // floating objects
+  protected: double metacentricWidth;
+
+  /// \brief Metacentric length of the robot, used only for surface vessels and
+  /// floating objects
+  protected: double metacentricLength;
+
+  /// \brief If the cross section area around water level of the surface vessel
+  /// is not given, it will be computed from the object's bounding box
+  protected: double waterLevelPlaneArea;
+
+  /// \brief Height of the robot that is submerged (only for surface vessels)
+  protected: double submergedHeight;
+
+  /// \brief Flag set to true if the information about the metacentric width and
+  /// height is available
+  protected: bool isSurfaceVessel;
 };
 }
 

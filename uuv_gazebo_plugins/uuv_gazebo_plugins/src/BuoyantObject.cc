@@ -37,6 +37,11 @@ BuoyantObject::BuoyantObject(physics::LinkPtr _link)
   this->centerOfBuoyancy.Set(0, 0, 0);
   this->debugFlag = false;
   this->isSubmerged = true;
+  this->metacentricWidth = 0.0;
+  this->metacentricLength = 0.0;
+  this->waterLevelPlaneArea = 0.0;
+  this->submergedHeight = 0.0;
+  this->isSurfaceVessel = false;
 
   this->link = _link;
   // Retrieve the bounding box
@@ -69,34 +74,77 @@ void BuoyantObject::SetNeutrallyBuoyant()
 }
 
 /////////////////////////////////////////////////
-math::Vector3 BuoyantObject::GetBuoyancyForce(const math::Pose &_pose)
+void BuoyantObject::GetBuoyancyForce(const math::Pose &_pose,
+  math::Vector3 &buoyancyForce, math::Vector3 &buoyancyTorque)
 {
   double height = this->boundingBox.GetZLength();
   double z = _pose.pos.z;
   double volume = 0.0;
 
-  // TODO Consider the orientation of the object in the calculation of
-  //      submerged volume
-  if (z + height / 2 > 0 && z < 0)
+  buoyancyForce = math::Vector3(0, 0, 0);
+  buoyancyTorque = math::Vector3(0, 0, 0);
+
+  if (!this->isSurfaceVessel)
   {
-    this->isSubmerged = false;
-    volume = this->volume * (std::fabs(z) + height / 2) / height;
+    if (z + height / 2 > 0 && z < 0)
+    {
+      this->isSubmerged = false;
+      volume = this->volume * (std::fabs(z) + height / 2) / height;
+    }
+    else if (z + height / 2 < 0)
+    {
+      this->isSubmerged = true;
+      volume = this->volume;
+    }
+
+    if (!this->neutrallyBuoyant || volume != this->volume)
+      buoyancyForce = math::Vector3(0, 0, volume * this->fluidDensity * this->g);
+    else if (this->neutrallyBuoyant)
+      buoyancyForce = math::Vector3(
+          0, 0, this->link->GetInertial()->GetMass() * this->g);
   }
-  else if (z + height / 2 < 0)
+  else
   {
-    this->isSubmerged = true;
-    volume = this->volume;
+    // Implementation of the linear (small angle) theory for boxed-shaped
+    // vessels. Further details can be seen at
+    // T. I. Fossen, “Handbook of Marine Craft Hydrodynamics and Motion Control,” Apr. 2011.
+    // Page 65
+    if (this->waterLevelPlaneArea <= 0)
+    {
+      this->waterLevelPlaneArea = this->boundingBox.GetXLength() *
+        this->boundingBox.GetYLength();
+      gzmsg << this->link->GetName() << "::" << "waterLevelPlaneArea = " <<
+        this->waterLevelPlaneArea << std::endl;
+    }
+
+    GZ_ASSERT(this->waterLevelPlaneArea > 0.0,
+      "Water level plane area must be greater than zero");
+
+    if (z + height / 2.0 > 0.5)
+    {
+      // Vessel is completely out of the water
+      buoyancyForce = math::Vector3(0, 0, 0);
+      buoyancyTorque = math::Vector3(0, 0, 0);
+      // Store the restoring force vector, if needed
+      this->StoreVector(RESTORING_FORCE, buoyancyForce);
+      return;
+    }
+    else if (z + height / 2.0 < 0)
+      this->submergedHeight = this->boundingBox.GetZLength();
+    else
+      this->submergedHeight = this->boundingBox.GetZLength() / 2 - z;
+
+    volume = this->submergedHeight * this->waterLevelPlaneArea;
+    buoyancyForce = math::Vector3(0, 0, volume * this->fluidDensity * this->g);
+    buoyancyTorque = math::Vector3(
+      -1 * this->metacentricWidth * sin(_pose.rot.GetAsEuler().x) * buoyancyForce.z,
+      -1 * this->metacentricLength * sin(_pose.rot.GetAsEuler().y) * buoyancyForce.z,
+      0);
+
   }
 
-  math::Vector3 restoring;
-  if (!this->neutrallyBuoyant || volume != this->volume)
-    restoring = math::Vector3(0, 0, volume * this->fluidDensity * this->g);
-  else if (this->neutrallyBuoyant)
-    restoring = math::Vector3(
-        0, 0, this->link->GetInertial()->GetMass() * this->g);
   // Store the restoring force vector, if needed
-  this->StoreVector(RESTORING_FORCE, restoring);
-  return restoring;
+  this->StoreVector(RESTORING_FORCE, buoyancyForce);
 }
 
 /////////////////////////////////////////////////
@@ -105,9 +153,22 @@ void BuoyantObject::ApplyBuoyancyForce()
   // Link's pose
   const math::Pose pose = this->link->GetWorldPose();
   // Get the buoyancy force in world coordinates
-  math::Vector3 buoyancyWorld = this->GetBuoyancyForce(pose);
-  GZ_ASSERT(!std::isnan(buoyancyWorld.GetLength()), "Buoyancy force is nan");
-  this->link->AddForceAtRelativePosition(buoyancyWorld, this->GetCoB());
+  math::Vector3 buoyancyForce, buoyancyTorque;
+
+  this->GetBuoyancyForce(pose, buoyancyForce, buoyancyTorque);
+
+  GZ_ASSERT(!std::isnan(buoyancyForce.GetLength()),
+    "Buoyancy force is invalid");
+  GZ_ASSERT(!std::isnan(buoyancyTorque.GetLength()),
+    "Buoyancy torque is invalid");
+  if (!this->isSurfaceVessel)
+    this->link->AddForceAtRelativePosition(buoyancyForce, this->GetCoB());
+  else
+  {
+    this->link->AddRelativeForce(buoyancyForce);
+    this->link->AddRelativeTorque(buoyancyTorque);
+  }
+
 }
 
 /////////////////////////////////////////////////
