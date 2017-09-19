@@ -19,8 +19,8 @@
     <!-- Ground base -->
 
     <link name="${namespace}/end_effector">
-        <xacro:link_box_inertial mass="${total_mass * gripper_base_volume / total_volume}" 
-                    width="${gripper_base_width}" 
+        <xacro:link_box_inertial mass="${total_mass * gripper_base_volume / total_volume}"
+                    width="${gripper_base_width}"
                     length="${gripper_base_length}"
                     height="${gripper_base_height}">
         <origin xyz="${gripper_base_com}" rpy="0 0 0"/>
@@ -41,21 +41,22 @@
         </collision>
     </link>
 
-    <joint name="${namespace}/wrist" type="continuous">
+    <joint name="${namespace}/wrist" type="revolute">
       <parent link="${namespace}/wrist_link"/>
       <child link="${namespace}/end_effector"/>
-       <origin xyz="0.19304 0 0" rpy="0 0 0"/>
+       <origin xyz="0.19304 0 0" rpy="${-PI*0.5} 0 0"/>
       <axis xyz="1 0 0"/>
       <dynamics damping="10" friction="5"/>
+      <limit effort="10" lower="${-2*PI}" upper="${2*PI}" velocity="${gripper_velocity}"/>
     </joint>
 
-    <xacro:simple_transmission joint="${namespace}/wrist" /> 
+    <xacro:simple_transmission joint="${namespace}/wrist" />
 
     <!-- Finger left  -->
 
     <link name="${namespace}/finger_left">
-        <xacro:link_box_inertial mass="${total_mass * finger_volume / total_volume}" 
-                    width="${finger_width}" 
+        <xacro:link_box_inertial mass="${total_mass * finger_volume / total_volume}"
+                    width="${finger_width}"
                     length="${finger_length}"
                     height="${finger_height}">
         <origin xyz="${finger_com}" rpy="0 0 0"/>
@@ -85,13 +86,13 @@
         <limit effort="${gripper_effort}" lower="0" upper="${PI*0.3333}" velocity="${gripper_velocity}"/>
     </joint>
 
-    <xacro:simple_transmission joint="${namespace}/finger_left_joint" /> 
+    <xacro:simple_transmission joint="${namespace}/finger_left_joint" />
 
     <!-- Finger tip left  -->
 
     <link name="${namespace}/finger_tip_left">
-        <xacro:link_box_inertial mass="${total_mass * finger_tip_volume / total_volume}" 
-                    width="${finger_tip_width}" 
+        <xacro:link_box_inertial mass="${total_mass * finger_tip_volume / total_volume}"
+                    width="${finger_tip_width}"
                     length="${finger_tip_length}"
                     height="${finger_tip_height}">
         <origin xyz="${finger_tip_com}" rpy="0 0 0"/>
@@ -124,8 +125,8 @@
     <!-- Finger right  -->
 
     <link name="${namespace}/finger_right">
-        <xacro:link_box_inertial mass="${total_mass * finger_volume / total_volume}" 
-                    width="${finger_width}" 
+        <xacro:link_box_inertial mass="${total_mass * finger_volume / total_volume}"
+                    width="${finger_width}"
                     length="${finger_length}"
                     height="${finger_height}">
         <origin xyz="${finger_com}" rpy="0 0 0"/>
@@ -155,13 +156,13 @@
         <limit effort="${gripper_effort}" lower="0" upper="${PI*0.3333}" velocity="${gripper_velocity}"/>
     </joint>
 
-    <xacro:simple_transmission joint="${namespace}/finger_right_joint" /> 
+    <xacro:simple_transmission joint="${namespace}/finger_right_joint" />
 
     <!-- Finger tip right  -->
 
     <link name="${namespace}/finger_tip_right">
-        <xacro:link_box_inertial mass="${total_mass * finger_tip_volume / total_volume}" 
-                    width="${finger_tip_width}" 
+        <xacro:link_box_inertial mass="${total_mass * finger_tip_volume / total_volume}"
+                    width="${finger_tip_width}"
                     length="${finger_tip_length}"
                     height="${finger_tip_height}">
         <origin xyz="${finger_tip_com}" rpy="0 0 0"/>
@@ -190,5 +191,5 @@
         <dynamics damping="5" friction="10"/>
         <limit effort="0" lower="0" upper="0" velocity="0"/>
     </joint>
-    
+
 </robot>
