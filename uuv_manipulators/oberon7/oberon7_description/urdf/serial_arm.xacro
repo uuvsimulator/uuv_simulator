@@ -17,9 +17,9 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <!-- Import arm parameters -->
     <xacro:include filename="$(find oberon7_description)/urdf/parameters/serial_arm.xacro" />
-    
+
     <!-- Transmission Macro -->
-    <xacro:macro name="simple_transmission" params="joint">
+    <!-- <xacro:macro name="simple_transmission" params="joint">
         <transmission name="${joint}_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="${joint}">
@@ -30,6 +30,21 @@
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
+    </xacro:macro> -->
+
+
+    <!-- Transmission Macro -->
+    <xacro:macro name="simple_transmission" params="joint">
+      <transmission name="${joint}_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${joint}">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${joint}_motor">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+          <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+      </transmission>
     </xacro:macro>
 
     <xacro:macro name="oberon7_serial_arm" params="namespace">
@@ -37,8 +52,8 @@
         <!-- Ground base -->
 
         <link name="${namespace}/base">
-            <xacro:link_box_inertial mass="${total_mass * base_volume / total_volume_bbox}" 
-                        width="${base_width}" 
+            <xacro:link_box_inertial mass="${total_mass * base_volume / total_volume_bbox}"
+                        width="${base_width}"
                         length="${base_length}"
                         height="${base_height}">
             <origin xyz="${base_com}" rpy="0 0 0"/>
@@ -62,8 +77,8 @@
         <!-- Shoulder link -->
 
         <link name="${namespace}/shoulder_link">
-            <xacro:link_box_inertial mass="${total_mass * shoulder_link_volume / total_volume_bbox}" 
-                        width="${shoulder_link_width}" 
+            <xacro:link_box_inertial mass="${total_mass * shoulder_link_volume / total_volume_bbox}"
+                        width="${shoulder_link_width}"
                         length="${shoulder_link_length}"
                         height="${shoulder_link_height}">
                 <origin xyz="${shoulder_link_com}" rpy="0 0 0"/>
@@ -79,7 +94,7 @@
             <collision>
                 <origin xyz="${shoulder_link_com}" rpy="0 0 0"/>
                 <geometry>
-                    <cylinder radius="${0.5 * shoulder_link_width}" length="${shoulder_link_height}" />                    
+                    <cylinder radius="${0.5 * shoulder_link_width}" length="${shoulder_link_height}" />
                 </geometry>
             </collision>
         </link>
@@ -88,17 +103,18 @@
             <parent link="${namespace}/base"/>
             <child link="${namespace}/shoulder_link"/>
             <axis xyz="0 0 1"/>
-            <dynamics damping="50" friction="120"/>
+            <dynamics damping="50" friction="200"/>
             <limit lower="${-60 * d2r}" upper="${60 * d2r}" velocity="0.17" effort="200"/>
+            <!-- <limit lower="${-60 * d2r}" upper="${60 * d2r}" velocity="0.17" effort="1000"/> -->
         </joint>
 
-        <xacro:simple_transmission joint="${namespace}/azimuth" />  
-        
+        <xacro:simple_transmission joint="${namespace}/azimuth" />
+
         <!-- UPPER ARM -->
 
         <link name="${namespace}/upper_arm">
-            <xacro:link_box_inertial mass="${total_mass * upper_arm_volume / total_volume_bbox}" 
-                        width="${upper_arm_width}" 
+            <xacro:link_box_inertial mass="${total_mass * upper_arm_volume / total_volume_bbox}"
+                        width="${upper_arm_width}"
                         length="${upper_arm_length}"
                         height="${upper_arm_height}">
                 <origin xyz="${upper_arm_com}" rpy="0 0 0"/>
@@ -124,17 +140,18 @@
             <child link="${namespace}/upper_arm"/>
             <origin xyz="0.06955 0.00015 0.01536" rpy="${0.5*pi} 0 0"/>
             <axis xyz="0 0 1"/>
-            <dynamics damping="50" friction="120"/>
+            <dynamics damping="50" friction="200"/>
             <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".17" effort="5000"/>
+            <!-- <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".17" effort="1000"/> -->
         </joint>
 
-        <xacro:simple_transmission joint="${namespace}/shoulder" />  
+        <xacro:simple_transmission joint="${namespace}/shoulder" />
 
         <!-- ELBOW LINK -->
 
         <link name="${namespace}/elbow_link">
-            <xacro:link_box_inertial mass="${total_mass * elbow_link_volume / total_volume_bbox}" 
-                        width="${elbow_link_width}" 
+            <xacro:link_box_inertial mass="${total_mass * elbow_link_volume / total_volume_bbox}"
+                        width="${elbow_link_width}"
                         length="${elbow_link_length}"
                         height="${elbow_link_height}">
                 <origin xyz="${elbow_link_com}" rpy="0 0 0"/>
@@ -159,18 +176,19 @@
             <parent link="${namespace}/upper_arm"/>
             <child link="${namespace}/elbow_link"/>
             <origin xyz="0.55616 -0.01229 0" rpy="0 0 0"/>
-            <dynamics damping="50" friction="120"/>
+            <dynamics damping="50" friction="200"/>
             <axis xyz="0 0 1"/>
-            <limit lower="${-90 * d2r}" upper="${60 * d2r}" velocity=".13" effort="1000"/>
+            <limit lower="${-90 * d2r}" upper="${60 * d2r}" velocity=".15" effort="300"/>
+            <!-- <limit lower="${-90 * d2r}" upper="${60 * d2r}" velocity=".13" effort="1000"/> -->
         </joint>
 
-        <xacro:simple_transmission joint="${namespace}/elbow" />  
+        <xacro:simple_transmission joint="${namespace}/elbow" />
 
         <!-- FOREARM -->
 
         <link name="${namespace}/forearm">
-            <xacro:link_box_inertial mass="${total_mass * forearm_volume / total_volume_bbox}" 
-                        width="${forearm_width}" 
+            <xacro:link_box_inertial mass="${total_mass * forearm_volume / total_volume_bbox}"
+                        width="${forearm_width}"
                         length="${forearm_length}"
                         height="${forearm_height}">
                 <origin xyz="${forearm_com}" rpy="0 0 0"/>
@@ -196,17 +214,18 @@
             <child link="${namespace}/forearm"/>
             <origin xyz="0.1349014 -0.1936267 0" rpy="${0.5*PI} 0 0"/>
             <axis xyz="0 0 1"/>
-            <dynamics damping="50" friction="120"/>
-            <limit lower="${-135 * d2r}" upper="${135 * d2r}" velocity=".085" effort="1000"/>
+            <dynamics damping="50" friction="200"/>
+            <!-- <limit lower="${-135 * d2r}" upper="${135 * d2r}" velocity=".15" effort="200"/> -->
+            <limit lower="${-135 * d2r}" upper="${135 * d2r}" velocity=".25" effort="1000"/>
         </joint>
 
-        <xacro:simple_transmission joint="${namespace}/roll" />  
+        <xacro:simple_transmission joint="${namespace}/roll" />
 
         <!-- WRIST 1  -->
 
         <link name="${namespace}/wrist_link">
-            <xacro:link_box_inertial mass="${total_mass * wrist_volume / total_volume_bbox}" 
-                        width="${wrist_width}" 
+            <xacro:link_box_inertial mass="${total_mass * wrist_volume / total_volume_bbox}"
+                        width="${wrist_width}"
                         length="${wrist_length}"
                         height="${wrist_height}">
                 <origin xyz="${wrist_com}" rpy="0 0 0"/>
@@ -232,11 +251,12 @@
             <child link="${namespace}/wrist_link"/>
             <origin xyz="0 0 0.31595760629823427" rpy="${-0.5*PI} ${-0.5*PI} 0"/>
             <axis xyz="0 0 1"/>
-            <dynamics damping="50" friction="120"/>
-            <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".26" effort="1000"/>
+            <dynamics damping="50" friction="200"/>
+            <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".26" effort="200"/>
+            <!-- <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".26" effort="1000"/> -->
         </joint>
 
-        <xacro:simple_transmission joint="${namespace}/pitch" />  
+        <xacro:simple_transmission joint="${namespace}/pitch" />
 
         <!-- Adding parallel gripper  -->
         <xacro:include filename="$(find oberon7_description)/urdf/parallel_gripper.xacro" />
