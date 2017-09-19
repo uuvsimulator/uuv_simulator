@@ -19,7 +19,10 @@ from recording import Recording
 
 
 class TrajectoryError(object):
-    TAGS = ['position',
+    TAGS = ['x',
+            'y',
+            'z',
+            'position',
             'linear_velocity',
             'angular_velocity',
             'angle',
@@ -33,6 +36,10 @@ class TrajectoryError(object):
 
         self._time = p_act.t
         self._errors = dict()
+
+        self._errors['x'] = p_des.p[0] - p_act.p[0]
+        self._errors['y'] = p_des.p[1] - p_act.p[1]
+        self._errors['z'] = p_des.p[2] - p_act.p[2]
 
         self._errors['position'] = p_des.p - p_act.p
         self._errors['linear_velocity'] = p_des.v - p_act.v

@@ -38,7 +38,6 @@ PARAMS = dict(Kp=[11993.888, 11993.888, 11993.888, 19460.069, 19460.069, 19460.0
 
 ROSPACK_INST = RosPack()
 ROOT_PATH = os.path.join(ROSPACK_INST.get_path(PKG), 'test')
-MISSION_TASK = os.path.join(ROOT_PATH, 'example_task.yaml')
 OCEAN_WORLD_TASK = os.path.join(ROOT_PATH, 'example_start_ocean_world.yaml')
 RESULTS_DIR = os.path.join(ROOT_PATH, 'results')
 
@@ -48,7 +47,7 @@ class TestRunTask(unittest.TestCase):
             shutil.rmtree(RESULTS_DIR)
 
     def test_create_task(self):        
-        runner = SimulationRunner(PARAMS, MISSION_TASK, RESULTS_DIR, True)
+        runner = SimulationRunner(PARAMS, OCEAN_WORLD_TASK, RESULTS_DIR, True)
         runner.run(PARAMS)
 
         self.assertIn('results', os.listdir(ROOT_PATH),'Root results directory was not generated')
@@ -58,7 +57,7 @@ class TestRunTask(unittest.TestCase):
         del runner
 
     def test_params(self):
-        runner = SimulationRunner(PARAMS, MISSION_TASK, RESULTS_DIR, True)
+        runner = SimulationRunner(PARAMS, OCEAN_WORLD_TASK, RESULTS_DIR, True)
         runner.run(PARAMS)
         self.assertIn('params_0.yml', os.listdir(runner.current_sim_results_dir),'Parameter file created correctly')
 
@@ -71,14 +70,14 @@ class TestRunTask(unittest.TestCase):
         del runner
 
     def test_task_process_timeout(self):
-        runner = SimulationRunner(PARAMS, MISSION_TASK, RESULTS_DIR, True)
+        runner = SimulationRunner(PARAMS, OCEAN_WORLD_TASK, RESULTS_DIR, True)
         success = runner.run(PARAMS, timeout=2)
         self.assertFalse(success, 'Simulation runner must return False when the timeout is triggered, flag=' + str(success))
         self.assertTrue(runner.process_timeout_triggered, 'Simulation runner did not set the flag process_timeout_triggered')
         del runner
 
     def test_batch_run_task(self):
-        for _ in range(100):            
+        for _ in range(3):            
             runner = SimulationRunner(dict(), OCEAN_WORLD_TASK, RESULTS_DIR, True)
             success = runner.run(dict(), timeout=30)            
             self.assertTrue(success, 'Simulation returned with error, flag=%s, timeout=%s' % (str(success), str(runner.process_timeout_triggered)))
