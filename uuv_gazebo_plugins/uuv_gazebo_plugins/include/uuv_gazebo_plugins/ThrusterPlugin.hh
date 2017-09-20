@@ -105,6 +105,12 @@ class ThrusterPlugin : public gazebo::ModelPlugin
   /// \brief: Optional: Commands greater than this value will be clamped.
   protected: double clampMax;
 
+  /// \brief: Optional: Minimum thrust force output
+  protected: double thrustMin;
+
+  /// \brief: Optional: Maximum thrust force output
+  protected: double thrustMax;
+
   /// \brief Thruster ID, used to generated topic names automatically
   protected: int thrusterID;
 

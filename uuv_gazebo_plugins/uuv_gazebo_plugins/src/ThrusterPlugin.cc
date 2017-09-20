@@ -44,6 +44,8 @@ ThrusterPlugin::ThrusterPlugin() : thrustForce(0),
   inputCommand(0),
   clampMin(std::numeric_limits<double>::lowest()),
   clampMax(std::numeric_limits<double>::max()),
+  thrustMin(std::numeric_limits<double>::lowest()),
+  thrustMax(std::numeric_limits<double>::max()),
   gain(1.0),
   isOn(true),
   thrustEfficiency(1.0),
@@ -104,6 +106,27 @@ void ThrusterPlugin::Load(physics::ModelPtr _model,
 
   if (_sdf->HasElement("clampMax"))
     this->clampMax = _sdf->Get<double>("clampMax");
+
+  if (this->clampMin >= this->clampMax)
+  {
+    gzmsg << "clampMax must be greater than clampMin, returning to default values..." << std::endl;
+    this->clampMin = std::numeric_limits<double>::lowest();
+    this->clampMax = std::numeric_limits<double>::max();
+  }
+
+  // Thrust force interval
+  if (_sdf->HasElement("thrustMin"))
+    this->thrustMin = _sdf->Get<double>("thrustMin");
+
+  if (_sdf->HasElement("thrustMax"))
+    this->thrustMax = _sdf->Get<double>("thrustMax");
+
+  if (this->thrustMin >= this->thrustMax)
+  {
+    gzmsg << "thrustMax must be greater than thrustMin, returning to default values..." << std::endl;
+    this->thrustMin = std::numeric_limits<double>::lowest();
+    this->thrustMax = std::numeric_limits<double>::max();
+  }
 
   // Gain (1.0 by default)
   if (_sdf->HasElement("gain"))
@@ -202,6 +225,10 @@ void ThrusterPlugin::Update(const common::UpdateInfo &_info)
   this->thrustForce = this->thrustEfficiency *
     this->conversionFunction->convert(dynamicState);
   GZ_ASSERT(!std::isnan(this->thrustForce), "Invalid thrust force");
+
+  // Use the thrust force limits
+  this->thrustForce = std::max(this->thrustForce, this->thrustMin);
+  this->thrustForce = std::min(this->thrustForce, this->thrustMax);
 
   this->thrustForceStamp = _info.simTime;
   math::Vector3 force(this->thrustForce, 0, 0);
