@@ -26,8 +26,11 @@ class ROV_PIDController(DPPIDControllerBase):
     def __init__(self):
         self._tau = np.zeros(6)
         DPPIDControllerBase.__init__(self, False)
+        self._is_init = True
 
     def update_controller(self):
+        if not self._is_init:
+            return False
         # Update PID control action
         self._tau = self.update_pid()
         self.publish_control_wrench(self._tau)

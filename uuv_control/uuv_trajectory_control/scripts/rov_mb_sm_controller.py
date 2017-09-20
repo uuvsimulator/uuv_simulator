@@ -144,9 +144,6 @@ class ROV_MB_SMController(DPControllerBase):
             self._ctrl_robust = rospy.get_param('~ctrl_robust')
         else:
             self._ctrl_robust = 1
-
-        # Stores last simulation time
-        self._prev_t = -1.0
         # Integrator component
         self._int = np.zeros(6)
         # Error for the vehicle pose
@@ -183,6 +180,7 @@ class ROV_MB_SMController(DPControllerBase):
             'get_mb_sm_controller_params',
             GetMBSMControllerParams,
             self.get_mb_sm_controller_params_callback)
+        self._is_init = True
 
     def _reset_controller(self):
         super(ROV_MB_SMController, self)._reset_controller()
@@ -221,7 +219,8 @@ class ROV_MB_SMController(DPControllerBase):
             self._drift_prevent)
 
     def update_controller(self):
-
+        if not self._is_init:
+            return False
         t = rospy.Time.now().to_sec()
 
         dt = t - self._prev_t

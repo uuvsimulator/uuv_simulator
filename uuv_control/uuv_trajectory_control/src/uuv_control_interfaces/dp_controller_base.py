@@ -43,6 +43,8 @@ class DPControllerBase(object):
     _LABEL = ''
 
     def __init__(self, is_model_based=False, list_odometry_callbacks=[]):
+        # Flag will be set to true when all parameters are initialized correctly
+        self._is_init = False
         self._logger = logging.getLogger('dp_controller')
         out_hdlr = logging.StreamHandler(sys.stdout)
         out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
@@ -66,7 +68,7 @@ class DPControllerBase(object):
             self._use_stamped_poses_only = rospy.get_param('~use_stamped_poses_only')
 
         # Instance of the local planner for local trajectory generation
-        self._local_planner = LocalPlanner(full_dof=False, 
+        self._local_planner = LocalPlanner(full_dof=False,
                                            stamped_pose_only=self._use_stamped_poses_only)
 
         # Instance of the vehicle model
@@ -86,7 +88,7 @@ class DPControllerBase(object):
             self._thrust_saturation = rospy.get_param('~saturation')
             if self._control_saturation <= 0:
                 raise rospy.ROSException('Invalid control saturation forces')
-        
+
         # Remap the following topics, if needed
         # Publisher for thruster allocator
         self._thrust_pub = rospy.Publisher('thruster_output',
@@ -124,6 +126,8 @@ class DPControllerBase(object):
         # Time stamp for the received trajectory
         self._stamp_trajectory_received = rospy.get_time()
 
+        # Stores last simulation time
+        self._prev_t = -1.0
         self._logger.info('DP controller successfully initialized')
 
     def __del__(self):
@@ -237,7 +241,7 @@ class DPControllerBase(object):
             msg.acceleration.angular = Vector3(*self._reference['acc'][3:6])
             self._reference_pub.publish(msg)
         return True
-    
+
     def _update_time_step(self):
         t = rospy.get_time()
         self._dt = t - self._prev_time
