@@ -16,8 +16,6 @@
 -->
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
-  <xacro:property name="pi" value="3.14159"/>
-
   <!-- Conversion factor: radian = d2r*degrees -->
   <xacro:property name="d2r" value="0.01745329"/>
 
