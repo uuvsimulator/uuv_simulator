@@ -91,8 +91,6 @@ class ROV_NMB_SMController(DPControllerBase):
 
         self._logger.info('slope=' + str(self._slope))
 
-        self._prev_t = -1.0
-
         self._summ_sign_sn_linear_b = np.array([0, 0, 0])
         self._summ_sign_sn_angular_b = np.array([0, 0, 0])
 
@@ -110,6 +108,7 @@ class ROV_NMB_SMController(DPControllerBase):
             GetSMControllerParams,
             self.get_sm_controller_params_callback)
 
+        self._is_init = True
         self._logger.info('Non-model based sliding mode controller ready!')
 
     def _reset_controller(self):
@@ -136,6 +135,8 @@ class ROV_NMB_SMController(DPControllerBase):
             self._slope.tolist())
 
     def update_controller(self):
+        if not self._is_init:
+            return False
         t = rospy.Time.now().to_sec()
 
         dt = t - self._prev_t

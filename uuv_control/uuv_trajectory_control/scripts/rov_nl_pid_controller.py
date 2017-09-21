@@ -50,6 +50,7 @@ class ROV_NLPIDController(DPPIDControllerBase):
         self._accel_ff = np.zeros(6)
         # PID control vector
         self._pid_control = np.zeros(6)
+        self._is_init = True
 
     def _reset_controller(self):
         super(ROV_NLPIDController, self)._reset_controller()
@@ -57,6 +58,8 @@ class ROV_NLPIDController(DPPIDControllerBase):
         self._pid_control = np.zeros(6)
 
     def update_controller(self):
+        if not self._is_init:
+            return False
         # Calculating the feedback acceleration vector for the control forces
         # from last iteration
         acc = self._vehicle_model.compute_acc(
