@@ -23,14 +23,14 @@ class RMSError(KPI):
     UNIT = 'm'
     TARGET = 'error'
 
-    def __init__(self, error_elem='position', use_bag=True):
-        KPI.__init__(self, use_bag)
+    def __init__(self, error_elem='position', use_bag=True, time_offset=0.0):
+        KPI.__init__(self, use_bag, time_offset)
         self._kpi_arg = error_elem
 
         if self._error_set is not None:
             assert error_elem in self._error_set.get_tags(), 'Error element given does not exist'
-            # Initialize the data structure for this KPI        
-            self._input_values = dict(error=self._error_set.get_data(error_elem))
+            # Initialize the data structure for this KPI
+            self._input_values = dict(error=self._error_set.get_data(error_elem, self._time_offset))
         else:
             self._input_values = None
 
@@ -39,6 +39,6 @@ class RMSError(KPI):
         if self._input_values is None:
             assert self.is_iterable(input_values), 'Invalid input data'
             self._input_values = dict(error=np.array(input_values))
-        
+
         self._kpi_value = self.get_rms_error(self._input_values['error'])
         return self._kpi_value

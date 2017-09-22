@@ -117,7 +117,7 @@ class ErrorSet(object):
         return self._errors
 
     def get_time(self):
-        return [e.t for e in self._errors]
+        return np.array([e.t for e in self._errors])
 
     def get_tags(self):
         if len(self._errors):
@@ -125,9 +125,10 @@ class ErrorSet(object):
         else:
             return list()
 
-    def get_data(self, tag):
+    def get_data(self, tag, time_offset=0.0):
         if len(self._errors) == 0:
             return None
         if tag not in self._errors[0].tags:
             return None
-        return [e.get_data(tag) for e in self._errors]
+        assert time_offset >= 0.0 and time_offset <= self._errors[-1].t, 'Time offset is off limits'
+        return [e.get_data(tag) for e in self._errors if e.t >= time_offset]
