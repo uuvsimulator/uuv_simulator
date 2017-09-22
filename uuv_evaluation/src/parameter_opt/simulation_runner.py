@@ -39,9 +39,9 @@ PORT_LOCK_FILE = 'uuv_port_lock'
 class SimulationRunner(object):
     """
     This class can run a simulation scenario by calling roslaunch with configurable parameters and create a folder
-    to store the simulation's ROS bag and configuration files. 
+    to store the simulation's ROS bag and configuration files.
     """
-  
+
     def __init__(self, params, task_filename, results_folder='./results', record_all_results=False,
                  add_folder_timestamp=True):
         # Setting up the logging
@@ -50,7 +50,7 @@ class SimulationRunner(object):
         out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
         out_hdlr.setLevel(logging.INFO)
         self._logger.addHandler(out_hdlr)
-        self._logger.setLevel(logging.INFO)           
+        self._logger.setLevel(logging.INFO)
 
         assert type(params) is dict, 'Parameter structure must be a dict'
         self._params = params
@@ -90,12 +90,12 @@ class SimulationRunner(object):
 
         self._ros_port = self._get_random_open_port(15000, 20000)
         self._gazebo_port = self._get_random_open_port(25000, 30000)
-        
+
         # Default timeout for the process
         self._timeout = 1e5
         # POpen object to be instantiated
         self._process = None
-        
+
 
     def __del__(self):
         if not self._record_all_results:
@@ -114,7 +114,7 @@ class SimulationRunner(object):
 
     @property
     def process_timeout_triggered(self):
-        return self._process_timeout_triggered    
+        return self._process_timeout_triggered
 
     def _port_open(self, port):
         return_code = 1
@@ -141,8 +141,8 @@ class SimulationRunner(object):
 
     def _get_port_lock_file(self, port):
         return os.path.join('/tmp', '%s-%d.lock' % (PORT_LOCK_FILE, port))
-    
-    def _get_random_open_port(self, start=1000, end=3000, timeout=10):        
+
+    def _get_random_open_port(self, start=1000, end=3000, timeout=10):
         start_time = time.time()
         while (time.time() - start_time) < timeout:
             port = random.randrange(start, end, 1)
@@ -170,7 +170,7 @@ class SimulationRunner(object):
     def remove_recording_dir(self):
         if self._recording_filename is not None and not self._record_all_results:
             rec_path = os.path.dirname(self._recording_filename)
-            self._logger.info('Removing old directory, path=' + rec_path) 
+            self._logger.info('Removing old directory, path=' + rec_path)
             shutil.rmtree(rec_path)
 
     def run(self, params=dict(), timeout=None):
@@ -188,7 +188,7 @@ class SimulationRunner(object):
 
         if self._add_folder_timestamp:
             self._sim_results_dir = os.path.join(
-                self._results_folder, 
+                self._results_folder,
                 strftime("%Y-%m-%d %H:%M:%S", gmtime()) + '_' + str(random.randrange(0, 1000, 1))).replace(' ', '_')
         else:
             self._sim_results_dir = self._results_folder
@@ -228,11 +228,11 @@ class SimulationRunner(object):
                         cmd += str(task['execute']['params'][param]) + ' '
                     if 'timeout' in param:
                         # Setting the process timeout
-                        if task['execute']['params'][param] > 0 and timeout is None:         
-                            # Set the process timeout to 5 times the given simulation timeout                   
+                        if task['execute']['params'][param] > 0 and timeout is None:
+                            # Set the process timeout to 5 times the given simulation timeout
                             self._timeout = 5 * int(task['execute']['params'][param])
                             self._logger.info('Simulation timout t=%.f s' % task['execute']['params'][param])
-                        else:                            
+                        else:
                             self._logger.error('Invalid timeout = %.f' % task['execute']['params'][param])
 
                 # If timeout was given as an input argument, take it as process timeout
@@ -260,7 +260,7 @@ class SimulationRunner(object):
                 self._process = psutil.Popen(cmd, shell=True, stdout=logfile, stderr=logfile, env=os.environ.copy())
                 # Start process timeout, which is a security measure in case something happens, e.g. roscore not responding
                 # If the process timeout is reached before the simulation process is finished, this function
-                # will return false 
+                # will return false
                 timer = Timer(self._timeout, self._kill_process)
                 timer.start()
                 success = self._process.wait(timeout=1e5)
