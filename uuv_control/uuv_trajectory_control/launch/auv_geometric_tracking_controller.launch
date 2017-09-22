@@ -1,0 +1,101 @@
+<launch>
+  <!-- Vehicle namespace -->
+  <arg name="uuv_name"/>
+  <!-- Flag set as true to use load controller the parameters from the file  -->
+  <arg name="use_params_file" default="false"/>
+  <!-- Flag to start the trajectory visual markers publisher -->
+  <arg name="gui_on" default="true"/>
+
+  <!-- AUV controller parameters that will be used in case the use_params_file
+       flag is set to false -->
+  <arg name="thrust_gain" default="100"/>
+  <arg name="roll_gain" default="0.2"/>
+  <arg name="pitch_gain" default="1.0"/>
+  <arg name="yaw_gain" default="0.5"/>
+  <arg name="max_fin_angle" default="4.71238898"/>
+  <arg name="n_fins" default="4"/>
+  <arg name="fin_contribution_roll" default="1,1,1,1"/>
+  <arg name="fin_contribution_pitch" default="1,1,-1,-1"/>
+  <arg name="fin_contribution_yaw" default="-1,1,1,-1"/>
+  <arg name="fin_topic_prefix" default="fins/"/>
+  <arg name="fin_topic_suffix" default="/input"/>
+  <arg name="thruster_topic" default="thrusters/0/input"/>
+  <arg name="thruster_model_name" default="proportional"/>
+  <arg name="max_thrust" default="70"/>
+  <arg name="thruster_rotor_gain" default="0.0009"/>
+
+  <!-- In case use_param_file is set to true, replace the path to the YAML file containing the parameters -->
+  <arg name="controller_config_file" default="$(find uuv_trajectory_control)/config/controllers/ua_pid/$(arg uuv_name)/params.yaml"/>
+  <!-- This node just reads the trajectory and waypoint topics and publishes
+       visualization markers for RViz -->
+  <group if="$(arg gui_on)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_control_utils"
+            type="trajectory_marker_publisher.py"
+            name="trajectory_marker_publisher"
+            output="screen">
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+      </node>
+    </group>
+  </group>
+
+  <group if="$(arg use_params_file)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_trajectory_control"
+            type="auv_geometric_tracking_controller.py"
+            name="auv_geometric_tracking_controller"
+            output="screen">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input"/>
+        <rosparam file="$(arg controller_config_file)" command="load"/>
+      </node>
+    </group>
+  </group>
+
+  <group unless="$(arg use_params_file)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_trajectory_control"
+            type="auv_geometric_tracking_controller.py"
+            name="auv_geometric_tracking_controller"
+            output="screen">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input"/>
+        <!-- Controller parameters -->
+        <rosparam subst_value="true">
+          saturation: 1000
+          thrust_gain: $(arg thrust_gain)
+          roll_gain: $(arg roll_gain)
+          pitch_gain: $(arg pitch_gain)
+          yaw_gain: $(arg yaw_gain)
+          max_fin_angle: $(arg max_fin_angle)
+          n_fins: $(arg n_fins)
+          fin_contribution_roll: [$(arg fin_contribution_roll)]
+          fin_contribution_pitch: [$(arg fin_contribution_pitch)]
+          fin_contribution_yaw: [$(arg fin_contribution_yaw)]
+          fin_topic_prefix: $(arg fin_topic_prefix)
+          fin_topic_suffix: $(arg fin_topic_suffix)
+          thruster_topic: $(arg thruster_topic)
+          thruster_model:
+            name: proportional
+            max_thrust: $(arg max_thrust)
+            params:
+              gain: $(arg thruster_rotor_gain)
+        </rosparam>
+      </node>
+    </group>
+  </group>
+
+</launch>
