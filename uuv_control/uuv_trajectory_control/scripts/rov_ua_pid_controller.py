@@ -80,6 +80,7 @@ class ROVUnderActuatedPIDController(DPControllerBase):
             GetPIDParams,
             self.get_pid_params_callback)
 
+        self._is_init = True
         self._logger.info('Underactuated PID controller ready!')
 
     def _reset_controller(self):
@@ -110,17 +111,18 @@ class ROVUnderActuatedPIDController(DPControllerBase):
         if not self._is_init:
             return False
         # Update integrator
-        self._int += 0.5 * (self.error_pose_euler + self._error_pose) * self._dt
+        cur_error_pose = np.array([self.error_pose_euler[0],
+                                   self.error_pose_euler[1],
+                                   self.error_pose_euler[2],
+                                   self.error_pose_euler[5]])
+        self._int += 0.5 * (cur_error_pose + self._error_pose) * self._dt
         # Store current pose error
-        self._error_pose = np.array([self.error_pose_euler[0],
-                                     self.error_pose_euler[1],
-                                     self.error_pose_euler[2],
-                                     self.error_pose_euler[5]])
+        self._error_pose = cur_error_pose
         error_vel = np.array([self._errors['vel'][0],
                               self._errors['vel'][1],
                               self._errors['vel'][2],
-                              self._errors['vel'][5]))
-        ua_tau = np.dot(self._Kp, self.error_pose_euler) \
+                              self._errors['vel'][5]])
+        ua_tau = np.dot(self._Kp, cur_error_pose) \
                         + np.dot(self._Kd, error_vel) \
                         + np.dot(self._Ki, self._int)
         self._tau = np.array([ua_tau[0], ua_tau[1], ua_tau[2], 0, 0, ua_tau[3]])
