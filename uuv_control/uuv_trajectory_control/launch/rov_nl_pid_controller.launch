@@ -5,7 +5,8 @@
   <arg name="model_name"/>
   <!-- Thruster saturation -->
   <arg name="saturation" default="6000"/>
-
+  <!-- Flag to start the trajectory visual markers publisher -->
+  <arg name="gui_on" default="true"/>
   <!-- Flag set as true to use load controller the parameters from the file  -->
   <arg name="use_params_file" default="false"/>
 
@@ -29,14 +30,16 @@
 
   <!-- This node just reads the trajectory and waypoint topics and publishes
        visualization markers for RViz -->
-  <group ns="$(arg uuv_name)">
-    <node pkg="uuv_control_utils"
-          type="trajectory_marker_publisher.py"
-          name="trajectory_marker_publisher"
-          output="screen">
-      <remap from="trajectory" to="dp_controller/trajectory"/>
-      <remap from="waypoints" to="dp_controller/waypoints"/>
-    </node>
+  <group if="$(arg gui_on)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_control_utils"
+            type="trajectory_marker_publisher.py"
+            name="trajectory_marker_publisher"
+            output="screen">
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+      </node>
+    </group>
   </group>
 
   <!-- Start the controller using the controller parameter file -->

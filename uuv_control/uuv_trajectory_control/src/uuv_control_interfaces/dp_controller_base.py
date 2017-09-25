@@ -42,7 +42,8 @@ class DPControllerBase(object):
 
     _LABEL = ''
 
-    def __init__(self, is_model_based=False, list_odometry_callbacks=[]):
+    def __init__(self, is_model_based=False, list_odometry_callbacks=[],
+        planner_full_dof=False):
         # Flag will be set to true when all parameters are initialized correctly
         self._is_init = False
         self._logger = logging.getLogger('dp_controller')
@@ -68,7 +69,7 @@ class DPControllerBase(object):
             self._use_stamped_poses_only = rospy.get_param('~use_stamped_poses_only')
 
         # Instance of the local planner for local trajectory generation
-        self._local_planner = LocalPlanner(full_dof=False,
+        self._local_planner = LocalPlanner(full_dof=planner_full_dof,
                                            stamped_pose_only=self._use_stamped_poses_only)
 
         # Instance of the vehicle model
