@@ -23,14 +23,14 @@ class MaxError(KPI):
     UNIT = 'm'
     TARGET = 'error'
 
-    def __init__(self, error_elem='position', use_bag=True):
-        KPI.__init__(self, use_bag)
+    def __init__(self, error_elem='position', use_bag=True, time_offset=0.0):
+        KPI.__init__(self, use_bag, time_offset)
         self._kpi_arg = error_elem
 
         if self._error_set is not None:
             assert error_elem in self._error_set.get_tags(), 'Error element given does not exist'
-            # Initialize the data structure for this KPI    
-            self._input_values = dict(error=self._error_set.get_data(error_elem))
+            # Initialize the data structure for this KPI
+            self._input_values = dict(error=self._error_set.get_data(error_elem, time_offset))
         else:
             self._input_values = None
 

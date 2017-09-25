@@ -105,7 +105,7 @@ class Evaluation(object):
                                      legend=dict(loc='upper right',
                                                  fontsize=18)))
 
-    def __init__(self, filename, output_dir='.', plot_config_file=None):
+    def __init__(self, filename, output_dir='.', plot_config_file=None, time_offset=0.0):
         # Setting up the log
         self._logger = logging.getLogger('run_evaluation')
         out_hdlr = logging.StreamHandler(sys.stdout)
@@ -132,6 +132,15 @@ class Evaluation(object):
         if not os.path.isdir(output_dir):
             self._logger.error('Invalid output directory, dir=%s' % str(output_dir) )
             raise Exception('Invalid output directory')
+
+        # Simulation time offset to start the computation of each KPI
+        if time_offset >= 0.0:
+            self._time_offset = time_offset
+        else:
+            self._logger.error('Invalid time offset, setting time offset to zero')
+            self._time_offset = 0.0
+
+        self._logger.info('Time offset for KPI evaluation [s]=' + str(self._time_offset))
 
         self._output_dir = output_dir
         # Table of configuration parameters (set per default all KPIs)

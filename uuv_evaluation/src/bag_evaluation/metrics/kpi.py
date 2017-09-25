@@ -23,11 +23,13 @@ class KPI(object):
     UNIT = ''
     TARGET = ''
 
-    def __init__(self, use_bag=True):
+    def __init__(self, use_bag=True, time_offset=0.0):
+        assert time_offset >= 0.0, 'Time offset cannot be negative'
         self._input_values = dict()
 
         self._bag = None
         self._error_set = None
+        self._time_offset = time_offset
 
         if use_bag:
             self._bag = Recording.get_instance()
