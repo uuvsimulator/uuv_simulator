@@ -1,0 +1,326 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-------------------------------------------------------------------------->
+  <!-- MACRO FOR THRUSTER UNITS  -->
+  <!-------------------------------------------------------------------------->
+
+  <!-- Provide the propeller mesh in a separate file with the rotation axis
+  over propeller's frame X-axis in DAE (Collada) or STL format.
+  -->
+  <xacro:property name="prop_mesh_file" value="file://$(find $CATKIN_PACKAGE)/meshes/propeller.dae"/>
+
+  <!--
+    Thruster macro with integration of joint and link. The thrusters should
+    be initialized in the actuators.xacro file.
+  -->
+  <xacro:macro name="thruster_macro" params="robot_namespace thruster_id *origin">
+
+    <!--
+    Dummy link as place holder for the thruster frame,
+    since thrusters can often be inside the collision geometry
+    of the vehicle and may cause internal collisions if set otherwise
+    -->
+    <link name="${robot_namespace}/thruster_${thruster_id}">
+
+      <visual>
+        <geometry>
+          <mesh filename="${prop_mesh_file}" scale="1 1 1" />
+        </geometry>
+      </visual>
+
+      <inertial>
+        <mass value="0.001" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.000000017" ixy="0.0" ixz="0.0"
+               iyy="0.000000017" iyz="0.0"
+               izz="0.000000017" />
+      </inertial>
+    </link>
+
+    <!-- Joint between thruster link and vehicle base link -->
+    <joint name="${robot_namespace}/thruster_${thruster_id}_joint" type="continuous">
+      <xacro:insert_block name="origin" />
+      <axis xyz="1 0 0" />
+      <parent link="${robot_namespace}/base_link" />
+      <child link="${robot_namespace}/thruster_${thruster_id}" />
+    </joint>
+
+    <gazebo>
+      <!-- Thruster ROS plugin -->
+      <plugin name="${robot_namespace}_${thruster_id}_thruster_model" filename="libthruster_ros_plugin.so">
+        <!-- Name of the thruster link -->
+        <linkName>${robot_namespace}/thruster_${thruster_id}</linkName>
+
+        <!-- Name of the joint between thruster and vehicle base link -->
+        <jointName>${robot_namespace}/thruster_${thruster_id}_joint</jointName>
+
+        <!-- Make the thruster aware of its id -->
+        <thrusterId>${thruster_id}</thrusterId>
+
+        <!-- Gain of the input command signal -->
+        <gain>1</gain>
+
+        <!-- Maximum allowed input value for the input signal for thruster unit -->
+        <clampMax>0</clampMax>
+
+        <!-- Minimum allowed value for the input signal for thruster unit -->
+        <clampMin>0</clampMin>
+
+        <!-- Minimum and maximum thrust force output allowed -->
+        <thrustMin>0</thrustMin>
+        <thrustMax>0</thrustMax>
+
+        <!--
+        Value from 0 to 1 to set the efficiency of the output thrust force
+        Default value is 1.0
+        -->
+        <thrust_efficiency>1</thrust_efficiency>
+
+        <!--
+        Value from 0 to 1 to set the efficiency of the propeller as a factor
+        to be multiplied to the current value of the state variable at each
+        iteration.
+        Default value is 1.0
+        -->
+        <propeller_efficiency>1</propeller_efficiency>
+
+        <!--
+        ----------------------------------------------------
+        ----------------------------------------------------
+        Choose one of the propeller dynamics models below for your implementation
+        This will describe the dynamic model for the state variable of your thruster unit,
+        which can be, e.g., the angular velocity of the propeller.
+        ----------------------------------------------------
+        ---------------------------------------------------->
+
+        <!-- 1) Simple zero-order model -->
+        <dynamics>
+          <type>ZeroOrder</type>
+        </dynamics>
+
+        <!-- 2) First order model, gain used is specified above -->
+        <dynamics>
+          <type>FirstOrder</type>
+          <timeConstant>0.0</timeConstant>
+        </dynamics>
+
+        <!-- Yoerger's nonlinear dynamic model
+        For information on the model description:
+        [1] D. R. Yoerger, J. G. Cooke, and J.-J. E. Slotine, “The influence of
+            thruster dynamics on underwater vehicle behavior and their incorporation
+            into control system design,” IEEE Journal of Oceanic Engineering, vol. 15,
+            no. 3, pp. 167–178, Jul. 1990.
+        -->
+        <dynamics>
+          <type>Yoerger</type>
+          <alpha>0.0</alpha>
+          <beta>0.0</beta>
+        </dynamics>
+
+        <!-- 3) Bessa's nonlinear dynamic model
+        For information on the model description:
+        [2] Bessa, Wallace Moreira, Max Suell Dutra, and Edwin Kreuzer. "Thruster
+            dynamics compensation for the positioning of underwater robotic vehicles
+            through a fuzzy sliding mode based approach." ABCM Symposium Series in
+            Mechatronics. Vol. 2. 2006.
+        -->
+        <dynamics>
+          <type>Bessa</type>
+          <Jmsp>0.0</Jmsp>
+          <Kv1>0.0</Kv1>
+          <Kv2>0.0</Kv2>
+          <Kt>0.0</Kt>
+          <Rm>0.0</Rm>
+        </dynamics>
+
+        <!--
+        ----------------------------------------------------
+        ----------------------------------------------------
+        Choose one of the model for the steady-state curve describing the
+        relationship between the state variable and the output thrust force
+        ----------------------------------------------------
+        ---------------------------------------------------->
+
+        <!-- 1) Basic curve
+        Input: x
+        Output: thrust
+        Function: thrust = rotorConstant * x * abs(x)
+        -->
+        <conversion>
+          <type>Basic</type>
+          <rotorConstant>0.0</rotorConstant>
+        </conversion>
+
+        <!-- 2) Dead-zone nonlinearity described in Bessa, 2006
+        Input: x
+        Output: thrust
+        Function:
+        thrust = rotorConstantL * (x * abs(x) - deltaL), if x * abs(x) <= deltaL
+        thrust = 0, if deltaL < x * abs(x) < deltaR
+        thrust = rotorConstantR * (x * abs(x) - deltaR), if x * abs(x) >= deltaL
+        -->
+        <conversion>
+          <type>Bessa</type>
+          <rotorConstantL>0.0</rotorConstantL>
+          <rotorConstantR>0.0</rotorConstantR>
+          <deltaL>0.0</deltaL>
+          <deltaR>0.0</deltaR>
+        </conversion>
+
+        <!-- 3) Linear interpolation
+        If you have access to the thruster's data sheet, for example,
+        you can enter samples of the curve's input and output values
+        and the thruster output will be found through linear interpolation
+        of the given samples.
+        -->
+        <conversion>
+          <type>LinearInterp</type>
+          <inputValues>0 1 2 3</inputValues>
+          <outputValues>0 1 2 3</outputValues>
+        </conversion>
+
+      </plugin>
+    </gazebo>
+
+    <gazebo reference="${robot_namespace}/thruster_${thruster_id}">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+  </xacro:macro>
+
+
+  <!-------------------------------------------------------------------------->
+  <!-- MACRO FOR FIN/RUDDER UNITS  -->
+  <!-------------------------------------------------------------------------->
+
+  <!--
+    This macro can be used to add fins to the body of the vehicle, the fins
+    should be initialized in the actuators.xacro file. If you vehicle has no
+    fins, you can erase the macro below.
+  -->
+
+  <!-- A separate mesh for the fin should be stored in the meshes folder -->
+  <xacro:property name="fin_mesh_file" value="file://$(find $CATKIN_PACKAGE)/meshes/fin.dae"/>
+
+  <!-- Fin joint limits  -->
+  <xacro:property name="fin_min_joint_limit" value="${0.0 * d2r}"/>
+  <xacro:property name="fin_max_joint_limit" value="${0.0 * d2r}"/>
+
+  <xacro:macro name="fin_macro" params="namespace fin_id *origin">
+      <joint name="${namespace}/fin${fin_id}_joint" type="revolute">
+          <limit effort="0" lower="${fin_min_joint_limit}" upper="${fin_max_joint_limit}" velocity="0"/>
+          <xacro:insert_block name="origin"/>
+          <axis xyz="0 0 1"/>
+          <parent link="${namespace}/base_link" />
+          <child link="${namespace}/fin${fin_id}" />
+      </joint>
+
+      <link name="${namespace}/fin${fin_id}">
+        <inertial>
+          <mass value="0.001" />
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <inertia ixx="0.000000017" ixy="0.0" ixz="0.0"
+                 iyy="0.000000017" iyz="0.0"
+                 izz="0.000000017" />
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="${fin_mesh_file}" scale="1 1 1"/>
+          </geometry>
+        </visual>
+      </link>
+
+      <gazebo>
+        <plugin name="${namespace}_fin${fin_id}_model" filename="libfin_ros_plugin.so">
+
+          <!--
+            ----------------------------------------------------
+            ----------------------------------------------------
+            First order dynamics model for the fin joint dynamics,
+            replace an appropriate time constant
+            ----------------------------------------------------
+            ----------------------------------------------------
+          -->
+          <dynamics>
+            <type>FirstOrder</type>
+            <timeConstant>0.0</timeConstant>
+          </dynamics>
+
+          <!--
+            ----------------------------------------------------
+            ----------------------------------------------------
+            Definition of the lift and drag model, choose ONE of the models
+            below according to the model you want to use.
+            ----------------------------------------------------
+            ----------------------------------------------------
+          -->
+
+          <!--
+            1) References for the two line lift and drag model:
+              [1] https://en.wikipedia.org/wiki/Lift_coefficient
+              [2] http://gazebosim.org/tutorials?tut=aerodynamics&cat=plugins
+          -->
+          <liftdrag>
+            <type>TwoLines</type>
+            <area>${replace here the value for the area of the fin's cross section}</area>
+            <fluid_density>0.0</fluid_density>
+            <a0>0.0</a0>
+            <alpha_stall>0.0</alpha_stall>
+            <cla>0.0</cla><!-- ^= 0.244 when using deg -->
+            <cla_stall>0.0</cla_stall>
+            <cda>0.0</cda>
+            <cda_stall>0.0</cda_stall>
+          </liftdrag>
+
+          <!--
+            2) Reference for the quadratic lift and drag model:
+              [1] Engelhardtsen, Oystein. 3D AUV Collision Avoidance.
+                  MS thesis. Institutt for teknisk kybernetikk, 2007.
+                  https://brage.bibsys.no/xmlui/handle/11250/259834
+          -->
+          <liftdrag>
+            <type>Quadratic</type>
+            <lift_constant>0.0</lift_constant>
+            <drag_constant>0.0</drag_constant>
+          </liftdrag>
+
+          <!--
+            ----------------------------------------------------
+            ----------------------------------------------------
+            Further parameters necessary for the lift and drag plugin
+            ----------------------------------------------------
+            ----------------------------------------------------
+          -->
+
+          <!-- Current velocity topic -->
+          <current_velocity_topic>/hydrodynamics/current_velocity</current_velocity_topic>
+
+          <!-- Name of the correspodent fin link and joint  -->
+          <link_name>${namespace}/fin${fin_id}</link_name>
+          <joint_name>${namespace}/fin${fin_id}_joint</joint_name>
+
+          <!-- Output topic to publish the current angle of the fin joint -->
+          <output_topic>${namespace}/fins/${fin_id}/output</output_topic>
+          <input_topic>${namespace}/fins/${fin_id}/input</input_topic>
+          <wrench_topic>${namespace}/fins/${fin_id}/wrench_topic</wrench_topic>
+        </plugin>
+      </gazebo>
+  </xacro:macro>
+
+</robot>
