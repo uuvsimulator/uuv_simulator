@@ -120,16 +120,6 @@
 
     </link>
 
-    <xacro:dummy_link name="${namespace}/ned_link" />
-
-    <joint name="ned_joint" type="fixed">
-      <!-- This is revolute and not static since gazebo would remove ned_link -->
-      <origin xyz="0 0 0" rpy="${pi} 0 0"/>
-      <parent link="${namespace}/base_link"/>
-      <child link="${namespace}/ned_link"/>
-      <limit effort="0" lower="0" upper="0" velocity="0"/>
-    </joint>
-
     <!-- Set up hydrodynamic plugin given as input parameter -->
     <xacro:insert_block name="gazebo"/>
 

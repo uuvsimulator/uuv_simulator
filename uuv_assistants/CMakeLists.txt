@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(uuv_assistants)
 
 find_package(catkin REQUIRED COMPONENTS
-        rospy 
-        rostopic 
+        rospy
+        rostopic
         rosgraph
         nav_msgs
         geometry_msgs
@@ -18,6 +18,7 @@ catkin_install_python(PROGRAMS scripts/publish_footprints.py
                                scripts/publish_world_models.py
                                scripts/publish_vehicle_footprint.py
                                scripts/unpause_simulation.py
+                               scripts/create_new_robot_model
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch

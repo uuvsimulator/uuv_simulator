@@ -1,0 +1,47 @@
+<launch>
+  <!-- Debug flag -->
+  <arg name="debug" default="0"/>
+
+  <!-- Vehicle's initial pose -->
+  <arg name="x"     default="0"/>
+  <arg name="y"     default="0"/>
+  <arg name="z"     default="-20"/>
+  <arg name="roll"  default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw"   default="0"/>
+
+  <!-- Mode to open different robot configurations as set the in file
+  nomenclature standard for the files in /robots
+
+  /robots/<model_name>_<mode>.xacro
+  -->
+  <arg name="mode" default="default"/>
+
+  <!-- Vehicle's namespace -->
+  <arg name="namespace" default="$ROBOT_NAME"/>
+
+  <arg name="world_frame" default="world"/>
+
+
+  <group ns="$(arg namespace)">
+    <param name="robot_description"
+           command="$(find xacro)/xacro.py '$(find $CATKIN_PACKAGE)/robots/$(arg mode).xacro' debug:=$(arg debug) namespace:=$(arg namespace)" />
+
+    <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model $(arg namespace) -param /$(arg namespace)/robot_description"/>
+
+    <!-- A joint state publisher plugin already is started with the model, no need to use the default joint state publisher -->
+
+    <!-- Publish robot model for ROS -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen">
+      <param name="robot_description" value="/$(arg namespace)/robot_description" />
+    </node>
+  </group>
+
+  <!-- Publish state and tf for in relation to the world frame -->
+  <include file="$(find uuv_descriptions)/models/common/launch/message_to_tf.launch">
+    	<arg name="namespace" value="$(arg namespace)"/>
+  </include>
+
+</launch>
