@@ -120,7 +120,7 @@
           <timeConstant>0.0</timeConstant>
         </dynamics>
 
-        <!-- Yoerger's nonlinear dynamic model
+        <!-- 3) Yoerger's nonlinear dynamic model
         For information on the model description:
         [1] D. R. Yoerger, J. G. Cooke, and J.-J. E. Slotine, “The influence of
             thruster dynamics on underwater vehicle behavior and their incorporation
@@ -133,7 +133,7 @@
           <beta>0.0</beta>
         </dynamics>
 
-        <!-- 3) Bessa's nonlinear dynamic model
+        <!-- 4) Bessa's nonlinear dynamic model
         For information on the model description:
         [2] Bessa, Wallace Moreira, Max Suell Dutra, and Edwin Kreuzer. "Thruster
             dynamics compensation for the positioning of underwater robotic vehicles
