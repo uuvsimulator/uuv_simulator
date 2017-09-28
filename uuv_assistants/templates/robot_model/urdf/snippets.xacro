@@ -114,7 +114,7 @@
           <type>ZeroOrder</type>
         </dynamics>
 
-        <!-- 2) First order model, gain used is specified above -->
+        <!-- 2) First order model -->
         <dynamics>
           <type>FirstOrder</type>
           <timeConstant>0.0</timeConstant>
