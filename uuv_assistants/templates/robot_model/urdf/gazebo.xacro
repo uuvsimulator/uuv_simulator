@@ -101,7 +101,8 @@
             implementation of linear (small angle) theory for boxed shaped vessels
             by providing the following parameters. If you omit the area of the
             water level plane area, it will be calculated from the bounding box
-            parameters.
+            parameters. Uncomment the lines below in case you are simulating a
+            surface vessel.
             For more details on these parameters and the computation of buoyancy
             for vessels using this theory, check:
               [1] Lecture Notes  TTK 4190 Guidance and Control of Vehicles (T. I. Fossen)
@@ -109,9 +110,11 @@
               [2] Fossen, Thor I. Handbook of marine craft hydrodynamics and motion
                   control. John Wiley & Sons, 2011.
           -->
+          <!--
           <metacentric_width>0.0</metacentric_width>
           <metacentric_length>0.0</metacentric_length>
           <water_level_plane_area>0.0</water_level_plane_area>
+          -->
         </hydrodynamic_model>
 
         <!-- 2) This computes the added-mass and damping parameters for a sphere
