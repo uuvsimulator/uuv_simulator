@@ -57,16 +57,16 @@ if __name__ == '__main__':
     template_path = os.path.join(ROSPACK_INST.get_path('uuv_assistants'), 'templates', 'robot_model')
 
     for d in os.listdir(template_path):
-        shutil.copytree(os.path.join(template_path, d),
-                        os.path.join(catkin_pkg, d))
-        print('Creating folder=' + os.path.join(catkin_pkg, d))
-
         new_folder = os.path.join(catkin_pkg, d)
-        for f in os.listdir(os.path.join(template_path, d)):
-            print('Replacing robot and catkin package names in file:')
-            print('\t' + os.path.join(new_folder, f))
+        os.makedirs(new_folder)
+        print('Creating folder=' + new_folder)
 
-            output_file = open(os.path.join(catkin_pkg, d, f), 'w')
+        for f in os.listdir(os.path.join(template_path, d)):
+            print('Creating file:')
+            filename = os.path.join(catkin_pkg, d, f.replace('.template', ''))
+            print('\t' + filename)
+
+            output_file = open(filename, 'w')
             with open(os.path.join(os.path.join(template_path, d), f), 'r') as d_file:
                 for line in d_file:
                     if '$ROBOT_NAME' in line:
