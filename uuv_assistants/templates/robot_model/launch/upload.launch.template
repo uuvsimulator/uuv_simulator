@@ -13,7 +13,7 @@
   <!-- Mode to open different robot configurations as set the in file
   nomenclature standard for the files in /robots
 
-  /robots/<model_name>_<mode>.xacro
+  /robots/<mode>.xacro
   -->
   <arg name="mode" default="default"/>
 

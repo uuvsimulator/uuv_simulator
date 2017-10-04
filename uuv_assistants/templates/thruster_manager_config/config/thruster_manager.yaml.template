@@ -1,0 +1,49 @@
+thruster_manager:
+  tf_prefix: $ROBOT_NAME
+  base_link: base_link
+  thruster_topic_prefix: thrusters/
+  thruster_topic_suffix: /input
+  thruster_frame_base: thruster_
+  max_thrust: <set the maximum absolute thrust force allowed>
+  timeout: -1
+  update_rate: 50
+  ##################################################
+  # Options to set the thruster models below
+  ##################################################
+
+  # 1) If all thrusters have the same model (as described in the vehicle's robot description)
+  #
+  # 1.1) If the conversion function set for the thruster plugins is the following:
+  # <conversion>
+  #   <type>Basic</type>
+  #   <rotorConstant>0.0</rotorConstant>
+  # </conversion>
+  # You can set the conversion function to be:
+  conversion_fcn: proportional
+  conversion_fcn_params:
+    gain: <rotorConstant>
+
+  # 1.2)  If the conversion function set for the thruster plugins is the following:
+  # <conversion>
+  #   <type>LinearInterp</type>
+  #   <inputValues>0 1 2 3</inputValues>
+  #   <outputValues>0 1 2 3</outputValues>
+  # </conversion>
+  # You can set the conversion function to be:
+  conversion_fcn: custom
+  conversion_fcn_params:
+    input: [0, 1, 2, 3]
+    output: [0, 1, 2, 3]
+
+  # 2) If the vehicle has thrusters with different models, you can list the
+  #    models descriptions. Beware to set the list where the index in list
+  #    matches the thruster ID
+  conversion_fcn:
+    - proportional
+    - proportional
+    - custom
+  conversion_fcn_params:
+    - gain: rotorConstant0
+    - gain: rotorConstant1
+    - input: [0, 1, 2, 3]
+      output: [0, 1, 2, 3]

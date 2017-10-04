@@ -1,0 +1,50 @@
+<launch>
+  <!-- Name of the robot model  -->
+  <arg name="model_name" default="$ROBOT_NAME"/>
+  <!-- Namespace of the robot in the simulation (it can be different from the original model name) -->
+  <arg name="uuv_name" default="$(arg model_name)"/>
+  <!-- Name of the base link -->
+  <arg name="base_link" default="base_link" />
+  <!--
+    Thruster manager timeout.
+    If no wrench topic is received in the thruster
+    manager input for the time determined by the timeout, the manager will
+    publish zeros.
+    If the timeout is set to -1, the latest received input is always going to
+    be redistributed to the thruster units.
+  -->
+  <arg name="timeout" default="-1" />
+  <!--
+    In case the TAM.yaml must be generated or updated, you can set this flag to
+    true. The thruster allocation matrix is stored in a file because the
+    tf listener, that retrieves the pose of the thrusters wrt the vehicle's
+    base link in runtime, takes a long time to start. This initialization time
+    can make the vehicle's inactive until the tf frames are available. Be
+    sure to keep the thruster allocation matrix stored in a TAM.yaml to
+    improve the initialization of the thruster manager.
+    To generate the TAM.yaml, start the simulation with the vehicle and run:
+
+    >> rosrun $CATKIN_PACKAGE start_thruster_manager.launch reset_tam:=true
+
+    The TAM.yaml file will be store in the folder defined by the following
+    argument output_dir
+  -->
+  <arg name="reset_tam" default="false"/>
+  <!-- Output folder to store the TAM.yaml and thruster_manager.yaml files -->
+  <arg name="output_dir" default="$(find $CATKIN_PACKAGE)/config"/>
+  <!-- Thruster manager configuration file path -->
+  <arg name="config_file" default="$(find $CATKIN_PACKAGE)/config/thruster_manager.yaml"/>
+  <!-- Thruster allocation matrix file path -->
+  <arg name="tam_file" default="$(find $CATKIN_PACKAGE)/config/TAM.yaml"/>
+
+  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+    <arg name="model_name" value="$(arg model_name)"/>
+    <arg name="uuv_name" value="$(arg uuv_name)"/>
+    <arg name="base_link" value="$(arg base_link)"/>
+    <arg name="timeout" value="$(arg timeout)"/>
+    <arg name="reset_tam" value="$(arg reset_tam)"/>
+    <arg name="output_dir" value="$(arg output_dir)"/>
+    <arg name="config_file" value="$(arg config_file)"/>
+    <arg name="tam_file" value="$(arg tam_file)"/>
+   </include>
+</launch>

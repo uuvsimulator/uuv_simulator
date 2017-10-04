@@ -29,6 +29,7 @@ ROSPACK_INST = RosPack()
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Create new catkin package for a UUV robot description")
     parser.add_argument('--robot_name', type=str)
+    parser.add_argument('--output_dir', type=str, default=None)
 
     args = parser.parse_args(rospy.myargv()[1:])
 
@@ -36,34 +37,36 @@ if __name__ == '__main__':
         print('No robot name given!')
         sys.exit(-1)
 
-    catkin_pkg = args.robot_name + '_description'
-
-    print('Create new catkin package for a UUV robot description')
-    print('\tRobot name = ' + args.robot_name)
-    print('\tCatkin package name = ' + catkin_pkg)
-
-
-    if catkin_pkg is not None:
-        if os.path.exists(catkin_pkg):
+    if args.output_dir is None:
+        output_dir = args.robot_name + '_control'
+        print('Creating catking package %s for the thruster manager configuration' % output_dir)
+        if os.path.exists(output_dir):
             print('Catkin package already exists!')
-            sys.exit(1)
+            sys.exit(-1)
         print('Creating the catkin package...')
-        os.system('catkin_create_pkg ' + catkin_pkg)
-        if not os.path.isdir(catkin_pkg):
+        os.system('catkin_create_pkg ' + output_dir)
+        if not os.path.isdir(output_dir):
             print('Catkin package could not be created')
             sys.exit(-1)
         print('Done!')
+    else:
+        output_dir = args.output_dir
 
-    template_path = os.path.join(ROSPACK_INST.get_path('uuv_assistants'), 'templates', 'robot_model')
+    print('Create new catkin package for a UUV control configuration')
+    print('\tRobot name = ' + args.robot_name)
+    print('\tOutput directory = ' + output_dir)
+
+    template_path = os.path.join(ROSPACK_INST.get_path('uuv_assistants'), 'templates', 'thruster_manager_config')
 
     for d in os.listdir(template_path):
-        new_folder = os.path.join(catkin_pkg, d)
-        os.makedirs(new_folder)
-        print('Creating folder=' + new_folder)
+        new_folder = os.path.join(output_dir, d)
+        if not os.path.isdir(new_folder):
+            os.makedirs(new_folder)
+            print('Creating folder=' + new_folder)
 
         for f in os.listdir(os.path.join(template_path, d)):
             print('Creating file:')
-            filename = os.path.join(catkin_pkg, d, f.replace('.template', ''))
+            filename = os.path.join(output_dir, d, f.replace('.template', ''))
             print('\t' + filename)
 
             output_file = open(filename, 'w')
@@ -72,7 +75,7 @@ if __name__ == '__main__':
                     if '$ROBOT_NAME' in line:
                         line = line.replace('$ROBOT_NAME', args.robot_name)
                     if '$CATKIN_PACKAGE' in line:
-                        line = line.replace('$CATKIN_PACKAGE', catkin_pkg)
+                        line = line.replace('$CATKIN_PACKAGE', output_dir)
                     output_file.write(line)
 
-    print('Robot description package <%s> create successfully' % catkin_pkg)
+    print('Thruster manager configuration <%s> create successfully' % output_dir)
