@@ -19,9 +19,7 @@ namespace gazebo {
 
 /////////////////////////////////////////////////
 SwitchableROSGpuRaySensor::SwitchableROSGpuRaySensor() : SwitchableROSSensorPlugin()
-{
-
-}
+{ }
 
 /////////////////////////////////////////////////
 SwitchableROSGpuRaySensor::~SwitchableROSGpuRaySensor()
@@ -46,7 +44,10 @@ void SwitchableROSGpuRaySensor::Load(sensors::SensorPtr _parent,
 void SwitchableROSGpuRaySensor::UpdateSensorInput(
   const sensor_msgs::LaserScan::ConstPtr &_msg)
 {
-  if (!this->sensorOn)
+  // Publish sensor state
+  this->PublishState();
+
+  if (!this->IsOn())
     return;
   this->msg.header = _msg->header;
   this->msg.angle_min = _msg->angle_min;

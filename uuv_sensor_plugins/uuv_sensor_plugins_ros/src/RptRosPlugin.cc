@@ -87,13 +87,22 @@ void GazeboRptRosPlugin::Load(gazebo::physics::ModelPtr _parent,
   this->pubPose = this->rosNode->advertise<
       geometry_msgs::PoseWithCovarianceStamped
       >(this->sensorTopic_ + "_pose", 10);
+
+  bool isSensorOn = true;
+  if (_sdf->HasElement("is_on"))
+    isSensorOn = _sdf->GetElement("is_on")->Get<bool>();
+
+  this->InitSwitchablePlugin(this->sensorTopic_, isSensorOn);
 }
 
 bool GazeboRptRosPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
   bool measurementOK = GazeboRptPlugin::OnUpdate(_info);
 
-  if (!measurementOK)
+  // Publish sensor state
+  this->PublishState();
+
+  if (!measurementOK || !this->IsOn())
     return false;
 
   // publish position message

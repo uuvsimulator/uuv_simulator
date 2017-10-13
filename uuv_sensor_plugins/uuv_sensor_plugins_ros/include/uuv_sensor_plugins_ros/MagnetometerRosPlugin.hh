@@ -17,6 +17,7 @@
 #define UUV_SENSOR_PLUGINS_ROS_MAGNETOMETER_H_
 
 #include <uuv_sensor_plugins/MagnetometerPlugin.hh>
+#include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
 
 #include <boost/scoped_ptr.hpp>
 #include <ros/ros.h>
@@ -27,9 +28,10 @@ namespace gazebo {
 /// \brief GazeboImuRosPlugin is a ROS wrapper for GazeboImuPlugin.
 /// All it does is in addition to GazeboImuPlugin is
 /// publishing simulated measurement via a ROS topic.
-class GazeboMagnetometerRosPlugin : public GazeboMagnetometerPlugin {
+class GazeboMagnetometerRosPlugin :
+  public GazeboMagnetometerPlugin, public SwitchableROSPlugin {
   /// \brief Constructor.
-public: GazeboMagnetometerRosPlugin();
+  public: GazeboMagnetometerRosPlugin();
 
   /// \brief Destructor.
   public: virtual ~GazeboMagnetometerRosPlugin();
@@ -39,10 +41,7 @@ public: GazeboMagnetometerRosPlugin();
                           sdf::ElementPtr _sdf);
 
   /// \brief Update callback from simulator.
-public: virtual bool OnUpdate(const common::UpdateInfo& _info);
-
-  /// \brief ROS node handle for communication with ROS
-  protected: boost::scoped_ptr<ros::NodeHandle> rosNode_;
+  public: virtual bool OnUpdate(const common::UpdateInfo& _info);
 
   /// \brief ROS publisher for Magnetometer data.
   protected: ros::Publisher rosPublisher_;

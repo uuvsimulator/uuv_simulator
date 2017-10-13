@@ -43,12 +43,12 @@ void GazeboImuRosPlugin::Load(gazebo::physics::ModelPtr _parent,
         return;
     }
 
-    this->rosNode_.reset(new ros::NodeHandle(this->namespace_));
+    this->rosNode.reset(new ros::NodeHandle(this->namespace_));
 
     this->world_ = _parent->GetWorld();
     this->model_ = _parent;
 
-    this->pubImu_ = this->rosNode_->advertise<sensor_msgs::Imu>(
+    this->pubImu_ = this->rosNode->advertise<sensor_msgs::Imu>(
                 this->sensorTopic_, 10);
 
     this->imuRosMessage_.header.frame_id = this->linkName_;
@@ -75,13 +75,22 @@ void GazeboImuRosPlugin::Load(gazebo::physics::ModelPtr _parent,
     this->imuRosMessage_.orientation_covariance[0] = orientationVar;
     this->imuRosMessage_.orientation_covariance[4] = orientationVar;
     this->imuRosMessage_.orientation_covariance[8] = orientationVar;
+
+    bool isSensorOn = true;
+    if (_sdf->HasElement("is_on"))
+      isSensorOn = _sdf->GetElement("is_on")->Get<bool>();
+
+    this->InitSwitchablePlugin(this->sensorTopic_, isSensorOn);
 }
 
 bool GazeboImuRosPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
     bool measurementOK = GazeboImuPlugin::OnUpdate(_info);
 
-    if (!measurementOK)
+    // Publish sensor state
+    this->PublishState();
+
+    if (!measurementOK || !this->IsOn())
         return false;
 
     this->imuRosMessage_.header.stamp.sec = _info.simTime.sec;
