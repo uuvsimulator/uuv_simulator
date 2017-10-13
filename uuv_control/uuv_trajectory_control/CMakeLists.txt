@@ -26,6 +26,7 @@ catkin_install_python(PROGRAMS scripts/rov_nl_pid_controller.py
                                scripts/rov_nmb_sm_controller.py
                                scripts/rov_pid_controller.py
                                scripts/rov_ua_pid_controller.py
+                               scripts/rov_mb_fl_controller.py
                                scripts/auv_geometric_tracking_controller.py
                                scripts/demo_wp_trajectory_generator.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
