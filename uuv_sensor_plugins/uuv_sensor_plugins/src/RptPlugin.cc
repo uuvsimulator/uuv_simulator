@@ -51,6 +51,8 @@ void GazeboRptPlugin::Load(physics::ModelPtr _model,
     }
   }
 
+  if (this->sensorTopic_.empty())
+      this->sensorTopic_ = "rpt";
   // Advertise topic to gazebo
   this->publisher_ = this->nodeHandle_->Advertise<sensor_msgs::msgs::Rpt>(
         this->sensorTopic_, 10);

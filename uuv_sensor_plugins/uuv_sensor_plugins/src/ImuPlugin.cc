@@ -89,8 +89,11 @@ void GazeboImuPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
                         imuParameters_.orientationNoise,
                         imuParameters_.orientationNoise);
 
-    publisher_ = nodeHandle_->Advertise<sensor_msgs::msgs::Imu>(sensorTopic_,
-                                                               10);
+    if (this->sensorTopic_.empty())
+      this->sensorTopic_ = "imu";
+
+    publisher_ = nodeHandle_->Advertise<sensor_msgs::msgs::Imu>(
+      this->sensorTopic_, 10);
 
     // Fill imu message.
     // imu_message_.header.frame_id = frame_id_; TODO Add header

@@ -44,8 +44,10 @@ void GazeboSubseaPressurePlugin::Load(physics::ModelPtr _model,
                         101.325);
     getSdfParam<double>(_sdf, "kPaPerM", this->kPaPerM_, 9.80638);
 
-    publisher_ = nodeHandle_->Advertise<sensor_msgs::msgs::Pressure>(
-                sensorTopic_, 10);
+    if (this->sensorTopic_.empty())
+        this->sensorTopic_ = "pressure";
+    this->publisher_ = nodeHandle_->Advertise<sensor_msgs::msgs::Pressure>(
+        this->sensorTopic_, 10);
 }
 
 void GazeboSubseaPressurePlugin::SimulateMeasurement(

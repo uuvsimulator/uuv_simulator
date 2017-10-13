@@ -85,6 +85,9 @@ void GazeboMagnetometerPlugin::Load(physics::ModelPtr _model,
     magneticGazeboMessage_.add_magnetic_field_covariance(
                 parameters_.noiseZ*parameters_.noiseZ);
 
+    if (this->sensorTopic_.empty())
+        this->sensorTopic_ = "magnetometer";
+
     publisher_ = nodeHandle_->Advertise<sensor_msgs::msgs::Magnetic>(
                 sensorTopic_, 10);
 }
