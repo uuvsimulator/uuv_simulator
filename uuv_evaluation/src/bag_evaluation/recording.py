@@ -27,11 +27,12 @@ class Recording:
     def __init__(self, filename):
         # Setting up the log
         self._logger = logging.getLogger('read_rosbag')
-        out_hdlr = logging.StreamHandler(sys.stdout)
-        out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
-        out_hdlr.setLevel(logging.INFO)
-        self._logger.addHandler(out_hdlr)
-        self._logger.setLevel(logging.INFO)
+        if len(self._logger.handlers) == 0:
+            out_hdlr = logging.StreamHandler(sys.stdout)
+            out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+            out_hdlr.setLevel(logging.INFO)
+            self._logger.addHandler(out_hdlr)
+            self._logger.setLevel(logging.INFO)
 
         # Bag filename
         self._filename = filename
@@ -81,11 +82,6 @@ class Recording:
             self._logger.error('Error reading bag, filename=' + self._filename)
 
         Recording.__instance = self
-
-    def __del__(self):
-      # Removing logging message handlers
-      while self._logger.handlers:
-        self._logger.handlers.pop()
 
     @classmethod
     def get_instance(cls):

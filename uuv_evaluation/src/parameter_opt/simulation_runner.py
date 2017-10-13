@@ -46,11 +46,12 @@ class SimulationRunner(object):
                  add_folder_timestamp=True):
         # Setting up the logging
         self._logger = logging.getLogger('run_simulation_wrapper')
-        out_hdlr = logging.StreamHandler(sys.stdout)
-        out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
-        out_hdlr.setLevel(logging.INFO)
-        self._logger.addHandler(out_hdlr)
-        self._logger.setLevel(logging.INFO)
+        if len(self._logger.handlers) == 0:
+            self._out_hdlr = logging.StreamHandler(sys.stdout)
+            self._out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+            self._out_hdlr.setLevel(logging.INFO)
+            self._logger.addHandler(self._out_hdlr)
+            self._logger.setLevel(logging.INFO)
 
         assert type(params) is dict, 'Parameter structure must be a dict'
         self._params = params
@@ -68,11 +69,10 @@ class SimulationRunner(object):
         # Create results folder, if not existent
         self._results_folder = results_folder
 
-        if self._results_folder[0:2] == './':
-            self._results_folder = self._results_folder.replace('./', os.getcwd() + '/')
-
         if not os.path.isdir(self._results_folder):
             os.makedirs(self._results_folder)
+
+        self._results_folder = os.path.abspath(self._results_folder)
 
         self._logger.info('Results folder <%s>' % self._results_folder)
 
@@ -100,9 +100,6 @@ class SimulationRunner(object):
     def __del__(self):
         if not self._record_all_results:
             self.remove_recording_dir()
-        # Removing logging handlers
-        while self._logger.handlers:
-            self._logger.handlers.pop()
 
     @property
     def recording_filename(self):
