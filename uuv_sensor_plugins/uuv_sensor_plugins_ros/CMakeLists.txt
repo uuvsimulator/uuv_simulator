@@ -4,8 +4,8 @@ project(uuv_sensor_plugins_ros)
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 find_package(catkin REQUIRED COMPONENTS
-  uuv_gazebo_plugins 
-  sensor_msgs 
+  uuv_gazebo_plugins
+  sensor_msgs
   geometry_msgs
   std_msgs
   roscpp
@@ -52,22 +52,30 @@ target_link_libraries(uuv_gazebo_ros_camera ${catkin_LIBRARIES} ${GAZEBO_LIBRARI
 add_dependencies(uuv_gazebo_ros_camera ${catkin_EXPORTED_TARGETS})
 list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_camera)
 
-add_library(uuv_gazebo_ros_dvl src/DvlRosPlugin.cc)
+add_library(uuv_gazebo_ros_dvl
+  src/DvlRosPlugin.cc
+  src/SwitchableROSPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_dvl ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_dvl ${catkin_EXPORTED_TARGETS})
 list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_dvl)
 
-add_library(uuv_gazebo_ros_imu src/ImuRosPlugin.cc)
+add_library(uuv_gazebo_ros_imu
+  src/ImuRosPlugin.cc
+  src/SwitchableROSPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_imu ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_imu ${catkin_EXPORTED_TARGETS})
 list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_imu)
 
-add_library(uuv_gazebo_ros_magnetometer src/MagnetometerRosPlugin.cc)
+add_library(uuv_gazebo_ros_magnetometer
+  src/MagnetometerRosPlugin.cc
+  src/SwitchableROSPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_magnetometer ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_magnetometer ${catkin_EXPORTED_TARGETS})
 list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_magnetometer)
 
-add_library(uuv_gazebo_ros_rpt src/RptRosPlugin.cc)
+add_library(uuv_gazebo_ros_rpt
+  src/RptRosPlugin.cc
+  src/SwitchableROSPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_rpt ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_rpt ${catkin_EXPORTED_TARGETS})
 list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_rpt)
@@ -77,19 +85,22 @@ target_link_libraries(uuv_gazebo_ros_gps ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES}
 add_dependencies(uuv_gazebo_ros_gps ${catkin_EXPORTED_TARGETS})
 list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_gps)
 
-add_library(uuv_gazebo_ros_subseapressure src/SubseapressureRosPlugin.cc)
+add_library(uuv_gazebo_ros_subseapressure
+  src/SubseapressureRosPlugin.cc
+  src/SwitchableROSPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_subseapressure ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_subseapressure ${catkin_EXPORTED_TARGETS})
 list(APPEND uuv_sensor_plugins_list uuv_gazebo_ros_subseapressure)
 
 # Gazebo ROS plugin adaptations with switch service function
 
-add_library(uuv_gazebo_ros_switchable_gpu_ray_sensor 
+add_library(uuv_gazebo_ros_switchable_gpu_ray_sensor
   src/SwitchableROSGpuRaySensor.cc
-  src/SwitchableROSSensorPlugin.cc)
-target_link_libraries(uuv_gazebo_ros_switchable_gpu_ray_sensor 
-  ${catkin_LIBRARIES} 
-  ${GAZEBO_LIBRARIES} 
+  src/SwitchableROSSensorPlugin.cc
+  src/SwitchableROSPlugin.cc)
+target_link_libraries(uuv_gazebo_ros_switchable_gpu_ray_sensor
+  ${catkin_LIBRARIES}
+  ${GAZEBO_LIBRARIES}
   ${Boost_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_switchable_gpu_ray_sensor
   ${catkin_EXPORTED_TARGETS})

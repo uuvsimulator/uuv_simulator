@@ -16,14 +16,12 @@
 #ifndef SWITCHABLE_ROS_SENSOR_PLUGIN_H_
 #define SWITCHABLE_ROS_SENSOR_PLUGIN_H_
 
-#include <boost/scoped_ptr.hpp>
 #include <gazebo/common/common.hh>
 #include <gazebo/sensors/sensors.hh>
 #include <gazebo/gazebo.hh>
 #include <string>
 #include <ros/ros.h>
-#include <std_msgs/Bool.h>
-#include <uuv_sensor_plugins_ros_msgs/ChangeSensorState.h>
+#include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
 
 #define UUV_SWITCHABLE_SUFFIX "_switchable"
 
@@ -32,7 +30,7 @@ namespace gazebo {
 /// \brief SwitchableROSSensorPlugin
 /// Provides a service to turn the sensor on and off
 /// TODO: Find a better solution to switch payload on and off, Gazebo's IsActive still not implemented properly
-class SwitchableROSSensorPlugin : public SensorPlugin {
+class SwitchableROSSensorPlugin : public SensorPlugin, public SwitchableROSPlugin {
   /// \brief Constructor
   public: SwitchableROSSensorPlugin();
 
@@ -43,9 +41,6 @@ class SwitchableROSSensorPlugin : public SensorPlugin {
   public: virtual void Load(sensors::SensorPtr _parent,
     sdf::ElementPtr _sdf);
 
-  /// \brief Flag to control the generation of sensor messages
-  protected: bool sensorOn;
-
   /// \brief Namespace of the vehicle
   protected: std::string robotNamespace;
 
@@ -55,25 +50,12 @@ class SwitchableROSSensorPlugin : public SensorPlugin {
   /// \brief Pointer to the parent sensor
   protected: sensors::SensorPtr parentSensor;
 
-  /// \brief ROS node handle for communication with ROS
-  protected: boost::scoped_ptr<ros::NodeHandle> rosNode;
-
-  /// \brief Pointer to the update event connection.
-  event::ConnectionPtr updateConnection;
-
-  /// \brief Service server object
-  public: ros::ServiceServer changeSensorSrv;
-
   /// \brief ROS subscriber from the parent sensor
   protected: ros::Subscriber inputSub;
 
   /// \brief ROS publisher for the switchable sensor data
   protected: ros::Publisher outputPub;
 
-  /// \brief Change sensor state (ON/OFF)
-  public: bool ChangeSensorState(
-      uuv_sensor_plugins_ros_msgs::ChangeSensorState::Request& _req,
-      uuv_sensor_plugins_ros_msgs::ChangeSensorState::Response& _res);
 };
 
 }

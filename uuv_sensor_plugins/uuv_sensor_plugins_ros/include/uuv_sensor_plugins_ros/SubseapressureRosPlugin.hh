@@ -17,6 +17,7 @@
 #define UUV_SENSOR_PLUGINS_ROS_SUBSEAPRESSURE_H_
 
 #include <uuv_sensor_plugins/SubseapressurePlugin.hh>
+#include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
 
 #include <boost/scoped_ptr.hpp>
 #include <ros/ros.h>
@@ -27,25 +28,24 @@ namespace gazebo {
 /// \brief GazeboImuRosPlugin is a ROS wrapper for GazeboImuPlugin.
 /// All it does is in addition to GazeboImuPlugin is
 /// publishing simulated measurement via a ROS topic.
-class GazeboSubseaPressureRosPlugin : public GazeboSubseaPressurePlugin {
-    /// \brief Constructor.
-    public: GazeboSubseaPressureRosPlugin();
+class GazeboSubseaPressureRosPlugin :
+  public GazeboSubseaPressurePlugin, public SwitchableROSPlugin {
 
-    /// \brief Destructor.
-    public: virtual ~GazeboSubseaPressureRosPlugin();
+  /// \brief Constructor.
+  public: GazeboSubseaPressureRosPlugin();
 
-    /// \brief Load module and read parameters from SDF.
-    public: virtual void Load(gazebo::physics::ModelPtr _model,
-                              sdf::ElementPtr _sdf);
+  /// \brief Destructor.
+  public: virtual ~GazeboSubseaPressureRosPlugin();
 
-    /// \brief Update callback from simulator.
-    public: virtual bool OnUpdate(const common::UpdateInfo& _info);
+  /// \brief Load module and read parameters from SDF.
+  public: virtual void Load(gazebo::physics::ModelPtr _model,
+                            sdf::ElementPtr _sdf);
 
-    /// \brief ROS node handle for communication with ROS
-    protected: boost::scoped_ptr<ros::NodeHandle> rosNode_;
+  /// \brief Update callback from simulator.
+  public: virtual bool OnUpdate(const common::UpdateInfo& _info);
 
-    /// \brief ROS publisher for Magnetometer data.
-    protected: ros::Publisher rosPublisher_;
+  /// \brief ROS publisher for Magnetometer data.
+  protected: ros::Publisher rosPublisher_;
 };
 }
 

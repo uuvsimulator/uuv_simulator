@@ -40,14 +40,10 @@ void GazeboGpsRosPlugin::Load(sensors::SensorPtr _parent,
     return;
   }
 
-  this->vehicleNamespace.clear();
-  if (_sdf->HasElement("namespace"))
-      this->vehicleNamespace =
-          _sdf->GetElement("namespace")->Get<std::string>();
-  else
-      gzerr << "[gazebo_gps_ros_plugin] Please specify a vehicle namespace.\n";
+  GZ_ASSERT(_sdf->HasElement("namespace"), "Robot namespace was not provided");
 
-  this->rosNode.reset(new ros::NodeHandle(this->vehicleNamespace));
+  this->robotNamespace = _sdf->GetElement("namespace")->Get<std::string>();
+  this->rosNode.reset(new ros::NodeHandle(this->robotNamespace));
 
   std::string outputTopic;
 
@@ -67,7 +63,7 @@ void GazeboGpsRosPlugin::Load(sensors::SensorPtr _parent,
     outputTopic, 10);
 
   // Set the frame ID
-  this->gpsMessage.header.frame_id = this->vehicleNamespace;
+  this->gpsMessage.header.frame_id = this->robotNamespace;
   // TODO: Get the position covariance from the GPS sensor
   this->gpsMessage.position_covariance_type =
     sensor_msgs::NavSatFix::COVARIANCE_TYPE_KNOWN;

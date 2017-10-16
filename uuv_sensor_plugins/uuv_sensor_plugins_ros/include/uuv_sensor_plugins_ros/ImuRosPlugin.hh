@@ -17,6 +17,7 @@
 #define UUV_SENSOR_PLUGINS_ROS_IMU_H_
 
 #include <uuv_sensor_plugins/ImuPlugin.hh>
+#include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
 
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
@@ -26,7 +27,9 @@ namespace gazebo {
 /// \brief GazeboImuRosPlugin is a ROS wrapper for GazeboImuPlugin.
 /// All it does is in addition to GazeboImuPlugin is
 /// publishing simulated measurements via a ROS topic.
-class GazeboImuRosPlugin : public GazeboImuPlugin {
+class GazeboImuRosPlugin :
+  public GazeboImuPlugin, public SwitchableROSPlugin {
+
     /// \brief Constructor.
     public: GazeboImuRosPlugin();
 
@@ -39,9 +42,6 @@ class GazeboImuRosPlugin : public GazeboImuPlugin {
 
     /// \brief Update callback from simulator.
     public: virtual bool OnUpdate(const common::UpdateInfo& _info);
-
-    /// \brief ROS node handle for communication with ROS
-    protected: boost::scoped_ptr<ros::NodeHandle> rosNode_;
 
     /// \brief ROS publisher for IMU data.
     protected: ros::Publisher pubImu_;

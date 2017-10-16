@@ -18,16 +18,11 @@
 namespace gazebo {
 /////////////////////////////////////////////////
 SwitchableROSSensorPlugin::SwitchableROSSensorPlugin() : SensorPlugin()
-{
-
-}
+{ }
 
 /////////////////////////////////////////////////
 SwitchableROSSensorPlugin::~SwitchableROSSensorPlugin()
-{
-  gzmsg << "SwitchableROSSensorPlugin - shutting down sensor" << std::endl;
-  this->rosNode->shutdown();
-}
+{ }
 
 /////////////////////////////////////////////////
 void SwitchableROSSensorPlugin::Load(sensors::SensorPtr _parent,
@@ -35,68 +30,43 @@ void SwitchableROSSensorPlugin::Load(sensors::SensorPtr _parent,
 {
   if (!ros::isInitialized())
   {
-    gzerr << "Not loading SwitchableROSSensorPlugin since ROS has not been properly "
-          << "initialized." << std::endl;
+    gzerr << "Not loading SwitchableROSSensorPlugin since ROS has not been "
+          << "properly initialized." << std::endl;
     return;
   }
 
   this->robotNamespace.clear();
   if (_sdf->HasElement("namespace"))
-      this->robotNamespace =
-          _sdf->GetElement("namespace")->Get<std::string>();
+    this->robotNamespace = _sdf->GetElement("namespace")->Get<std::string>();
   else
-      gzerr << "[switchable_ros_sensor_plugin] Please specify a vehicle namespace.\n";
+    gzerr << "[switchable_ros_sensor_plugin] Please specify a vehicle namespace.\n";
 
   this->inputTopicName.clear();
   if (_sdf->HasElement("input_topic"))
-      this->inputTopicName =
-          _sdf->GetElement("input_topic")->Get<std::string>();
+    this->inputTopicName = _sdf->GetElement("input_topic")->Get<std::string>();
   else
-      gzerr << "[switchable_ros_sensor_plugin] Please specify an input topic name.\n";
+    gzerr << "[switchable_ros_sensor_plugin] Please specify an input topic name.\n";
+
+  bool isOn = true;
+  if (_sdf->HasElement("is_on"))
+    isOn = _sdf->GetElement("is_on")->Get<bool>();
 
   this->rosNode.reset(new ros::NodeHandle(this->robotNamespace));
 
 #if GAZEBO_MAJOR_VERSION >= 7
   this->parentSensor = std::dynamic_pointer_cast<sensors::Sensor>(_parent);
+  this->InitSwitchablePlugin(this->parentSensor->Name(), isOn);
 #else
   this->parentSensor = boost::dynamic_pointer_cast<sensors::Sensor>(_parent);
-#endif  
-
-  this->sensorOn = false;
-
-  this->changeSensorSrv = this->rosNode->advertiseService(
-    this->parentSensor->Name() + "/change_sensor_state",
-    &SwitchableROSSensorPlugin::ChangeSensorState, this);
+  this->InitSwitchablePlugin(this->parentSensor->GetName(), isOn);
+#endif
 
 #if GAZEBO_MAJOR_VERSION >= 7
   gzmsg << this->parentSensor->Name() << ":: Switchable sensor plugin initialized" << std::endl;
 #else
   gzmsg << this->parentSensor->GetName() << ":: Switchable sensor plugin initialized" << std::endl;
 #endif
-}
 
-/////////////////////////////////////////////////
-bool SwitchableROSSensorPlugin::ChangeSensorState(
-    uuv_sensor_plugins_ros_msgs::ChangeSensorState::Request& _req,
-    uuv_sensor_plugins_ros_msgs::ChangeSensorState::Response& _res)
-{
-  this->sensorOn = _req.on;
-  _res.success = true;
-  std::string message = "";
-
-#if GAZEBO_MAJOR_VERSION >= 7
-  message += this->parentSensor->ParentName() + "::" + this->parentSensor->Name();
-#else
-  message += this->parentSensor->GetParentName() + "::" + this->parentSensor->GetName();
-#endif
-
-  if (_req.on)
-    message += " ON";
-  else
-    message += " OFF";
-  _res.message = message;
-  gzmsg << message << std::endl;
-  return true;
 }
 
 }

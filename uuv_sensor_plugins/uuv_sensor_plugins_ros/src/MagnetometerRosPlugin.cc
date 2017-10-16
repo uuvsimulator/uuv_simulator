@@ -46,12 +46,12 @@ void GazeboMagnetometerRosPlugin::Load(gazebo::physics::ModelPtr _parent,
         return;
     }
 
-    this->rosNode_.reset(new ros::NodeHandle(this->namespace_));
+    this->rosNode.reset(new ros::NodeHandle(this->namespace_));
 
     this->world_ = _parent->GetWorld();
     this->model_ = _parent;
 
-    this->rosPublisher_ = this->rosNode_->advertise<sensor_msgs::MagneticField>(
+    this->rosPublisher_ = this->rosNode->advertise<sensor_msgs::MagneticField>(
                 this->sensorTopic_, 10);
 
     // Prepare ROS message
@@ -63,13 +63,22 @@ void GazeboMagnetometerRosPlugin::Load(gazebo::physics::ModelPtr _parent,
             this->parameters_.noiseXY*this->parameters_.noiseXY;
     this->rosMessage_.magnetic_field_covariance[8] =
             this->parameters_.noiseZ*this->parameters_.noiseZ;
+
+    bool isSensorOn = true;
+    if (_sdf->HasElement("is_on"))
+      isSensorOn = _sdf->GetElement("is_on")->Get<bool>();
+
+    this->InitSwitchablePlugin(this->sensorTopic_, isSensorOn);
 }
 
 bool GazeboMagnetometerRosPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
     bool measurementOK = GazeboMagnetometerPlugin::OnUpdate(_info);
 
-    if (!measurementOK)
+    // Publish sensor state
+    this->PublishState();
+
+    if (!measurementOK || !this->IsOn())
         return false;
 
     this->rosMessage_.header.stamp.sec = _info.simTime.sec;

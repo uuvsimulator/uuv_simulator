@@ -21,6 +21,7 @@
 #include <uuv_sensor_plugins/RptPlugin.hh>
 #include <uuv_sensor_plugins_ros_msgs/PositionWithCovarianceStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
 
 #include <ros/ros.h>
 
@@ -29,7 +30,8 @@ namespace gazebo {
 /// \brief GazeboRptRosPlugin is a ROS wrapper for GazeboRptPlugin.
 /// All it does is in addition to GazeboRptPlugin is
 /// publishing simulated measurements via a ROS topic.
-class GazeboRptRosPlugin : public GazeboRptPlugin {
+class GazeboRptRosPlugin :
+  public GazeboRptPlugin, public SwitchableROSPlugin {
   /// \brief Constructor.
 public: GazeboRptRosPlugin();
 
@@ -42,9 +44,6 @@ public: GazeboRptRosPlugin();
 
   /// \brief Update callback from simulator.
   public: virtual bool OnUpdate(const common::UpdateInfo& _info);
-
-  /// \brief ROS node handle for communication with ROS
-  protected: boost::scoped_ptr<ros::NodeHandle> rosNode;
 
   /// \brief ROS publisher for position data.
   protected: ros::Publisher pubPos;

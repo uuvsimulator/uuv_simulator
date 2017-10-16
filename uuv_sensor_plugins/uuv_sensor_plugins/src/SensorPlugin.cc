@@ -24,11 +24,8 @@
 
 namespace gazebo {
 
-GazeboSensorPlugin::GazeboSensorPlugin() : ModelPlugin() 
-{ 
-    // Sensor is turned on per default
-    this->isActive = true;
-}
+GazeboSensorPlugin::GazeboSensorPlugin() : ModelPlugin()
+{ }
 
 GazeboSensorPlugin::~GazeboSensorPlugin()
 {
@@ -73,7 +70,7 @@ void GazeboSensorPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
         this->sensorTopic_ =
             _sdf->GetElement("sensorTopic")->Get<std::string>();
     else
-        gzerr << "[gazebo_sensor_plugin] Please specify a sensorTopic.\n";
+        this->sensorTopic_ = std::string();
 
     if (!_sdf->HasElement("updatePeriod"))
         gzerr << "[gazebo_sensor_plugin] Please specify an updatePeriod.\n";
@@ -97,6 +94,6 @@ bool GazeboSensorPlugin::ShouldIGenerate(const common::UpdateInfo& _info) const
 {
     common::Time current_time  = _info.simTime;
     double dt = (current_time - this->lastMeasTime_).Double();
-    return dt >= this->updatePeriod_.Double() && this->isActive;
+    return dt >= this->updatePeriod_.Double();
 }
 }

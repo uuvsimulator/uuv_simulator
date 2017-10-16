@@ -51,6 +51,8 @@ void GazeboDvlPlugin::Load(physics::ModelPtr _model,
       this->message.add_linear_velocity_covariance(0.0);
     }
   }
+  if (this->sensorTopic_.empty())
+    this->sensorTopic_ = "dvl";
 
   // Advertise topic to gazebo
   this->publisher_ = this->nodeHandle_->Advertise<sensor_msgs::msgs::Dvl>(

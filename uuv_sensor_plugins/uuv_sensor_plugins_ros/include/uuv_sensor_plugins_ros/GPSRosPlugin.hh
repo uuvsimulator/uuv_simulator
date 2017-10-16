@@ -44,8 +44,8 @@ class GazeboGpsRosPlugin : public SensorPlugin {
   /// \brief Update callback from simulator.
   public: bool OnUpdate();
 
-  /// \brief Namespace of the vehicle
-  protected: std::string vehicleNamespace;
+  /// \brief Robot namespace
+  protected: std::string robotNamespace;
 
   /// \brief Pointer to the parent sensor
   protected: sensors::GpsSensorPtr gazeboGPSSensor;
@@ -59,8 +59,8 @@ class GazeboGpsRosPlugin : public SensorPlugin {
   /// \brief Store dvl message since many attributes do not change (cov.).
   protected: sensor_msgs::NavSatFix gpsMessage;
 
-  /// \brief    Pointer to the update event connection.
-  event::ConnectionPtr updateConnection;
+  /// \brief Pointer to the update event connection.
+  protected: event::ConnectionPtr updateConnection;
 };
 }
 

@@ -20,6 +20,7 @@
 #include <geometry_msgs/TwistWithCovarianceStamped.h>
 #include <uuv_sensor_plugins/DvlPlugin.hh>
 #include <uuv_sensor_plugins_ros_msgs/DVL.h>
+#include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
 
 #include <ros/ros.h>
 
@@ -28,9 +29,11 @@ namespace gazebo {
 /// \brief GazeboDvlRosPlugin is a ROS wrapper for GazeboDvlPlugin.
 /// All it does is in addition to GazeboDvlPlugin is
 /// publishing simulated measurements via a ROS topic.
-class GazeboDVLRosPlugin : public GazeboDvlPlugin {
+class GazeboDVLRosPlugin :
+  public GazeboDvlPlugin, public SwitchableROSPlugin {
+
   /// \brief Constructor.
-public: GazeboDVLRosPlugin();
+  public: GazeboDVLRosPlugin();
 
   /// \brief Destructor.
   public: virtual ~GazeboDVLRosPlugin();
@@ -41,9 +44,6 @@ public: GazeboDVLRosPlugin();
 
   /// \brief Update callback from simulator.
   public: virtual bool OnUpdate(const common::UpdateInfo& _info);
-
-  /// \brief ROS node handle for communication with ROS
-  protected: boost::scoped_ptr<ros::NodeHandle> rosNode;
 
   /// \brief ROS publisher for dvl data.
   protected: ros::Publisher pubDvl;

@@ -74,6 +74,11 @@ void GazeboDVLRosPlugin::Load(gazebo::physics::ModelPtr _parent,
   this->twistMessage.twist.covariance[28] = -1;  // not available
   this->twistMessage.twist.covariance[35] = -1;  // not available
 
+  bool isSensorOn = true;
+  if (_sdf->HasElement("is_on"))
+    isSensorOn = _sdf->GetElement("is_on")->Get<bool>();
+
+  this->InitSwitchablePlugin(this->sensorTopic_, isSensorOn);
 
   this->pubDvl = this->rosNode->advertise<uuv_sensor_plugins_ros_msgs::DVL>(
         this->sensorTopic_, 10);
@@ -87,7 +92,10 @@ bool GazeboDVLRosPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
   bool measurementOK = GazeboDvlPlugin::OnUpdate(_info);
 
-  if (!measurementOK)
+  // Publish sensor state
+  this->PublishState();
+
+  if (!measurementOK || !this->IsOn())
     return false;
 
   this->dvlMessage.header.stamp.sec = _info.simTime.sec;

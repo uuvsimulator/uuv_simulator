@@ -46,20 +46,29 @@ void GazeboSubseaPressureRosPlugin::Load(gazebo::physics::ModelPtr _parent,
         return;
     }
 
-    this->rosNode_.reset(new ros::NodeHandle(this->namespace_));
+    this->rosNode.reset(new ros::NodeHandle(this->namespace_));
 
     this->world_ = _parent->GetWorld();
     this->model_ = _parent;
 
-    this->rosPublisher_ = this->rosNode_->advertise<sensor_msgs::FluidPressure>(
+    this->rosPublisher_ = this->rosNode->advertise<sensor_msgs::FluidPressure>(
                 this->sensorTopic_, 10);
+
+    bool isSensorOn = true;
+    if (_sdf->HasElement("is_on"))
+      isSensorOn = _sdf->GetElement("is_on")->Get<bool>();
+
+    this->InitSwitchablePlugin(this->sensorTopic_, isSensorOn);
 }
 
 bool GazeboSubseaPressureRosPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
     bool measurementOK = GazeboSubseaPressurePlugin::OnUpdate(_info);
 
-    if (!measurementOK)
+    // Publish sensor state
+    this->PublishState();
+
+    if (!measurementOK || !this->IsOn())
         return false;
 
     sensor_msgs::FluidPressure msg;
