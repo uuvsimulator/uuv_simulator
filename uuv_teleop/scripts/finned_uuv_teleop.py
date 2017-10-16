@@ -44,6 +44,11 @@ class FinnedUUVControllerNode:
         # Number of fins
         self._n_fins = rospy.get_param('~n_fins')
 
+        # Thruster joy axis gain
+        self._thruster_joy_gain = 1
+        if rospy.has_param('~thruster_joy_gain'):
+            self._thruster_joy_gain = rospy.get_param('~thruster_joy_gain')
+
         # Read the vector for contribution of each fin on the change on
         # orientation
         gain_roll = rospy.get_param('~gain_roll')
@@ -100,7 +105,8 @@ class FinnedUUVControllerNode:
 
         try:
             thrust = msg.axes[self._joy_axis['axis_thruster']] * \
-                self._thruster_params['max_thrust']
+                self._thruster_params['max_thrust'] * \
+                self._thruster_joy_gain
 
             rpy = numpy.array([msg.axes[self._joy_axis['axis_roll']],
                                msg.axes[self._joy_axis['axis_pitch']],

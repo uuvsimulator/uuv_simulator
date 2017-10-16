@@ -20,6 +20,7 @@ file is available, for this default mode the thruster is modelled as
 <arg name="thruster_topic" default="thrusters/0/input"/>
 <arg name="fin_topic_prefix" default="fins/"/>
 <arg name="fin_topic_suffix" default="/input"/>
+<arg name="thruster_joy_gain" default="1.0"/>
 <!--
 The default fin configuration considered here assumes that your fins are placed
 around the body of the vehicle as follows (on the YZ plane)
@@ -60,6 +61,7 @@ between the number
           axis_pitch: $(arg axis_pitch)
           axis_yaw: $(arg axis_yaw)
           n_fins: $(arg n_fins)
+          thruster_joy_gain: $(arg thruster_joy_gain)
           thruster_model:
             name: proportional
             max_thrust: $(arg max_thrust)
