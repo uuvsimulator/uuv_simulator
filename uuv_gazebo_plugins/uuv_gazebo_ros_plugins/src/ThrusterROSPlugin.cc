@@ -157,6 +157,14 @@ void ThrusterROSPlugin::Load(gazebo::physics::ModelPtr _parent,
   this->pubDynamicStateEff = this->rosNode->advertise<std_msgs::Float64>(
     this->topicPrefix + "dynamic_state_efficiency", 1);
 
+  gzmsg << "Thruster #" << this->thrusterID << " initialized" << std::endl
+    << "\t- Link: " << this->thrusterLink->GetName() << std::endl
+    << "\t- Robot model: " << _parent->GetName() << std::endl
+    << "\t- Input command topic: " <<
+      this->commandSubscriber->GetTopic() << std::endl
+    << "\t- Thrust output topic: " <<
+      this->thrustTopicPublisher->GetTopic() << std::endl;
+
   this->rosPublishConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
     boost::bind(&ThrusterROSPlugin::RosPublishStates, this));
 }
