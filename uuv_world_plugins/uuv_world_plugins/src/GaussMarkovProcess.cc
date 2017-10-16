@@ -87,10 +87,10 @@ double GaussMarkovProcess::Update(double _time)
 /////////////////////////////////////////////////
 void GaussMarkovProcess::Print()
 {
-  gzmsg << "\tMean = " << this->mean << std::endl;
-  gzmsg << "\tMin. Limit = " << this->min << std::endl;
-  gzmsg << "\tMax. Limit = " << this->max << std::endl;
-  gzmsg << "\tMu = " << this->mu << std::endl;
-  gzmsg << "\tNoise Amp. = " << this->noiseAmp << std::endl;
+  gzmsg << "\tMean = " << this->mean << std::endl
+    << "\tMin. Limit = " << this->min << std::endl
+    << "\tMax. Limit = " << this->max << std::endl
+    << "\tMu = " << this->mu << std::endl
+    << "\tNoise Amp. = " << this->noiseAmp << std::endl;
 }
 }
