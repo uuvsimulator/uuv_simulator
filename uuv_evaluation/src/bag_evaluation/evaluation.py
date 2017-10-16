@@ -108,11 +108,12 @@ class Evaluation(object):
     def __init__(self, filename, output_dir='.', plot_config_file=None, time_offset=0.0):
         # Setting up the log
         self._logger = logging.getLogger('run_evaluation')
-        out_hdlr = logging.StreamHandler(sys.stdout)
-        out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
-        out_hdlr.setLevel(logging.INFO)
-        self._logger.addHandler(out_hdlr)
-        self._logger.setLevel(logging.INFO)
+        if len(self._logger.handlers) == 0:
+            out_hdlr = logging.StreamHandler(sys.stdout)
+            out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+            out_hdlr.setLevel(logging.INFO)
+            self._logger.addHandler(out_hdlr)
+            self._logger.setLevel(logging.INFO)
 
         self._logger.info('Opening bag: %s' % filename)
         self._bag = Recording(filename)
@@ -191,9 +192,6 @@ class Evaluation(object):
         self.compute_kpis()
 
     def __del__(self):
-      # Removing logging message handlers
-      while self._logger.handlers:
-        self._logger.handlers.pop()
       if self._bag is not None:
         del self._bag
 
