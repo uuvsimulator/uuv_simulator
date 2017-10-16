@@ -90,6 +90,12 @@ class FinPlugin : public gazebo::ModelPlugin
     /// \brief Latest input command.
     protected: double inputCommand;
 
+    /// \brief Fin ID
+    protected: int finID;
+
+    /// \brief Topic prefix
+    protected: std::string topicPrefix;
+
     /// \brief Latest fin angle in [rad].
     protected: double angle;
 

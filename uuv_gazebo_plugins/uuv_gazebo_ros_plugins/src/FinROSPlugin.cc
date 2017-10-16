@@ -103,11 +103,22 @@ void FinROSPlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
     uuv_gazebo_ros_plugins_msgs::FloatStamped
     >(this->anglePublisher->GetTopic(), 10);
 
-  GZ_ASSERT(_sdf->HasElement("wrench_topic"), "Could not find wrench_topic.");
-  std::string wrenchTopic = _sdf->Get<std::string>("wrench_topic");
+  std::string wrenchTopic;
+  if (_sdf->HasElement("wrench_topic"))
+    wrenchTopic = _sdf->Get<std::string>("wrench_topic");
+  else
+    wrenchTopic = this->topicPrefix + "wrench_topic";
 
   this->pubFinForce =
     this->rosNode->advertise<geometry_msgs::WrenchStamped>(wrenchTopic, 10);
+
+  gzmsg << "Fin #" << this->finID << " initialized" << std::endl
+    << "\t- Link: " << this->link->GetName() << std::endl
+    << "\t- Robot model: " << _parent->GetName() << std::endl
+    << "\t- Input command topic: " <<
+      this->commandSubscriber->GetTopic() << std::endl
+    << "\t- Output topic: " <<
+      this->anglePublisher->GetTopic() << std::endl;
 
   this->rosPublishConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
         boost::bind(&FinROSPlugin::RosPublishStates, this));

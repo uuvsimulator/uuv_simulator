@@ -29,7 +29,7 @@ namespace uuv_simulator_ros
   class FinROSPlugin : public gazebo::FinPlugin
   {
     /// \brief Constrcutor.
-public: FinROSPlugin();
+    public: FinROSPlugin();
 
     /// \brief Destructor.
     public: ~FinROSPlugin();

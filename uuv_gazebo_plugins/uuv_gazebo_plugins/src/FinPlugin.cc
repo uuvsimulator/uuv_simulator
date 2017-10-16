@@ -27,7 +27,7 @@ GZ_REGISTER_MODEL_PLUGIN(gazebo::FinPlugin)
 namespace gazebo {
 
 /////////////////////////////////////////////////
-FinPlugin::FinPlugin() : inputCommand(0), angle(0)
+FinPlugin::FinPlugin() : inputCommand(0), angle(0), finID(-1)
 {
 }
 
@@ -48,12 +48,27 @@ void FinPlugin::Load(physics::ModelPtr _model,
   this->node = transport::NodePtr(new transport::Node());
   this->node->Init(_model->GetWorld()->GetName());
 
-  // Input/output topics
-  GZ_ASSERT(_sdf->HasElement("input_topic"), "Could not find input_topic.");
-  std::string input_topic = _sdf->Get<std::string>("input_topic");
+  // Fin ID
+  GZ_ASSERT(_sdf->HasElement("fin_id"), "Could not find fin_id parameter.");
+  this->finID = _sdf->Get<int>("fin_id");
+  GZ_ASSERT(this->finID >= 0, "Fin ID must be greater or equal than zero");
 
-  GZ_ASSERT(_sdf->HasElement("output_topic"), "Could not find output_topic.");
-  std::string output_topic = _sdf->Get<std::string>("output_topic");
+  // Root string for topics
+  std::stringstream strs;
+  strs << "/" << _model->GetName() << "/fins/" << this->finID << "/";
+  this->topicPrefix = strs.str();
+
+  // Input/output topics
+  std::string inputTopic, outputTopic;
+  if (_sdf->HasElement("input_topic"))
+    std::string inputTopic = _sdf->Get<std::string>("input_topic");
+  else
+    inputTopic = this->topicPrefix + "input";
+
+  if (_sdf->HasElement("output_topic"))
+    outputTopic = _sdf->Get<std::string>("output_topic");
+  else
+    outputTopic = this->topicPrefix + "output";
 
   GZ_ASSERT(_sdf->HasElement("link_name"), "Could not find link_name.");
   std::string link_name = _sdf->Get<std::string>("link_name");
@@ -92,11 +107,11 @@ void FinPlugin::Load(physics::ModelPtr _model,
 
   // Advertise the output topic
   this->anglePublisher = this->node->Advertise<
-      uuv_gazebo_plugins_msgs::msgs::Double>(output_topic);
+      uuv_gazebo_plugins_msgs::msgs::Double>(outputTopic);
 
 
   // Subscribe to the input signal topic
-  this->commandSubscriber = this->node->Subscribe(input_topic,
+  this->commandSubscriber = this->node->Subscribe(inputTopic,
                                                 &FinPlugin::UpdateInput,
                                                 this);
 
