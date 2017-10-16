@@ -91,6 +91,12 @@ class ROV_NMB_SMController(DPControllerBase):
 
         self._logger.info('slope=' + str(self._slope))
 
+        self._sat_epsilon = 0.8
+        if rospy.has_param('~sat_epsilon'):
+            self._sat_epsilon = max(0.0, rospy.get_param('~sat_epsilon'))
+
+        self._logger.info('Saturation limits=' + str(self._sat_epsilon))
+
         self._summ_sign_sn_linear_b = np.array([0, 0, 0])
         self._summ_sign_sn_angular_b = np.array([0, 0, 0])
 
@@ -173,9 +179,9 @@ class ROV_NMB_SMController(DPControllerBase):
         # Compute summation sign(sn) wrt body frame
         if self._prev_t > 0.0 and dt > 0.0:
             self._summ_sign_sn_linear_b = self._summ_sign_sn_linear_b + 0.5 * (
-            np.sign(sn_linear_b) + self._prev_sign_sn_linear_b) * dt
+            self.sat(sn_linear_b, self._sat_epsilon) + self._prev_sign_sn_linear_b) * dt
             self._summ_sign_sn_angular_b = self._summ_sign_sn_angular_b + 0.5 * (
-            np.sign(sn_angular_b) + self._prev_sign_sn_angular_b) * dt
+            self.sat(sn_angular_b, self._sat_epsilon) + self._prev_sign_sn_angular_b) * dt
 
         # Compute extended error wrt body frame
         sr_linear_b = sn_linear_b + np.multiply(self._Ki[0:3],
@@ -191,10 +197,26 @@ class ROV_NMB_SMController(DPControllerBase):
 
         self.publish_control_wrench(self._tau)
 
-        self._prev_sign_sn_linear_b = np.sign(sn_linear_b)
-        self._prev_sign_sn_angular_b = np.sign(sn_angular_b)
+        self._prev_sign_sn_linear_b = self.sat(sn_linear_b, self._sat_epsilon)
+        self._prev_sign_sn_angular_b = self.sat(sn_angular_b, self._sat_epsilon)
         self._prev_t = t
 
+    @staticmethod
+    def sat(value, epsilon=0.5):
+        assert epsilon >= 0, 'Saturation constant must be greate or equal to zero'
+        if epsilon == 0:
+            return np.sign(value)
+
+        vec = value / epsilon
+        output = np.zeros(vec.size)
+        for i in range(output.size):
+            if vec[i] > epsilon:
+                output[i] = 1
+            elif vec[i] < -epsilon:
+                output[i] = -1
+            else:
+                output[i] = vec[i]
+        return output
 
 if __name__ == '__main__':
     print('Starting Non-model-based Sliding Mode Controller')
