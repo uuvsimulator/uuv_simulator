@@ -73,13 +73,13 @@
       <pose>0 0 -95 0 0 0</pose>
     </include>
 
-    <plugin name="underwater_world" filename="libuuv_underwater_world_ros_plugin.so">
+    <plugin name="underwater_current_plugin" filename="libuuv_underwater_current_ros_plugin.so">
       <namespace>hydrodynamics</namespace>
       <constant_current>
         <topic>current_velocity</topic>
         <velocity>
           <mean>0</mean>
-          <min>-5</min>
+          <min>0</min>
           <max>5</max>
           <mu>0.0</mu>
           <noiseAmp>0.0</noiseAmp>
@@ -87,21 +87,23 @@
 
         <horizontal_angle>
           <mean>0</mean>
-          <min>-1.5707963267948966</min>
-          <max>1.5707963267948966</max>
+          <min>-3.141592653589793238</min>
+          <max>3.141592653589793238</max>
           <mu>0.0</mu>
           <noiseAmp>0.0</noiseAmp>
         </horizontal_angle>
 
         <vertical_angle>
           <mean>0</mean>
-          <min>-1.5707963267948966</min>
-          <max>1.5707963267948966</max>
+          <min>-3.141592653589793238</min>
+          <max>3.141592653589793238</max>
           <mu>0.0</mu>
           <noiseAmp>0.0</noiseAmp>
         </vertical_angle>
       </constant_current>
     </plugin>
+
+    <plugin name="sc_interface" filename="libuuv_sc_ros_interface_plugin.so"/>
 
     <gui fullscreen='0'>
       <camera name='user_camera'>
