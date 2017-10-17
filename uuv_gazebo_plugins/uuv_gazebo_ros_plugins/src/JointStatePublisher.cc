@@ -64,17 +64,18 @@ void JointStatePublisher::Load(gazebo::physics::ModelPtr _parent,
   else
     this->updateRate = 50;
 
-  // TODO Retrieve the ignored joints from the parameter server instead
+  gzmsg << "JointStatePublisher::Retrieving moving joints:" << std::endl;
   this->movingJoints.clear();
-  if (_sdf->HasElement("movingJoints"))
+  for (auto &joint : this->model->GetJoints())
   {
-    std::stringstream ss(_sdf->Get<std::string>("movingJoints"));
-    std::string jointName;
-    while (std::getline(ss, jointName, ' '))
+    if (joint->GetLowerLimit(0).Radian() == 0 && joint->GetUpperLimit(0).Radian() == 0)
+      continue;
+    else if (joint->GetType() == gazebo::physics::Base::EntityType::FIXED_JOINT)
+      continue;
+    else
     {
-      this->movingJoints.push_back(jointName);
-      gzmsg << "JointStatePublisher - Publishing state of joint <"
-        << jointName << ">" << std::endl;
+      this->movingJoints.push_back(joint->GetName());
+      gzmsg << "\t- " << joint->GetName() << std::endl;
     }
   }
 
@@ -86,7 +87,7 @@ void JointStatePublisher::Load(gazebo::physics::ModelPtr _parent,
   // Advertise the joint states topic
   this->jointStatePub =
     this->node->advertise<sensor_msgs::JointState>(
-      this->robotNamespace + "/joint_states", 1000);
+      this->robotNamespace + "/joint_states", 1);
 
   this->lastUpdate = this->world->GetSimTime();
   // Connect the update function to the Gazebo callback
