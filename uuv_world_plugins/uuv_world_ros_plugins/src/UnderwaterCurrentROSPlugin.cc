@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_world_ros_plugins/UnderwaterWorldROSPlugin.hh>
+#include <uuv_world_ros_plugins/UnderwaterCurrentROSPlugin.hh>
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/World.hh>
@@ -21,14 +21,14 @@
 namespace uuv_simulator_ros
 {
 /////////////////////////////////////////////////
-UnderwaterWorldROSPlugin::UnderwaterWorldROSPlugin()
+UnderwaterCurrentROSPlugin::UnderwaterCurrentROSPlugin()
 {
   this->rosPublishPeriod = gazebo::common::Time(0.05);
   this->lastRosPublishTime = gazebo::common::Time(0.0);
 }
 
 /////////////////////////////////////////////////
-UnderwaterWorldROSPlugin::~UnderwaterWorldROSPlugin()
+UnderwaterCurrentROSPlugin::~UnderwaterCurrentROSPlugin()
 {
   gazebo::event::Events::DisconnectWorldUpdateBegin(
     this->rosPublishConnection);
@@ -36,12 +36,12 @@ UnderwaterWorldROSPlugin::~UnderwaterWorldROSPlugin()
 }
 
 /////////////////////////////////////////////////
-void UnderwaterWorldROSPlugin::Load(gazebo::physics::WorldPtr _world,
+void UnderwaterCurrentROSPlugin::Load(gazebo::physics::WorldPtr _world,
     sdf::ElementPtr _sdf)
 {
   try
   {
-    UnderwaterWorldPlugin::Load(_world, _sdf);
+    UnderwaterCurrentPlugin::Load(_world, _sdf);
   } catch(gazebo::common::Exception &_e)
   {
     gzerr << "Error loading plugin."
@@ -58,84 +58,78 @@ void UnderwaterWorldROSPlugin::Load(gazebo::physics::WorldPtr _world,
     return;
   }
 
-  this->rosNode.reset(new ros::NodeHandle(""));
+  this->ns = "";
+  if (_sdf->HasElement("namespace"))
+    this->ns = _sdf->Get<std::string>("namespace");
+
+  gzmsg << "UnderwaterCurrentROSPlugin::namespace=" << this->ns << std::endl;
+
+  this->rosNode.reset(new ros::NodeHandle(this->ns));
 
   // Advertise the flow velocity as a stamped twist message
   this->flowVelocityPub = this->rosNode->advertise<geometry_msgs::TwistStamped>(
-    this->publishers[this->currentVelocityTopic]->GetTopic(), 10);
+    this->currentVelocityTopic, 10);
 
   // Advertise the service to update the current velocity model
   this->worldServices["set_current_velocity_model"] =
     this->rosNode->advertiseService(
-    "/" + this->ns + "/set_current_velocity_model",
-    &UnderwaterWorldROSPlugin::UpdateCurrentVelocityModel, this);
+      "set_current_velocity_model",
+      &UnderwaterCurrentROSPlugin::UpdateCurrentVelocityModel, this);
 
   // Advertise the service to update the current velocity model
   this->worldServices["get_current_velocity_model"] =
     this->rosNode->advertiseService(
-    "/" + this->ns + "/get_current_velocity_model",
-    &UnderwaterWorldROSPlugin::GetCurrentVelocityModel, this);
+      "get_current_velocity_model",
+      &UnderwaterCurrentROSPlugin::GetCurrentVelocityModel, this);
 
   // Advertise the service to update the current velocity model
   this->worldServices["set_current_horz_angle_model"] =
     this->rosNode->advertiseService(
-    "/" + this->ns + "/set_current_horz_angle_model",
-    &UnderwaterWorldROSPlugin::UpdateCurrentHorzAngleModel, this);
+      "set_current_horz_angle_model",
+      &UnderwaterCurrentROSPlugin::UpdateCurrentHorzAngleModel, this);
 
   // Advertise the service to update the current velocity model
   this->worldServices["get_current_horz_angle_model"] =
     this->rosNode->advertiseService(
-    "/" + this->ns + "/get_current_horz_angle_model",
-    &UnderwaterWorldROSPlugin::GetCurrentHorzAngleModel, this);
+      "get_current_horz_angle_model",
+      &UnderwaterCurrentROSPlugin::GetCurrentHorzAngleModel, this);
 
   // Advertise the service to update the current velocity model
   this->worldServices["set_current_vert_angle_model"] =
     this->rosNode->advertiseService(
-    "/" + this->ns + "/set_current_vert_angle_model",
-    &UnderwaterWorldROSPlugin::UpdateCurrentVertAngleModel, this);
+      "set_current_vert_angle_model",
+      &UnderwaterCurrentROSPlugin::UpdateCurrentVertAngleModel, this);
 
   // Advertise the service to update the current velocity model
   this->worldServices["get_current_vert_angle_model"] =
     this->rosNode->advertiseService(
-    "/" + this->ns + "/get_current_vert_angle_model",
-    &UnderwaterWorldROSPlugin::GetCurrentHorzAngleModel, this);
+      "get_current_vert_angle_model",
+      &UnderwaterCurrentROSPlugin::GetCurrentHorzAngleModel, this);
 
   // Advertise the service to update the current velocity mean value
   this->worldServices["set_current_velocity"] =
     this->rosNode->advertiseService(
-      "/" + this->ns + "/set_current_velocity",
-      &UnderwaterWorldROSPlugin::UpdateCurrentVelocity, this);
+      "set_current_velocity",
+      &UnderwaterCurrentROSPlugin::UpdateCurrentVelocity, this);
 
   // Advertise the service to update the current velocity mean value
   this->worldServices["set_current_horz_angle"] =
     this->rosNode->advertiseService(
-      "/" + this->ns + "/set_current_horz_angle",
-      &UnderwaterWorldROSPlugin::UpdateHorzAngle, this);
+      "set_current_horz_angle",
+      &UnderwaterCurrentROSPlugin::UpdateHorzAngle, this);
 
   // Advertise the service to update the current velocity mean value
   this->worldServices["set_current_vert_angle"] =
     this->rosNode->advertiseService(
-      "/" + this->ns + "/set_current_vert_angle",
-      &UnderwaterWorldROSPlugin::UpdateVertAngle, this);
-
-  // Advertise the service to get origin of the world in spherical coordinates
-  this->worldServices["get_origin_spherical_coordinates"] =
-    this->rosNode->advertiseService(
-      "/gazebo/get_origin_spherical_coordinates",
-      &UnderwaterWorldROSPlugin::GetOriginSphericalCoord, this);
-
-  // Advertise the service to get origin of the world in spherical coordinates
-  this->worldServices["set_origin_spherical_coordinates"] =
-    this->rosNode->advertiseService(
-      "/gazebo/set_origin_spherical_coordinates",
-      &UnderwaterWorldROSPlugin::SetOriginSphericalCoord, this);
+      "set_current_vert_angle",
+      &UnderwaterCurrentROSPlugin::UpdateVertAngle, this);
 
   this->rosPublishConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
-    boost::bind(&UnderwaterWorldROSPlugin::PublishROSTopics, this));
+    boost::bind(&UnderwaterCurrentROSPlugin::OnUpdateCurrentVel, this));
 }
 
 /////////////////////////////////////////////////
-void UnderwaterWorldROSPlugin::PublishROSTopics()
+void UnderwaterCurrentROSPlugin::OnUpdateCurrentVel()
 {
   if (this->lastUpdate - this->lastRosPublishTime >= this->rosPublishPeriod)
   {
@@ -153,7 +147,7 @@ void UnderwaterWorldROSPlugin::PublishROSTopics()
 }
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::UpdateHorzAngle(
+bool UnderwaterCurrentROSPlugin::UpdateHorzAngle(
     uuv_world_ros_plugins_msgs::SetCurrentDirection::Request& _req,
     uuv_world_ros_plugins_msgs::SetCurrentDirection::Response& _res)
 {
@@ -163,7 +157,7 @@ bool UnderwaterWorldROSPlugin::UpdateHorzAngle(
 }
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::UpdateVertAngle(
+bool UnderwaterCurrentROSPlugin::UpdateVertAngle(
     uuv_world_ros_plugins_msgs::SetCurrentDirection::Request& _req,
     uuv_world_ros_plugins_msgs::SetCurrentDirection::Response& _res)
 {
@@ -172,7 +166,7 @@ bool UnderwaterWorldROSPlugin::UpdateVertAngle(
 }
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::UpdateCurrentVelocity(
+bool UnderwaterCurrentROSPlugin::UpdateCurrentVelocity(
     uuv_world_ros_plugins_msgs::SetCurrentVelocity::Request& _req,
     uuv_world_ros_plugins_msgs::SetCurrentVelocity::Response& _res)
 {
@@ -180,13 +174,13 @@ bool UnderwaterWorldROSPlugin::UpdateCurrentVelocity(
       this->currentHorzAngleModel.SetMean(_req.horizontal_angle) &&
       this->currentVertAngleModel.SetMean(_req.vertical_angle))
   {
-    gzmsg << "Current velocity [m/s] = " << _req.velocity << std::endl;
-    gzmsg << "Current horizontal angle [rad] = " << _req.horizontal_angle
-        << std::endl;
-    gzmsg << "Current vertical angle [rad] = " << _req.vertical_angle
-        << std::endl;
-    gzmsg << "\tWARNING: Current velocity calculated in the ENU frame"
-        << std::endl;
+    gzmsg << "Current velocity [m/s] = " << _req.velocity << std::endl
+      << "Current horizontal angle [rad] = " << _req.horizontal_angle
+      << std::endl
+      << "Current vertical angle [rad] = " << _req.vertical_angle
+      << std::endl
+      << "\tWARNING: Current velocity calculated in the ENU frame"
+      << std::endl;
     _res.success = true;
   }
   else
@@ -198,7 +192,7 @@ bool UnderwaterWorldROSPlugin::UpdateCurrentVelocity(
 }
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::GetCurrentVelocityModel(
+bool UnderwaterCurrentROSPlugin::GetCurrentVelocityModel(
     uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
     uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res)
 {
@@ -211,7 +205,7 @@ bool UnderwaterWorldROSPlugin::GetCurrentVelocityModel(
 }
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::GetCurrentHorzAngleModel(
+bool UnderwaterCurrentROSPlugin::GetCurrentHorzAngleModel(
     uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
     uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res)
 {
@@ -224,7 +218,7 @@ bool UnderwaterWorldROSPlugin::GetCurrentHorzAngleModel(
 }
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::GetCurrentVertAngleModel(
+bool UnderwaterCurrentROSPlugin::GetCurrentVertAngleModel(
     uuv_world_ros_plugins_msgs::GetCurrentModel::Request& _req,
     uuv_world_ros_plugins_msgs::GetCurrentModel::Response& _res)
 {
@@ -238,78 +232,51 @@ bool UnderwaterWorldROSPlugin::GetCurrentVertAngleModel(
 
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::UpdateCurrentVelocityModel(
+bool UnderwaterCurrentROSPlugin::UpdateCurrentVelocityModel(
     uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
     uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res)
 {
-  _res.success = this->currentVelModel.SetModel(_req.mean, _req.min, _req.max,
-    _req.mu, _req.noise);
-  gzmsg << "Current velocity model updated" << std::endl;
-  gzmsg << "\tWARNING: Current velocity calculated in the ENU frame"
-      << std::endl;
+  _res.success = this->currentVelModel.SetModel(
+    std::max(0.0, _req.mean),
+    std::max(0.0, _req.min),
+    std::max(0.0, _req.max),
+    _req.mu,
+    _req.noise);
+  gzmsg << "Current velocity model updated" << std::endl
+    << "\tWARNING: Current velocity calculated in the ENU frame"
+    << std::endl;
   this->currentVelModel.Print();
   return true;
 }
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::UpdateCurrentHorzAngleModel(
+bool UnderwaterCurrentROSPlugin::UpdateCurrentHorzAngleModel(
     uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
     uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res)
 {
   _res.success = this->currentHorzAngleModel.SetModel(_req.mean, _req.min,
     _req.max, _req.mu, _req.noise);
-  gzmsg << "Horizontal angle model updated" << std::endl;
-  gzmsg << "\tWARNING: Current velocity calculated in the ENU frame"
-      << std::endl;
+  gzmsg << "Horizontal angle model updated" << std::endl
+    << "\tWARNING: Current velocity calculated in the ENU frame"
+    << std::endl;
   this->currentHorzAngleModel.Print();
   return true;
 }
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::UpdateCurrentVertAngleModel(
+bool UnderwaterCurrentROSPlugin::UpdateCurrentVertAngleModel(
     uuv_world_ros_plugins_msgs::SetCurrentModel::Request& _req,
     uuv_world_ros_plugins_msgs::SetCurrentModel::Response& _res)
 {
   _res.success = this->currentVertAngleModel.SetModel(_req.mean, _req.min,
     _req.max, _req.mu, _req.noise);
-  gzmsg << "Vertical angle model updated" << std::endl;
-  gzmsg << "\tWARNING: Current velocity calculated in the ENU frame"
-      << std::endl;
+  gzmsg << "Vertical angle model updated" << std::endl
+    << "\tWARNING: Current velocity calculated in the ENU frame"
+    << std::endl;
   this->currentVertAngleModel.Print();
   return true;
 }
 
 /////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::GetOriginSphericalCoord(
-    uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Request& _req,
-    uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Response& _res)
-{
-  _res.latitude_deg =
-    this->world->GetSphericalCoordinates()->LatitudeReference().Degree();
-  _res.longitude_deg =
-    this->world->GetSphericalCoordinates()->LongitudeReference().Degree();
-  _res.altitude =
-    this->world->GetSphericalCoordinates()->GetElevationReference();
-  return true;
-}
-
-/////////////////////////////////////////////////
-bool UnderwaterWorldROSPlugin::SetOriginSphericalCoord(
-    uuv_world_ros_plugins_msgs::SetOriginSphericalCoord::Request& _req,
-    uuv_world_ros_plugins_msgs::SetOriginSphericalCoord::Response& _res)
-{
-  ignition::math::Angle angle;
-  angle.Degree(_req.latitude_deg);
-  this->world->GetSphericalCoordinates()->SetLatitudeReference(angle);
-
-  angle.Degree(_req.longitude_deg);
-  this->world->GetSphericalCoordinates()->SetLongitudeReference(angle);
-
-  this->world->GetSphericalCoordinates()->SetElevationReference(_req.altitude);
-  _res.success = true;
-  return true;
-}
-
-/////////////////////////////////////////////////
-GZ_REGISTER_WORLD_PLUGIN(UnderwaterWorldROSPlugin)
+GZ_REGISTER_WORLD_PLUGIN(UnderwaterCurrentROSPlugin)
 }

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// \file UnderwaterWorldPlugin.cc
+/// \file UnderwaterCurrentPlugin.cc
 
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
@@ -31,26 +31,26 @@
 
 #include <math.h>
 
-#include "uuv_world_plugins/UnderwaterWorldPlugin.hh"
+#include <uuv_world_plugins/UnderwaterCurrentPlugin.hh>
 
 using namespace gazebo;
 
-GZ_REGISTER_WORLD_PLUGIN(UnderwaterWorldPlugin)
+GZ_REGISTER_WORLD_PLUGIN(UnderwaterCurrentPlugin)
 
 /////////////////////////////////////////////////
-UnderwaterWorldPlugin::UnderwaterWorldPlugin()
+UnderwaterCurrentPlugin::UnderwaterCurrentPlugin()
 {
   // Doing nothing for now
 }
 
 /////////////////////////////////////////////////
-UnderwaterWorldPlugin::~UnderwaterWorldPlugin()
+UnderwaterCurrentPlugin::~UnderwaterCurrentPlugin()
 {
   event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
 }
 
 /////////////////////////////////////////////////
-void UnderwaterWorldPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
+void UnderwaterCurrentPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
 {
   GZ_ASSERT(_world != NULL, "World pointer is invalid");
   GZ_ASSERT(_sdf != NULL, "SDF pointer is invalid");
@@ -73,18 +73,14 @@ void UnderwaterWorldPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
     "constant_current");
 
   // Read the topic names from the SDF file
-  GZ_ASSERT(currentVelocityParams->HasElement("topic"),
-    "Current velocity topic name is not available");
-
-  // Retrieve the current velocity topic
-  this->currentVelocityTopic =
+  if (currentVelocityParams->HasElement("topic"))
+    this->currentVelocityTopic =
       currentVelocityParams->Get<std::string>("topic");
-
+  else
+    this->currentVelocityTopic = "current_velocity";
+    
   GZ_ASSERT(!this->currentVelocityTopic.empty(),
     "Empty current velocity topic");
-
-  if (this->currentVelocityTopic[0] != '/')
-    this->currentVelocityTopic = "/" + this->currentVelocityTopic;
 
   if (currentVelocityParams->HasElement("velocity"))
   {
@@ -202,29 +198,29 @@ void UnderwaterWorldPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
   // Advertise the current velocity topic
   this->publishers[this->currentVelocityTopic] =
     this->node->Advertise<msgs::Vector3d>(
-    this->ns + this->currentVelocityTopic);
+    this->ns + "/" + this->currentVelocityTopic);
 
   gzmsg << "Current velocity topic name: " <<
-    this->ns + this->currentVelocityTopic << std::endl;
+    this->ns + "/" + this->currentVelocityTopic << std::endl;
 
   // Connect the update event
   this->updateConnection = event::Events::ConnectWorldUpdateBegin(
-    boost::bind(&UnderwaterWorldPlugin::Update,
+    boost::bind(&UnderwaterCurrentPlugin::Update,
     this, _1));
 
-  gzmsg << "Underwater world loaded!" << std::endl;
-  gzmsg << "\tWARNING: Current velocity calculated in the ENU frame"
-      << std::endl;
+  gzmsg << "Underwater current plugin loaded!" << std::endl
+    << "\tWARNING: Current velocity calculated in the ENU frame"
+    << std::endl;
 }
 
 /////////////////////////////////////////////////
-void UnderwaterWorldPlugin::Init()
+void UnderwaterCurrentPlugin::Init()
 {
     // Doing nothing for now
 }
 
 /////////////////////////////////////////////////
-void UnderwaterWorldPlugin::Update(const common::UpdateInfo & /** _info */)
+void UnderwaterCurrentPlugin::Update(const common::UpdateInfo & /** _info */)
 {
     common::Time time = this->world->GetSimTime();
     // Calculate the flow velocity and the direction using the Gauss-Markov
@@ -251,7 +247,7 @@ void UnderwaterWorldPlugin::Update(const common::UpdateInfo & /** _info */)
 }
 
 /////////////////////////////////////////////////
-void UnderwaterWorldPlugin::PublishCurrentVelocity()
+void UnderwaterCurrentPlugin::PublishCurrentVelocity()
 {
     msgs::Vector3d currentVel;
     msgs::Set(&currentVel, ignition::math::Vector3d(this->currentVelocity.x,

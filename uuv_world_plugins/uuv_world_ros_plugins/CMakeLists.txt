@@ -12,7 +12,8 @@ find_package(gazebo REQUIRED)
 
 catkin_package(
  INCLUDE_DIRS include
- LIBRARIES uuv_underwater_world_ros_plugin
+ LIBRARIES uuv_underwater_current_ros_plugin
+           uuv_sc_ros_interface_plugin
  CATKIN_DEPENDS
 #  DEPENDS system_lib
 )
@@ -29,12 +30,18 @@ link_directories(
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
-add_library(uuv_underwater_world_ros_plugin src/UnderwaterWorldROSPlugin.cc)
-target_link_libraries(uuv_underwater_world_ros_plugin ${catkin_LIBRARIES})
-add_dependencies(uuv_underwater_world_ros_plugin ${catkin_EXPORTED_TARGETS})
+add_library(uuv_underwater_current_ros_plugin src/UnderwaterCurrentROSPlugin.cc)
+target_link_libraries(uuv_underwater_current_ros_plugin ${catkin_LIBRARIES})
+add_dependencies(uuv_underwater_current_ros_plugin ${catkin_EXPORTED_TARGETS})
+
+add_library(uuv_sc_ros_interface_plugin src/SphericalCoordinatesROSInterfacePlugin.cc)
+target_link_libraries(uuv_sc_ros_interface_plugin ${catkin_LIBRARIES})
+add_dependencies(uuv_sc_ros_interface_plugin ${catkin_EXPORTED_TARGETS})
 
 ## Mark executables and/or libraries for installation
-install(TARGETS uuv_underwater_world_ros_plugin
+install(TARGETS
+    uuv_underwater_current_ros_plugin
+    uuv_sc_ros_interface_plugin
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

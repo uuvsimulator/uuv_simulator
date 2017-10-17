@@ -13,18 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// \file UnderwaterWorldROSPlugin.hh
+/// \file UnderwaterCurrentROSPlugin.hh
 /// \brief Publishes the constant flow velocity in ROS messages and creates a
 /// service to alter the flow model in runtime
 
-#ifndef __CONSTANT_FLOW_ROS_PLUGIN_HH__
-#define __CONSTANT_FLOW_ROS_PLUGIN_HH__
+#ifndef __UNDERWATER_CURRENT_ROS_PLUGIN_HH__
+#define __UNDERWATER_CURRENT_ROS_PLUGIN_HH__
 
 #include <map>
 #include <string>
 
 // Gazebo plugin
-#include <uuv_world_plugins/UnderwaterWorldPlugin.hh>
+#include <uuv_world_plugins/UnderwaterCurrentPlugin.hh>
 
 #include <boost/scoped_ptr.hpp>
 #include <gazebo/common/Plugin.hh>
@@ -40,13 +40,13 @@
 
 namespace uuv_simulator_ros
 {
-  class UnderwaterWorldROSPlugin : public gazebo::UnderwaterWorldPlugin
+  class UnderwaterCurrentROSPlugin : public gazebo::UnderwaterCurrentPlugin
   {
     /// \brief Class constructor
-    public: UnderwaterWorldROSPlugin();
+    public: UnderwaterCurrentROSPlugin();
 
     /// \brief Class destructor
-    public: virtual ~UnderwaterWorldROSPlugin();
+    public: virtual ~UnderwaterCurrentROSPlugin();
 
     /// \brief Load module and read parameters from SDF.
     public: void Load(gazebo::physics::WorldPtr _world,
@@ -103,18 +103,8 @@ namespace uuv_simulator_ros
         uuv_world_ros_plugins_msgs::SetCurrentDirection::Request& _req,
         uuv_world_ros_plugins_msgs::SetCurrentDirection::Response& _res);
 
-    /// \brief Service call that returns the origin in WGS84 standard
-    public: bool GetOriginSphericalCoord(
-        uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Request& _req,
-        uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Response& _res);
-
-    /// \brief Service call that returns the origin in WGS84 standard
-    public: bool SetOriginSphericalCoord(
-        uuv_world_ros_plugins_msgs::SetOriginSphericalCoord::Request& _req,
-        uuv_world_ros_plugins_msgs::SetOriginSphericalCoord::Response& _res);
-
     /// \brief Publishes ROS topics
-    private: void PublishROSTopics();
+    private: void OnUpdateCurrentVel();
 
     /// \brief All underwater world services
     private: std::map<std::string, ros::ServiceServer> worldServices;
@@ -136,4 +126,4 @@ namespace uuv_simulator_ros
   };
 }
 
-#endif  // __CONSTANT_FLOW_ROS_PLUGIN_HH__
+#endif  // __UNDERWATER_CURRENT_ROS_PLUGIN_HH__

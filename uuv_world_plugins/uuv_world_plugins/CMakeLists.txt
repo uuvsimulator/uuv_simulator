@@ -18,7 +18,7 @@ catkin_package(
                ${OGRE_INCLUDE_DIRS}
                ${GAZEBO_INCLUDE_DIRS}
                ${Boost_INCLUDE_DIRS}
-	LIBRARIES uuv_underwater_world
+	LIBRARIES uuv_underwater_current_plugin
 	CATKIN_DEPENDS gazebo_msgs
 	DEPENDS gazebo
 )
@@ -38,10 +38,10 @@ link_directories(${GAZEBO_LIBRARY_DIRS}
 ## Build ##
 ###########
 
-add_library(uuv_underwater_world
-  src/UnderwaterWorldPlugin.cc
+add_library(uuv_underwater_current_plugin
+  src/UnderwaterCurrentPlugin.cc
   src/GaussMarkovProcess.cc)
-target_link_libraries(uuv_underwater_world
+target_link_libraries(uuv_underwater_current_plugin
   ${GAZEBO_LIBRARIES}
   ${Boost_LIBRARIES}
   ${catkin_LIBRARIES})
@@ -51,7 +51,8 @@ target_link_libraries(uuv_underwater_world
 #############
 
 ## Mark executables and/or libraries for installation
-install(TARGETS uuv_underwater_world
+install(TARGETS
+		uuv_underwater_current_plugin
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

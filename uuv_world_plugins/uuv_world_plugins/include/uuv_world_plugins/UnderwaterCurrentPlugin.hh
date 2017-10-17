@@ -13,11 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// \file UnderwaterWorldPlugin.hh
+/// \file UnderwaterCurrentPlugin.hh
 /// \brief Plugin that for the underwater world
 
-#ifndef __UNDERWATER_WORLD_PLUGIN_HH__
-#define __UNDERWATER_WORLD_PLUGIN_HH__
+#ifndef __UNDERWATER_CURRENT_PLUGIN_HH__
+#define __UNDERWATER_CURRENT_PLUGIN_HH__
 
 #include <map>
 #include <cmath>
@@ -31,16 +31,16 @@
 namespace gazebo
 {
   /// \brief Class for the underwater world plugin
-  class UnderwaterWorldPlugin : public gazebo::WorldPlugin
+  class UnderwaterCurrentPlugin : public WorldPlugin
   {
     /// \brief Class constructor
-    public: UnderwaterWorldPlugin();
+    public: UnderwaterCurrentPlugin();
 
     /// \brief Class destructor
-    public: virtual ~UnderwaterWorldPlugin();
+    public: virtual ~UnderwaterCurrentPlugin();
 
     // Documentation inherited.
-    public: virtual void Load(gazebo::physics::WorldPtr _world,
+    public: virtual void Load(physics::WorldPtr _world,
         sdf::ElementPtr _sdf);
 
     // Documentation inherited.
@@ -48,16 +48,16 @@ namespace gazebo
 
     /// \brief Update the simulation state.
     /// \param[in] _info Information used in the update event.
-    public: void Update(const gazebo::common::UpdateInfo &_info);
+    public: void Update(const common::UpdateInfo &_info);
 
     /// \brief Publish current velocity and the pose of its frame
     protected: void PublishCurrentVelocity();
 
     /// \brief Update event
-    protected: gazebo::event::ConnectionPtr updateConnection;
+    protected: event::ConnectionPtr updateConnection;
 
     /// \brief Pointer to world
-    protected: gazebo::physics::WorldPtr world;
+    protected: physics::WorldPtr world;
 
     /// \brief Pointer to sdf
     protected: sdf::ElementPtr sdf;
@@ -65,18 +65,12 @@ namespace gazebo
     /// \brief True if the sea surface is present
     protected: bool hasSurface;
 
-    /// \brief NED (North-East-Down) frame
-    protected: gazebo::math::Pose nedFrame;
-
     /// \brief Pointer to a node for communication
-    protected: gazebo::transport::NodePtr node;
+    protected: transport::NodePtr node;
 
     /// \brief Map of publishers
-    protected: std::map<std::string, gazebo::transport::PublisherPtr>
+    protected: std::map<std::string, transport::PublisherPtr>
       publishers;
-
-    /// \brief NED frame topic
-    protected: std::string nedFrameTopic;
 
     /// \brief Current velocity topic
     protected: std::string currentVelocityTopic;
@@ -94,11 +88,11 @@ namespace gazebo
     protected: GaussMarkovProcess currentVertAngleModel;
 
     /// \brief Last update time stamp
-    protected: gazebo::common::Time lastUpdate;
+    protected: common::Time lastUpdate;
 
     /// \brief Current linear velocity vector
     protected: gazebo::math::Vector3 currentVelocity;
   };
 }
 
-#endif  // __UNDERWATER_WORLD_PLUGIN_HH__
+#endif  // __UNDERWATER_CURRENT_PLUGIN_HH__
