@@ -28,6 +28,7 @@
   <!-- includes -->
   <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
   <xacro:include filename="$(find uuv_sensor_plugins_ros)/urdf/sensor_snippets.xacro"/>
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro"/>
 
   <!-- Parameters -->
   <xacro:property name="namespace" value="rexrov"/>
@@ -36,51 +37,6 @@
 
   <!-- Mass, see p.28 in Berg2012 -->
   <xacro:property name="mass" value="1862.87"/>
-
-  <!-- Thruster joint and link snippet -->
-  <xacro:macro name="thruster_macro"
-               params="namespace thruster_id *origin">
-    <joint name="${namespace}/thruster_${thruster_id}_joint" type="continuous">
-      <xacro:insert_block name="origin"/>
-      <axis xyz="1 0 0"/>
-      <parent link="${namespace}/base_link"/>
-      <child link="${namespace}/thruster_${thruster_id}"/>
-    </joint>
-    <link name="${namespace}/thruster_${thruster_id}">
-      <xacro:box_inertial x="0" y="0" z="0" mass="0.001">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-      </xacro:box_inertial>
-      <visual>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <geometry>
-          <mesh filename="${prop_mesh_file}" scale="1 1 1"/>
-        </geometry>
-      </visual>
-      <collision>
-        <!-- todo: gazebo needs a collision volume or it will ignore the pose of
-           the joint that leads to this link (and assume it to be the identity) -->
-        <geometry>
-          <cylinder length="0.000001" radius="0.000001"/>
-        </geometry>
-        <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
-      </collision>
-    </link>
-    <gazebo>
-      <plugin name="${namespace}_${thruster_id}_thruster_model" filename="libthruster_ros_plugin.so">
-        <linkName>${namespace}/thruster_${thruster_id}</linkName>
-        <jointName>${namespace}/thruster_${thruster_id}_joint</jointName>
-        <thrusterID>${thruster_id}</thrusterID>
-        <dynamics>
-          <type>FirstOrder</type>
-          <timeConstant>0.05</timeConstant>
-        </dynamics>
-        <conversion>
-          <type>Basic</type>
-          <rotorConstant>0.00031</rotorConstant>
-        </conversion>
-      </plugin>
-    </gazebo>
-  </xacro:macro>
 
   <xacro:macro name="rexrov_base" params="namespace *gazebo">
     <!-- base_link according to ROS conventions: x forward, z up -->
@@ -123,76 +79,15 @@
     <!-- Set up hydrodynamic plugin given as input parameter -->
     <xacro:insert_block name="gazebo"/>
 
+    <!-- optional: plugin to test compare Gazebo's returned accelerations
     <gazebo>
-      <!-- optional: plugin to test compare Gazebo's returned accelerations
       <plugin name="${namespace}_test_plugin" filename="libaccelerations_test_plugin.so">
         <link_name>${namespace}/base_link</link_name>
-      </plugin> -->
-    </gazebo>
+      </plugin>
+    </gazebo> -->
 
-    <xacro:thruster_macro namespace="${namespace}" thruster_id="0">
-      <origin xyz="-0.890895 0.334385 0.528822" rpy="${0*d2r} ${-74.53*d2r} ${-53.21*d2r}"/>
-    </xacro:thruster_macro>
-    <xacro:thruster_macro namespace="${namespace}" thruster_id="1">
-      <origin xyz="-0.890895 -0.334385 0.528822" rpy="${0*d2r} ${-74.53*d2r} ${53.21*d2r}"/>
-    </xacro:thruster_macro>
-    <xacro:thruster_macro namespace="${namespace}" thruster_id="2">
-      <origin xyz="0.890895 0.334385 0.528822" rpy="${0*d2r} ${-105.47*d2r} ${53.21*d2r}"/>
-    </xacro:thruster_macro>
-    <xacro:thruster_macro namespace="${namespace}" thruster_id="3">
-      <origin xyz="0.890895 -0.334385 0.528822" rpy="${0*d2r} ${-105.47*d2r} ${-53.21*d2r}"/>
-    </xacro:thruster_macro>
-    <xacro:thruster_macro namespace="${namespace}" thruster_id="4">
-      <origin xyz="-0.412125 0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${45*d2r}"/>
-    </xacro:thruster_macro>
-    <xacro:thruster_macro namespace="${namespace}" thruster_id="5">
-      <origin xyz="-0.412125 -0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${-45*d2r}"/>
-    </xacro:thruster_macro>
-    <xacro:thruster_macro namespace="${namespace}" thruster_id="6">
-      <origin xyz="0.412125 0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${135*d2r}"/>
-    </xacro:thruster_macro>
-    <xacro:thruster_macro namespace="${namespace}" thruster_id="7">
-      <origin xyz="0.412125 -0.505415 0.129" rpy="${0*d2r} ${0*d2r} ${-135*d2r}"/>
-    </xacro:thruster_macro>
-
-    <!-- DVL  -->
-    <xacro:default_dvl namespace="${namespace}" parent_link="${namespace}/base_link">
-      <origin xyz="-1.4 0 -0.312" rpy="0 ${0.5*pi} 0"/>
-    </xacro:default_dvl>
-
-    <!-- RPT  -->
-    <xacro:default_rpt namespace="${namespace}" parent_link="${namespace}/base_link">
-      <origin xyz="-1.32 0 0.8" rpy="0 0 0"/>
-    </xacro:default_rpt>
-
-    <!-- Pressure  -->
-    <xacro:default_pressure namespace="${namespace}" parent_link="${namespace}/base_link">
-      <origin xyz="-1.32 0.5 0.85" rpy="0 0 0"/>
-    </xacro:default_pressure>
-
-    <!-- IMU  -->
-    <xacro:default_imu namespace="${namespace}" parent_link="${namespace}/base_link">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-    </xacro:default_imu>
-
-    <!-- Mount a camera -->
-    <xacro:default_camera namespace="${namespace}" parent_link="${namespace}/base_link" suffix="">
-      <origin xyz="1.15 0 0.4" rpy="0 0.6 0"/>
-    </xacro:default_camera>
-
-    <xacro:default_camera namespace="${namespace}" parent_link="${namespace}/base_link" suffix="right">
-      <origin xyz="1.15 -0.63 0.4" rpy="0 0.6 0.4"/>
-    </xacro:default_camera>
-
-    <xacro:default_camera namespace="${namespace}" parent_link="${namespace}/base_link" suffix="left">
-      <origin xyz="1.15 0.63 0.4" rpy="0 0.6 -0.4"/>
-    </xacro:default_camera>
-
-    <!-- Mount a GPS. -->
-    <xacro:default_gps namespace="${namespace}" parent_link="${namespace}/base_link" />
-
-    <!-- Mount a Pose 3D sensor. -->
-    <xacro:default_pose_3d namespace="${namespace}" parent_link="${namespace}/base_link" />
+    <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov_actuators.xacro"/>
+    <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov_sensors.xacro"/>
 
   </xacro:macro>
 </robot>

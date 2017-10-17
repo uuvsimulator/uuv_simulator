@@ -52,18 +52,6 @@
   </gazebo>
 
   <!-- Joint state publisher plugin -->
-  <xacro:custom_joint_state_publisher
-    namespace="$(arg namespace)"
-    update_rate="50"
-    joints="oberon7/azimuth
-            oberon7/shoulder
-            oberon7/elbow
-            oberon7/roll
-            oberon7/pitch
-            oberon7/wrist
-            oberon7/finger_left_joint
-            oberon7/finger_tip_left_joint
-            oberon7/finger_right_joint
-            oberon7/finger_tip_right_joint"/>
+  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="50"/>
 
 </robot>
