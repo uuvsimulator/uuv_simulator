@@ -11,6 +11,8 @@ find_package(Protobuf REQUIRED)
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/msgs)
 
+set(UUV_GAZEBO_PLUGINS_LIST "")
+
 # add_subdirectory(msgs)
 set(PROTOBUF_IMPORT_DIRS "")
 foreach(ITR ${GAZEBO_INCLUDE_DIRS})
@@ -35,6 +37,7 @@ file(GLOB msgs msgs/*.proto)
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${msgs})
 add_library(uuv_gazebo_plugins_msgs SHARED ${PROTO_SRCS})
 target_link_libraries(uuv_gazebo_plugins_msgs ${PROTOBUF_LIBRARY} ${GAZEBO_LIBRARIES})
+list(APPEND UUV_GAZEBO_PLUGINS_LIST uuv_gazebo_plugins_msgs)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -66,12 +69,12 @@ link_directories(${EIGEN3_LIBRARY_DIRS} ${GAZEBO_LIBRARY_DIRS})
 add_library(dynamics
     src/Dynamics.cc
 )
+list(APPEND UUV_GAZEBO_PLUGINS_LIST dynamics)
 
 add_library(fin_plugin
     src/LiftDragModel.cc
     src/FinPlugin.cc
 )
-add_dependencies(fin_plugin uuv_gazebo_plugins_msgs)
 target_link_libraries(fin_plugin
     dynamics
     uuv_gazebo_plugins_msgs
@@ -80,6 +83,7 @@ target_link_libraries(fin_plugin
 add_dependencies(fin_plugin
   uuv_gazebo_plugins_msgs
   ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_GAZEBO_PLUGINS_LIST fin_plugin)
 
 add_library(underwater_object_plugin
     src/HydrodynamicModel.cc
@@ -90,6 +94,7 @@ target_link_libraries(underwater_object_plugin
     ${GAZEBO_LIBRARIES}
     ${EIGEN3_LIBRARIES}
 )
+list(APPEND UUV_GAZEBO_PLUGINS_LIST underwater_object_plugin)
 
 add_library(thruster_plugin
     src/ThrusterConversionFcn.cc
@@ -103,24 +108,20 @@ target_link_libraries(thruster_plugin
 add_dependencies(thruster_plugin
     uuv_gazebo_plugins_msgs
     ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_GAZEBO_PLUGINS_LIST thruster_plugin)
 
 add_library(umbilical_plugin
   src/UmbilicalModel.cc
   src/UmbilicalPlugin.cc)
 target_link_libraries(umbilical_plugin
   ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+list(APPEND UUV_GAZEBO_PLUGINS_LIST umbilical_plugin)
 
 #############
 ## Install ##
 #############
 
-install(TARGETS
-    dynamics
-    fin_plugin
-    thruster_plugin
-    umbilical_plugin
-    underwater_object_plugin
-    uuv_gazebo_plugins_msgs
+install(TARGETS ${UUV_GAZEBO_PLUGINS_LIST}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

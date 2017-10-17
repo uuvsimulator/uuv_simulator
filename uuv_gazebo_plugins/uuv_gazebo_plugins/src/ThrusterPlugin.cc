@@ -169,13 +169,6 @@ void ThrusterPlugin::Load(physics::ModelPtr _model,
     this->node->Subscribe(this->topicPrefix + "input",
         &ThrusterPlugin::UpdateInput,
         this);
-  gzmsg << "Thruster #" << this->thrusterID << " initialized" << std::endl;
-  gzmsg << "\t- Link: " << this->thrusterLink->GetName() << std::endl;
-  gzmsg << "\t- Robot model: " << _model->GetName() << std::endl;
-  gzmsg << "\t- Input command Gazebo topic: " <<
-    this->commandSubscriber->GetTopic() << std::endl;
-  gzmsg << "\t- Thrust output Gazebo topic: " <<
-    this->thrustTopicPublisher->GetTopic() << std::endl;
 
   // Connect the update event
   this->updateConnection = event::Events::ConnectWorldUpdateBegin(
