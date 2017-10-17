@@ -166,27 +166,6 @@
     <xacro:box_inertial x="0" y="0" z="0" mass="0.0001">
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:box_inertial>
-  </xacro:macro>
-
-  <!-- Default joint state publisher -->
-  <xacro:macro name="default_joint_state_publisher" params="namespace update_rate">
-    <gazebo>
-      <plugin name="joint_state_publisher" filename="libjoint_state_publisher.so">
-        <robotNamespace>${namespace}</robotNamespace>
-        <updateRate>${update_rate}</updateRate>
-      </plugin>
-    </gazebo>
-  </xacro:macro>
-
-  <!-- Joint state publisher with moving joints -->
-  <xacro:macro name="custom_joint_state_publisher" params="namespace update_rate joints">
-    <gazebo>
-      <plugin name="joint_state_publisher" filename="libjoint_state_publisher.so">
-        <robotNamespace>${namespace}</robotNamespace>
-        <updateRate>${update_rate}</updateRate>
-        <movingJoints>${joints}</movingJoints>
-      </plugin>
-    </gazebo>
-  </xacro:macro>
+  </xacro:macro>  
 
 </robot>
