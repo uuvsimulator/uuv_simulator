@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Fin snippet using the two lines lift and drag model -->
+  <xacro:macro name="fin_two_lines_macro"
+    params="namespace
+            parent_link
+            fin_id
+            *origin
+            min_joint_limit
+            max_joint_limit
+            mesh_filename
+            fin_dynamics_time_constant
+            fin_cross_section_area
+            fluid_density
+            a0
+            alpha_stall
+            cla
+            cla_stall
+            cda
+            cda_stall
+            current_velocity_topic">
+
+    <joint name="${namespace}/fin${fin_id}_joint" type="revolute">
+        <limit effort="0" lower="${min_joint_limit}" upper="${max_joint_limit}" velocity="0"/>
+        <xacro:insert_block name="origin"/>
+        <axis xyz="0 0 1"/>
+        <parent link="${parent_link}" />
+        <child link="${namespace}/fin${fin_id}" />
+    </joint>
+
+    <link name="${namespace}/fin${fin_id}">
+      <xacro:no_inertial />
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="${mesh_filename}" scale="1 1 1"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <gazebo>
+      <plugin name="${namespace}_fin${fin_id}_model" filename="libfin_ros_plugin.so">
+        <dynamics>
+          <type>FirstOrder</type>
+          <timeConstant>${fin_dynamics_time_constant}</timeConstant>
+        </dynamics>
+
+        <liftdrag>
+          <type>TwoLines</type>
+          <area>${fin_cross_section_area}</area>
+          <fluid_density>${fluid_density}</fluid_density>
+          <a0>${a0}</a0>
+          <alpha_stall>${alpha_stall}</alpha_stall>
+          <cla>${cla}</cla><!-- ^= 0.244 when using deg -->
+          <cla_stall>${cla_stall}</cla_stall>
+          <cda>${cda}</cda>
+          <cda_stall>${cda_stall}</cda_stall>
+        </liftdrag>
+
+        <current_velocity_topic>${current_velocity_topic}</current_velocity_topic>
+        <fin_id>${fin_id}</fin_id>
+        <link_name>${namespace}/fin${fin_id}</link_name>
+        <joint_name>${namespace}/fin${fin_id}_joint</joint_name>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Fin snippet using the quadratic lift and drag model -->
+  <xacro:macro name="fin_quadratic_macro"
+    params="namespace
+            parent_link
+            fin_id
+            *origin
+            min_joint_limit
+            max_joint_limit
+            mesh_filename
+            fin_dynamics_time_constant
+            lift_constant
+            drag_constant
+            current_velocity_topic">
+
+    <joint name="${namespace}/fin${fin_id}_joint" type="revolute">
+        <limit effort="0" lower="${min_joint_limi}" upper="${max_joint_limit}" velocity="0"/>
+        <xacro:insert_block name="origin"/>
+        <axis xyz="0 0 1"/>
+        <parent link="${parent_link}" />
+        <child link="${namespace}/fin${fin_id}" />
+    </joint>
+
+    <link name="${namespace}/fin${fin_id}">
+      <xacro:no_inertial />
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="${mesh_filename}" scale="1 1 1"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <gazebo>
+      <plugin name="${namespace}_fin${fin_id}_model" filename="libfin_ros_plugin.so">
+        <dynamics>
+          <type>FirstOrder</type>
+          <timeConstant>${fin_dynamics_time_constant}</timeConstant>
+        </dynamics>
+
+        <liftdrag>
+          <type>Quadratic</type>
+          <lift_constant>${lift_constant}</lift_constant>
+          <drag_constant>${drag_constant}</drag_constant>
+        </liftdrag>
+
+        <current_velocity_topic>${current_velocity_topic}</current_velocity_topic>
+        <fin_id>${fin_id}</fin_id>
+        <link_name>${namespace}/fin${fin_id}</link_name>
+        <joint_name>${namespace}/fin${fin_id}_joint</joint_name>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+</robot>

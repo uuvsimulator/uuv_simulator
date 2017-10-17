@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Basic linear battery plugin -->
+  <xacro:macro name="basic_linear_battery_macro"
+    params="namespace
+            parent_link
+            prefix
+            open_circuit_voltage_constant_coef
+            open_circuit_voltage_linear_coef
+            initial_charge
+            capacity
+            resistance
+            smooth_current_tau
+            voltage
+            update_rate">
+    <link name="${namespace}/battery_link">
+      <inertial>
+        <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+        <mass value="0.001" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+    </link>
+
+    <joint name="${namespace}/battery_joint" type="revolute">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/battery_link" />
+      <axis xyz="1 0 0"/>
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+
+    <gazebo reference="${namespace}/battery_link">
+      <battery name="${namespace}/battery">
+        <voltage>${voltage}</voltage>
+      </battery>
+    </gazebo>
+
+    <gazebo>
+      <plugin filename="liblinear_battery_ros_plugin.so"
+        name="${namespace}_${prefix}linear_battery_ros_plugin">
+        <namespace>${namespace}</namespace>
+        <link_name>${namespace}/battery_link</link_name>
+        <battery_name>${namespace}/battery</battery_name>
+        <open_circuit_voltage_constant_coef>${open_circuit_voltage_constant_coef}</open_circuit_voltage_constant_coef>
+        <open_circuit_voltage_linear_coef>${open_circuit_voltage_linear_coef}</open_circuit_voltage_linear_coef>
+        <initial_charge>${initial_charge}</initial_charge>
+        <capacity>${capacity}</capacity>
+        <resistance>${resistance}</resistance>
+        <smooth_current_tau>${smooth_current_tau}</smooth_current_tau>
+        <update_rate>${update_rate}</update_rate>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Battery consumer plugin that can be switched ON and OFF -->
+  <xacro:macro name="switchable_battery_consumer_macro"
+    params="link_name
+            battery_link
+            battery_name
+            power_load
+            topic">
+    <gazebo>
+      <plugin filename="libcustom_battery_consumer_ros_plugin.so"
+        name="${link_name}_battery_consumer">
+        <link_name>${battery_link}</link_name>
+        <battery_name>${battery_name}</battery_name>
+        <power_load>${power_load}</power_load>
+        <topic_device_state>${topic}</topic_device_state>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Battery consumer plugin for devices that are always ON -->
+  <xacro:macro name="basic_battery_consumer_macro"
+    params="link_name
+            battery_link
+            battery_name
+            power_load">
+    <gazebo>
+      <plugin filename="libcustom_battery_consumer_ros_plugin.so"
+        name="${link_name}_battery_consumer">
+        <link_name>${battery_link}</link_name>
+        <battery_name>${battery_name}</battery_name>
+        <power_load>${power_load}</power_load>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+</robot>
