@@ -58,11 +58,21 @@ void GazeboCPCROSPlugin::Load(physics::ModelPtr _model,
   if (_sdf->HasElement("gamma"))
     this->gamma = _sdf->Get<double>("gamma");
 
-  // Radius of the kernel to identify particles that will be taken into
-  // account in the concentration computation
+  GZ_ASSERT(this->gamma > 0, "Gamma value must be greater than zero");
+
   this->smoothingLength = 3.0;
-  if(_sdf->HasElement("radius"))
+  if (_sdf->HasElement("radius"))
     this->smoothingLength = _sdf->Get<double>("radius");
+
+  GZ_ASSERT(this->smoothingLength > 0,
+    "Radius of the sensor must be greater than zero");
+
+  this->noiseAmplitude = 0.0;
+  if (_sdf->HasElement("noiseAmplitude"))
+    this->noiseAmplitude = _sdf->Get<double>("noiseAmplitude");
+
+  GZ_ASSERT(this->noiseAmplitude >= 0.0,
+    "Signal noise amplitude must be greater or equal to zero");
 
   this->particlesSub = this->rosNode->subscribe<sensor_msgs::PointCloud>(
     inputTopic, 1,
@@ -153,6 +163,7 @@ bool GazeboCPCROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   if (_info.simTime.Double() - this->lastUpdateTimestamp.toSec() > 1.0)
     this->outputMsg.concentration = 0.0;
 
+  this->outputMsg.concentration += this->noiseAmplitude * this->normal_(this->rndGen_);
   this->outputMsg.header.stamp.sec = _info.simTime.sec;
   this->outputMsg.header.stamp.nsec = _info.simTime.nsec;
   this->measurementPub.publish(this->outputMsg);

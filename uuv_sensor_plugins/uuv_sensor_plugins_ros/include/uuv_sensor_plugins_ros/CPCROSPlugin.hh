@@ -67,7 +67,11 @@ class GazeboCPCROSPlugin :
   /// \brief Gamma velocity parameter for the smoothing function
   protected: double gamma;
 
-  /// \brief Determines the supporting area of the smoothing function
+  /// \brief Noise amplitude
+  protected: double noiseAmplitude;
+
+  // \brief Radius of the kernel to identify particles that will be taken into
+  // account in the concentration computation
   protected: double smoothingLength;
 
   /// \brief Output measurement topic
