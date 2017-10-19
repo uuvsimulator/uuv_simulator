@@ -13,32 +13,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins_ros/ImuRosPlugin.hh>
+#include <uuv_sensor_plugins_ros/IMUROSPlugin.hh>
 
 namespace gazebo {
 
-GazeboImuRosPlugin::GazeboImuRosPlugin() : GazeboImuPlugin()
+GazeboIMUROSPlugin::GazeboIMUROSPlugin() : GazeboIMUPlugin()
 {
 }
 
-GazeboImuRosPlugin::~GazeboImuRosPlugin()
+GazeboIMUROSPlugin::~GazeboIMUROSPlugin()
 {
 }
 
-void GazeboImuRosPlugin::Load(gazebo::physics::ModelPtr _parent,
+void GazeboIMUROSPlugin::Load(gazebo::physics::ModelPtr _parent,
                               sdf::ElementPtr _sdf)
 {
     try {
-        GazeboImuPlugin::Load(_parent, _sdf);
+        GazeboIMUPlugin::Load(_parent, _sdf);
     } catch(gazebo::common::Exception &_e)
     {
-        gzerr << "Error loading GazeboImuPlugin" << std::endl;
+        gzerr << "Error loading GazeboIMUPlugin" << std::endl;
         return;
     }
 
     if (!ros::isInitialized())
     {
-        gzerr << "Not loading GazeboImuPlugin since ROS has not been properly "
+        gzerr << "Not loading GazeboIMUPlugin since ROS has not been properly "
               << "initialized." << std::endl;
         return;
     }
@@ -83,9 +83,9 @@ void GazeboImuRosPlugin::Load(gazebo::physics::ModelPtr _parent,
     this->InitSwitchablePlugin(this->sensorTopic_, isSensorOn);
 }
 
-bool GazeboImuRosPlugin::OnUpdate(const common::UpdateInfo& _info)
+bool GazeboIMUROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
-    bool measurementOK = GazeboImuPlugin::OnUpdate(_info);
+    bool measurementOK = GazeboIMUPlugin::OnUpdate(_info);
 
     // Publish sensor state
     this->PublishState();
@@ -114,5 +114,5 @@ bool GazeboImuRosPlugin::OnUpdate(const common::UpdateInfo& _info)
     return true;
 }
 
-GZ_REGISTER_MODEL_PLUGIN(GazeboImuRosPlugin);
+GZ_REGISTER_MODEL_PLUGIN(GazeboIMUROSPlugin);
 }

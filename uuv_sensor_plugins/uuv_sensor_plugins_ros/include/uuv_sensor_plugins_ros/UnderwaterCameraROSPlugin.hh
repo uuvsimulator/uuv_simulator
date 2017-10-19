@@ -26,15 +26,15 @@
 
 namespace gazebo {
 
-/// \brief UnderwaterCameraRosPlugin is a ROS wrapper for UnderwaterCameraPlugin
-class UnderwaterCameraRosPlugin
+/// \brief UnderwaterCameraROSPlugin is a ROS wrapper for UnderwaterCameraPlugin
+class UnderwaterCameraROSPlugin
         : public UnderwaterCameraPlugin, GazeboRosCameraUtils
 {
     /// \brief Constructor.
-    public: UnderwaterCameraRosPlugin();
+    public: UnderwaterCameraROSPlugin();
 
     /// \brief Destructor.
-    public: virtual ~UnderwaterCameraRosPlugin();
+    public: virtual ~UnderwaterCameraROSPlugin();
 
     /// \brief Load module and read parameters from SDF.
     public: virtual void Load(sensors::SensorPtr _sensor,

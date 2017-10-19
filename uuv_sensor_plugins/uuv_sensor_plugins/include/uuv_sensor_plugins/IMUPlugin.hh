@@ -112,15 +112,15 @@ struct ImuParameters {
   {}
 };
 
-/// \brief GazeboImuPlugin simulates an IMU with drifting gyro. and accel.
-///        The implementation is based on the GazeboImuPlugin found in the
+/// \brief GazeboIMUPlugin simulates an IMU with drifting gyro. and accel.
+///        The implementation is based on the GazeboIMUPlugin found in the
 ///        rotors simulator.
-class GazeboImuPlugin : public GazeboSensorPlugin {
+class GazeboIMUPlugin : public GazeboSensorPlugin {
   /// \brief Constructor.
-  public: GazeboImuPlugin();
+  public: GazeboIMUPlugin();
 
   /// \brief Desctructor.
-  public: virtual ~GazeboImuPlugin();
+  public: virtual ~GazeboIMUPlugin();
 
   /// \brief Load plugin and its configuration from sdf,
   protected: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);

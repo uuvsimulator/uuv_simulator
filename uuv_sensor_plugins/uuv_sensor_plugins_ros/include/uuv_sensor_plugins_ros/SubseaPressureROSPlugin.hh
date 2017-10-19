@@ -16,7 +16,7 @@
 #ifndef UUV_SENSOR_PLUGINS_ROS_SUBSEAPRESSURE_H_
 #define UUV_SENSOR_PLUGINS_ROS_SUBSEAPRESSURE_H_
 
-#include <uuv_sensor_plugins/SubseapressurePlugin.hh>
+#include <uuv_sensor_plugins/SubseaPressurePlugin.hh>
 #include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
 
 #include <boost/scoped_ptr.hpp>
@@ -28,14 +28,14 @@ namespace gazebo {
 /// \brief GazeboImuRosPlugin is a ROS wrapper for GazeboImuPlugin.
 /// All it does is in addition to GazeboImuPlugin is
 /// publishing simulated measurement via a ROS topic.
-class GazeboSubseaPressureRosPlugin :
+class GazeboSubseaPressureROSPlugin :
   public GazeboSubseaPressurePlugin, public SwitchableROSPlugin {
 
   /// \brief Constructor.
-  public: GazeboSubseaPressureRosPlugin();
+  public: GazeboSubseaPressureROSPlugin();
 
   /// \brief Destructor.
-  public: virtual ~GazeboSubseaPressureRosPlugin();
+  public: virtual ~GazeboSubseaPressureROSPlugin();
 
   /// \brief Load module and read parameters from SDF.
   public: virtual void Load(gazebo::physics::ModelPtr _model,

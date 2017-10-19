@@ -13,35 +13,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins_ros/MagnetometerRosPlugin.hh>
+#include <uuv_sensor_plugins_ros/MagnetometerROSPlugin.hh>
 
 #include <gazebo/physics/physics.hh>
 
 namespace gazebo {
 
-GazeboMagnetometerRosPlugin::GazeboMagnetometerRosPlugin()
+GazeboMagnetometerROSPlugin::GazeboMagnetometerROSPlugin()
     : GazeboMagnetometerPlugin()
 {
 }
 
-GazeboMagnetometerRosPlugin::~GazeboMagnetometerRosPlugin()
+GazeboMagnetometerROSPlugin::~GazeboMagnetometerROSPlugin()
 {
 }
 
-void GazeboMagnetometerRosPlugin::Load(gazebo::physics::ModelPtr _parent,
+void GazeboMagnetometerROSPlugin::Load(gazebo::physics::ModelPtr _parent,
                               sdf::ElementPtr _sdf)
 {
     try {
         GazeboMagnetometerPlugin::Load(_parent, _sdf);
     } catch(gazebo::common::Exception &_e)
     {
-        gzerr << "Error loading GazeboMagnetometerRosPlugin" << std::endl;
+        gzerr << "Error loading GazeboMagnetometerROSPlugin" << std::endl;
         return;
     }
 
     if (!ros::isInitialized())
     {
-        gzerr << "Not loading GazeboMagnetometerRosPlugin since ROS has not "
+        gzerr << "Not loading GazeboMagnetometerROSPlugin since ROS has not "
               << "been properly initialized." << std::endl;
         return;
     }
@@ -71,7 +71,7 @@ void GazeboMagnetometerRosPlugin::Load(gazebo::physics::ModelPtr _parent,
     this->InitSwitchablePlugin(this->sensorTopic_, isSensorOn);
 }
 
-bool GazeboMagnetometerRosPlugin::OnUpdate(const common::UpdateInfo& _info)
+bool GazeboMagnetometerROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
     bool measurementOK = GazeboMagnetometerPlugin::OnUpdate(_info);
 
@@ -93,5 +93,5 @@ bool GazeboMagnetometerRosPlugin::OnUpdate(const common::UpdateInfo& _info)
     return true;
 }
 
-GZ_REGISTER_MODEL_PLUGIN(GazeboMagnetometerRosPlugin);
+GZ_REGISTER_MODEL_PLUGIN(GazeboMagnetometerROSPlugin);
 }

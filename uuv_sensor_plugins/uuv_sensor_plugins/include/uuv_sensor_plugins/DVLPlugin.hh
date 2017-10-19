@@ -13,21 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UUV_SENSOR_PLUGINS_GAZEBO_RPT_PLUGIN_H_
-#define UUV_SENSOR_PLUGINS_GAZEBO_RPT_PLUGIN_H_
+#ifndef UUV_SENSOR_PLUGINS_GAZEBO_DVL_PLUGIN_H_
+#define UUV_SENSOR_PLUGINS_GAZEBO_DVL_PLUGIN_H_
 
-#include "SensorPlugin.hh"
-#include "SensorRpt.pb.h"
+#include <uuv_sensor_plugins/SensorPlugin.hh>
+#include "SensorDvl.pb.h"
 
 namespace gazebo {
 
-class GazeboRptPlugin : public GazeboSensorPlugin
+class GazeboDVLPlugin : public GazeboSensorPlugin
 {
   /// \brief Constructor.
-  public: GazeboRptPlugin();
+  public: GazeboDVLPlugin();
 
   /// \brief Destructor.
-  public: ~GazeboRptPlugin();
+  public: ~GazeboDVLPlugin();
 
   /// \brief Load plugin and its configuration from sdf.
   protected: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
@@ -39,14 +39,14 @@ class GazeboRptPlugin : public GazeboSensorPlugin
   protected: virtual bool OnUpdate(const common::UpdateInfo&);
 
   /// \brief Standard deviation of measurement noise (in all dimensions).
-  protected: double positionNoise;
+  protected: double velocityNoise;
 
-  /// \brief Latest measured position.
-  protected: gazebo::math::Vector3 position;
+  /// \brief Latest measured linear velocity
+  protected: gazebo::math::Vector3 vel;
 
   /// \brief Reuse message structure sine parts (covariance) remain const.
-  protected: sensor_msgs::msgs::Rpt message;
+  protected: sensor_msgs::msgs::Dvl message;
 };
 }
 
-#endif  // UUV_SENSOR_PLUGINS_GAZEBO_RPT_PLUGIN_H_
+#endif  // UUV_SENSOR_PLUGINS_GAZEBO_DVL_PLUGIN_H_

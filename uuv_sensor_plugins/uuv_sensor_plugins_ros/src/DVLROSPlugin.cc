@@ -13,25 +13,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins_ros/DvlRosPlugin.hh>
+#include <uuv_sensor_plugins_ros/DVLROSPlugin.hh>
 
 #include <gazebo/physics/Model.hh>
 
 namespace gazebo {
 
-GazeboDVLRosPlugin::GazeboDVLRosPlugin() : GazeboDvlPlugin()
+GazeboDVLROSPlugin::GazeboDVLROSPlugin() : GazeboDVLPlugin()
 {
 }
 
-GazeboDVLRosPlugin::~GazeboDVLRosPlugin()
+GazeboDVLROSPlugin::~GazeboDVLROSPlugin()
 {
 }
 
-void GazeboDVLRosPlugin::Load(gazebo::physics::ModelPtr _parent,
+void GazeboDVLROSPlugin::Load(gazebo::physics::ModelPtr _parent,
                               sdf::ElementPtr _sdf)
 {
   try {
-    GazeboDvlPlugin::Load(_parent, _sdf);
+    GazeboDVLPlugin::Load(_parent, _sdf);
   } catch(gazebo::common::Exception &_e)
   {
     gzerr << "Error loading GazeboDVLPlugin" << std::endl;
@@ -88,9 +88,9 @@ void GazeboDVLRosPlugin::Load(gazebo::physics::ModelPtr _parent,
       >(this->sensorTopic_ + "_twist", 10);
 }
 
-bool GazeboDVLRosPlugin::OnUpdate(const common::UpdateInfo& _info)
+bool GazeboDVLROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
-  bool measurementOK = GazeboDvlPlugin::OnUpdate(_info);
+  bool measurementOK = GazeboDVLPlugin::OnUpdate(_info);
 
   // Publish sensor state
   this->PublishState();
@@ -115,5 +115,5 @@ bool GazeboDVLRosPlugin::OnUpdate(const common::UpdateInfo& _info)
   this->pubTwist.publish(this->twistMessage);
 }
 
-GZ_REGISTER_MODEL_PLUGIN(GazeboDVLRosPlugin);
+GZ_REGISTER_MODEL_PLUGIN(GazeboDVLROSPlugin);
 }

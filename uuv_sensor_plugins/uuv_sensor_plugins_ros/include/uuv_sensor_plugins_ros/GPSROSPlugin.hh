@@ -27,15 +27,15 @@
 
 namespace gazebo {
 
-/// \brief GazeboGpsRosPlugin is a ROS wrapper for GpsPlugin.
+/// \brief GazeboGPSROSPlugin is a ROS wrapper for GpsPlugin.
 /// All it does is in addition to GpsPlugin is
 /// publishing simulated measurements via a ROS topic.
-class GazeboGpsRosPlugin : public SensorPlugin {
+class GazeboGPSROSPlugin : public SensorPlugin {
   /// \brief Constructor.
-  public: GazeboGpsRosPlugin();
+  public: GazeboGPSROSPlugin();
 
   /// \brief Destructor.
-  public: virtual ~GazeboGpsRosPlugin();
+  public: virtual ~GazeboGPSROSPlugin();
 
   /// \brief Load module and read parameters from SDF.
   public: virtual void Load(sensors::SensorPtr _parent,

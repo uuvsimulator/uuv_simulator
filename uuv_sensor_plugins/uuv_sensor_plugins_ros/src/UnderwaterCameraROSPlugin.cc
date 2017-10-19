@@ -13,21 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins_ros/UnderwaterCameraRosPlugin.hh>
+#include <uuv_sensor_plugins_ros/UnderwaterCameraROSPlugin.hh>
 
 #include <string>
 
 namespace gazebo {
 
-UnderwaterCameraRosPlugin::UnderwaterCameraRosPlugin()
+UnderwaterCameraROSPlugin::UnderwaterCameraROSPlugin()
 {
 }
 
-UnderwaterCameraRosPlugin::~UnderwaterCameraRosPlugin()
+UnderwaterCameraROSPlugin::~UnderwaterCameraROSPlugin()
 {
 }
 
-void UnderwaterCameraRosPlugin::Load(sensors::SensorPtr _sensor,
+void UnderwaterCameraROSPlugin::Load(sensors::SensorPtr _sensor,
                                      sdf::ElementPtr _sdf)
 {
     try {
@@ -40,7 +40,7 @@ void UnderwaterCameraRosPlugin::Load(sensors::SensorPtr _sensor,
 
     if (!ros::isInitialized())
     {
-        gzerr << "Not loading UnderwaterCameraRosPlugin since ROS has not "
+        gzerr << "Not loading UnderwaterCameraROSPlugin since ROS has not "
               << " been properly initialized." << std::endl;
         return;
     }
@@ -57,7 +57,7 @@ void UnderwaterCameraRosPlugin::Load(sensors::SensorPtr _sensor,
 }
 
 
-void UnderwaterCameraRosPlugin::OnNewDepthFrame(const float *_image,
+void UnderwaterCameraROSPlugin::OnNewDepthFrame(const float *_image,
                                                 unsigned int _width,
                                                 unsigned int _height,
                                                 unsigned int _depth,
@@ -67,7 +67,7 @@ void UnderwaterCameraRosPlugin::OnNewDepthFrame(const float *_image,
                                             _depth, _format);
 }
 
-void UnderwaterCameraRosPlugin::OnNewRGBPointCloud(const float *_pcd,
+void UnderwaterCameraROSPlugin::OnNewRGBPointCloud(const float *_pcd,
                                                    unsigned int _width,
                                                    unsigned int _height,
                                                    unsigned int _depth,
@@ -77,7 +77,7 @@ void UnderwaterCameraRosPlugin::OnNewRGBPointCloud(const float *_pcd,
                                                _depth, _format);
 }
 
-void UnderwaterCameraRosPlugin::OnNewImageFrame(const unsigned char *_image,
+void UnderwaterCameraROSPlugin::OnNewImageFrame(const unsigned char *_image,
                                                 unsigned int _width,
                                                 unsigned int _height,
                                                 unsigned int _depth,
@@ -110,5 +110,5 @@ void UnderwaterCameraRosPlugin::OnNewImageFrame(const unsigned char *_image,
     }
 }
 
-GZ_REGISTER_SENSOR_PLUGIN(UnderwaterCameraRosPlugin);
+GZ_REGISTER_SENSOR_PLUGIN(UnderwaterCameraROSPlugin);
 }
