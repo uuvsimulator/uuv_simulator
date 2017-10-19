@@ -14,4 +14,15 @@
 # limitations under the License.
 
 Header header
+# Position of the measured value in local ENU coordinates
+geometry_msgs/Vector3 position_enu
+# Latitude in degrees (WGS84 coordinates)
+float64 latitude
+# Longiture in degrees (WGS84 coordinates)
+float64 longitude
+# Depth in meters (WGS84 coordinates)
+float64 depth
+# Particle concentration
 float64 concentration
+# Status, false if no plume particles are received
+bool is_measuring

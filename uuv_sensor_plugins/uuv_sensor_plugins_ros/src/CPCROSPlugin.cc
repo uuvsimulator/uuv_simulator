@@ -85,6 +85,9 @@ void GazeboCPCROSPlugin::Load(physics::ModelPtr _model,
   // Initialize the time stamp of the point cloud update
   this->lastUpdateTimestamp = ros::Time::now();
 
+  // Set the is_measuring flag initially to false
+  this->outputMsg.is_measuring = false;
+
   this->measurementPub = this->rosNode->advertise<
     uuv_sensor_plugins_ros_msgs::ChemicalParticleConcentration>(
       this->sensorTopic_, 1);
@@ -113,6 +116,25 @@ void GazeboCPCROSPlugin::OnPlumeParticlesUpdate(
   double distToParticle;
 
   math::Vector3 linkPos = this->link_->GetWorldPose().pos;
+
+  this->outputMsg.is_measuring = true;
+  // Store the current position in the local ENU frame where this
+  // measurement was taken
+  this->outputMsg.position_enu.x = linkPos.x;
+  this->outputMsg.position_enu.y = linkPos.y;
+  this->outputMsg.position_enu.z = linkPos.z;
+
+  // Calculate the current position in WGS84 spherical coordinates
+  ignition::math::Vector3d cartVec = ignition::math::Vector3d(linkPos.x,
+    linkPos.y, linkPos.z);
+
+  ignition::math::Vector3d scVec =
+    this->link_->GetWorld()->GetSphericalCoordinates()->SphericalFromLocal(cartVec);
+  this->outputMsg.latitude = scVec.X();
+  this->outputMsg.longitude = scVec.Y();
+  this->outputMsg.depth = -1 * scVec.Z();
+
+  // Store this measurement's time stamp
   this->lastUpdateTimestamp = _msg->header.stamp;
 
   double currentTime = _msg->header.stamp.toSec();
@@ -161,7 +183,10 @@ bool GazeboCPCROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   // Set particle concentration to zero if the point cloud message has not
   // been received for a long time
   if (_info.simTime.Double() - this->lastUpdateTimestamp.toSec() > 1.0)
+  {
+    this->outputMsg.is_measuring = false;
     this->outputMsg.concentration = 0.0;
+  }
 
   this->outputMsg.concentration += this->noiseAmplitude * this->normal_(this->rndGen_);
   this->outputMsg.header.stamp.sec = _info.simTime.sec;

@@ -18,6 +18,7 @@
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/Link.hh>
+#include <gazebo/physics/World.hh>
 #include <ros/ros.h>
 #include <boost/scoped_ptr.hpp>
 #include <uuv_sensor_plugins/CPCPlugin.hh>
