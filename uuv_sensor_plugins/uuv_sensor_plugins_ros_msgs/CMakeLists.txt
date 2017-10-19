@@ -9,6 +9,7 @@ add_message_files(
   DVLBeam.msg
   PositionWithCovariance.msg
   PositionWithCovarianceStamped.msg
+  ChemicalParticleConcentration.msg
 )
 
 add_service_files(
