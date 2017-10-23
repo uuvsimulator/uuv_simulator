@@ -13,13 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins_ros/RptRosPlugin.hh>
+#include <uuv_sensor_plugins_ros/RPTROSPlugin.hh>
 
 #include <gazebo/physics/Model.hh>
 
 namespace gazebo {
 
-GazeboRptRosPlugin::GazeboRptRosPlugin() : GazeboRptPlugin()
+GazeboRptRosPlugin::GazeboRptRosPlugin() : GazeboRPTPlugin()
 {
 }
 
@@ -31,16 +31,16 @@ void GazeboRptRosPlugin::Load(gazebo::physics::ModelPtr _parent,
                               sdf::ElementPtr _sdf)
 {
   try {
-    GazeboRptPlugin::Load(_parent, _sdf);
+    GazeboRPTPlugin::Load(_parent, _sdf);
   } catch(gazebo::common::Exception &_e)
   {
-    gzerr << "Error loading GazeboRptPlugin" << std::endl;
+    gzerr << "Error loading GazeboRPTPlugin" << std::endl;
     return;
   }
 
   if (!ros::isInitialized())
   {
-    gzerr << "Not loading GazeboRptPlugin since ROS has not been properly "
+    gzerr << "Not loading GazeboRPTPlugin since ROS has not been properly "
           << "initialized." << std::endl;
     return;
   }
@@ -97,7 +97,7 @@ void GazeboRptRosPlugin::Load(gazebo::physics::ModelPtr _parent,
 
 bool GazeboRptRosPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
-  bool measurementOK = GazeboRptPlugin::OnUpdate(_info);
+  bool measurementOK = GazeboRPTPlugin::OnUpdate(_info);
 
   // Publish sensor state
   this->PublishState();

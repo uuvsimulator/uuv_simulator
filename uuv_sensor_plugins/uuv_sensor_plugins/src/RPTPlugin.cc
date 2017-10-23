@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins/RptPlugin.hh>
+#include <uuv_sensor_plugins/RPTPlugin.hh>
 
 #include <gazebo/physics/physics.hh>
 
@@ -21,16 +21,16 @@
 
 namespace gazebo {
 
-GazeboRptPlugin::GazeboRptPlugin()
+GazeboRPTPlugin::GazeboRPTPlugin()
   : GazeboSensorPlugin()
 {
 }
 
-GazeboRptPlugin::~GazeboRptPlugin()
+GazeboRPTPlugin::~GazeboRPTPlugin()
 {
 }
 
-void GazeboRptPlugin::Load(physics::ModelPtr _model,
+void GazeboRPTPlugin::Load(physics::ModelPtr _model,
                            sdf::ElementPtr _sdf)
 {
   GazeboSensorPlugin::Load(_model, _sdf);
@@ -58,7 +58,7 @@ void GazeboRptPlugin::Load(physics::ModelPtr _model,
         this->sensorTopic_, 10);
 }
 
-void GazeboRptPlugin::SimulateMeasurement(
+void GazeboRPTPlugin::SimulateMeasurement(
     const common::UpdateInfo &_info)
 {
   // True position
@@ -73,7 +73,7 @@ void GazeboRptPlugin::SimulateMeasurement(
   return;
 }
 
-bool GazeboRptPlugin::OnUpdate(const common::UpdateInfo &_info)
+bool GazeboRPTPlugin::OnUpdate(const common::UpdateInfo &_info)
 {
   if (!ShouldIGenerate(_info))
     return false;
@@ -92,5 +92,5 @@ bool GazeboRptPlugin::OnUpdate(const common::UpdateInfo &_info)
   return true;
 }
 
-GZ_REGISTER_MODEL_PLUGIN(GazeboRptPlugin);
+GZ_REGISTER_MODEL_PLUGIN(GazeboRPTPlugin);
 }

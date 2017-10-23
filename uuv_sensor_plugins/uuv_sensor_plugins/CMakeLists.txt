@@ -14,6 +14,8 @@ find_package(OGRE REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Protobuf REQUIRED)
 
+set(UUV_SENSOR_PLUGINS_LIST "")
+
 add_definitions(-std=c++11)
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
@@ -44,6 +46,8 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${msgs})
 add_library(uuv_sensors_msgs SHARED ${PROTO_SRCS})
 target_link_libraries(uuv_sensors_msgs ${PROTOBUF_LIBRARY} ${GAZEBO_LIBRARIES})
 
+list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_sensors_msgs)
+
 file(COPY ${CMAKE_CURRENT_BINARY_DIR}/ DESTINATION ${CATKIN_DEVEL_PREFIX}/include/${PACKAGE_NAME} FILES_MATCHING PATTERN "*.pb.*")
 
 message(STATUS "Copying sensor message headers from = " ${CMAKE_CURRENT_BINARY_DIR} " to " ${CATKIN_DEVEL_PREFIX}/include/${PACKAGE_NAME})
@@ -61,6 +65,7 @@ catkin_package(
       uuv_gazebo_magnetometer
       uuv_gazebo_rpt
       uuv_gazebo_subseapressure
+      uuv_gazebo_chemical_concentration
     DEPENDS Eigen3 gazebo
 )
 
@@ -90,6 +95,7 @@ set(common_libraries
   ${OGRE_Paging_LIBRARIES}
 )
 
+###########################################################################
 add_library(uuv_gazebo_camera SHARED
   src/SensorPlugin.cc
   src/UnderwaterCameraPlugin.cc
@@ -97,53 +103,66 @@ add_library(uuv_gazebo_camera SHARED
 target_link_libraries(uuv_gazebo_camera ${common_libraries} ${OpenCV_LIBRARIES}
   gazebo_sensors DepthCameraPlugin)
 add_dependencies(uuv_gazebo_camera uuv_sensors_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_gazebo_camera)
 
+###########################################################################
 add_library(uuv_gazebo_dvl SHARED
   src/SensorPlugin.cc
-  src/DvlPlugin.cc
+  src/DVLPlugin.cc
 )
 target_link_libraries(uuv_gazebo_dvl ${common_libraries}
   gazebo_sensors)
 add_dependencies(uuv_gazebo_dvl uuv_sensors_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_gazebo_dvl)
 
+###########################################################################
 add_library(uuv_gazebo_imu SHARED
   src/SensorPlugin.cc
-  src/ImuPlugin.cc
+  src/IMUPlugin.cc
 )
 target_link_libraries(uuv_gazebo_imu ${common_libraries})
 add_dependencies(uuv_gazebo_imu uuv_sensors_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_gazebo_imu)
 
+###########################################################################
 add_library(uuv_gazebo_magnetometer SHARED
   src/SensorPlugin.cc
   src/MagnetometerPlugin.cc
 )
 target_link_libraries(uuv_gazebo_magnetometer ${common_libraries})
 add_dependencies(uuv_gazebo_magnetometer uuv_sensors_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_gazebo_magnetometer)
 
+###########################################################################
 add_library(uuv_gazebo_rpt SHARED
   src/SensorPlugin.cc
-  src/RptPlugin.cc
+  src/RPTPlugin.cc
 )
 target_link_libraries(uuv_gazebo_rpt ${common_libraries}
   gazebo_sensors)
 add_dependencies(uuv_gazebo_rpt uuv_sensors_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_gazebo_rpt)
 
+###########################################################################
 add_library(uuv_gazebo_subseapressure SHARED
   src/SensorPlugin.cc
-  src/SubseapressurePlugin.cc
+  src/SubseaPressurePlugin.cc
 )
 target_link_libraries(uuv_gazebo_subseapressure ${common_libraries})
 add_dependencies(uuv_gazebo_subseapressure uuv_sensors_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_gazebo_subseapressure)
+
+###########################################################################
+add_library(uuv_gazebo_chemical_concentration SHARED
+  src/SensorPlugin.cc
+  src/CPCPlugin.cc
+)
+target_link_libraries(uuv_gazebo_chemical_concentration ${common_libraries})
+add_dependencies(uuv_gazebo_chemical_concentration ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_gazebo_chemical_concentration)
 
 install(
-  TARGETS
-    uuv_gazebo_camera
-    uuv_gazebo_dvl
-    uuv_gazebo_imu
-    uuv_gazebo_magnetometer
-    uuv_gazebo_rpt
-    uuv_gazebo_subseapressure
-    uuv_sensors_msgs
+  TARGETS ${UUV_SENSOR_PLUGINS_LIST}
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )

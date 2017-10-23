@@ -13,22 +13,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins_ros/SubseapressureRosPlugin.hh>
+#include <uuv_sensor_plugins_ros/SubseaPressureROSPlugin.hh>
 
 #include <gazebo/physics/physics.hh>
 
 namespace gazebo {
 
-GazeboSubseaPressureRosPlugin::GazeboSubseaPressureRosPlugin()
+GazeboSubseaPressureROSPlugin::GazeboSubseaPressureROSPlugin()
     : GazeboSubseaPressurePlugin()
 {
 }
 
-GazeboSubseaPressureRosPlugin::~GazeboSubseaPressureRosPlugin()
+GazeboSubseaPressureROSPlugin::~GazeboSubseaPressureROSPlugin()
 {
 }
 
-void GazeboSubseaPressureRosPlugin::Load(gazebo::physics::ModelPtr _parent,
+void GazeboSubseaPressureROSPlugin::Load(gazebo::physics::ModelPtr _parent,
                               sdf::ElementPtr _sdf)
 {
     try {
@@ -41,7 +41,7 @@ void GazeboSubseaPressureRosPlugin::Load(gazebo::physics::ModelPtr _parent,
 
     if (!ros::isInitialized())
     {
-        gzerr << "Not loading GazeboSubseaPressureRosPlugin since ROS has not "
+        gzerr << "Not loading GazeboSubseaPressureROSPlugin since ROS has not "
               << "been properly initialized." << std::endl;
         return;
     }
@@ -61,7 +61,7 @@ void GazeboSubseaPressureRosPlugin::Load(gazebo::physics::ModelPtr _parent,
     this->InitSwitchablePlugin(this->sensorTopic_, isSensorOn);
 }
 
-bool GazeboSubseaPressureRosPlugin::OnUpdate(const common::UpdateInfo& _info)
+bool GazeboSubseaPressureROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
     bool measurementOK = GazeboSubseaPressurePlugin::OnUpdate(_info);
 
@@ -85,5 +85,5 @@ bool GazeboSubseaPressureRosPlugin::OnUpdate(const common::UpdateInfo& _info)
     return true;
 }
 
-GZ_REGISTER_MODEL_PLUGIN(GazeboSubseaPressureRosPlugin);
+GZ_REGISTER_MODEL_PLUGIN(GazeboSubseaPressureROSPlugin);
 }

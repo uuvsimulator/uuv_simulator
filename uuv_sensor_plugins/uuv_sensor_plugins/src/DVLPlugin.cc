@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins/DvlPlugin.hh>
+#include <uuv_sensor_plugins/DVLPlugin.hh>
 
 #include <gazebo/physics/physics.hh>
 
@@ -22,16 +22,16 @@
 
 namespace gazebo {
 
-GazeboDvlPlugin::GazeboDvlPlugin()
+GazeboDVLPlugin::GazeboDVLPlugin()
   : GazeboSensorPlugin()
 {
 }
 
-GazeboDvlPlugin::~GazeboDvlPlugin()
+GazeboDVLPlugin::~GazeboDVLPlugin()
 {
 }
 
-void GazeboDvlPlugin::Load(physics::ModelPtr _model,
+void GazeboDVLPlugin::Load(physics::ModelPtr _model,
                            sdf::ElementPtr _sdf)
 {
   GazeboSensorPlugin::Load(_model, _sdf);
@@ -59,7 +59,7 @@ void GazeboDvlPlugin::Load(physics::ModelPtr _model,
         this->sensorTopic_, 10);
 }
 
-void GazeboDvlPlugin::SimulateMeasurement(
+void GazeboDVLPlugin::SimulateMeasurement(
     const common::UpdateInfo &_info)
 {
   // True velocity
@@ -74,7 +74,7 @@ void GazeboDvlPlugin::SimulateMeasurement(
   return;
 }
 
-bool GazeboDvlPlugin::OnUpdate(const common::UpdateInfo &_info)
+bool GazeboDVLPlugin::OnUpdate(const common::UpdateInfo &_info)
 {
   if (!ShouldIGenerate(_info))
     return false;
@@ -93,5 +93,5 @@ bool GazeboDvlPlugin::OnUpdate(const common::UpdateInfo &_info)
   return true;
 }
 
-GZ_REGISTER_MODEL_PLUGIN(GazeboDvlPlugin);
+GZ_REGISTER_MODEL_PLUGIN(GazeboDVLPlugin);
 }

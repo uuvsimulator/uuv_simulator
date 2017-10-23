@@ -13,30 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UUV_SENSOR_PLUGINS_ROS_DVL_H_
-#define UUV_SENSOR_PLUGINS_ROS_DVL_H_
+#ifndef UUV_SENSOR_PLUGINS_ROS_MAGNETOMETER_H_
+#define UUV_SENSOR_PLUGINS_ROS_MAGNETOMETER_H_
 
-#include <boost/scoped_ptr.hpp>
-#include <geometry_msgs/TwistWithCovarianceStamped.h>
-#include <uuv_sensor_plugins/DvlPlugin.hh>
-#include <uuv_sensor_plugins_ros_msgs/DVL.h>
+#include <uuv_sensor_plugins/MagnetometerPlugin.hh>
 #include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
 
+#include <boost/scoped_ptr.hpp>
 #include <ros/ros.h>
+#include <sensor_msgs/MagneticField.h>
 
 namespace gazebo {
 
-/// \brief GazeboDvlRosPlugin is a ROS wrapper for GazeboDvlPlugin.
-/// All it does is in addition to GazeboDvlPlugin is
-/// publishing simulated measurements via a ROS topic.
-class GazeboDVLRosPlugin :
-  public GazeboDvlPlugin, public SwitchableROSPlugin {
-
+/// \brief GazeboImuRosPlugin is a ROS wrapper for GazeboImuPlugin.
+/// All it does is in addition to GazeboImuPlugin is
+/// publishing simulated measurement via a ROS topic.
+class GazeboMagnetometerROSPlugin :
+  public GazeboMagnetometerPlugin, public SwitchableROSPlugin {
   /// \brief Constructor.
-  public: GazeboDVLRosPlugin();
+  public: GazeboMagnetometerROSPlugin();
 
   /// \brief Destructor.
-  public: virtual ~GazeboDVLRosPlugin();
+  public: virtual ~GazeboMagnetometerROSPlugin();
 
   /// \brief Load module and read parameters from SDF.
   public: virtual void Load(gazebo::physics::ModelPtr _model,
@@ -45,18 +43,12 @@ class GazeboDVLRosPlugin :
   /// \brief Update callback from simulator.
   public: virtual bool OnUpdate(const common::UpdateInfo& _info);
 
-  /// \brief ROS publisher for dvl data.
-  protected: ros::Publisher pubDvl;
+  /// \brief ROS publisher for Magnetometer data.
+  protected: ros::Publisher rosPublisher_;
 
-  /// \brief ROS publisher for twist data.
-  protected: ros::Publisher pubTwist;
-
-  /// \brief Store dvl message since many attributes do not change (cov.).
-  protected: uuv_sensor_plugins_ros_msgs::DVL dvlMessage;
-
-  /// \brief Store pose message since many attributes do not change (cov.).
-  protected: geometry_msgs::TwistWithCovarianceStamped twistMessage;
+  /// \brief Store IMU message since many attributes do not change (cov.).
+  protected: sensor_msgs::MagneticField rosMessage_;
 };
 }
 
-#endif  // UUV_SENSOR_PLUGINS_ROS_DVL_H_
+#endif  // UUV_SENSOR_PLUGINS_ROS_MAGNETOMETER_H_

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins/SubseapressurePlugin.hh>
+#include <uuv_sensor_plugins/SubseaPressurePlugin.hh>
 
 #include <gazebo/physics/physics.hh>
 

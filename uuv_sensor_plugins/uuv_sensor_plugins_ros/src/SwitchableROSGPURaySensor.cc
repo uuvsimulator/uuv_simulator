@@ -13,27 +13,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins_ros/SwitchableROSGpuRaySensor.hh>
+#include <uuv_sensor_plugins_ros/SwitchableROSGPURaySensor.hh>
 
 namespace gazebo {
 
 /////////////////////////////////////////////////
-SwitchableROSGpuRaySensor::SwitchableROSGpuRaySensor() : SwitchableROSSensorPlugin()
+SwitchableROSGPURaySensor::SwitchableROSGPURaySensor() : SwitchableROSSensorPlugin()
 { }
 
 /////////////////////////////////////////////////
-SwitchableROSGpuRaySensor::~SwitchableROSGpuRaySensor()
+SwitchableROSGPURaySensor::~SwitchableROSGPURaySensor()
 { }
 
 /////////////////////////////////////////////////
-void SwitchableROSGpuRaySensor::Load(sensors::SensorPtr _parent,
+void SwitchableROSGPURaySensor::Load(sensors::SensorPtr _parent,
   sdf::ElementPtr _sdf)
 {
   SwitchableROSSensorPlugin::Load(_parent, _sdf);
 
   this->inputSub = this->rosNode->subscribe<sensor_msgs::LaserScan>(
     this->inputTopicName, 10,
-    boost::bind(&SwitchableROSGpuRaySensor::UpdateSensorInput,
+    boost::bind(&SwitchableROSGPURaySensor::UpdateSensorInput,
     this, _1));
 
   this->outputPub = this->rosNode->advertise<sensor_msgs::LaserScan>(
@@ -41,7 +41,7 @@ void SwitchableROSGpuRaySensor::Load(sensors::SensorPtr _parent,
 }
 
 /////////////////////////////////////////////////
-void SwitchableROSGpuRaySensor::UpdateSensorInput(
+void SwitchableROSGPURaySensor::UpdateSensorInput(
   const sensor_msgs::LaserScan::ConstPtr &_msg)
 {
   // Publish sensor state
@@ -61,6 +61,6 @@ void SwitchableROSGpuRaySensor::UpdateSensorInput(
   this->outputPub.publish(this->msg);
 }
 
-GZ_REGISTER_SENSOR_PLUGIN(SwitchableROSGpuRaySensor)
+GZ_REGISTER_SENSOR_PLUGIN(SwitchableROSGPURaySensor)
 
 }

@@ -30,7 +30,7 @@
 // - adhere to Gazebo's coding standards.
 
 
-#include <uuv_sensor_plugins/ImuPlugin.hh>
+#include <uuv_sensor_plugins/IMUPlugin.hh>
 
 #include <chrono>
 #include <cmath>
@@ -44,17 +44,17 @@
 
 namespace gazebo {
 
-GazeboImuPlugin::GazeboImuPlugin()
+GazeboIMUPlugin::GazeboIMUPlugin()
     : GazeboSensorPlugin()
 {
 }
 
-GazeboImuPlugin::~GazeboImuPlugin()
+GazeboIMUPlugin::~GazeboIMUPlugin()
 {
 }
 
 
-void GazeboImuPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
+void GazeboIMUPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
     GazeboSensorPlugin::Load(_model, _sdf);
 
@@ -180,7 +180,7 @@ void GazeboImuPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
 /// \brief This function adds noise to acceleration and angular rates for
 ///        accelerometer and gyroscope measurement simulation.
-void GazeboImuPlugin::AddNoise(Eigen::Vector3d &linear_acceleration,
+void GazeboIMUPlugin::AddNoise(Eigen::Vector3d &linear_acceleration,
                                Eigen::Vector3d &angular_velocity,
                                Eigen::Quaterniond &orientation,
                                double dt)
@@ -247,7 +247,7 @@ void GazeboImuPlugin::AddNoise(Eigen::Vector3d &linear_acceleration,
     orientation = orientation*error;
 }
 
-void GazeboImuPlugin::SimulateMeasurement(const common::UpdateInfo& _info)
+void GazeboIMUPlugin::SimulateMeasurement(const common::UpdateInfo& _info)
 {
     common::Time current_time  = _info.simTime;
     double dt = (current_time - lastMeasTime_).Double();
@@ -292,7 +292,7 @@ void GazeboImuPlugin::SimulateMeasurement(const common::UpdateInfo& _info)
              this->measOrientation_, dt);
 }
 
-bool GazeboImuPlugin::OnUpdate(const common::UpdateInfo& _info)
+bool GazeboIMUPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
     if (!ShouldIGenerate(_info))
         return false;
@@ -327,5 +327,5 @@ bool GazeboImuPlugin::OnUpdate(const common::UpdateInfo& _info)
     return true;
 }
 
-GZ_REGISTER_MODEL_PLUGIN(GazeboImuPlugin);
+GZ_REGISTER_MODEL_PLUGIN(GazeboIMUPlugin);
 }

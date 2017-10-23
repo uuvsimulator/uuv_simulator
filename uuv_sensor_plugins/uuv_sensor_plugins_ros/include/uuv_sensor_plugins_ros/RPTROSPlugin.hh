@@ -18,7 +18,7 @@
 
 #include <string>
 #include <boost/scoped_ptr.hpp>
-#include <uuv_sensor_plugins/RptPlugin.hh>
+#include <uuv_sensor_plugins/RPTPlugin.hh>
 #include <uuv_sensor_plugins_ros_msgs/PositionWithCovarianceStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
@@ -27,11 +27,11 @@
 
 namespace gazebo {
 
-/// \brief GazeboRptRosPlugin is a ROS wrapper for GazeboRptPlugin.
-/// All it does is in addition to GazeboRptPlugin is
+/// \brief GazeboRptRosPlugin is a ROS wrapper for GazeboRPTPlugin.
+/// All it does is in addition to GazeboRPTPlugin is
 /// publishing simulated measurements via a ROS topic.
 class GazeboRptRosPlugin :
-  public GazeboRptPlugin, public SwitchableROSPlugin {
+  public GazeboRPTPlugin, public SwitchableROSPlugin {
   /// \brief Constructor.
 public: GazeboRptRosPlugin();
 

@@ -13,29 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <uuv_sensor_plugins_ros/GPSRosPlugin.hh>
+#include <uuv_sensor_plugins_ros/GPSROSPlugin.hh>
 
 namespace gazebo {
 
 /////////////////////////////////////////////////
-GazeboGpsRosPlugin::GazeboGpsRosPlugin() : SensorPlugin()
+GazeboGPSROSPlugin::GazeboGPSROSPlugin() : SensorPlugin()
 {
 
 }
 
 /////////////////////////////////////////////////
-GazeboGpsRosPlugin::~GazeboGpsRosPlugin()
+GazeboGPSROSPlugin::~GazeboGPSROSPlugin()
 {
   this->gazeboGPSSensor->DisconnectUpdated(this->updateConnection);
 }
 
 /////////////////////////////////////////////////
-void GazeboGpsRosPlugin::Load(sensors::SensorPtr _parent,
+void GazeboGPSROSPlugin::Load(sensors::SensorPtr _parent,
   sdf::ElementPtr _sdf)
 {
   if (!ros::isInitialized())
   {
-    gzerr << "Not loading GazeboGpsRosPlugin since ROS has not been properly "
+    gzerr << "Not loading GazeboGPSROSPlugin since ROS has not been properly "
           << "initialized." << std::endl;
     return;
   }
@@ -89,11 +89,11 @@ void GazeboGpsRosPlugin::Load(sensors::SensorPtr _parent,
 
   // Connect to the sensor update event.
   this->updateConnection = this->gazeboGPSSensor->ConnectUpdated(
-    boost::bind(&GazeboGpsRosPlugin::OnUpdate, this));
+    boost::bind(&GazeboGPSROSPlugin::OnUpdate, this));
 }
 
 /////////////////////////////////////////////////
-bool GazeboGpsRosPlugin::OnUpdate()
+bool GazeboGPSROSPlugin::OnUpdate()
 {
   common::Time currentTime = this->gazeboGPSSensor->LastMeasurementTime();
 
@@ -110,5 +110,5 @@ bool GazeboGpsRosPlugin::OnUpdate()
   return true;
 }
 
-GZ_REGISTER_SENSOR_PLUGIN(GazeboGpsRosPlugin);
+GZ_REGISTER_SENSOR_PLUGIN(GazeboGPSROSPlugin);
 }

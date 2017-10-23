@@ -16,7 +16,7 @@
 #ifndef UUV_SENSOR_PLUGINS_ROS_IMU_H_
 #define UUV_SENSOR_PLUGINS_ROS_IMU_H_
 
-#include <uuv_sensor_plugins/ImuPlugin.hh>
+#include <uuv_sensor_plugins/IMUPlugin.hh>
 #include <uuv_sensor_plugins_ros/SwitchableROSPlugin.hh>
 
 #include <ros/ros.h>
@@ -24,17 +24,17 @@
 
 namespace gazebo {
 
-/// \brief GazeboImuRosPlugin is a ROS wrapper for GazeboImuPlugin.
-/// All it does is in addition to GazeboImuPlugin is
+/// \brief GazeboIMUROSPlugin is a ROS wrapper for GazeboIMUPlugin.
+/// All it does is in addition to GazeboIMUPlugin is
 /// publishing simulated measurements via a ROS topic.
-class GazeboImuRosPlugin :
-  public GazeboImuPlugin, public SwitchableROSPlugin {
+class GazeboIMUROSPlugin :
+  public GazeboIMUPlugin, public SwitchableROSPlugin {
 
     /// \brief Constructor.
-    public: GazeboImuRosPlugin();
+    public: GazeboIMUROSPlugin();
 
     /// \brief Destructor.
-    public: virtual ~GazeboImuRosPlugin();
+    public: virtual ~GazeboIMUROSPlugin();
 
     /// \brief Load module and read parameters from SDF.
     public: virtual void Load(gazebo::physics::ModelPtr _model,
