@@ -1,0 +1,44 @@
+<gazebo>
+  <plugin name="uuv_plugin" filename="libunderwater_object_ros_plugin.so">
+    <fluid_density>1028.0</fluid_density>
+    <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+    <debug>$(arg debug)</debug>
+    <link name="${namespace}/base_link">
+      <neutrally_buoyant>0</neutrally_buoyant>
+
+      <volume>0</volume>
+
+      <box>
+        <width>0</width>
+        <length>0</length>
+        <height>0</height>
+      </box>
+
+      <center_of_buoyancy>0 0 0</center_of_buoyancy>
+
+      <hydrodynamic_model>
+        <type>fossen</type>
+        <added_mass>
+          0 0 0 0 0 0
+          0 0 0 0 0 0
+          0 0 0 0 0 0
+          0 0 0 0 0 0
+          0 0 0 0 0 0
+          0 0 0 0 0 0
+        </added_mass>
+
+        <linear_damping>
+          0 0 0 0 0 0
+        </linear_damping>
+
+        <linear_damping_forward_speed>
+          0 0 0 0 0 0
+        </linear_damping_forward_speed>
+
+        <quadratic_damping>
+          0 0 0 0 0 0
+        </quadratic_damping>
+      </hydrodynamic_model>
+    </link>
+  </plugin>
+</gazebo>

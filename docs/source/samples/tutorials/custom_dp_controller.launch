@@ -1,0 +1,43 @@
+<launch>
+  <arg name="uuv_name"/>
+  <arg name="model_name" default="$(arg uuv_name)"/>
+  <arg name="saturation" default="5000"/>
+
+  <arg name="Kp" default="11993.888,11993.888,11993.888,19460.069,19460.069,19460.069"/>
+  <arg name="Kd" default="9077.459,9077.459,9077.459,18880.925,18880.925,18880.925"/>
+  <arg name="Ki" default="321.417,321.417,321.417,2096.951,2096.951,2096.951"/>
+
+  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+      <arg name="uuv_name" value="$(arg uuv_name)"/>
+      <arg name="model_name" value="$(arg model_name)"/>
+  </include>
+
+  <group ns="$(arg uuv_name)">
+      <node pkg="uuv_control_utils"
+            type="trajectory_marker_publisher.py"
+            name="trajectory_marker_publisher"
+            output="screen">
+          <remap from="trajectory" to="dp_controller/trajectory"/>
+          <remap from="waypoints" to="dp_controller/waypoints"/>
+      </node>
+
+      <node pkg="uuv_tutorial_dp_controller"
+          type="tutorial_dp_controller.py"
+          name="tutorial_dp_controller"
+          output="screen">
+          <remap from="odom" to="pose_gt"/>
+          <remap from="trajectory" to="dp_controller/trajectory"/>
+          <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+          <remap from="waypoints" to="dp_controller/waypoints"/>
+          <remap from="error" to="dp_controller/error"/>
+          <remap from="reference" to="dp_controller/reference"/>
+          <remap from="thruster_output" to="thruster_manager/input"/>
+          <rosparam subst_value="true">
+              saturation: $(arg saturation)
+              Kp: [$(arg Kp)]
+              Kd: [$(arg Kd)]
+              Ki: [$(arg Ki)]
+          </rosparam>
+      </node>
+  </group>
+</launch>
