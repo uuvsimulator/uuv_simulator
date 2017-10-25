@@ -49,7 +49,7 @@ help:
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILDDIR)/*
+	rm -rf $(BUILDDIR)/html/_sources/ $(BUILDDIR)/html/_static/ $(BUILDDIR)/html/doctrees/ $(BUILDDIR)/html/*.html $(BUILDDIR)/html/objects.inv $(BUILDDIR)/html/searchindex.js $(BUILDDIR)/html/tutorials $(BUILDDIR)/html/.buildinfo $(BUILDDIR)/doctrees
 
 .PHONY: html
 html:
