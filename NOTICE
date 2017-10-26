@@ -1,0 +1,27 @@
+# This is the official list of UUV Simulator copyright holders and authors.
+#
+# Often employers or academic institutions have ownership over code that is
+# written in certain circumstances, so please do due diligence to ensure that
+# you have the right to submit the code.
+#
+# When adding J Random Contributor's name to this file, either J's name on its
+# own or J's name associated with J's organization's name should be added,
+# depending on whether J's employer (or academic institution) has ownership
+# over code that is written for this project.
+#
+# How to add names to this file:
+#     Individual's name <submission email address>.
+#
+# If Individual's organization is copyright holder of her contributions add the
+# organization's name, optionally also the contributor's name:
+#
+#     Organization's name
+#         Individual's name <submission corporate email address>
+#
+# Please keep the list sorted.
+
+Robert Bosch GmbH
+    Luiz Ricardo Douat <LuizRicardo.Douat@de.bosch.com>
+    Musa Morena Marcusso Manhães <Musa.Marcusso@de.bosch.com>
+    Sebastian Scherer <Sebastian.Scherer2@de.bosch.com>
+    Thomas Winkler <Thomas.Winkler3@de.bosch.com>
