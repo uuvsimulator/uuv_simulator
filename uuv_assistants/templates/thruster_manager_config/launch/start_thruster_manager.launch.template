@@ -24,7 +24,7 @@
     improve the initialization of the thruster manager.
     To generate the TAM.yaml, start the simulation with the vehicle and run:
 
-    >> rosrun $CATKIN_PACKAGE start_thruster_manager.launch reset_tam:=true
+    >> roslaunch $CATKIN_PACKAGE start_thruster_manager.launch reset_tam:=true
 
     The TAM.yaml file will be store in the folder defined by the following
     argument output_dir
