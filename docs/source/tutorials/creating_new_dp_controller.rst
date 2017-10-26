@@ -105,3 +105,68 @@ Edit the file to include the following
 .. literalinclude:: ../samples/tutorials/custom_dp_controller.launch
   :language: xml
   :linenos:
+
+The most important parts of the launch file to notice is that the vehicle
+namespace **uuv_name** must always be provided, since the simulation per
+default will have nodes specific to the operation of each vehicle created inside
+their namespaces. The thruster manager must also be initialized.
+
+.. note::
+
+  For more information on how to setup the thruster manager, check the tutorial
+  :ref:`config_thruster_manager`.
+
+Finally, the controller node has to be called, along with the correct parameters
+set by the arguments **Kp**, **Kd** and **Ki** in this example. You can pass
+this parameters by command line or set default vectors as seen above, but there
+should be no spaces between commas and values. They have to be set in the
+**rosparam** block. The **trajectory_marker_publisher** is an optional node
+used only to publish visual markers.
+
+To start a small demonstration using the RexROV vehicle, you can create another
+launch file as follows ::
+
+  cd ~/catkin_ws/src/uuv_tutorial_dp_controller/launch
+  touch start_tutorial_dp_controller_demo.launch
+
+and initialize a world, the vehicle and the RViz visualization tool as follows
+
+.. literalinclude:: ../../../uuv_tutorials/uuv_tutorial_dp_controller/launch/start_tutorial_dp_controller_demo.launch
+  :language: xml
+
+Before you can run this demo, the package has to be configured.
+
+Configuring the package
+-----------------------
+
+To allow catkin to install all your modules, you can open the **CMakeLists.txt**
+file from your catkin package and edit it to look like in the example below.
+
+.. literalinclude:: ../../../uuv_tutorials/uuv_tutorial_dp_controller/CMakeLists.txt
+
+Running the simulation
+----------------------
+
+After you compile you workspace again with **catkin_make** or **catkin build**,
+you can run the demo launch file created before. ::
+
+  roslaunch uuv_tutorial_dp_controller start_tutorial_dp_controller_demo.launch
+
+This will start the Gazebo simulator with an instance of the RexROV vehicle with
+this custom controller being used for positioning.
+
+.. image:: ../images/tutorial_dp_controller/rviz_view.png
+
+You can use one the modules from the `uuv_control_utils` package to send the
+vehicle some waypoints and see the controller in action. For example, use the
+`default list of waypoints <https://github.com/uuvsimulator/uuv_simulator/blob/master/uuv_control/uuv_control_utils/config/example_waypoints.yaml>`_
+and send them to the controller by using ::
+
+  roslaunch uuv_control_utils send_waypoints_file.launch uuv_name:=rexrov
+
+The local planner in **uuv_control_interfaces** that is used per default by the
+**DPControllerBase** class will receive the waypoints and apply a linear
+interpolation with polynomial blends to generate a path to be followed by the
+vehicle.
+
+.. image:: ../images/tutorial_dp_controller/waypoint_following.png

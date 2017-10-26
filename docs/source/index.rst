@@ -10,6 +10,8 @@ The UUV Simulator is a package containing the implementation of Gazebo plugins
 and ROS nodes necessary for the simulation of unmanned underwater vehicles, such
 as ROVs (remotely operated vehicles) and AUVs (autonomous underwater vehicles).
 
+To send questions and/or issues, please refer to the `repository's issues page <https://github.com/uuvsimulator/uuv_simulator/issues>`_.
+
 Contents
 --------
 
@@ -19,9 +21,9 @@ Contents
 
   installation
   quick_start
+  tutorials/index
   license
   .. description
-  .. tutorials/index
   .. vehicles
 
 
@@ -30,14 +32,15 @@ Reference
 
 If you wish to use the UUV Simulator in a research project, please cite our paper ::
 
-  @inproceedings{Marcusso_2016,
-    author    = {Musa Morena Marcusso Manh{\~{a}}es and Sebastian Scherer and Martin Voss and Luiz Ricardo Douat and Thomas Rauschenbach},
-    title     = {{UUV} Simulator: A Gazebo-based Package for Underwater Intervention and Multi-Robot Simulation},
-    year      = {2016},
-    pages     = {1-8},
-    month     = {September},
-    booktitle = {OCEANS'16 MTS/IEEE Monterey},
-    doi       = {10.1109/OCEANS.2016.7761080}
+  @inproceedings{Manhaes_2016,
+  	doi = {10.1109/oceans.2016.7761080},
+  	url = {https://doi.org/10.1109%2Foceans.2016.7761080},
+  	year = 2016,
+  	month = {sep},
+  	publisher = {{IEEE}},
+  	author = {Musa Morena Marcusso Manh\~{a}es and Sebastian A. Scherer and Martin Voss and Luiz Ricardo Douat and Thomas Rauschenbach},
+  	title = {{UUV} Simulator: A Gazebo-based package for underwater intervention and multi-robot simulation},
+  	booktitle = {{OCEANS} 2016 {MTS}/{IEEE} Monterey}
   }
 
 Indices and tables

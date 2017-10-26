@@ -16,3 +16,8 @@ and hydrodynamic parameters are derived from the parameters for the SF 30k ROV a
 
 RexROV 2
 --------
+
+.. _desistek_saga:
+
+Desistek SAGA ROV
+-----------------
