@@ -103,6 +103,7 @@ class TutorialDPController(DPControllerBase):
             else:
                 # If the vector provided has the wrong dimension, raise an exception
                 raise rospy.ROSException('For the Ki diagonal matrix, 6 coefficients are needed')
+            self._is_init = True
 
     def _reset_controller(self):
         # The _reset_controller method from the super class DPControllerBase already sets the error
@@ -115,6 +116,8 @@ class TutorialDPController(DPControllerBase):
         self._int = np.zeros(shape=(6,))
 
     def update_controller(self):
+        if not self._is_init:
+            return False
         # The controller algorithm must be implemented here, the super class will connect this method
         # to the odometry update as a callback function
 
@@ -160,8 +163,3 @@ if __name__ == '__main__':
     except rospy.ROSInterruptException:
         print('caught exception')
     print('exiting')
-
-
-
-
-
