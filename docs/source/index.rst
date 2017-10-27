@@ -12,6 +12,9 @@ as ROVs (remotely operated vehicles) and AUVs (autonomous underwater vehicles).
 
 To send questions and/or issues, please refer to the `repository's issues page <https://github.com/uuvsimulator/uuv_simulator/issues>`_.
 
+Click `here <https://github.com/uuvsimulator/uuv_simulator>`_ to access the
+GitHub repository.
+
 Contents
 --------
 
@@ -22,9 +25,10 @@ Contents
   installation
   quick_start
   tutorials/index
+  vehicles
+  faq
   license
   .. description
-  .. vehicles
 
 
 Reference

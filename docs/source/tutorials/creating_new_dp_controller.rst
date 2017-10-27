@@ -85,7 +85,7 @@ The last part of the file is necessary for the ROS node to be executed.
 
 .. literalinclude:: ../samples/tutorials/custom_dp_controller.py
   :language: python
-  :lines: 59-68
+  :lines: 63-73
 
 Configuring the launch files
 ----------------------------

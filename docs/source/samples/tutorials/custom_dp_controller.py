@@ -42,6 +42,7 @@ class TutorialDPController(DPControllerBase):
           else:
               # If the vector provided has the wrong dimension, raise an exception
               raise rospy.ROSException('For the Ki diagonal matrix, 6 coefficients are needed')
+      self._is_init = True
 
   def _reset_controller(self):
       super(TutorialDPController, self)._reset_controller()
@@ -49,6 +50,9 @@ class TutorialDPController(DPControllerBase):
       self._int = np.zeros(shape=(6,))
 
   def update_controller(self):
+      if not self._is_init:
+          return False
+
       if not self.odom_is_init:
           return
       self._int = self._int + 0.5 * (self.error_pose_euler + self._error_pose) * self._dt
