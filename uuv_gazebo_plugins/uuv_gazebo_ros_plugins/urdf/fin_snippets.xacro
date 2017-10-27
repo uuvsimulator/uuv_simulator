@@ -81,7 +81,7 @@
             current_velocity_topic">
 
     <joint name="${namespace}/fin${fin_id}_joint" type="revolute">
-        <limit effort="0" lower="${min_joint_limi}" upper="${max_joint_limit}" velocity="0"/>
+        <limit effort="0" lower="${min_joint_limit}" upper="${max_joint_limit}" velocity="0"/>
         <xacro:insert_block name="origin"/>
         <axis xyz="0 0 1"/>
         <parent link="${parent_link}" />
