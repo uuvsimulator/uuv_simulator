@@ -104,7 +104,7 @@ class FinnedUUVControllerNode:
             return
 
         try:
-            thrust = msg.axes[self._joy_axis['axis_thruster']] * \
+            thrust = max(0, msg.axes[self._joy_axis['axis_thruster']]) * \
                 self._thruster_params['max_thrust'] * \
                 self._thruster_joy_gain
 
