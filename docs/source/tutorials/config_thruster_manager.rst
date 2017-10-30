@@ -40,7 +40,9 @@ The folder structure will look like the following ::
       |-- thruster_manager.yaml
   |-- launch
       |-- start_thruster_manager.launch
-
+  `-- CMakeLists.txt
+  `-- package.xml
+  
 You should edit the **thruster_manager.yaml** file to include the correct
 thruster model parameters and topics. Instructions on how to do it can be found
 in the comments on the same file.  Here is an example from the RexROV
