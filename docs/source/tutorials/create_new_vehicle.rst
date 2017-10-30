@@ -19,7 +19,7 @@ can be seen below. ::
   |-- launch
       |-- upload.launch
   |-- meshes
-      |-- READMED.md
+      |-- README.md
   |-- robots
       |-- default.xacro
   |-- urdf
@@ -58,7 +58,7 @@ and the `uuv_sensor_plugins_ros XACRO macros <https://github.com/uuvsimulator/uu
 
 .. note::
 
-  The position and orientation for the sensor, actuators and center of buoyancy
-  must be set with respect to the center of gravity of the link. ROS and Gazebo
-  also use per default the ENU (East-North-Up) reference frame convention, not
-  NED (North-East-Down).
+  The position and orientation for sensors, actuators and center of buoyancy
+  must be set with respect to the center of gravity of the vehicle's base link.
+  ROS and Gazebo also use per default the `ENU (East-North-Up) reference frame <http://www.ros.org/reps/rep-0103.html>`_
+  convention, not NED (North-East-Down).
