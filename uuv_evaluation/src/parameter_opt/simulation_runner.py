@@ -263,7 +263,7 @@ class SimulationRunner(object):
                 success = self._process.wait(timeout=1e5)
 
                 if success == 0:
-                    self._logger.info('Simulation run successfully')
+                    self._logger.info('Simulation finished successfully')
                     result_ok = True
                 else:
                     self._logger.info('Simulation finished with error')
