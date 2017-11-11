@@ -316,7 +316,7 @@ class GripperInterface(object):
                 return self._groups[group].joint_names
 
     def get_group_names(self):
-        return self._groups.keys()
+        return list(self._groups.keys())
 
     def set_state(self, state):
         for gripper_state in GripperState:

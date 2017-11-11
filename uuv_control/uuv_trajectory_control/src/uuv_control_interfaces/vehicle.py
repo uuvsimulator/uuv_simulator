@@ -55,7 +55,7 @@ class Vehicle(object):
 
         self._inertial = dict(ixx=0, iyy=0, izz=0, ixy=0, ixz=0, iyz=0)
         if rospy.has_param('~inertial'):
-            print 'has inertial'
+            print('has inertial')
             inertial = rospy.get_param('~inertial')
             for key in self._inertial:
                 if key not in inertial:
@@ -222,7 +222,7 @@ class Vehicle(object):
     def pos(self, position):
         pos = np.array(position)
         if pos.size != 3:
-            print 'Invalid position vector'
+            print('Invalid position vector')
         else:
             self._pose['pos'] = pos
 
@@ -245,7 +245,7 @@ class Vehicle(object):
     def quat(self, q):
         q_rot = np.array(q)
         if q_rot.size != 4:
-            print 'Invalid quaternion'
+            print('Invalid quaternion')
         else:
             self._pose['rot'] = q_rot
 
@@ -264,7 +264,7 @@ class Vehicle(object):
         """Set the velocity vector in the BODY frame."""
         v = np.array(velocity)
         if v.size != 6:
-            print 'Invalid velocity vector'
+            print('Invalid velocity vector')
         else:
             self._vel = v
 
@@ -400,7 +400,7 @@ class Vehicle(object):
                 return np.array([x[0], -1 * x[1], -1 * x[2],
                                  x[3], -1 * x[4], -1 * x[5]])
         except:
-            print('Invalid input vector, v=' + str(x))
+            print(('Invalid input vector, v=' + str(x)))
             return None
 
     def from_SNAME(self, x):
@@ -408,16 +408,16 @@ class Vehicle(object):
 
     def print_info(self):
         """Print the vehicle's parameters."""
-        print 'Namespace: {}'.format(self._namespace)
-        print 'Mass: {0:.3f} kg'.format(self._mass)
-        print 'System inertia matrix:\n', self._M
-        print 'Added-mass:\n', self._Ma
-        print 'M:\n', self._Mtotal
-        print 'Linear damping:', self._linear_damping
-        print 'Quad. damping:', self._quad_damping
-        print 'Center of gravity:', self._cog
-        print 'Center of buoyancy:', self._cob
-        print 'Inertial:\n', self._calc_inertial_tensor()
+        print('Namespace: {}'.format(self._namespace))
+        print('Mass: {0:.3f} kg'.format(self._mass))
+        print('System inertia matrix:\n', self._M)
+        print('Added-mass:\n', self._Ma)
+        print('M:\n', self._Mtotal)
+        print('Linear damping:', self._linear_damping)
+        print('Quad. damping:', self._quad_damping)
+        print('Center of gravity:', self._cog)
+        print('Center of buoyancy:', self._cob)
+        print('Inertial:\n', self._calc_inertial_tensor())
 
     def _calc_mass_matrix(self):
         self._Mtotal = self._M + self._Ma
@@ -485,7 +485,7 @@ class Vehicle(object):
     def set_added_mass(self, Ma):
         """Set added-mass matrix coefficients."""
         if Ma.shape != (6, 6):
-            print "Added mass matrix must have dimensions 6x6"
+            print("Added mass matrix must have dimensions 6x6")
             return False
         self._Ma = np.array(Ma, copy=True)
         self._calc_mass_matrix()
@@ -494,7 +494,7 @@ class Vehicle(object):
     def set_damping_coef(self, linear_damping, quad_damping):
         """Set linear and quadratic damping coefficients."""
         if linear_damping.size != 6 or quad_damping.size != 6:
-            print 'Invalid dimensions for damping coefficient vectors'
+            print('Invalid dimensions for damping coefficient vectors')
             return False
         self._linear_damping = np.array(linear_damping, copy=True)
         self._quad_damping = np.array(quad_damping, copy=True)
@@ -628,4 +628,4 @@ class Vehicle(object):
                 for func in self._list_callbacks:
                     func()
             except:
-                print 'Invalid callback function handle'
+                print('Invalid callback function handle')

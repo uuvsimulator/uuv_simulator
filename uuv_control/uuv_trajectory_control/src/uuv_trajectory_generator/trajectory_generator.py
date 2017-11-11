@@ -89,7 +89,7 @@ class TrajectoryGenerator(object):
                 msg.points.append(pnt.to_message())
             return msg
         except:
-            print 'Error during creation of trajectory message'
+            print('Error during creation of trajectory message')
             return None
 
     def is_using_waypoints(self):
@@ -140,7 +140,7 @@ class TrajectoryGenerator(object):
             self._time.append(pnt.t)
             return True
         else:
-            print 'Cannot add trajectory point! Generator is in waypoint interpolation mode!'
+            print('Cannot add trajectory point! Generator is in waypoint interpolation mode!')
             return False
 
     def add_trajectory_point_from_msg(self, msg):
@@ -150,15 +150,15 @@ class TrajectoryGenerator(object):
                 self.add_trajectory_point(pnt)
                 return True
             else:
-                print 'Error converting message to trajectory point'
+                print('Error converting message to trajectory point')
                 return False
         else:
-            print 'Cannot add trajectory point! Generator is in waypoint interpolation mode!'
+            print('Cannot add trajectory point! Generator is in waypoint interpolation mode!')
             return False
 
     def set_duration(self, t):
         if not self._wp_interp_on:
-            print 'Waypoint interpolation is not activated'
+            print('Waypoint interpolation is not activated')
             return False
         else:
             return self._wp_interp.set_duration(t)
@@ -199,7 +199,7 @@ class TrajectoryGenerator(object):
                 last_t = t
             else:
                 if t <= last_t:
-                    print 'Trajectory should be given a growing value of time'
+                    print('Trajectory should be given a growing value of time')
                     self._reset()
                     return False
             self.add_trajectory_point_from_msg(p_msg)

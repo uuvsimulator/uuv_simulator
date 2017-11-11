@@ -27,12 +27,12 @@ class TestWaypoint(unittest.TestCase):
     def test_equal_waypoints(self):
         wp0 = Waypoint(x=1, y=2, z=3)
         wp1 = Waypoint(x=1, y=2, z=3)
-        self.assertEquals(wp0, wp1, 'Waypoints equal operator failed')
+        self.assertEqual(wp0, wp1, 'Waypoints equal operator failed')
 
     def test_unequal_waypoints(self):
         wp0 = Waypoint(x=1, y=2, z=3)
         wp1 = Waypoint(x=6, y=5, z=4)
-        self.assertNotEquals(wp0, wp1, 'Waypoints unequal operator failed')
+        self.assertNotEqual(wp0, wp1, 'Waypoints unequal operator failed')
 
     def test_violate_constraint_flag(self):
         wp = Waypoint()
@@ -41,15 +41,15 @@ class TestWaypoint(unittest.TestCase):
 
     def test_distance_calculation(self):
         wp = Waypoint(x=0, y=2, z=0)
-        self.assertEquals(wp.dist([0, 4, 0]), 2, 'Distance calculation is wrong')
-        self.assertEquals(wp.dist([2, 2, 0]), 2, 'Distance calculation is wrong')
-        self.assertEquals(wp.dist([0, 2, 2]), 2, 'Distance calculation is wrong')
+        self.assertEqual(wp.dist([0, 4, 0]), 2, 'Distance calculation is wrong')
+        self.assertEqual(wp.dist([2, 2, 0]), 2, 'Distance calculation is wrong')
+        self.assertEqual(wp.dist([0, 2, 2]), 2, 'Distance calculation is wrong')
 
     def test_to_message(self):
         wp0 = Waypoint(x=1, y=2, z=3)
         wp1 = Waypoint()
         wp1.from_message(wp0.to_message())
-        self.assertEquals(wp0, wp1, "Waypoint to message conversion failed")
+        self.assertEqual(wp0, wp1, "Waypoint to message conversion failed")
 
 
 if __name__ == '__main__':

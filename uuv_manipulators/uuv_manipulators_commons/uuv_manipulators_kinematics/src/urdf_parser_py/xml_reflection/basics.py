@@ -66,7 +66,7 @@ def xml_children(node):
 
 def isstring(obj):
     try:
-        return isinstance(obj, basestring)
+        return isinstance(obj, str)
     except NameError:
         return isinstance(obj, str)
 
@@ -84,7 +84,7 @@ def to_yaml(obj):
     	out = etree.tostring(obj, pretty_print = True)
     elif type(obj) == dict:
         out = {}
-        for (var, value) in obj.items():
+        for (var, value) in list(obj.items()):
             out[str(var)] = to_yaml(value)
     elif hasattr(obj, 'tolist'):
         # For numpy objects

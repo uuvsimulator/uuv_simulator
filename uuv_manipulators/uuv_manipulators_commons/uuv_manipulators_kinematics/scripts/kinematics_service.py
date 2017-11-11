@@ -120,7 +120,7 @@ class KinematicsService(object):
         result_ik = self._arm_interface.inverse_kinematics(pos, orientation)
 
         if result_ik is not None:
-            for i, name in zip(range(len(self.joint_names)), self.joint_names):
+            for i, name in zip(list(range(len(self.joint_names))), self.joint_names):
                 out.joints.name.append(name)
                 out.joints.position.append(result_ik[i])
             out.isValid = True

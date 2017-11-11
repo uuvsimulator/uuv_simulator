@@ -46,7 +46,7 @@ class MaxAbsThrust(KPI):
 
         if self._input_values is None:
             assert type(input_values) is dict, 'Input dict is not a dictionary'
-            assert len(input_values.keys()) > 0, 'Dictionary is empty'
+            assert len(list(input_values.keys())) > 0, 'Dictionary is empty'
             self._input_values = dict()
             for i, tag in enumerate(input_values.keys()):
                 assert i == tag, 'Thruster indexes must be the keys of the dictionary'

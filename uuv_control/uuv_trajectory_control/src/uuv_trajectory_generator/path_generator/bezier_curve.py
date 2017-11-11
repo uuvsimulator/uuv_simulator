@@ -136,7 +136,7 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
 
-    print 'Test - Cubic Bezier curve'
+    print('Test - Cubic Bezier curve')
     q_x = [0, 1, 2, 4, 5, 6]
     q_y = [0, 2, 3, 3, 2, 0]
     q_z = [0, 1, 0, 0, 2, 2]
@@ -153,8 +153,8 @@ if __name__ == '__main__':
     lengths = [np.linalg.norm(q[i + 1, :] - q[i, :]) for i in range(q.shape[0] - 1)]
     lengths = [0] + lengths
     u = np.cumsum(lengths) / np.sum(lengths)
-    print q.T
-    print 'u=', u
+    print(q.T)
+    print('u=', u)
 
     tangents = [np.zeros(3) for _ in range(q.shape[0])]
     delta_u = lambda k: u[k] - u[k - 1]
@@ -168,19 +168,19 @@ if __name__ == '__main__':
 
     tangents[-1] = 2 * lamb_k(len(u) - 1) - tangents[-2]
 
-    print 'Tangents'
+    print('Tangents')
     for i in range(len(tangents)):
         tangents[i] = tangents[i] / np.linalg.norm(tangents[i])
-        print '\t#%d - %.2f %.2f %.2f' % (i, tangents[i][0], tangents[i][1], tangents[i][2])
+        print('\t#%d - %.2f %.2f %.2f' % (i, tangents[i][0], tangents[i][1], tangents[i][2]))
         ax.plot([q[i, 0], tangents[i][0] + q[i, 0]],
                 [q[i, 1], tangents[i][1] + q[i, 1]],
                 [q[i, 2], tangents[i][2] + q[i, 2]], 'c')
 
     segments = list()
-    print 'Segments'
+    print('Segments')
     for i in range(len(tangents) - 1):
         segments.append(BezierCurve([q[i, :], q[i + 1, :]], 3, tangents[i:i + 2]))
-        print '\t', segments[-1]._control_pnts
+        print('\t', segments[-1]._control_pnts)
 
     lengths = [seg.get_length() for seg in segments]
     lengths = [0] + lengths

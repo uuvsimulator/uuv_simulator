@@ -52,12 +52,12 @@ class LineSegment(object):
 
 
 if __name__ == '__main__':
-    from bezier_curve import BezierCurve
+    from .bezier_curve import BezierCurve
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
     from copy import deepcopy
 
-    print 'Test - Linear interpolation with polynomial blends - Bezier curves of degree 5'
+    print('Test - Linear interpolation with polynomial blends - Bezier curves of degree 5')
     q_x = [0, 1, 2, 4, 5, 6]
     q_y = [0, 2, 3, 3, 2, 0]
     q_z = [0, 1, 0, 0, 2, 2]

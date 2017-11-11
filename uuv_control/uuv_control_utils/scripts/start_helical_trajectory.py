@@ -22,11 +22,11 @@ from geometry_msgs.msg import Point
 from std_msgs.msg import Time
 
 if __name__ == '__main__':
-    print 'Starting the helical trajectory creator'
+    print('Starting the helical trajectory creator')
     rospy.init_node('start_circular_trajectory')
 
     if rospy.is_shutdown():
-        print 'ROS master not running!'
+        print('ROS master not running!')
         sys.exit(-1)
 
     # If no start time is provided: start *now*.
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     if rospy.has_param('~start_time'):
         start_time = rospy.get_param('~start_time')
         if start_time < 0.0:
-            print 'Negative start time, setting it to 0.0'
+            print('Negative start time, setting it to 0.0')
             start_time = 0.0
             start_now = True
     else:
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     for label in param_labels:
         if not rospy.has_param('~' + label):
-            print '%s must be provided for the trajectory generation!' % label
+            print('%s must be provided for the trajectory generation!' % label)
             sys.exit(-1)
 
         params[label] = rospy.get_param('~' + label)
@@ -68,10 +68,10 @@ if __name__ == '__main__':
 
     try:
         traj_gen = rospy.ServiceProxy('start_helical_trajectory', InitHelicalTrajectory)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         raise rospy.ROSException('Service call failed, error=' + e)
 
-    print 'Generating trajectory that starts at t=%fs' % start_time
+    print('Generating trajectory that starts at t=%fs' % start_time)
 
     success = traj_gen(Time(rospy.Time(start_time)),
                        start_now,
@@ -87,6 +87,6 @@ if __name__ == '__main__':
                        params['delta_z'])
 
     if success:
-        print 'Trajectory successfully generated!'
+        print('Trajectory successfully generated!')
     else:
-        print 'Failed'
+        print('Failed')

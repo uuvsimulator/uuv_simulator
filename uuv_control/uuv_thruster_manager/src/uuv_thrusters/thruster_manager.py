@@ -21,7 +21,7 @@ import tf.transformations as trans
 from os.path import isdir, join
 import yaml
 from time import sleep
-from models import Thruster
+from .models import Thruster
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from geometry_msgs.msg import Wrench
 
@@ -80,7 +80,7 @@ class ThrusterManager:
             if not isdir(self.output_dir):
                 raise rospy.ROSException(
                     'Invalid output directory, output_dir=' + self.output_dir)
-            print 'output_dir=', self.output_dir
+            print('output_dir=', self.output_dir)
 
         # Number of thrusters
         self.n_thrusters = 0
@@ -124,9 +124,9 @@ class ThrusterManager:
                                        'function=%s'
                                        % self.config['conversion_fcn'])
                 self.thrusters.append(thruster)
-            print 'Thruster allocation matrix provided!'
-            print 'TAM='
-            print self.configuration_matrix
+            print('Thruster allocation matrix provided!')
+            print('TAM=')
+            print(self.configuration_matrix)
             self.thrust = numpy.zeros(self.n_thrusters)
 
         if not self.update_tam():
@@ -145,7 +145,7 @@ class ThrusterManager:
                     yaml.safe_dump(
                         dict(tam=self.configuration_matrix.tolist())))
         else:
-            print 'Invalid output directory for the TAM matrix, dir=', self.output_dir
+            print('Invalid output directory for the TAM matrix, dir=', self.output_dir)
 
         self.ready = True
         print ('ThrusterManager: ready')
@@ -154,7 +154,7 @@ class ThrusterManager:
         """Calculate the thruster allocation matrix, if one is not given."""
         if self.configuration_matrix is not None and not recalculate:
             self.ready = True
-            print 'TAM provided, skipping...'
+            print('TAM provided, skipping...')
             print ('ThrusterManager: ready')
             return True
 
@@ -179,8 +179,8 @@ class ThrusterManager:
                     ' must have equal length')
             equal_thrusters = False
 
-        print 'conversion_fcn=', self.config['conversion_fcn']
-        print 'conversion_fcn_params=', self.config['conversion_fcn_params']
+        print('conversion_fcn=', self.config['conversion_fcn'])
+        print('conversion_fcn_params=', self.config['conversion_fcn_params'])
 
         listener = tf.TransformListener()
         sleep(5)
@@ -190,7 +190,7 @@ class ThrusterManager:
                 self.config['thruster_frame_base'] + str(i)
             try:
                 # try to get thruster pose with respect to base frame via tf
-                print('transform: ' + base + ' -> ' + frame)
+                print(('transform: ' + base + ' -> ' + frame))
                 now = rospy.Time.now() + rospy.Duration(1.0)
                 listener.waitForTransform(base, frame,
                                                now, rospy.Duration(30.0))
@@ -222,11 +222,11 @@ class ThrusterManager:
                                        % self.config['conversion_fcn'])
                 self.thrusters.append(thruster)
             except tf.Exception:
-                print('could not get transform from: ' + base)
-                print('to: ' + frame)
+                print(('could not get transform from: ' + base))
+                print(('to: ' + frame))
                 break
 
-        print self.thrusters
+        print(self.thrusters)
         if len(self.thrusters) == 0:
             return False
 
@@ -246,8 +246,8 @@ class ThrusterManager:
         self.configuration_matrix[numpy.abs(
             self.configuration_matrix) < 1e-3] = 0.0
 
-        print 'TAM='
-        print self.configuration_matrix
+        print('TAM=')
+        print(self.configuration_matrix)
 
         # Once we know the configuration matrix we can compute its
         # (pseudo-)inverse:
@@ -260,11 +260,11 @@ class ThrusterManager:
                 yaml_file.write(
                     yaml.safe_dump(
                         dict(tam=self.configuration_matrix.tolist())))
-            print 'TAM saved in <%s>' % join(self.output_dir, 'TAM.yaml')
+            print('TAM saved in <%s>' % join(self.output_dir, 'TAM.yaml'))
         elif recalculate:
-            print 'Recalculate flag on, matrix will not be stored in TAM.yaml'
+            print('Recalculate flag on, matrix will not be stored in TAM.yaml')
         else:
-            print 'Invalid output directory for the TAM matrix, dir=', self.output_dir
+            print('Invalid output directory for the TAM matrix, dir=', self.output_dir)
 
         self.ready = True
         print ('ThrusterManager: ready')

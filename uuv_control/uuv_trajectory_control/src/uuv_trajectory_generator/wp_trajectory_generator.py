@@ -21,7 +21,7 @@ from .waypoint import Waypoint
 from .waypoint_set import WaypointSet
 from tf.transformations import quaternion_multiply, quaternion_inverse, \
     quaternion_conjugate
-from path_generator import PathGenerator
+from .path_generator import PathGenerator
 import logging
 import sys
 

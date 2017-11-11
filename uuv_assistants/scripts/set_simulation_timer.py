@@ -29,9 +29,9 @@ if __name__ == '__main__':
         if timeout <= 0:
             raise rospy.ROSException('Termination time must be a positive floating point value')
 
-    print 'Starting simulation timer - Timeout = %2.f s' % timeout
+    print('Starting simulation timer - Timeout = %2.f s' % timeout)
     rate = rospy.Rate(100)
     while rospy.get_time() < timeout:
         rate.sleep()
 
-    print 'Simulation timeout - Killing simulation...'
+    print('Simulation timeout - Killing simulation...')

@@ -17,7 +17,7 @@ import rospy
 import numpy as np
 import os
 import yaml
-from waypoint import Waypoint
+from .waypoint import Waypoint
 from uuv_control_msgs.msg import WaypointSet as WaypointSetMessage
 from visualization_msgs.msg import Marker, MarkerArray
 from nav_msgs.msg import Path
@@ -83,7 +83,7 @@ class WaypointSet(object):
         if len(self._waypoints):
             # TODO: Test the current reference frame convention being used (default: Gazebo's ENU)
             if waypoint.z > 0:
-                print 'Waypoint is above the sea surface, z=', waypoint.z
+                print('Waypoint is above the sea surface, z=', waypoint.z)
                 return False
             if self._waypoints[-1] != waypoint:
                 if not add_to_beginning:
@@ -91,7 +91,7 @@ class WaypointSet(object):
                 else:
                     self._waypoints = [waypoint] + self._waypoints
             else:
-                print 'Cannot add repeated waypoint'
+                print('Cannot add repeated waypoint')
                 return False
         else:
             if not add_to_beginning:
@@ -126,7 +126,7 @@ class WaypointSet(object):
 
     def read_from_file(self, filename):
         if not os.path.isfile(filename):
-            print 'Invalid waypoint filename, file', filename
+            print('Invalid waypoint filename, file', filename)
             return False
         try:
             self.clear_waypoints()
@@ -142,7 +142,7 @@ class WaypointSet(object):
                         use_fixed_heading=wp_data['use_fixed_heading'])
                     self.add_waypoint(wp)
         except:
-            print 'Error while loading the file'
+            print('Error while loading the file')
             return False
         return True
 
@@ -159,7 +159,7 @@ class WaypointSet(object):
                 yaml.dump(wp_data, wp_file, default_flow_style=False)
             return True
         except:
-            print 'Error occured while exporting waypoint file'
+            print('Error occured while exporting waypoint file')
             return False
 
     def to_message(self):
@@ -239,15 +239,15 @@ class WaypointSet(object):
     def generate_circle(self, radius, center, num_points, max_forward_speed,
                         theta_offset=0.0, heading_offset=0.0, append=False):
         if radius <= 0:
-            print 'Invalid radius, value=', radius
+            print('Invalid radius, value=', radius)
             return False
 
         if num_points <= 0:
-            print 'Invalid number of samples, value=', num_points
+            print('Invalid number of samples, value=', num_points)
             return False
 
         if max_forward_speed <= 0:
-            print 'Invalid absolute maximum velocity, value=', max_forward_speed
+            print('Invalid absolute maximum velocity, value=', max_forward_speed)
             return False
 
         if not append:
@@ -269,19 +269,19 @@ class WaypointSet(object):
                        num_turns, theta_offset=0.0, heading_offset=0.0,
                        append=False):
         if radius <= 0:
-            print 'Invalid radius, value=', radius
+            print('Invalid radius, value=', radius)
             return False
 
         if num_points <= 0:
-            print 'Invalid number of samples, value=', num_points
+            print('Invalid number of samples, value=', num_points)
             return False
 
         if num_turns <= 0:
-            print 'Invalid number of turns, value=', num_points
+            print('Invalid number of turns, value=', num_points)
             return False
 
         if max_forward_speed <= 0:
-            print 'Invalid absolute maximum velocity, value=', max_forward_speed
+            print('Invalid absolute maximum velocity, value=', max_forward_speed)
             return False
 
         if not append:

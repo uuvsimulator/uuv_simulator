@@ -119,8 +119,8 @@ class SimulationRunner(object):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             return_code = sock.connect_ex(('', port))
             sock.close()
-        except Exception, exp:
-            print exp
+        except Exception as exp:
+            print(exp)
         return return_code == 0
 
     def _is_port_locked(self, port):
@@ -171,7 +171,7 @@ class SimulationRunner(object):
             shutil.rmtree(rec_path)
 
     def run(self, params=dict(), timeout=None):
-        if len(params.keys()):
+        if len(list(params.keys())):
             for tag in self._params:
                 if tag not in params:
                     raise Exception('Parameter list has the wrong dimension')
@@ -198,7 +198,7 @@ class SimulationRunner(object):
         task_filename = os.path.join(self._sim_results_dir,
                                      'task.yml')
 
-        if len(self._params.keys()):
+        if len(list(self._params.keys())):
             with open(os.path.join(self._sim_results_dir,
                                    'params_%d.yml' % self._sim_counter), 'w') as param_file:
                 yaml.dump(self._params, param_file, default_flow_style=False)
@@ -268,7 +268,7 @@ class SimulationRunner(object):
                 else:
                     self._logger.info('Simulation finished with error')
                     result_ok = False
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error while running the simulation, message=' + str(e))
             result_ok = False
             if self._process:

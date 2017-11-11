@@ -141,7 +141,7 @@ class DPControllerBase(object):
         """Create instance of a specific DP controller."""
         for controller in DPControllerBase.__subclasses__():
             if name == controller.__name__:
-                print 'Creating controller=', name
+                print('Creating controller=', name)
                 return controller(*args)
 
     @staticmethod

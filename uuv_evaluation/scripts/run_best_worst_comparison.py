@@ -31,8 +31,8 @@ from bag_evaluation import Evaluation
 try:
     plt.rc('text', usetex=True)
     plt.rc('font', family='sans-serif')
-except Exception, e:
-    print 'Cannot use Latex configuration with matplotlib, message=', str(e)
+except Exception as e:
+    print('Cannot use Latex configuration with matplotlib, message=', str(e))
 
 roslib.load_manifest('uuv_evaluation')
 
@@ -94,7 +94,7 @@ def gen_evaluations(bags, output_dir):
     """Generate evaluation instances for each ROS bag file in the bags array."""
     sim_evals = list()
     for bag in bags:
-        print '\tOPENING BAG: ', bag
+        print('\tOPENING BAG: ', bag)
         sim_evals.append(Evaluation(bag, output_dir))
     return sim_evals
 
@@ -352,7 +352,7 @@ if __name__ == '__main__':
 
     logger.info('Processing the following folders')
     for d in args.input_dir:
-        print '\t - ', d
+        print('\t - ', d)
 
     with open(args.config_file, 'r') as c_file:
         config_file = yaml.load(c_file)
@@ -444,7 +444,7 @@ if __name__ == '__main__':
         worst_kpi_bags = list()
         worst_kpi_labels = list()
 
-        for d, i in zip(args.input_dir, range(len(args.input_dir))):
+        for d, i in zip(args.input_dir, list(range(len(args.input_dir)))):
             kpi[d] = [kpis[d][k][tag] for k in range(len(kpis[d]))]
             min_idx[d] = np.argmin(kpi[d])
             max_idx[d] = np.argmax(kpi[d])
@@ -548,7 +548,7 @@ if __name__ == '__main__':
         worst_cost_fcn_labels = list()
 
         tag = 'cost_fcn'
-        for d, i in zip(args.input_dir, range(len(args.input_dir))):
+        for d, i in zip(args.input_dir, list(range(len(args.input_dir)))):
             # If a custom cost function is available, compute the best and worst
             # candidates according to the cost function
 

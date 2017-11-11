@@ -121,9 +121,9 @@ if __name__ == '__main__':
 
         del runner
         del sim_eval
-    except Exception, e:
-        print('Error occurred in this iteration, setting simulation status to CRASHED, message=' + str(e))
+    except Exception as e:
+        print(('Error occurred in this iteration, setting simulation status to CRASHED, message=' + str(e)))
         status = 'CRASHED'
         cost = 1e7
 
-    print('Result for SMAC: %s, 0, 0, %f, %s' % (status, cost, args.seed))
+    print(('Result for SMAC: %s, 0, 0, %f, %s' % (status, cost, args.seed)))

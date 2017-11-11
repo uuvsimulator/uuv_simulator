@@ -96,7 +96,7 @@ def update_vehicle_list(event):
             get_world_props = rospy.ServiceProxy('/gazebo/get_world_properties',
                                                  GetWorldProperties)
         except rospy.ROSException:
-            print '/gazebo/get_world_properties service is unavailable'
+            print('/gazebo/get_world_properties service is unavailable')
 
     global get_model_props
     if get_model_props is None:
@@ -106,7 +106,7 @@ def update_vehicle_list(event):
             get_model_props = rospy.ServiceProxy('/gazebo/get_model_properties',
                                                  GetModelProperties)
         except rospy.ROSException:
-            print '/gazebo/get_model_properties service is unavailable'
+            print('/gazebo/get_model_properties service is unavailable')
     try:
         global vehicle_pub
         global odom_sub
@@ -120,8 +120,8 @@ def update_vehicle_list(event):
                vehicle_pub[model] = rospy.Publisher('/{}/footprint'.format(model),
                                                     PolygonStamped,
                                                     queue_size=1)
-    except rospy.ServiceException, e:
-        print 'Service call failed: %s', e
+    except rospy.ServiceException as e:
+        print('Service call failed: %s', e)
 
 def main():
     update_timer = rospy.Timer(rospy.Duration(10), update_vehicle_list)

@@ -46,9 +46,9 @@ class EndPointStateNode:
     def _update(self):
         state_msg = EndPointState
         # Read joint states from the kinematics interface
-        q = self._kinematics.joint_angles.values()
-        qd = self._kinematics.joint_velocities.values()
-        eff = self._kinematics.joint_efforts.values()
+        q = list(self._kinematics.joint_angles.values())
+        qd = list(self._kinematics.joint_velocities.values())
+        eff = list(self._kinematics.joint_efforts.values())
         # Storing the pose
         pose = self._kinematics.forward_position_kinematics(q)
         state_msg.pose.position.x = pose[0]

@@ -38,12 +38,12 @@ class NCParser(object):
         if labels is not None:
             assert type(labels) == dict, 'Labels input should be an dict'
             for key in labels:
-                if labels[key] not in self._data.variables.keys():
-                    print key, ' not a valid NC data variables'
+                if labels[key] not in list(self._data.variables.keys()):
+                    print(key, ' not a valid NC data variables')
                 elif key in self._labels:
                     self._labels[key] = labels[key]
                 else:
-                    raise self.__class__.__name__, '- Invalid label and key to NC data variable'
+                    raise self.__class__.__name__('- Invalid label and key to NC data variable')
 
         self._time = self._data.variables[self._labels['time']][:]
 
@@ -59,7 +59,7 @@ class NCParser(object):
         else:
             self._time_unit = 'seconds'
 
-        print 'Time unit=', self._time_unit
+        print('Time unit=', self._time_unit)
 
     def __str__(self):
         msg = 'Ocean data, name=%s\n' % self._data.title
@@ -75,7 +75,7 @@ class NCParser(object):
 
     @property
     def variable_names(self):
-        return self._data.variables.keys()
+        return list(self._data.variables.keys())
 
     @property
     def start_time(self):
@@ -139,9 +139,9 @@ class NCParser(object):
 
     def print_variable(self, var_name):
         if var_name not in self.variable_names:
-            print 'Invalid variable name, var_name=', var_name
+            print('Invalid variable name, var_name=', var_name)
             return
-        print self._data.variables[var_name]
+        print(self._data.variables[var_name])
 
     def get_closest_xy_idx(self, x, y):
         idx = np.argmin(np.abs(self.x - x))
@@ -149,8 +149,8 @@ class NCParser(object):
         return idx, idy
 
     def get_range(self, value, var_name):
-        if var_name not in self._labels.keys():
-            print 'Invalid coordinate var_name'
+        if var_name not in list(self._labels.keys()):
+            print('Invalid coordinate var_name')
             return None, None
 
         label = self._labels[var_name]
@@ -178,14 +178,14 @@ class NCParser(object):
         idy = self.get_range(y, 'y')
         idz = self.get_range(depth, 'z')
 
-        print 'x, y, z=', x, y, depth
-        print 'box(x)=', self.x[idx[0]], self.x[idx[1]]
-        print 'box(y)=', self.y[idy[0]], self.y[idy[1]]
-        print 'box(z)=', self.z[idz[0]], self.z[idz[1]]
+        print('x, y, z=', x, y, depth)
+        print('box(x)=', self.x[idx[0]], self.x[idx[1]])
+        print('box(y)=', self.y[idy[0]], self.y[idy[1]])
+        print('box(z)=', self.z[idz[0]], self.z[idz[1]])
 
     def interpolate(self, variable, x, y, z, time):
         if variable not in self.variable_names:
-            print 'Invalid variable name, value=', variable
+            print('Invalid variable name, value=', variable)
             return None
 
         idx = self.get_range(x, 'x')

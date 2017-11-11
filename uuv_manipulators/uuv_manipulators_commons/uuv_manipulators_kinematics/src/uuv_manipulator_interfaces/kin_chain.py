@@ -93,7 +93,7 @@ class KinChainInterface(object):
         # Get joint names from the chain
         # Joint names
         self._joint_names = list()
-        for idx in xrange(self._chain.getNrOfSegments()):
+        for idx in range(self._chain.getNrOfSegments()):
             joint = self._chain.getSegment(idx).getJoint()
             # Not considering fixed joints
             if joint.getType() == 0:
@@ -179,7 +179,7 @@ class KinChainInterface(object):
     def link_names(self):
         """Link names."""
         names = list()
-        for idx in xrange(self._chain.getNrOfSegments()):
+        for idx in range(self._chain.getNrOfSegments()):
             names.append(self._chain.getSegment(idx).getName())
         return names
 
@@ -230,18 +230,18 @@ class KinChainInterface(object):
         for j in self._robot_description.joints:
             if j.type != 'fixed':
                 nf_joints += 1
-        print 'Base root=%s' % self._base_link
-        print 'Tip link=%s' % self._tip_link
-        print "URDF non-fixed joints: %d;" % nf_joints
-        print "URDF total joints: %d" % len(self.n_joints)
-        print "URDF links: %d" % len(self._robot_description.links)
-        print "KDL joints: %d" % self._kdl_tree.getNrOfJoints()
-        print "KDL segments: %d" % self._kdl_tree.getNrOfSegments()
+        print(('Base root=%s' % self._base_link))
+        print(('Tip link=%s' % self._tip_link))
+        print(("URDF non-fixed joints: %d;" % nf_joints))
+        print(("URDF total joints: %d" % len(self.n_joints)))
+        print(("URDF links: %d" % len(self._robot_description.links)))
+        print(("KDL joints: %d" % self._kdl_tree.getNrOfJoints()))
+        print(("KDL segments: %d" % self._kdl_tree.getNrOfSegments()))
 
     def print_chain(self):
-        print 'Number of segments in chain=%d' % self._chain.getNrOfSegments()
-        for idx in xrange(self._chain.getNrOfSegments()):
-            print '* ' + self._chain.getSegment(idx).getName()
+        print(('Number of segments in chain=%d' % self._chain.getNrOfSegments()))
+        for idx in range(self._chain.getNrOfSegments()):
+            print(('* ' + self._chain.getSegment(idx).getName()))
 
     def get_joint_angle(self, joint):
         assert joint in self._joint_angles, 'Invalid joint name'

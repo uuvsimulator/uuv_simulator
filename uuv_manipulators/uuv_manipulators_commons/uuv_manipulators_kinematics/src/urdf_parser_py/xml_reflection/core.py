@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from basics import *
+from .basics import *
 import sys
 import copy
 
@@ -171,7 +171,7 @@ class RawType(ValueType):
 		children = xml_children(value)
 		list(map(node.append, children))
 		# Copy attributes
-		for (attrib_key, attrib_value) in value.attrib.iteritems():
+		for (attrib_key, attrib_value) in value.attrib.items():
 			node.set(attrib_key, attrib_value)
 
 class SimpleElementType(ValueType):
@@ -206,7 +206,7 @@ class FactoryType(ValueType):
 		self.name = name
 		self.typeMap = typeMap
 		self.nameMap = {}
-		for (key, value) in typeMap.items():
+		for (key, value) in list(typeMap.items()):
 			# Reverse lookup
 			self.nameMap[value] = key
 
@@ -238,7 +238,7 @@ class DuckTypedFactory(ValueType):
 		for value_type in self.type_order:
 			try:
 				return value_type.from_xml(node)
-			except Exception, e:
+			except Exception as e:
 				error_set.append((value_type, e))
 		# Should have returned, we encountered errors
 		out = "Could not perform duck-typed parsing."

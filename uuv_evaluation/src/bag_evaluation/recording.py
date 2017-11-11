@@ -111,7 +111,7 @@ class Recording:
 
     @property
     def n_thrusters(self):
-        return len(self._thrusters.keys())
+        return len(list(self._thrusters.keys()))
 
     def _read_data(self):
         try:
@@ -167,7 +167,7 @@ class Recording:
                                                                msg.wrench.torque.y,
                                                                msg.wrench.torque.z])
             self._is_init = True
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error retrieving data from rosbag, message=' + str(e))
             self._is_init = False
 
@@ -178,10 +178,10 @@ class Recording:
 
     def get_thruster_data(self, index):
         if not self._is_init:
-            print self.__class__.__name__, '- Thruster data has not been parsed'
+            print(self.__class__.__name__, '- Thruster data has not been parsed')
             return None, None
         if index not in self._thrusters:
-            print self.__class__.__name__, '- Invalid thruster index, value=', index
+            print(self.__class__.__name__, '- Invalid thruster index, value=', index)
             return None, None
         return self._thrusters[index]['time'], self._thrusters[index]['values']
 

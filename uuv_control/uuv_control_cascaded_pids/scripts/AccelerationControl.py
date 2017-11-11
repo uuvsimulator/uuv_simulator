@@ -57,7 +57,7 @@ class AccelerationControllerNode:
           numpy.hstack((self.mass*numpy.identity(3), numpy.zeros((3, 3)))),
           numpy.hstack((numpy.zeros((3, 3)), self.inertial_tensor))))
 
-        print self.mass_inertial_matrix
+        print(self.mass_inertial_matrix)
         self.ready = True
 
     def force_callback(self, msg):

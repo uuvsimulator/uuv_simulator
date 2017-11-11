@@ -71,7 +71,7 @@ def urdf_joint_to_kdl_joint(jnt):
     if jnt.joint_type == 'prismatic':
         return kdl.Joint(jnt.name, origin_frame.p,
                          origin_frame.M * axis, kdl.Joint.TransAxis)
-    print "Unknown joint type: %s." % jnt.joint_type
+    print("Unknown joint type: %s." % jnt.joint_type)
     return kdl.Joint(jnt.name, kdl.Joint.None)
 
 def urdf_inertial_to_kdl_rbi(i):
@@ -133,17 +133,17 @@ def main():
     for j in robot.joints:
         if robot.joints[j].joint_type != 'fixed':
             num_non_fixed_joints += 1
-    print "URDF non-fixed joints: %d;" % num_non_fixed_joints,
-    print "KDL joints: %d" % tree.getNrOfJoints()
-    print "URDF joints: %d; KDL segments: %d" %(len(robot.joints),
-                                                tree.getNrofSegments())
+    print("URDF non-fixed joints: %d;" % num_non_fixed_joints, end=' ')
+    print("KDL joints: %d" % tree.getNrOfJoints())
+    print("URDF joints: %d; KDL segments: %d" %(len(robot.joints),
+                                                tree.getNrofSegments()))
     import random
     base_link = robot.get_root()
-    end_link = robot.links.keys()[random.randint(0, len(robot.links)-1)]
+    end_link = list(robot.links.keys())[random.randint(0, len(robot.links)-1)]
     chain = tree.getChain(base_link, end_link)
-    print "Root link: %s; Random end link: %s" % (base_link, end_link)
+    print("Root link: %s; Random end link: %s" % (base_link, end_link))
     for i in range(chain.getNrOfSegments()):
-        print chain.getSegment(i).getName()
+        print(chain.getSegment(i).getName())
 
 if __name__ == "__main__":
     main()

@@ -122,9 +122,9 @@ class FinnedUUVControllerNode:
 
             if not self._ready:
                 return
-        except Exception, e:
-            print 'Error occurred while parsing joystick input, check if the joy_id corresponds to the joystick ' \
-                  'being used. message=%s' % str(e)
+        except Exception as e:
+            print('Error occurred while parsing joystick input, check if the joy_id corresponds to the joystick ' \
+                  'being used. message=%s' % str(e))
 
 
 if __name__ == '__main__':

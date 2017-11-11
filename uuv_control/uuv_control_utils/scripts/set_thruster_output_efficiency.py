@@ -19,7 +19,7 @@ from uuv_gazebo_ros_plugins_msgs.srv import SetThrusterEfficiency
 
 
 if __name__ == '__main__':
-    print 'Set the thruster output efficiency for vehicle, namespace=', rospy.get_namespace()
+    print('Set the thruster output efficiency for vehicle, namespace=', rospy.get_namespace())
     rospy.init_node('set_thrusters_states')
 
     if rospy.is_shutdown():
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     if rospy.has_param('~starting_time'):
         starting_time = rospy.get_param('~starting_time')
 
-    print 'Starting time= %fs' % starting_time
+    print('Starting time= %fs' % starting_time)
 
     duration = 0.0
     if rospy.has_param('~duration'):
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     if duration == 0.0:
         rospy.ROSException('Duration not set, leaving node...')
 
-    print 'Duration [s]=', ('Inf.' if duration < 0 else duration)
+    print('Duration [s]=', ('Inf.' if duration < 0 else duration))
 
     if rospy.has_param('~efficiency'):
         efficiency = rospy.get_param('~efficiency')
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     if thruster_id < 0:
         rospy.ROSException('Invalid thruster ID')
 
-    print 'Setting thruster output efficiency #%d to %.2f' % (thruster_id, 100 * efficiency)
+    print('Setting thruster output efficiency #%d to %.2f' % (thruster_id, 100 * efficiency))
 
     vehicle_name = rospy.get_namespace().replace('/', '')
 
@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
     try:
         set_eff = rospy.ServiceProxy(srv_name, SetThrusterEfficiency)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.ROSException('Service call failed, error=' + e)
 
     rate = rospy.Rate(100)
@@ -78,8 +78,8 @@ if __name__ == '__main__':
     success = set_eff(efficiency)
 
     if success:
-        print 'Time=%.2f s' % rospy.get_time()
-        print 'Current thruster output efficiency #%d=%.2f' % (thruster_id, efficiency * 100)
+        print('Time=%.2f s' % rospy.get_time())
+        print('Current thruster output efficiency #%d=%.2f' % (thruster_id, efficiency * 100))
 
     if duration > 0:
         rate = rospy.Rate(100)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
         success = set_eff(1.0)
 
         if success:
-            print 'Time=%.2f s' % rospy.get_time()
-            print 'Returning to previous thruster output efficiency #%d=%.2f' % (thruster_id, efficiency * 100)
+            print('Time=%.2f s' % rospy.get_time())
+            print('Returning to previous thruster output efficiency #%d=%.2f' % (thruster_id, efficiency * 100))
 
-    print 'Leaving node...'
+    print('Leaving node...')

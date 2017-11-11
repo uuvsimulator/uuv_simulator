@@ -165,12 +165,12 @@ class ArmInterface(KinChainInterface):
 
         # Compute the pose of all frames, if requested
         if self._compute_fk_for_all:
-            for idx in xrange(self.n_links):
+            for idx in range(self.n_links):
                 self._frames[idx] = self.forward_position_kinematics(q, segment_idx=idx)
         # End effector pose
         pose = self.forward_position_kinematics(q)
         vel = self.forward_velocity_kinematics(q, qd)
-        wrench = np.dot(self.jacobian(q), np.array(eff.values()))
+        wrench = np.dot(self.jacobian(q), np.array(list(eff.values())))
         # Store everything in the end point state message
         self._endeffector_state.position = pose[0:3]
         self._endeffector_state.orientation = pose[3::]
@@ -230,7 +230,7 @@ class ArmInterface(KinChainInterface):
 
     def add_callback(self, topic_name, function_handle):
         if topic_name not in self._subTopics:
-            print 'ArmInterface - Invalid topic name'
+            print('ArmInterface - Invalid topic name')
             return
 
         if topic_name not in self._callbacks:

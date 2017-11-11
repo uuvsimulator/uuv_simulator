@@ -19,9 +19,9 @@ from ..waypoint import Waypoint
 from ..waypoint_set import WaypointSet
 from ..trajectory_point import TrajectoryPoint
 from tf.transformations import quaternion_multiply, quaternion_about_axis
-from line_segment import LineSegment
-from bezier_curve import BezierCurve
-from path_generator import PathGenerator
+from .line_segment import LineSegment
+from .bezier_curve import BezierCurve
+from .path_generator import PathGenerator
 
 
 class CSInterpolator(PathGenerator):

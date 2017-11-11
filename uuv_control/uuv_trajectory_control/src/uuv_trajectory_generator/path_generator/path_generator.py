@@ -144,7 +144,7 @@ class PathGenerator(object):
             wps = self._segment_to_wp_map[idx::]
             return np.unique(wps)
         except:
-            print 'Invalid index'
+            print('Invalid index')
             return None
 
     def is_full_dof(self):
@@ -176,7 +176,7 @@ class PathGenerator(object):
             self._waypoints = deepcopy(waypoints)
 
         if self._waypoints is None:
-            print 'Waypoint list has not been initialized'
+            print('Waypoint list has not been initialized')
             return False
 
         return self.init_interpolator()

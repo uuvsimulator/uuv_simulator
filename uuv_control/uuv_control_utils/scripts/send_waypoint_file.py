@@ -21,11 +21,11 @@ from std_msgs.msg import String, Time
 
 
 if __name__ == '__main__':
-    print 'Send a waypoint file, namespace=', rospy.get_namespace()
+    print('Send a waypoint file, namespace=', rospy.get_namespace())
     rospy.init_node('send_waypoint_file')
 
     if rospy.is_shutdown():
-        print 'ROS master not running!'
+        print('ROS master not running!')
         sys.exit(-1)
 
     if rospy.has_param('~filename'):
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     if rospy.has_param('~start_time'):
         start_time = rospy.get_param('~start_time')
         if start_time < 0.0:
-            print 'Negative start time, setting it to 0.0'
+            print('Negative start time, setting it to 0.0')
             start_time = 0.0
             start_now = True
     else:
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         init_wp = rospy.ServiceProxy(
             'init_waypoints_from_file',
             InitWaypointsFromFile)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.ROSException('Service call failed, error=' + e)
 
     success = init_wp(Time(rospy.Time(start_time)),
@@ -62,6 +62,6 @@ if __name__ == '__main__':
                       String(filename))
 
     if success:
-        print 'Waypoints file successfully received, file=', filename
+        print('Waypoints file successfully received, file=', filename)
     else:
-        print 'Failed'
+        print('Failed')

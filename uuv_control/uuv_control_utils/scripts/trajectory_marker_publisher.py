@@ -57,7 +57,7 @@ class TrajectoryMarkerPublisher:
         if rospy.has_param('~output_dir'):
             self._output_dir = rospy.get_param('~output_dir')
             if not os.path.isdir(self._output_dir):
-                print 'Invalid output directory, not saving the files, dir=', self._output_dir
+                print('Invalid output directory, not saving the files, dir=', self._output_dir)
                 self._output_dir = None
             else:
                 self._output_dir = os.path.join(self._output_dir, rospy.get_namespace().replace('/', ''))

@@ -77,14 +77,14 @@ if __name__ == '__main__':
     if smac_folder is None:
         raise Exception('No SMAC output folder found')
 
-    print 'SMAC RESULTS FOLDER=', smac_folder
+    print('SMAC RESULTS FOLDER=', smac_folder)
 
     smac_file = os.path.join(smac_folder, 'traj_aclib2.json')
 
     if not os.path.isfile(smac_file):
         raise Exception('SMAC output file not found')
 
-    print 'SMAC OUTPUT FILE=', smac_file
+    print('SMAC OUTPUT FILE=', smac_file)
 
     if not os.path.isdir(args.output_dir):
         os.makedirs(args.output_dir)
@@ -144,7 +144,7 @@ if __name__ == '__main__':
                 params = parse_input(parsed_params, opt_config['input_map'])
 
                 task = os.path.join(args.input_dir, opt_config['task'])
-                print idx, sub_result_folder
+                print(idx, sub_result_folder)
 
                 runner = SimulationRunner(params, task, sub_result_folder, True, add_folder_timestamp=False)
                 runner.run(params)
@@ -187,8 +187,8 @@ if __name__ == '__main__':
 
                 idx += 1
     else:
-        print 'Reprocessing the best results...'
-        print 'Opening the results directory: ', args.output_dir
+        print('Reprocessing the best results...')
+        print('Opening the results directory: ', args.output_dir)
 
         for item in sorted(os.listdir(args.output_dir)):
             subdir = os.path.join(args.output_dir, item)
@@ -205,7 +205,7 @@ if __name__ == '__main__':
                 bag_path = subdir
                 bag_filename = os.path.join(bag_path, 'recording.bag')
                 if os.path.isfile(bag_filename):
-                    print bag_filename
+                    print(bag_filename)
                     sim_eval = Evaluation(bag_filename, bag_path)
                     sim_eval.compute_kpis()
                     sim_eval.save_evaluation()
@@ -239,7 +239,7 @@ if __name__ == '__main__':
                     with open(os.path.join(bag_path, 'cost_function.yaml'), 'w') as cf_file:
                         yaml.dump(opt_config['cost_fcn'], cf_file, default_flow_style=False)
 
-                    print 'COST=', cur_cost
+                    print('COST=', cur_cost)
                     del sim_eval
                     idx += 1
 
@@ -311,7 +311,7 @@ if __name__ == '__main__':
 
         i = 1
         for tag in kpi_labels:
-            ax = fig.add_subplot(len(kpi_labels.keys()), 1, i)
+            ax = fig.add_subplot(len(list(kpi_labels.keys())), 1, i)
             ax.plot(np.arange(idx), [kpi_results[k][tag] for k in np.arange(idx)], '--b', linewidth=2, zorder=1)
             ax.scatter(np.arange(idx), [kpi_results[k][tag] for k in np.arange(idx)], s=30, color='red', zorder=2)
             i += 1
@@ -406,5 +406,5 @@ if __name__ == '__main__':
         filename = os.path.join(args.output_dir, 'error_comparison.pdf')
         plt.savefig(filename)
         plt.clf()
-    except Exception, e:
-        print 'Error while plotting comparative results, message=', str(e)
+    except Exception as e:
+        print('Error while plotting comparative results, message=', str(e))

@@ -48,7 +48,7 @@ def run_generator(waypoint_set, interp_method):
         avg_time += toc - tic
         idx += 1
     avg_time /= idx
-    print 'Average processing time [s] =', avg_time
+    print('Average processing time [s] =', avg_time)
     fig = plt.figure()
     # Trajectory and heading 3D plot
     ax = fig.add_subplot(111, projection='3d')

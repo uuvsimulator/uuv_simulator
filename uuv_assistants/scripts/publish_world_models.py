@@ -50,7 +50,7 @@ class WorldPublisher:
     def add_meshes(self, models):
         for model in models:
             if model in self._model_paths:
-                print('Model %s already exists' % model)
+                print(('Model %s already exists' % model))
                 continue
 
             new_model = dict()
@@ -86,30 +86,30 @@ class WorldPublisher:
                                                     prop.pose.orientation.z,
                                                     prop.pose.orientation.w]
                     else:
-                        print('Model %s not found in the current Gazebo scenario' % model)
+                        print(('Model %s not found in the current Gazebo scenario' % model))
                 else:
-                    print('Information about the model %s for the mesh %s could not be '
-                          'retrieved' % (model, models[model]['mesh']))
+                    print(('Information about the model %s for the mesh %s could not be '
+                          'retrieved' % (model, models[model]['mesh'])))
             elif 'plane' in models[model]:
                 new_model['plane'] = [1, 1, 1]
                 if 'plane' in models[model]:
                     if len(models[model]['plane']) == 3:
                         new_model['plane'] = models[model]['plane']
                     else:
-                        print('Invalid scale vector for ' + model)
+                        print(('Invalid scale vector for ' + model))
             else:
                 continue
 
             self._model_paths[model] = new_model
-            print('New model being published: %s' % model)
-            print('\t Position: ' + str(self._model_paths[model]['position']))
-            print('\t Orientation: ' + str(self._model_paths[model]['orientation']))
-            print('\t Scale: ' + str(self._model_paths[model]['scale']))
+            print(('New model being published: %s' % model))
+            print(('\t Position: ' + str(self._model_paths[model]['position'])))
+            print(('\t Orientation: ' + str(self._model_paths[model]['orientation'])))
+            print(('\t Scale: ' + str(self._model_paths[model]['scale'])))
 
     def publish_meshes(self):
         markers = MarkerArray()
         i = 0
-        total_models = len(self._model_paths.keys())
+        total_models = len(list(self._model_paths.keys()))
         for model in self._model_paths:
             marker = Marker()
 

@@ -27,7 +27,7 @@ from uuv_trajectory_generator import Waypoint, WaypointSet
 class TestWaypointSet(unittest.TestCase):
     def test_init(self):
         wp_set = WaypointSet()
-        self.assertEquals(wp_set.num_waypoints, 0, 'Waypoint list is not empty')
+        self.assertEqual(wp_set.num_waypoints, 0, 'Waypoint list is not empty')
 
     def test_invalid_params_helix(self):
         wp_set = WaypointSet()

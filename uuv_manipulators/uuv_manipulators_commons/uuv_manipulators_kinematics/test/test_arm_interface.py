@@ -30,12 +30,12 @@ class TestArmInterface(unittest.TestCase):
     def test_init_interface(self):
          arm = ArmInterface()
          # Test if the namespace and arm name are correct
-         self.assertEquals(arm.namespace, '/rexrov/', 'Invalid robot namespace')
-         self.assertEquals(arm.arm_name, 'oberon', 'Invalid arm name')
-         self.assertEquals(arm.base_link, 'oberon/base', 'Invalid manipulator base name')
-         self.assertEquals(arm.tip_link, 'oberon/end_effector', 'Invalid end-effector link name')
-         self.assertNotEquals(len(arm.joint_names), 0, 'The list of joint names is empty')
-         self.assertEquals(arm.n_links, 7, 'Invalid number of links')
+         self.assertEqual(arm.namespace, '/rexrov/', 'Invalid robot namespace')
+         self.assertEqual(arm.arm_name, 'oberon', 'Invalid arm name')
+         self.assertEqual(arm.base_link, 'oberon/base', 'Invalid manipulator base name')
+         self.assertEqual(arm.tip_link, 'oberon/end_effector', 'Invalid end-effector link name')
+         self.assertNotEqual(len(arm.joint_names), 0, 'The list of joint names is empty')
+         self.assertEqual(arm.n_links, 7, 'Invalid number of links')
 
          for name in arm.joint_names:
              self.assertIn(name, arm.joint_angles, 'Joint name %s not listed in the joint positions dictionary' % name)
@@ -44,20 +44,20 @@ class TestArmInterface(unittest.TestCase):
 
     def test_joints_to_kdl(self):
         arm = ArmInterface()
-        for idx, name in zip(range(len(arm.joint_names)), arm.joint_names):
+        for idx, name in zip(list(range(len(arm.joint_names))), arm.joint_names):
             for t in ['positions', 'torques']:
                 jnt_array = arm.joints_to_kdl(t, last_joint=name)
-                self.assertEquals(jnt_array.rows(), idx + 1,
+                self.assertEqual(jnt_array.rows(), idx + 1,
                                   'Invalid number of joints, joint_idx=%d, last_joint=%s, n_joints=%d' % (idx, name, jnt_array.rows()))
 
     def test_jacobian(self):
         arm = ArmInterface()
         jac = arm.jacobian()
         self.assertIsNotNone(jac, 'Jacobian matrix is invalid')
-        self.assertEquals(jac.shape, (arm.n_links - 1, 6), 'The full Jacobian matrix has the wrong size')
-        for idx, name in zip(range(len(arm.joint_names)), arm.joint_names):
-            self.assertEquals(arm.jacobian(last_joint=name).shape, (arm.n_links - 1, idx + 1))
-            self.assertEquals(arm.jacobian_transpose(last_joint=name).shape, (idx + 1, arm.n_links - 1))
+        self.assertEqual(jac.shape, (arm.n_links - 1, 6), 'The full Jacobian matrix has the wrong size')
+        for idx, name in zip(list(range(len(arm.joint_names))), arm.joint_names):
+            self.assertEqual(arm.jacobian(last_joint=name).shape, (arm.n_links - 1, idx + 1))
+            self.assertEqual(arm.jacobian_transpose(last_joint=name).shape, (idx + 1, arm.n_links - 1))
 
     def test_home_config(self):
         arm = ArmInterface()

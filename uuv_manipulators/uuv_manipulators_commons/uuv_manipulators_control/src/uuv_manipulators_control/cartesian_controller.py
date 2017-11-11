@@ -137,7 +137,7 @@ class CartesianController(object):
         if self._arm_interface.inverse_kinematics(g_pos, g_quat) is not None:
             return next_goal
         else:
-            print 'Next goal could not be resolved by the inv. kinematics solver.'
+            print('Next goal could not be resolved by the inv. kinematics solver.')
             return self._last_goal
 
     def _home_button_pressed(self, msg):

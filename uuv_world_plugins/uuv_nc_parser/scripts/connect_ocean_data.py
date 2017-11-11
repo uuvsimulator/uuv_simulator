@@ -50,13 +50,13 @@ class OceanDataPlayBack:
                 labels = None
 
             self._ocean_data = NCParser(self._filename, labels)
-            print self._ocean_data
+            print(self._ocean_data)
         else:
             raise rospy.ROSException('NC data filename not available')
 
         if rospy.has_param('~fixed_time'):
             self._fixed_time = rospy.get_param('~fixed_time')
-            print 'Using fixed time=', self._fixed_time
+            print('Using fixed time=', self._fixed_time)
         else:
             self._fixed_time = None
 
@@ -102,10 +102,10 @@ class OceanDataPlayBack:
                 self._time_offset += int(offset['hour']) * self._ocean_data.HOUR2MIN * self._ocean_data.MIN2SEC
             if 'min' in offset:
                 self._time_offset += int(offset['min']) * self._ocean_data.MIN2SEC
-            print 'Starting time: %d days, %d hours, %d minutes' % (int(offset['day']),
+            print('Starting time: %d days, %d hours, %d minutes' % (int(offset['day']),
                                                                     int(offset['hour']),
-                                                                    int(offset['min']))
-            print 'Starting time in seconds:', self._time_offset
+                                                                    int(offset['min'])))
+            print('Starting time in seconds:', self._time_offset)
 
         self._services = dict()
 
@@ -147,14 +147,14 @@ class OceanDataPlayBack:
         try:
             rospy.wait_for_service('/gazebo/get_model_properties', timeout=30)
         except rospy.ROSException:
-            print 'Service not available! Closing node...'
+            print('Service not available! Closing node...')
             sys.exit(-1)
 
         try:
             self._model_prop_srv = rospy.ServiceProxy(
                 '/gazebo/get_model_properties', GetModelProperties)
-        except rospy.ServiceException, e:
-            print 'Service call failed, error=', e
+        except rospy.ServiceException as e:
+            print('Service call failed, error=', e)
             sys.exit(-1)
 
         self._sub_gazebo_models = rospy.Subscriber(
@@ -166,13 +166,13 @@ class OceanDataPlayBack:
             if rate > 0:
                 self._update_rate = float(rate)
             else:
-                print 'Invalid update rate, keeping default of 50 Hz'
+                print('Invalid update rate, keeping default of 50 Hz')
 
         if rospy.has_param('~current_velocity'):
             self._current_vel_config = rospy.get_param('~current_velocity')
             self._timer_current = rospy.Timer(rospy.Duration(1 / self._update_rate),
                                               self.publish_current_velocity)
-            print 'Publishing local current velocity'
+            print('Publishing local current velocity')
         else:
             self._current_vel_config = None
 
@@ -180,7 +180,7 @@ class OceanDataPlayBack:
             self._wind_vel_config = rospy.get_param('~wind_velocity')
             self._timer_wind = rospy.Timer(rospy.Duration(1 / self._update_rate),
                                            self.publish_wind_velocity)
-            print 'Publishing local wind velocity'
+            print('Publishing local wind velocity')
         else:
             self._wind_vel_config = None
 
@@ -215,7 +215,7 @@ class OceanDataPlayBack:
                 for name in new_vehicles:
                     resp = self._model_prop_srv(name)
                     if not resp.is_static and rospy.has_param('/%s/robot_description' % name):
-                        print 'NEW VEHICLE DETECTED:', name
+                        print('NEW VEHICLE DETECTED:', name)
                         self._vehicle_pos[name] = np.zeros(3)
                         # Create the topics for the new vehicle
                         self._topics[name] = dict()
@@ -229,7 +229,7 @@ class OceanDataPlayBack:
                             else:
                                 self._topics[name][var] = rospy.Publisher('/%s/%s' % (name, var), FloatStamped, queue_size=1)
                     else:
-                        print 'Static object found:', name
+                        print('Static object found:', name)
                         self._static_objs.append(name)
 
             # Updating the position of the non-static objects in the simulation
@@ -337,15 +337,15 @@ class OceanDataPlayBack:
         var = list()
         options = deepcopy(self._variables)
         if self._current_vel_config is not None:
-            options += self._current_vel_config.values()
+            options += list(self._current_vel_config.values())
         if self._wind_vel_config is not None:
-            options += self._wind_vel_config.values()
+            options += list(self._wind_vel_config.values())
 
         for v in options:
             if v in self._ocean_data.variable_names:
                 var.append(v)
             else:
-                print '%s not a valid variable' % v
+                print('%s not a valid variable' % v)
         return var
 
     def get_nc_wind_velocity(self, request):
@@ -395,7 +395,7 @@ class OceanDataPlayBack:
 
     def get_nc_data(self, request):
         if request.variable not in self._get_all_variables():
-            print 'Invalid variable, var_name=', request.variable
+            print('Invalid variable, var_name=', request.variable)
             return GetNCDataResponse(0.0)
 
         return GetNCDataResponse(
@@ -429,7 +429,7 @@ class OceanDataPlayBack:
         return output
 
 if __name__ == '__main__':
-    print 'Ocean data playback'
+    print('Ocean data playback')
     rospy.init_node('connect_to_ocean_data')
 
     try:

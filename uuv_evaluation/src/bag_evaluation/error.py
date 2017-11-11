@@ -15,7 +15,7 @@
 
 import numpy as np
 import tf.transformations as trans
-from recording import Recording
+from .recording import Recording
 
 
 class TrajectoryError(object):
@@ -71,7 +71,7 @@ class TrajectoryError(object):
 
     @property
     def tags(self):
-        return self._errors.keys()
+        return list(self._errors.keys())
 
     def get_data(self, tag):
         if tag in self._errors:

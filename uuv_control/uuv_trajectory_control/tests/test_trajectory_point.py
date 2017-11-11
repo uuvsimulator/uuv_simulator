@@ -29,19 +29,19 @@ from uuv_control_msgs.msg import TrajectoryPoint as TrajectoryPointMsg
 class TestTrajectoryPoint(unittest.TestCase):
     def test_init_pos_vector(self):
         p = TrajectoryPoint()
-        self.assertEquals(p.pos.size, 3, 'Position vector len() is incorrect')
+        self.assertEqual(p.pos.size, 3, 'Position vector len() is incorrect')
         self.assertTrue(np.array_equal(p.pos, [0, 0, 0]), 'Position initialization failed')
 
     def test_set_pos_vector(self):
         p = TrajectoryPoint()
         p.pos = [1, 2, 3]
-        self.assertEquals(p.pos[0], 1, 'X position was initialized wrong')
-        self.assertEquals(p.pos[1], 2, 'Y position was initialized wrong')
-        self.assertEquals(p.pos[2], 3, 'Z position was initialized wrong')
+        self.assertEqual(p.pos[0], 1, 'X position was initialized wrong')
+        self.assertEqual(p.pos[1], 2, 'Y position was initialized wrong')
+        self.assertEqual(p.pos[2], 3, 'Z position was initialized wrong')
 
     def test_init_quat_vector(self):
         p = TrajectoryPoint()
-        self.assertEquals(p.rotq.size, 4, 'Quaternion vector len() is incorrect')
+        self.assertEqual(p.rotq.size, 4, 'Quaternion vector len() is incorrect')
         self.assertTrue(np.array_equal(p.rotq, [0, 0, 0, 1]), 'Quaternion initialization failed')
 
     def test_to_message(self):
@@ -55,7 +55,7 @@ class TestTrajectoryPoint(unittest.TestCase):
         p1 = TrajectoryPoint()
         p1.from_message(p0.to_message())
 
-        self.assertEquals(p0, p1, 'Point to message conversion failed')
+        self.assertEqual(p0, p1, 'Point to message conversion failed')
 
     def test_to_dict(self):
         p0 = TrajectoryPoint()
@@ -68,7 +68,7 @@ class TestTrajectoryPoint(unittest.TestCase):
         p1 = TrajectoryPoint()
         p1.from_dict(p0.to_dict())
 
-        self.assertEquals(p0, p1, 'Point to dict conversion failed')
+        self.assertEqual(p0, p1, 'Point to dict conversion failed')
 
 if __name__ == '__main__':
     import rosunit

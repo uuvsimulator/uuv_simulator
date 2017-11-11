@@ -59,7 +59,7 @@ class KPI(object):
 
     @property
     def is_init(self):
-        return len(self._input_values.keys()) > 0
+        return len(list(self._input_values.keys())) > 0
 
     @property
     def kpi_value(self):
@@ -151,14 +151,14 @@ class KPI(object):
         try:
             it = iter(input_values)
         except TypeError:
-            print 'Input values are not iterable'
+            print('Input values are not iterable')
             return False
         return True
 
     def set_input_values(self, values):
         for tag in self._input_values:
             if tag not in values:
-                print 'Invalid input values set'
+                print('Invalid input values set')
                 return False
         self._input_values = values
         return True

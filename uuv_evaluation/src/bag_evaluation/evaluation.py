@@ -29,8 +29,8 @@ from mpl_toolkits.mplot3d import Axes3D
 try:
     plt.rc('text', usetex=True)
     plt.rc('font', family='sans-serif')
-except Exception, e:
-    print 'Cannot use Latex configuration with matplotlib, message=', str(e)
+except Exception as e:
+    print('Cannot use Latex configuration with matplotlib, message=', str(e))
 
 class Evaluation(object):
     PLOT_CONFIG = dict(paths=dict(figsize=[12, 8],
@@ -210,7 +210,7 @@ class Evaluation(object):
             with open(filename, 'w') as cost_file:
                 yaml.dump(self._cost_fcn_terms, cost_file,
                           default_flow_style=False)
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error exporting cost function configuration, message=' + str(e))
 
     def load_cost_fcn(self, filename):
@@ -223,7 +223,7 @@ class Evaluation(object):
             for item in fcn:
                 self.add_cost_fcn_term(item, fcn[item])
                 self._logger.info('Cost function term (tag, weight): (%s, %.4f)' % (item, fcn[item]))
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error loading cost function configuration')
             self._logger.error(e)
             return False
@@ -314,7 +314,7 @@ class Evaluation(object):
 
     def print_kpis(self):
         for item in self._kpis:
-            print item['func'].full_tag, '= ', item['value']
+            print(item['func'].full_tag, '= ', item['value'])
 
     def get_trajectory_coord(self, tag):
         return self._bag.get_trajectory_coord(tag)
@@ -416,7 +416,7 @@ class Evaluation(object):
             filename = os.path.join(output_path, 'paths.pdf')
             plt.savefig(filename)
             plt.close(fig)
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error while plotting 3D path plot')
             self._logger.error(e)
 
@@ -593,7 +593,7 @@ class Evaluation(object):
             plt.tight_layout()
             plt.savefig(os.path.join(output_path, 'trajectories_vel.pdf'))
             plt.close(fig)
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error plotting trajectories, error=' + str(e))
 
     def plot_thruster_output(self, output_dir=None):
@@ -731,7 +731,7 @@ class Evaluation(object):
             filename = os.path.join(output_path, 'thrusts_max.pdf')
             fig_max.savefig(filename)
             plt.close(fig_max)
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error plotting thrust forces, message=' + str(e))
 
     def add_disturbance_activation_spans(self, ax, min_value, max_value):
@@ -761,7 +761,7 @@ class Evaluation(object):
                     ax.fill_between(t, tau * min_value, tau * max_value, facecolor='green',
                                     alpha=0.2,
                                     label='Torque disturbance activated')
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error while adding disturbance activation time spans, message=' + str(e))
 
     def plot_error_dist(self, output_dir=None):
@@ -824,7 +824,7 @@ class Evaluation(object):
             plt.tight_layout()
             plt.savefig(os.path.join(output_path, 'error_pos_heading.pdf'))
             plt.close(fig)
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error while plotting position and heading error plots, message=' + str(e))
 
     def plot_errors(self, output_dir=None):
@@ -893,7 +893,7 @@ class Evaluation(object):
             plt.tight_layout()
             plt.savefig(os.path.join(output_path, 'errors_vel.pdf'))
             plt.close(fig)
-        except Exception, e:
+        except Exception as e:
             self._logger.info('Error while plotting pose and velocity errors, message=' + str(e))
 
     def plot_current(self, output_dir=None):
@@ -945,7 +945,7 @@ class Evaluation(object):
             plt.tight_layout()
             plt.savefig(os.path.join(output_path, 'current_velocity.pdf'))
             plt.close(fig)
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error while plotting disturbance wrenches, message=' + str(e))
 
     def plot_wrenches(self, output_dir=None):
@@ -1020,7 +1020,7 @@ class Evaluation(object):
             plt.tight_layout()
             plt.savefig(os.path.join(output_path, 'disturbance_wrenches.pdf'))
             plt.close(fig)
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error while plotting disturbance wrenches, message=' + str(e))
 
     def get_plot_configuration(self):
@@ -1039,7 +1039,7 @@ class Evaluation(object):
         self.plot_trajectories(output_dir)
         self.plot_thruster_output(output_dir)
         self.plot_error_dist(output_dir)
-        print 'Evaluation stored!'
+        print('Evaluation stored!')
 
     def save_kpis(self, output_dir=None):
         if output_dir is not None:
@@ -1062,5 +1062,5 @@ class Evaluation(object):
             with open(os.path.join(output_path, 'kpi_labels.yaml'), 'w') as kpi_file:
                 yaml.dump(kpi_labels, kpi_file, default_flow_style=False)
             self._logger.info('KPI labels stored in <%s>' % os.path.join(output_path, 'kpi_labels.yaml'))
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Error storing KPIs file, message=' + str(e))

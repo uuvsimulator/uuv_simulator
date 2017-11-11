@@ -238,7 +238,7 @@ class DPControllerLocalPlanner(object):
         return ref_pnt
 
     def _display_message(self, msg):
-        print 'DP Local Planner - ' + str(msg)
+        print('DP Local Planner - ' + str(msg))
 
     def _calc_smooth_approach(self):
         """
@@ -384,20 +384,20 @@ class DPControllerLocalPlanner(object):
             self.set_trajectory_running(True)
             self._smooth_approach_on = True
 
-            print '==========================================================='
-            print 'CIRCULAR TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION'
-            print '==========================================================='
-            print 'Radius [m] =', request.radius
-            print 'Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z)
-            print '# of points =', request.n_points
-            print 'Max. forward speed =', request.max_forward_speed
-            print 'Circle angle offset =', request.angle_offset
-            print 'Heading offset =', request.heading_offset
-            print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-            print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
-            print 'Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time())
-            print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-            print '==========================================================='
+            print('===========================================================')
+            print('CIRCULAR TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION')
+            print('===========================================================')
+            print('Radius [m] =', request.radius)
+            print('Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z))
+            print('# of points =', request.n_points)
+            print('Max. forward speed =', request.max_forward_speed)
+            print('Circle angle offset =', request.angle_offset)
+            print('Heading offset =', request.heading_offset)
+            print('# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints)
+            print('Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos)
+            print('Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time()))
+            print('Estimated max. time [s] = ', self._traj_interpolator.get_max_time())
+            print('===========================================================')
             return InitCircularTrajectoryResponse(True)
         else:
             self._logger.error('Error generating circular trajectory from waypoint set')
@@ -439,22 +439,22 @@ class DPControllerLocalPlanner(object):
             self.set_trajectory_running(True)
             self._smooth_approach_on = True
 
-            print '==========================================================='
-            print 'HELICAL TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION'
-            print '==========================================================='
-            print 'Radius [m] =', request.radius
-            print 'Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z)
-            print '# of points =', request.n_points
-            print 'Max. forward speed =', request.max_forward_speed
-            print 'Delta Z =', request.delta_z
-            print '# of turns =', request.n_turns
-            print 'Helix angle offset =', request.angle_offset
-            print 'Heading offset =', request.heading_offset
-            print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-            print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
-            print 'Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time())
-            print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-            print '==========================================================='
+            print('===========================================================')
+            print('HELICAL TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION')
+            print('===========================================================')
+            print('Radius [m] =', request.radius)
+            print('Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z))
+            print('# of points =', request.n_points)
+            print('Max. forward speed =', request.max_forward_speed)
+            print('Delta Z =', request.delta_z)
+            print('# of turns =', request.n_turns)
+            print('Helix angle offset =', request.angle_offset)
+            print('Heading offset =', request.heading_offset)
+            print('# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints)
+            print('Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos)
+            print('Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time()))
+            print('Estimated max. time [s] = ', self._traj_interpolator.get_max_time())
+            print('===========================================================')
             return InitHelicalTrajectoryResponse(True)
         else:
             self._logger.error('Error generating helical trajectory from waypoint set')
@@ -482,13 +482,13 @@ class DPControllerLocalPlanner(object):
             self.set_trajectory_running(True)
             self._smooth_approach_on = True
 
-            print '==========================================================='
-            print 'IMPORT WAYPOINTS FROM FILE'
-            print '==========================================================='
-            print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-            print 'Starting time =', t
-            print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-            print '==========================================================='
+            print('===========================================================')
+            print('IMPORT WAYPOINTS FROM FILE')
+            print('===========================================================')
+            print('# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints)
+            print('Starting time =', t)
+            print('Estimated max. time [s] = ', self._traj_interpolator.get_max_time())
+            print('===========================================================')
             return InitWaypointsFromFileResponse(True)
         else:
             self._logger.info('Error occurred while parsing waypoint file')
@@ -526,16 +526,16 @@ class DPControllerLocalPlanner(object):
         self.set_trajectory_running(True)
         self._smooth_approach_on = False
 
-        print '==========================================================='
-        print 'GO TO'
-        print '==========================================================='
-        print wp_set
-        print 'Heading offset =', request.waypoint.heading_offset
-        print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-        print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
-        print 'Start time [s]: ', t
-        print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-        print '==========================================================='
+        print('===========================================================')
+        print('GO TO')
+        print('===========================================================')
+        print(wp_set)
+        print('Heading offset =', request.waypoint.heading_offset)
+        print('# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints)
+        print('Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos)
+        print('Start time [s]: ', t)
+        print('Estimated max. time [s] = ', self._traj_interpolator.get_max_time())
+        print('===========================================================')
         return GoToResponse(True)
 
     def go_to_incremental(self, request):
@@ -577,12 +577,12 @@ class DPControllerLocalPlanner(object):
         self.set_trajectory_running(True)
         self._smooth_approach_on = False
 
-        print '==========================================================='
-        print 'GO TO INCREMENTAL'
-        print '==========================================================='
-        print wp_set
-        print '# waypoints =', wp_set.num_waypoints
-        print '==========================================================='
+        print('===========================================================')
+        print('GO TO INCREMENTAL')
+        print('===========================================================')
+        print(wp_set)
+        print('# waypoints =', wp_set.num_waypoints)
+        print('===========================================================')
 
         return GoToIncrementalResponse(True)
     

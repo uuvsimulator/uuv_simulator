@@ -15,7 +15,7 @@
 
 import rospy
 import numpy
-from thruster import Thruster
+from .thruster import Thruster
 
 
 class ThrusterProportional(Thruster):

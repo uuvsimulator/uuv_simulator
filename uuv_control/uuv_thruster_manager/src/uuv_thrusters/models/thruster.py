@@ -60,7 +60,7 @@ class Thruster(object):
         self._command_pub = rospy.Publisher(self._topic, FloatStamped,
                                             queue_size=10)
 
-        print 'Thruster #%d - %s - %s' % (self._index, self.LABEL, self._topic)
+        print('Thruster #%d - %s - %s' % (self._index, self.LABEL, self._topic))
 
     @property
     def tam_column(self):
