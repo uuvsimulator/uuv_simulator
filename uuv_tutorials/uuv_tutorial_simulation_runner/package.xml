@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>uuv_tutorial_simulation_runner</name>
+  <version>0.1.0</version>
+  <description>Source code the simulation runner tutorial</description>
+
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="sebastian.scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+
+  <author email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</author>
+  <author email="sebastian.scherer2@de.bosch.com">Sebastian Scherer</author>
+  <author email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</author>
+
+  <license>Apache-2.0</license>
+
+  <run_depend>uuv_evaluation</run_depend>
+  <run_depend>uuv_descriptions</run_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>

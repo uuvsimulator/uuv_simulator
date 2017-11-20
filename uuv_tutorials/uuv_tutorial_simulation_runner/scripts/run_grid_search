@@ -1,0 +1,106 @@
+#!/usr/bin/env python
+# Copyright (c) 2016 The UUV Simulator Authors.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import rospy
+from rospkg import RosPack
+import argparse
+import yaml
+import numpy 
+import os
+from parameter_opt import SimulationRunner
+from bag_evaluation import Evaluation
+
+PKG = 'uuv_tutorial_simulation_runner'
+
+import roslib; roslib.load_manifest(PKG)
+
+# Find the path to the uuv_tutorial_simulation_runner package
+ROSPACK_INST = RosPack()
+ROOT_PATH = ROSPACK_INST.get_path(PKG)
+
+# Find the path to the task.yml file with the parameter for the 
+# simualtion scenario 
+DEFAULT_TASK = os.path.join(ROOT_PATH, 'config', 'task.yml')
+
+# Path to the results folder to be created (here it will be created in 
+# the package folder, but it can be placed anywhere)
+DEFAULT_RESULTS = os.path.join(ROOT_PATH, 'results')
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Simulation runner tutorial')
+    parser.add_argument(
+        '--task',
+        type=str,
+        default=DEFAULT_TASK)
+    parser.add_argument(
+        '--output_dir',
+        type=str,
+        default=DEFAULT_RESULTS)
+
+    # Parse input arguments, rospy.myargv removes the default inputs 
+    # that ROS uses when running this script with rosrun
+    args = parser.parse_args(rospy.myargv()[1:])
+    
+    assert os.path.isfile(args.task), 'Task file is not a valid file'
+    assert '.yml' in args.task or '.yaml' in args.task, 'Task file is not a YAML file'
+    
+    # In this example, the simulation will be executed using increasing values for the
+    # current velocity magnitude, which will be generated as Vc = (u, 0, 0) m/s with
+    # respect to the inertial frame.
+    # This is one example, but any parameter can be given to the simulation as long as
+    # it is set as an input argument in the simulation's launch file
+    for c_vel in numpy.linspace(0, 0.5, 3):
+        # Set the parameters that are going to be evaluated, the key of the parameter
+        # in the dictionary must be equal to the name given to the input parameter in the
+        # launch file
+        # The input parameters can be scalars, lists or booleans
+        params = dict(current_vel=float(c_vel))
+
+        # Create a simulation wrapper 
+        # record_all_results can be set to False if the results folder should be 
+        # deleted after each iteration. It is good to set it to False in the case
+        # you want to run many iterations of the simulation scenario and avoid
+        # multiple ROS bags from being stored on the disk.
+        runner = SimulationRunner(params,
+                                  args.task,
+                                  args.output_dir,
+                                  record_all_results=True,
+                                  add_folder_timestamp=True)
+        # Run the simulation
+        runner.run(params)
+
+        # Evaluate the recording.bag, the time_offset allows the user
+        # to ignore a given amount of seconds at the beginning of the 
+        # recording of each topic.
+        sim_eval = Evaluation(runner.recording_filename,
+                              runner.current_sim_results_dir,
+                              time_offset=0.0)
+
+        # Compute all KPIs from the recording.bag
+        sim_eval.compute_kpis()
+
+        # Only use save evaluation to store the KPIs and the plots after each
+        # iteration. You can also use only save_kpis() to store only YAML files
+        # with the computed KPIs.
+        sim_eval.save_evaluation()
+
+        # Printing all KPIs
+        print('Simulation KPIS, current_vel=' + str(c_vel))
+        for tag, value in sim_eval.get_kpis().items():
+            print('- ' + tag + '=' + str(value))
+
+        del runner
+        del sim_eval
