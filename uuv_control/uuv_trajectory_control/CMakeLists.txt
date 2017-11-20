@@ -37,7 +37,13 @@ install(DIRECTORY launch config
 
 if (CATKIN_ENABLE_TESTING)
   find_package(rostest)
-  catkin_add_nosetests(tests/test_waypoint.py)
-  catkin_add_nosetests(tests/test_trajectory_point.py)
-  catkin_add_nosetests(tests/test_waypoint_set.py)
+  foreach(T
+      test/test_all.launch
+      )
+     add_rostest(${T})
+  endforeach()
+
+  catkin_add_nosetests(test/test_waypoint.py)
+  catkin_add_nosetests(test/test_trajectory_point.py)
+  catkin_add_nosetests(test/test_waypoint_set.py)
 endif()

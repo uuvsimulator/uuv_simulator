@@ -1,0 +1,13 @@
+<launch>
+    <test test-name="test_waypoint"
+      pkg="uuv_trajectory_control"
+      type="test_waypoint.py"/>
+
+    <test test-name="test_trajectory_point"
+      pkg="uuv_trajectory_control"
+      type="test_trajectory_point.py"/>
+
+    <test test-name="test_waypoint_set"
+      pkg="uuv_trajectory_control"
+      type="test_waypoint_set.py"/>
+</launch>
