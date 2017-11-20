@@ -1,0 +1,39 @@
+execute:
+  cmd: roslaunch uuv_tutorial_simulation_runner start_simulation.launch
+  # The parameters below are named as in the input arguments of the launch
+  # file. List below all parameters that you wish to override from default
+  # values set in the launch file. 
+  # IMPORTANT: Do not add below the parameters that you wish to vary in your
+  # script/optimizer/client. They will be given to the simulation wrapper 
+  # in the Python script as an input
+  params:
+    # Gazebo client and RViz are not initialized when running the iterations
+    # using the simulation wrapper
+    gui: false
+    # Recording the simulation is necessary for the evaluation step later
+    record: true
+    bag_filename: recording.bag
+    # Teleoperation is not needed during the iteration runs
+    teleop_on: false
+    # Initial position of the vehicle
+    x: 0
+    y: 0
+    z: -20
+    # Unpause the simulation after 5 seconds (computer clock time)
+    unpause_timeout: 5
+    # Simulation timeout (simulation time)
+    timeout: 110
+    # Trajectory parameters
+    radius: 8
+    center_x: 0
+    center_y: 0
+    center_z: -20
+    n_points: 50
+    n_turns: 1
+    delta_z: 4
+    duration: 100
+    max_forward_speed: 0.5
+    # Current velocity parameters
+    current_on: true
+    horizontal_angle: 0
+id: tutorial_simulation_runner

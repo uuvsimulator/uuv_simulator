@@ -1039,7 +1039,7 @@ class Evaluation(object):
         self.plot_trajectories(output_dir)
         self.plot_thruster_output(output_dir)
         self.plot_error_dist(output_dir)
-        print 'Evaluation stored!'
+        self._logger.info('Evaluation stored!') 
 
     def save_kpis(self, output_dir=None):
         if output_dir is not None:

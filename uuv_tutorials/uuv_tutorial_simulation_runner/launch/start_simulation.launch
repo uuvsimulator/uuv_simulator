@@ -1,0 +1,145 @@
+
+<launch>
+    <!-- 
+        In this launch file, all necessary nodes for the simulation should be started
+        given that they all have to be termined together by the optimizer by the end
+        of each iteration
+    -->
+
+    <!-- Start the launch file with record:=false if it is not being used by the optimizer -->
+    <arg name="record" default="false"/>
+    <arg name="bag_filename" default="recording.bag"/>
+
+    <!--
+        Set the gui to true only when running the launch file by itself. 
+        During the process calls at each iteration, the Gazebo client is 
+        not needed.
+    -->
+    <arg name="gui" default="true"/>
+
+    <!-- The timeout to finish Gazebo and all ROS nodes -->
+    <arg name="timeout" default="100"/>
+
+    <arg name="current_on" default="false"/>
+    <arg name="current_vel" default="0.0"/>
+    <arg name="horizontal_angle" default="0.0"/>
+
+    <!-- Vehicle's initial position -->
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="-20"/>
+    <arg name="yaw" default="0"/>
+
+    <!-- Controller parameters -->
+    <arg name="Kp" default="11993.888,11993.888,11993.888,19460.069,19460.069,19460.069"/>
+    <arg name="Kd" default="9077.459,9077.459,9077.459,18880.925,18880.925,18880.925"/>
+    <arg name="Ki" default="321.417,321.417,321.417,2096.951,2096.951,2096.951"/>
+
+    <!-- Options to test the simulation without the simulation wrapper -->
+    <arg name="teleop_on" default="false"/>
+    <arg name="joy_id" default="0"/>
+
+    <!-- Parametrization of the helical trajectory -->
+    <arg name="radius" default="8"/>
+    <arg name="center_x" default="0"/>
+    <arg name="center_y" default="0"/>
+    <arg name="center_z" default="-20"/>
+    <arg name="n_points" default="50"/>
+    <arg name="n_turns" default="1"/>
+    <arg name="delta_z" default="4.0"/>
+    <!-- Heading offset given in degrees -->
+    <arg name="heading_offset" default="0"/>
+    <arg name="duration" default="100"/>
+    <arg name="max_forward_speed" default="0.5"/>
+
+    <!-- 
+        Unpause timeout, this is done to allow Gazebo and its plugins to properly 
+        start before all other ROS nodes. Otherwise it can happen that ROS nodes
+        start before some services or topics are available, leading to some 
+        initialization issues.
+    -->
+    <arg name="unpause_timeout" default="5"/>
+
+    <!-- Start the Gazebo world scenario
+         Replace this block with any Gazebo world that allows to turn off
+         the front end. If you use a world launch file that does not contain
+         the simulation timeout node, add the following to this launch file
+
+         <include file="$(find uuv_assistants)/launch/set_simulation_timer.launch">
+            <arg name="timeout" value="$(arg timeout)"/>
+        </include>
+    -->
+    <include file="$(find uuv_descriptions)/launch/empty_underwater_world.launch">
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="paused" value="true"/>
+        <arg name="set_timeout" value="true"/>
+        <arg name="timeout" value="$(arg timeout)"/>
+    </include>
+
+    <include file="$(find uuv_assistants)/launch/unpause_simulation.launch">
+        <arg name="timeout" value="$(arg unpause_timeout)"/>
+    </include>
+
+    <!-- Spawn the vehicle -->
+    <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
+        <arg name="x" default="$(arg x)"/>
+        <arg name="y" default="$(arg y)"/>
+        <arg name="z" default="$(arg z)"/>
+        <arg name="yaw" default="$(arg yaw)"/>
+    </include>
+
+    <include file="$(find uuv_trajectory_control)/launch/rov_pid_controller.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="model_name" value="rexrov"/>
+        <arg name="Kp" value="$(arg Kp)"/>
+        <arg name="Kd" value="$(arg Kd)"/>
+        <arg name="Ki" value="$(arg Ki)"/>
+    </include>
+
+    <!-- Start some trajectory or waypoint generator node -->
+    <include file="$(find uuv_control_utils)/launch/start_helical_trajectory.launch">
+        <arg name="uuv_name" value="rexrov"/>
+        <arg name="radius" value="$(arg radius)"/>
+        <arg name="center_x" value="$(arg center_x)"/>
+        <arg name="center_y" value="$(arg center_y)"/>
+        <arg name="center_z" value="$(arg center_z)"/>
+        <arg name="n_points" value="$(arg n_points)"/>
+        <arg name="n_turns" value="$(arg n_turns)"/>
+        <arg name="delta_z" value="$(arg delta_z)"/>
+        <arg name="heading_offset" value="0"/>
+        <arg name="duration" value="$(arg duration)"/>
+        <arg name="max_forward_speed" value="$(arg max_forward_speed)"/>
+    </include>
+
+    <group if="$(arg current_on)">
+      <include file="$(find uuv_control_utils)/launch/set_timed_current_perturbation.launch">
+        <arg name="starting_time" value="0.0"/>
+        <arg name="end_time" value="-1"/>
+        <arg name="current_vel" value="$(arg current_vel)"/>
+        <arg name="horizontal_angle" value="$(arg horizontal_angle)"/>
+      </include>
+    </group>
+
+    <node pkg="rosbag" type="record" name="recording"
+        args="record -O $(arg bag_filename)
+        /rexrov/dp_controller/trajectory
+        /rexrov/dp_controller/reference
+        /rexrov/pose_gt
+        /hydrodynamics/current_velocity
+        /rexrov/thruster_manager/input
+        /rexrov/wrench_perturbation
+        /rexrov/thrusters/0/thrust
+        /rexrov/thrusters/1/thrust
+        /rexrov/thrusters/2/thrust
+        /rexrov/thrusters/3/thrust
+        /rexrov/thrusters/4/thrust
+        /rexrov/thrusters/5/thrust
+        /rexrov/thrusters/6/thrust
+        /rexrov/thrusters/7/thrust"
+        if="$(arg record)"/>
+
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" 
+        args="-d $(find uuv_gazebo)/rviz/controller_demo.rviz"
+        if="$(arg gui)"/>        
+
+</launch>
