@@ -61,14 +61,16 @@ If you don't have the ROS workspace yet, you should run the following and then c
 
   mkdir -p ~/catkin_ws/src
   cd ~/catkin_ws/src
-  catkin_init_workspace
-  wstool init
 
-.. note::
+Be sure to install **catkin tools** package by following the installation instructions on the `catkin tools documentation page <https://catkin-tools.readthedocs.io/en/latest/installing.html>`_. After the installation, initialize the catkin workspace ::
 
-    You can install the package **wstool** using ::
+  cd ~/catkin_ws
+  catkin init
 
-      sudo pip install wstool
+You can then clone the UUV simulator into your **src** folder ::
+
+  cd ~/catkin_ws/src
+  git clone https://github.com/uuvsimulator/uuv_simulator.git
 
 Configure the environment variables by adding the following lines in **~/.bashrc** (replace **kinetic** with **indigo** depending on the ROS version you  are using).
 
@@ -107,3 +109,21 @@ or ::
   catkin build
 
 in case you are using **catkin_tools**.
+
+.. note:: 
+
+  If after compiling your catkin workspace using **catkin build** ROS seems to not update the paths to the packages even after you run ::
+
+    cd ~/catkin_ws
+    source devel/setup.sh
+
+  you can try disabling the option to source the **install** folder of your catkin workspace by running ::
+
+    cd ~/catkin_ws
+    catkin config --no-install
+    catkin clean --all
+
+  Then rebuild your workspace ::
+
+    catkin build
+    source devel/setup.sh
