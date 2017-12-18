@@ -14,13 +14,11 @@
 # limitations under the License.
 
 import rospy
-import scipy
 import numpy as np
 from copy import deepcopy
-from ..waypoint import Waypoint
-from ..waypoint_set import WaypointSet
+from uuv_waypoints import Waypoint, WaypointSet
 from ..trajectory_point import TrajectoryPoint
-from tf.transformations import quaternion_multiply, quaternion_inverse, quaternion_from_euler, quaternion_conjugate, quaternion_about_axis
+from tf.transformations import quaternion_multiply, quaternion_about_axis
 
 
 class PathGenerator(object):

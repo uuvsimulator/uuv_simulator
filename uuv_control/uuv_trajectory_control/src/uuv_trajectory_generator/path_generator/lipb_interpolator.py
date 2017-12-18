@@ -16,8 +16,7 @@
 from copy import deepcopy
 from scipy.interpolate import splrep, splev
 import numpy as np
-from ..waypoint import Waypoint
-from ..waypoint_set import WaypointSet
+from uuv_waypoints import Waypoint, WaypointSet
 from ..trajectory_point import TrajectoryPoint
 from tf.transformations import quaternion_multiply, quaternion_about_axis
 from line_segment import LineSegment
@@ -51,7 +50,7 @@ class LIPBInterpolator(PathGenerator):
 
         self._interp_fcns['pos'] = list()
         self._segment_to_wp_map = [0]
-        
+
         if self._waypoints.num_waypoints == 2:
             self._interp_fcns['pos'].append(
                 LineSegment(self._waypoints.get_waypoint(0).pos,
@@ -91,7 +90,7 @@ class LIPBInterpolator(PathGenerator):
                     q_start_line = deepcopy(q_seg[-1, :])
         else:
             return False
-        
+
         # Reparametrizing the curves
         lengths = [seg.get_length() for seg in self._interp_fcns['pos']]
         lengths = [0] + lengths

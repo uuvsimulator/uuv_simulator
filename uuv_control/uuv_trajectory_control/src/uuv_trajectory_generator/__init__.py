@@ -15,7 +15,5 @@
 
 from .wp_trajectory_generator import WPTrajectoryGenerator
 from .trajectory_point import TrajectoryPoint
-from .waypoint import Waypoint
-from .waypoint_set import WaypointSet
 from .trajectory_generator import TrajectoryGenerator
 from .path_generator import *

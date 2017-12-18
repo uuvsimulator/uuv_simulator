@@ -15,8 +15,7 @@
 
 from scipy.interpolate import splrep, splev
 import numpy as np
-from ..waypoint import Waypoint
-from ..waypoint_set import WaypointSet
+from uuv_waypoints import Waypoint, WaypointSet
 from ..trajectory_point import TrajectoryPoint
 from tf.transformations import quaternion_multiply, quaternion_about_axis
 from line_segment import LineSegment
@@ -26,7 +25,7 @@ from path_generator import PathGenerator
 
 class CSInterpolator(PathGenerator):
     """
-    Interpolator that will generate cubic Bezier curve segments for a set of waypoints. 
+    Interpolator that will generate cubic Bezier curve segments for a set of waypoints.
     """
     LABEL = 'cubic_interpolator'
 
