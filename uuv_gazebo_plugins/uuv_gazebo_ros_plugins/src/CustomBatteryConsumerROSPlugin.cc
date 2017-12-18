@@ -64,10 +64,11 @@ void CustomBatteryConsumerROSPlugin::Load(physics::ModelPtr _parent,
   if (_sdf->HasElement("topic_device_state"))
   {
     std::string topicName = _sdf->Get<std::string>("topic_device_state");
-    GZ_ASSERT(!topicName.empty(), "Topic name is empty");
-    this->deviceStateSub = this->rosNode->subscribe<std_msgs::Bool>(
-      topicName, 1,
-      boost::bind(&CustomBatteryConsumerROSPlugin::UpdateDeviceState, this, _1));
+    if (!topicName.empty())
+        this->deviceStateSub = this->rosNode->subscribe<std_msgs::Bool>(
+          topicName, 1,
+          boost::bind(&CustomBatteryConsumerROSPlugin::UpdateDeviceState,
+          this, _1));
   }
   else
   {
@@ -90,7 +91,7 @@ void CustomBatteryConsumerROSPlugin::UpdateDeviceState(
   if (this->isDeviceOn)
     this->UpdatePowerLoad(this->powerLoad);
   else
-    this->UpdatePowerLoad(0.0); 
+    this->UpdatePowerLoad(0.0);
 }
 
 /////////////////////////////////////////////////
