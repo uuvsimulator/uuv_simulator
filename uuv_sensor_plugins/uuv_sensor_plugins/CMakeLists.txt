@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_sensor_plugins)
 
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+set(CMAKE_BUILD_TYPE Release)
 
 set (CMAKE_DIR ${PROJECT_SOURCE_DIR}/cmake CACHE PATH "Location of CMake scripts")
 
