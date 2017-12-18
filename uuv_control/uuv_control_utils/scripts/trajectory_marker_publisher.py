@@ -24,6 +24,7 @@ from visualization_msgs.msg import MarkerArray, Marker
 from geometry_msgs.msg import PoseStamped, Point, Quaternion
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint, WaypointSet
 import uuv_trajectory_generator
+import uuv_waypoints
 
 
 class TrajectoryMarkerPublisher:
@@ -116,7 +117,7 @@ class TrajectoryMarkerPublisher:
         self._trajectory = msg
 
     def _update_waypoints(self, msg):
-        self._waypoints = uuv_trajectory_generator.WaypointSet()
+        self._waypoints = uuv_waypoints.WaypointSet()
         self._waypoints.from_message(msg)
 
     def _update_auto_mode(self, msg):
@@ -127,6 +128,7 @@ class TrajectoryMarkerPublisher:
 
     def _update_traj_tracking_mode(self, msg):
         self._is_traj_tracking_on = msg.data
+
 
 if __name__ == '__main__':
     print('Starting trajectory and waypoint marker publisher')

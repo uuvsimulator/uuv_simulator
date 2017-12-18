@@ -20,7 +20,7 @@ from geometry_msgs.msg import Vector3, PoseStamped, Quaternion
 import uuv_control_msgs.msg as uuv_control_msgs
 from nav_msgs.msg import Path
 from .wp_trajectory_generator import WPTrajectoryGenerator
-from .waypoint_set import WaypointSet
+from uuv_waypoints import WaypointSet
 from .trajectory_point import TrajectoryPoint
 
 

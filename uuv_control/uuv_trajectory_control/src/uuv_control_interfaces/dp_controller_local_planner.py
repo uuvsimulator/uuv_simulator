@@ -22,6 +22,7 @@ from geometry_msgs.msg import Twist
 from uuv_control_msgs.srv import *
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint, WaypointSet
 import uuv_trajectory_generator
+import uuv_waypoints
 import logging
 import sys
 from tf.transformations import quaternion_about_axis, quaternion_multiply, quaternion_inverse
@@ -53,7 +54,7 @@ class DPControllerLocalPlanner(object):
                 self._max_forward_speed = speed
             else:
                 self._logger.error('Invalid max. forward speed, keeping 1 m/s')
-        
+
         self._logger.info('Max. forward speed = ' + str(self._max_forward_speed))
 
         # dt used to compute the pose reference from the joystick input
@@ -85,7 +86,7 @@ class DPControllerLocalPlanner(object):
         self._traj_tracking_pub = rospy.Publisher('trajectory_tracking_on',
                                                   Bool,
                                                   queue_size=1)
-                                                
+
         self._teleop_sub = rospy.Subscriber('cmd_vel', Twist, self._update_teleop)
 
         self._waypoints_msg = None
@@ -110,7 +111,7 @@ class DPControllerLocalPlanner(object):
         # Flag that indicates that a waypoint set has been initialized
         self._smooth_approach_on = False
         # Time stamp for received trajectory
-        self._stamp_trajectory_received = 0.0        
+        self._stamp_trajectory_received = 0.0
         # Dictionary of services
         self._services = dict()
         self._services['hold_vehicle'] = rospy.Service(
@@ -168,10 +169,10 @@ class DPControllerLocalPlanner(object):
         # Test whether the vehicle is in automatic mode (following a given trajectory)
         if self._is_automatic:
             self._teleop_vel_ref = None
-            return 
+            return
 
         # If this is the first twist message since the last time automatic mode was turned off,
-        # then just update the teleop timestamp and wait for the next message to allow computing 
+        # then just update the teleop timestamp and wait for the next message to allow computing
         # pose and velocity reference.
         if self._last_teleop_update is None:
             self._teleop_vel_ref = None
@@ -181,20 +182,20 @@ class DPControllerLocalPlanner(object):
         # Store twist reference message
         self._teleop_vel_ref = msg
 
-        # Set the teleop mode is active only if any of the linear velocity components and 
+        # Set the teleop mode is active only if any of the linear velocity components and
         # yaw rate are non-zero
         vel = np.array([self._teleop_vel_ref.linear.x, self._teleop_vel_ref.linear.y, self._teleop_vel_ref.linear.z, self._teleop_vel_ref.angular.z])
         self._is_teleop_active = np.abs(vel).sum() > 0
-       
+
         # Store time stamp
         self._last_teleop_update = rospy.get_time()
 
-    def _calc_teleop_reference(self):       
+    def _calc_teleop_reference(self):
         """
         Compute pose and velocity reference using the joystick linear and angular velocity input.
         """
-        # Check if there is already a timestamp for the last received reference message 
-        # from the teleop node 
+        # Check if there is already a timestamp for the last received reference message
+        # from the teleop node
         if self._last_teleop_update is None:
             self._is_teleop_active = False
 
@@ -203,7 +204,7 @@ class DPControllerLocalPlanner(object):
 
         # Compute the pose and velocity reference if the computed time step is positive and
         # the twist teleop message is valid
-        if self._dt > 0 and self._teleop_vel_ref is not None and self._dt < 0.1:                        
+        if self._dt > 0 and self._teleop_vel_ref is not None and self._dt < 0.1:
             speed = np.sqrt(self._teleop_vel_ref.linear.x**2 + self._teleop_vel_ref.linear.y**2)
             vel = np.array([self._teleop_vel_ref.linear.x, self._teleop_vel_ref.linear.y, self._teleop_vel_ref.linear.z])
             # Cap the forward speed if needed
@@ -212,21 +213,21 @@ class DPControllerLocalPlanner(object):
                 vel[1] *= self._max_forward_speed / speed
 
             vel = np.dot(self._vehicle_pose.rot_matrix, vel)
-            
+
             # Compute pose step
             step = uuv_trajectory_generator.TrajectoryPoint()
             step.pos = np.dot(self._vehicle_pose.rot_matrix, vel * self._dt)
             step.rotq = quaternion_about_axis(self._teleop_vel_ref.angular.z * self._dt, [0, 0, 1])
-            
-            # Compute new reference 
+
+            # Compute new reference
             ref_pnt = uuv_trajectory_generator.TrajectoryPoint()
-            ref_pnt.pos = self._vehicle_pose.pos + step.pos 
+            ref_pnt.pos = self._vehicle_pose.pos + step.pos
 
             ref_pnt.rotq = quaternion_multiply(self._vehicle_pose.rotq, step.rotq)
-            
+
             # Cap the pose reference in Z to stay underwater
             if ref_pnt.z > 0:
-                ref_pnt.z = 0.0                
+                ref_pnt.z = 0.0
                 ref_pnt.vel = [vel[0], vel[1], 0, 0, 0, self._teleop_vel_ref.angular.z]
             else:
                 ref_pnt.vel = [vel[0], vel[1], vel[2], 0, 0, self._teleop_vel_ref.angular.z]
@@ -251,7 +252,7 @@ class DPControllerLocalPlanner(object):
         if not self._traj_interpolator.is_using_waypoints():
             self._logger.error('Not using the waypoint interpolation method')
             return
-        init_wp = uuv_trajectory_generator.Waypoint(
+        init_wp = uuv_waypoints.Waypoint(
             x=self._vehicle_pose.pos[0],
             y=self._vehicle_pose.pos[1],
             z=self._vehicle_pose.pos[2],
@@ -267,7 +268,7 @@ class DPControllerLocalPlanner(object):
         steps = int(np.floor(first_wp.dist(init_wp.pos)) / 10)
         if steps > 0:
             for i in range(1, steps):
-                wp = uuv_trajectory_generator.Waypoint(
+                wp = uuv_waypoints.Waypoint(
                     x=first_wp.x - i * dx / steps,
                     y=first_wp.y - i * dy / steps,
                     z=first_wp.z - i * dz / steps,
@@ -359,7 +360,7 @@ class DPControllerLocalPlanner(object):
         if t.to_sec() < rospy.get_time() and not request.start_now:
             self._logger.error('The trajectory starts in the past, correct the starting time!')
             return InitCircularTrajectoryResponse(False)
-        wp_set = uuv_trajectory_generator.WaypointSet()
+        wp_set = uuv_waypoints.WaypointSet()
         success = wp_set.generate_circle(radius=request.radius,
                                          center=request.center,
                                          num_points=request.n_points,
@@ -414,7 +415,7 @@ class DPControllerLocalPlanner(object):
             return InitHelicalTrajectoryResponse(False)
         else:
             self._logger.info('Start helical trajectory now!')
-        wp_set = uuv_trajectory_generator.WaypointSet()
+        wp_set = uuv_waypoints.WaypointSet()
         success = wp_set.generate_helix(radius=request.radius,
                                         center=request.center,
                                         num_points=request.n_points,
@@ -500,11 +501,11 @@ class DPControllerLocalPlanner(object):
             return GoToResponse(False)
         if request.waypoint.max_forward_speed <= 0.0:
             self._logger.error('Max. forward speed must be greater than zero')
-            return GoToResponse(False) 
+            return GoToResponse(False)
         self.set_station_keeping(True)
-        wp_set = uuv_trajectory_generator.WaypointSet()
+        wp_set = uuv_waypoints.WaypointSet()
 
-        init_wp = uuv_trajectory_generator.Waypoint(
+        init_wp = uuv_waypoints.Waypoint(
             x=self._vehicle_pose.pos[0],
             y=self._vehicle_pose.pos[1],
             z=self._vehicle_pose.pos[2],
@@ -550,15 +551,15 @@ class DPControllerLocalPlanner(object):
             self._logger.error('Max. forward speed must be positive')
             return GoToIncrementalResponse(False)
         self.set_station_keeping(True)
-        wp_set = uuv_trajectory_generator.WaypointSet()
-        init_wp = uuv_trajectory_generator.Waypoint(
+        wp_set = uuv_waypoints.WaypointSet()
+        init_wp = uuv_waypoints.Waypoint(
             x=self._vehicle_pose.pos[0],
             y=self._vehicle_pose.pos[1],
             z=self._vehicle_pose.pos[2],
             max_forward_speed=request.max_forward_speed)
         wp_set.add_waypoint(init_wp)
 
-        wp = uuv_trajectory_generator.Waypoint(
+        wp = uuv_waypoints.Waypoint(
             x=self._vehicle_pose.pos[0] + request.step.x,
             y=self._vehicle_pose.pos[1] + request.step.y,
             z=self._vehicle_pose.pos[2] + request.step.z,
@@ -585,7 +586,7 @@ class DPControllerLocalPlanner(object):
         print '==========================================================='
 
         return GoToIncrementalResponse(True)
-    
+
     def interpolate(self, t):
         """
         Function interface to the controller. Calls the interpolator to
@@ -634,5 +635,5 @@ class DPControllerLocalPlanner(object):
         elif self._station_keeping_on:
             if self._is_teleop_active:
                 self._this_ref_pnt = self._calc_teleop_reference()
-            
+
         return self._this_ref_pnt

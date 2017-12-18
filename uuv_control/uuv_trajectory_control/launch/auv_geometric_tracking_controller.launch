@@ -21,8 +21,11 @@
   <arg name="fin_topic_suffix" default="/input"/>
   <arg name="thruster_topic" default="thrusters/0/input"/>
   <arg name="thruster_model_name" default="proportional"/>
-  <arg name="max_thrust" default="70"/>
+  <arg name="max_thrust" default="100"/>
+  <arg name="min_thrust" default="70"/>
   <arg name="thruster_rotor_gain" default="0.0009"/>
+  <arg name="pitch_abs_saturation" default="0.2"/>
+  <arg name="yaw_abs_saturation" default="0.3"/>
 
   <!-- In case use_param_file is set to true, replace the path to the YAML file containing the parameters -->
   <arg name="controller_config_file" default="$(find uuv_trajectory_control)/config/controllers/ua_pid/$(arg uuv_name)/params.yaml"/>
@@ -77,9 +80,12 @@
         <rosparam subst_value="true">
           saturation: 1000
           thrust_gain: $(arg thrust_gain)
+          min_thrust: $(arg min_thrust)
           roll_gain: $(arg roll_gain)
           pitch_gain: $(arg pitch_gain)
           yaw_gain: $(arg yaw_gain)
+          pitch_abs_saturation: $(arg pitch_abs_saturation)
+          yaw_abs_saturation: $(arg yaw_abs_saturation)
           max_fin_angle: $(arg max_fin_angle)
           n_fins: $(arg n_fins)
           fin_contribution_roll: [$(arg fin_contribution_roll)]

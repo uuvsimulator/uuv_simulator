@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .wp_trajectory_generator import WPTrajectoryGenerator
-from .trajectory_point import TrajectoryPoint
-from .trajectory_generator import TrajectoryGenerator
-from .path_generator import *
+__all__ = ['waypoint', 'waypoint_set']
+
+from .waypoint import Waypoint
+from .waypoint_set import WaypointSet

@@ -38,6 +38,12 @@ class AUVGeometricTrackingController(DPControllerBase):
         if rospy.has_param('~thrust_gain'):
             self._thrust_gain = rospy.get_param('~thrust_gain')
 
+        self._min_thrust = 0.0
+        if rospy.has_param('~min_thrust'):
+            self._min_thrust = rospy.get_param('~min_thrust')
+
+        self._min_thrust = max(0.0, self._min_thrust)
+
         if self._thrust_gain <= 0:
             raise rospy.ROSException('Thrust gain must be greater than zero')
 
@@ -72,6 +78,15 @@ class AUVGeometricTrackingController(DPControllerBase):
 
         self._logger.info('Pitch gain=' + str(self._pitch_gain))
 
+        if not rospy.has_param('~pitch_abs_saturation'):
+            raise rospy.ROSException('Pitch absolute saturation missing')
+
+        self._pitch_abs_saturation = rospy.get_param('~pitch_abs_saturation')
+
+        if self._pitch_abs_saturation <= 0:
+            raise rospy.ROSException('Absolute saturation for pitch must be'
+                                     ' greater than zero')
+
         # Proportional gain for the yaw angle
         self._yaw_gain = 0.0
         if rospy.has_param('~yaw_gain'):
@@ -81,6 +96,15 @@ class AUVGeometricTrackingController(DPControllerBase):
             raise rospy.ROSException('Yaw gain must be greater than zero')
 
         self._logger.info('Yaw gain=' + str(self._yaw_gain))
+
+        if not rospy.has_param('~yaw_abs_saturation'):
+            raise rospy.ROSException('Yaw absolute saturation missing')
+
+        self._yaw_abs_saturation = rospy.get_param('~yaw_abs_saturation')
+
+        if self._yaw_abs_saturation <= 0:
+            raise rospy.ROSException('Absolute saturation for yaw must be'
+                                     ' greater than zero')
 
         # Number of fins
         self._n_fins = 4
@@ -201,33 +225,36 @@ class AUVGeometricTrackingController(DPControllerBase):
         world_pos_error = self._vehicle_model.rotBtoI.dot(self._errors['pos'])
         world_rpy = euler_from_quaternion(self._vehicle_model.quat, axes='sxyz')
 
-        thrust_control = self._thrust_gain * np.linalg.norm(world_pos_error[0:2])
+        thrust_control = self._thrust_gain * np.linalg.norm(self._errors['pos'])
 
         # Check for saturation
-        if np.abs(thrust_control) > self._thruster_params['max_thrust']:
-            thrust_control = np.sign(thrust_control) * self._thruster_params['max_thrust']
+        thrust_control = min(self._thruster_params['max_thrust'], thrust_control)
+        thrust_control = -1 * max(self._min_thrust, thrust_control)
         # Not using the custom wrench publisher that is configured per default
         # for thruster-actuated vehicles
 
-        # Based on position tracking error: compute desired orientation
-        pitch_des = -np.arctan2(world_pos_error[2],
-                                np.linalg.norm(world_pos_error[0:2]))
+        # Based on position tracking error: Compute desired orientation
+        pitch_des = -1 * np.arctan2(world_pos_error[2],
+                                    np.linalg.norm(world_pos_error[0:2]))
+        # Limit desired pitch angle:
         pitch_err = self.unwrap_angle(pitch_des - world_rpy[1])
 
         yaw_des = np.arctan2(world_pos_error[1], world_pos_error[0])
         yaw_err = self.unwrap_angle(yaw_des - world_rpy[2])
+        # Limit yaw effort
+        yaw_err = min(np.pi / 4, max(-np.pi / 4, yaw_err))
 
-        rpy_control = np.array((self._roll_gain * world_rpy[0],
+        rpy_control = np.array([self._roll_gain * world_rpy[0],
                                 self._pitch_gain * pitch_err,
-                                self._yaw_gain * yaw_err))
+                                self._yaw_gain * yaw_err])
+
         fins_command = self._rpy_to_fins.dot(rpy_control)
 
         # Check for saturation
-        max_angle = np.max(np.abs(fins_command))
-        if max_angle >= self._max_fin_angle:
-            for i in range(fins_command.size):
-                if np.abs(fins_command[i]) > self._max_fin_angle:
-                    fins_command[i] = np.sign(fins_command[i]) * self._max_fin_angle
+        for i in range(fins_command.size):
+            if np.abs(fins_command[i]) > self._max_fin_angle:
+                fins_command[i] = np.sign(fins_command[i]) * self._max_fin_angle
+
         # Publishing the commands to thruster and fins
         self._thruster_model.publish_command(thrust_control)
 
@@ -239,6 +266,7 @@ class AUVGeometricTrackingController(DPControllerBase):
             self._fin_pubs[i].publish(cmd)
 
         return True
+
 
 if __name__ == '__main__':
     print('Starting AUV Geometric Tracking Controller')

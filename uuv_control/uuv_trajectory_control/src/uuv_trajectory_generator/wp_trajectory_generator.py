@@ -12,13 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import rospy
 import numpy as np
 from copy import deepcopy
 from .trajectory_point import TrajectoryPoint
-from .waypoint import Waypoint
-from .waypoint_set import WaypointSet
+from uuv_waypoints import Waypoint
+from uuv_waypoints import WaypointSet
 from tf.transformations import quaternion_multiply, quaternion_inverse, \
     quaternion_conjugate
 from path_generator import PathGenerator
