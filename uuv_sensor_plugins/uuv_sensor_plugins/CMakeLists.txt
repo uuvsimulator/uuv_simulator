@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_sensor_plugins)
 
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 set (CMAKE_DIR ${PROJECT_SOURCE_DIR}/cmake CACHE PATH "Location of CMake scripts")
 
@@ -59,13 +59,13 @@ catkin_package(
       ${OGRE_INCLUDE_DIRS}
       ${OGRE_Paging_INCLUDE_DIRS}
       ${OpenCV_INCLUDE_DIRS}
-    LIBRARIES uuv_gazebo_camera
-      uuv_gazebo_dvl
+    LIBRARIES uuv_gazebo_dvl
       uuv_gazebo_imu
       uuv_gazebo_magnetometer
       uuv_gazebo_rpt
       uuv_gazebo_subseapressure
       uuv_gazebo_chemical_concentration
+      # uuv_gazebo_camera
     DEPENDS Eigen3 gazebo
 )
 
@@ -96,14 +96,14 @@ set(common_libraries
 )
 
 ###########################################################################
-add_library(uuv_gazebo_camera SHARED
-  src/SensorPlugin.cc
-  src/UnderwaterCameraPlugin.cc
-)
-target_link_libraries(uuv_gazebo_camera ${common_libraries} ${OpenCV_LIBRARIES}
-  gazebo_sensors DepthCameraPlugin)
-add_dependencies(uuv_gazebo_camera uuv_sensors_msgs ${catkin_EXPORTED_TARGETS})
-list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_gazebo_camera)
+# add_library(uuv_gazebo_camera SHARED
+#   src/SensorPlugin.cc
+#   src/UnderwaterCameraPlugin.cc
+# )
+# target_link_libraries(uuv_gazebo_camera ${common_libraries} ${OpenCV_LIBRARIES}
+#   gazebo_sensors DepthCameraPlugin)
+# add_dependencies(uuv_gazebo_camera uuv_sensors_msgs ${catkin_EXPORTED_TARGETS})
+# list(APPEND UUV_SENSOR_PLUGINS_LIST uuv_gazebo_camera)
 
 ###########################################################################
 add_library(uuv_gazebo_dvl SHARED
