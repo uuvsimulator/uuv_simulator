@@ -6,6 +6,7 @@
 .vscode
 .idea
 .ropeproject
+.imdone
 
 # Misc
 .clang_complete
