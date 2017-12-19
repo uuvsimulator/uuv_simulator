@@ -21,12 +21,12 @@ set(UUV_SENSOR_ROS_PLUGINS_LIST "")
 catkin_package(
   INCLUDE_DIRS include
     ${EIGEN3_INCLUDE_DIR}
-  LIBRARIES uuv_gazebo_ros_camera
-    uuv_gazebo_ros_dvl
+  LIBRARIES uuv_gazebo_ros_dvl
     uuv_gazebo_ros_imu
     uuv_gazebo_ros_magnetometer
     uuv_gazebo_ros_rpt
     uuv_gazebo_ros_subseapressure
+    # uuv_gazebo_ros_camera
   CATKIN_DEPENDS uuv_gazebo_plugins
     sensor_msgs
     uuv_sensor_plugins
@@ -47,10 +47,10 @@ link_directories(
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
-add_library(uuv_gazebo_ros_camera src/UnderwaterCameraROSPlugin.cc)
-target_link_libraries(uuv_gazebo_ros_camera ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
-add_dependencies(uuv_gazebo_ros_camera ${catkin_EXPORTED_TARGETS})
-list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_camera)
+# add_library(uuv_gazebo_ros_camera src/UnderwaterCameraROSPlugin.cc)
+# target_link_libraries(uuv_gazebo_ros_camera ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+# add_dependencies(uuv_gazebo_ros_camera ${catkin_EXPORTED_TARGETS})
+# list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_camera)
 
 add_library(uuv_gazebo_ros_dvl
   src/DVLROSPlugin.cc

@@ -20,6 +20,10 @@ If you are using this simulator for your publication, please cite:
 
 In you are willing to contribute to this package, please check the instructions in [CONTRIBUTING](CONTRIBUTING.md)
 
+Status of the master branch:
+
+[![Build Status](https://travis-ci.org/uuvsimulator/uuv_simulator.svg?branch=dev%2Ftravis_integration)](https://travis-ci.org/uuvsimulator/uuv_simulator)
+
 ## Purpose of the project
 
 This software is a research prototype, originally developed for the EU ECSEL
