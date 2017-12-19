@@ -5,7 +5,7 @@ compiler:
   - gcc
 env:
   global:
-    - VERBOSE_OUTPUT='true'
+    - VERBOSE_OUTPUT='false'
     - CATKIN_PARALLEL_JOBS='-p1'
     - ROS_PARALLEL_JOBS='-j1'
     - ADDITIONAL_DEBS="build-essential python-catkin-tools python-pip"
