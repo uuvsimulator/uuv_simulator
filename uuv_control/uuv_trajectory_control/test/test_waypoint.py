@@ -21,7 +21,8 @@ roslib.load_manifest(PKG)
 
 import sys
 import unittest
-from uuv_trajectory_generator import Waypoint
+from uuv_waypoints import Waypoint
+
 
 class TestWaypoint(unittest.TestCase):
     def test_equal_waypoints(self):
