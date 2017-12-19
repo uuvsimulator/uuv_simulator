@@ -51,10 +51,10 @@ class TestRunTask(unittest.TestCase):
         runner = SimulationRunner(PARAMS, OCEAN_WORLD_TASK, RESULTS_DIR, True)
         runner.run(PARAMS)
 
-        self.assertIn('results', os.listdir(OUTPUT_DIR),'Root results directory was not generated')
+        self.assertIn('results', os.listdir(OUTPUT_DIR), 'Root results directory was not generated')
         self.assertTrue(os.path.isdir(runner.current_sim_results_dir), 'Results directory does not exist')
-        self.assertIn('ros', os.listdir(runner.current_sim_results_dir),'ROS_HOME not correctly changed to the current directory')
-        self.assertIn('recording.bag', os.listdir(runner.current_sim_results_dir),'recording.bag cannot be found')
+        self.assertIn('ros', os.listdir(runner.current_sim_results_dir), 'ROS_HOME not correctly changed to the current directory')
+        self.assertIn('recording.bag', os.listdir(runner.current_sim_results_dir), 'recording.bag cannot be found')
         del runner
 
     def test_params(self):

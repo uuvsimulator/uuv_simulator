@@ -5,11 +5,12 @@ compiler:
   - gcc
 env:
   global:
+    - LIBGL_ALWAYS_SOFTWARE=1
     - VERBOSE_OUTPUT='false'
     - CATKIN_CONFIG='--no-install'
     - CATKIN_PARALLEL_JOBS='-p1'
     - ROS_PARALLEL_JOBS='-j1'
-    - ADDITIONAL_DEBS="build-essential python-catkin-tools python-pip dvi2ps dvipng"
+    - ADDITIONAL_DEBS="build-essential python-catkin-tools python-pip dvi2ps dvipng binutils mesa-utils module-init-tools x-window-system"
     - AFTER_SCRIPT='cd $CATKIN_WORKSPACE && source devel/setup.bash && catkin run_tests && catkin_test_results'
   matrix:
     - USE_DEB=true ROS_DISTRO="kinetic" ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true
