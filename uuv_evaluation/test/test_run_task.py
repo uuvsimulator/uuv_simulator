@@ -39,19 +39,19 @@ PARAMS = dict(Kp=[11993.888, 11993.888, 11993.888, 19460.069, 19460.069, 19460.0
 ROSPACK_INST = RosPack()
 ROOT_PATH = os.path.join(ROSPACK_INST.get_path(PKG), 'test')
 OCEAN_WORLD_TASK = os.path.join(ROOT_PATH, 'example_start_ocean_world.yaml')
-RESULTS_DIR = os.path.join(ROOT_PATH, 'results')
+RESULTS_DIR = os.path.join('/tmp', 'results')
 
 class TestRunTask(unittest.TestCase):
     def tearDown(self):
         if os.path.isdir(RESULTS_DIR):
             shutil.rmtree(RESULTS_DIR)
 
-    def test_create_task(self):        
+    def test_create_task(self):
         runner = SimulationRunner(PARAMS, OCEAN_WORLD_TASK, RESULTS_DIR, True)
         runner.run(PARAMS)
 
         self.assertIn('results', os.listdir(ROOT_PATH),'Root results directory was not generated')
-        self.assertTrue(os.path.isdir(runner.current_sim_results_dir), 'Results directory does not exist')        
+        self.assertTrue(os.path.isdir(runner.current_sim_results_dir), 'Results directory does not exist')
         self.assertIn('ros', os.listdir(runner.current_sim_results_dir),'ROS_HOME not correctly changed to the current directory')
         self.assertIn('recording.bag', os.listdir(runner.current_sim_results_dir),'recording.bag cannot be found')
         del runner
@@ -77,11 +77,12 @@ class TestRunTask(unittest.TestCase):
         del runner
 
     def test_batch_run_task(self):
-        for _ in range(3):            
+        for _ in range(3):
             runner = SimulationRunner(dict(), OCEAN_WORLD_TASK, RESULTS_DIR, True)
-            success = runner.run(dict(), timeout=30)            
+            success = runner.run(dict(), timeout=30)
             self.assertTrue(success, 'Simulation returned with error, flag=%s, timeout=%s' % (str(success), str(runner.process_timeout_triggered)))
-            del runner            
+            del runner
+            
 
 if __name__ == '__main__':
     import rosunit
