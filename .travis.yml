@@ -6,6 +6,7 @@ compiler:
 env:
   global:
     - VERBOSE_OUTPUT='false'
+    - CATKIN_CONFIG='--no-install'
     - CATKIN_PARALLEL_JOBS='-p1'
     - ROS_PARALLEL_JOBS='-j1'
     - ADDITIONAL_DEBS="build-essential python-catkin-tools python-pip dvi2ps dvipng"
