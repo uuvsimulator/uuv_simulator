@@ -32,7 +32,7 @@ if __name__ == '__main__':
         if timeout <= 0:
             raise rospy.ROSException('Unpause time must be a positive floating point value')
 
-    print 'Unpause simulation - Time = %2.f s' % timeout    
+    print 'Unpause simulation - Time = %2.f s' % timeout
 
     start_time = time.time()
     while time.time() - start_time < timeout:

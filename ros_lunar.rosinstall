@@ -1,0 +1,6 @@
+- git:
+    uri: https://github.com/tu-darmstadt-ros-pkg/hector_localization
+    local-name: hector_quadrotor/hector_localization
+- git:
+    uri: https://github.com/ros-teleop/teleop_tools
+    local-name: ros/teleop_tools
