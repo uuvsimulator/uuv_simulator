@@ -128,6 +128,9 @@ class ThrusterPlugin : public gazebo::ModelPlugin
 
   /// \brief Optional: Propeller angular velocity efficiency term
   protected: double propellerEfficiency;
+
+  /// \brief The axis about which the thruster rotates
+  protected: math::Vector3 thrusterAxis;
 };
 }
 #endif  // __UUV_GAZEBO_PLUGINS_THRUSTER_PLUGIN_HH__

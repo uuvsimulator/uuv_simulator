@@ -24,6 +24,7 @@ from time import sleep
 from models import Thruster
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from geometry_msgs.msg import Wrench
+import xml.etree.ElementTree as etree
 
 
 class ThrusterManager:
@@ -60,8 +61,16 @@ class ThrusterManager:
                                      'initialized for uuv_name=' +
                                      self.namespace)
 
+
         # Load all parameters
         self.config = rospy.get_param('thruster_manager')
+
+        robot_description_param = self.namespace+'robot_description'
+        self.use_robot_descr = False
+        self.axes = {}
+        if rospy.has_param(robot_description_param):
+            self.use_robot_descr = True
+            self.parse_urdf(rospy.get_param(robot_description_param))
 
         if self.config['update_rate'] < 0:
             self.config['update_rate'] = 50
@@ -150,6 +159,19 @@ class ThrusterManager:
         self.ready = True
         print ('ThrusterManager: ready')
 
+    def parse_urdf(self, urdf_str):
+        root = etree.fromstring(urdf_str)
+        for joint in root.findall('joint'):
+            if joint.get('type')=='fixed':
+                continue
+            axis_str_list = joint.find('axis').get('xyz').split()
+            child = joint.find('child').get('link')
+            if child[0]!='/':
+                child = '/'+child
+
+            self.axes[child] = numpy.array([float(axis_str_list[0]),float(axis_str_list[1]),float(axis_str_list[2]),0.0])
+
+        
     def update_tam(self, recalculate=False):
         """Calculate the thruster allocation matrix, if one is not given."""
         if self.configuration_matrix is not None and not recalculate:
@@ -199,11 +221,15 @@ class ThrusterManager:
                 topic = self.config['thruster_topic_prefix'] + str(i) + \
                     self.config['thruster_topic_suffix']
 
+                # If not using robot_description, thrust_axis=None which will 
+                # result in the thrust axis being the x-axis,i.e. (1,0,0)
+                thrust_axis = None if not self.use_robot_descr else self.axes[frame]
+
                 if equal_thrusters:
                     params = self.config['conversion_fcn_params']
                     thruster = Thruster.create_thruster(
                         self.config['conversion_fcn'],
-                        i, topic, pos, quat,
+                        i, topic, pos, quat,self.axes[frame],
                         **params)
                 else:
                     if idx_thruster_model >= len(self.config['conversion_fcn']):
@@ -213,7 +239,7 @@ class ThrusterManager:
                     conv_fcn = self.config['conversion_fcn'][idx_thruster_model]
                     thruster = Thruster.create_thruster(
                         conv_fcn,
-                        i, topic, pos, quat,
+                        i, topic, pos, quat,self.axes[frame],
                         **params)
                     idx_thruster_model += 1
                 if thruster is None:

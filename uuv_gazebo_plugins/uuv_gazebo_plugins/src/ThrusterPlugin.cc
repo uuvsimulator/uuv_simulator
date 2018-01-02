@@ -174,6 +174,23 @@ void ThrusterPlugin::Load(physics::ModelPtr _model,
   this->updateConnection = event::Events::ConnectWorldUpdateBegin(
         boost::bind(&ThrusterPlugin::Update,
                     this, _1));
+
+  this->thrusterAxis = this->joint->GetWorldPose().rot.RotateVectorReverse(this->joint->GetGlobalAxis(0));
+  // this axis can contain non-zero x,y,z elements due to 
+  // numerical precision errors, so instead use it to 
+  // select the appropriate joint axis.
+  if(this->thrusterAxis.x==this->thrusterAxis.GetMax())
+  {
+    this->thrusterAxis = math::Vector3(1.,0.,0.);
+  }
+  else if(this->thrusterAxis.y==this->thrusterAxis.GetMax())
+  {
+    this->thrusterAxis = math::Vector3(0.,1.,0.);
+  }
+  else
+  {
+    this->thrusterAxis = math::Vector3(0.,0.,1.);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -224,7 +241,7 @@ void ThrusterPlugin::Update(const common::UpdateInfo &_info)
   this->thrustForce = std::min(this->thrustForce, this->thrustMax);
 
   this->thrustForceStamp = _info.simTime;
-  math::Vector3 force(this->thrustForce, 0, 0);
+  math::Vector3 force(this->thrustForce*this->thrusterAxis);
 
   this->thrusterLink->AddRelativeForce(force);
 
