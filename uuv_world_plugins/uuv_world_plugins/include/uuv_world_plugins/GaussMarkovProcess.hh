@@ -21,6 +21,7 @@
 
 #include <gazebo/gazebo.hh>
 #include <cstdlib>
+#include <ctime>
 #include <random>
 
 namespace gazebo

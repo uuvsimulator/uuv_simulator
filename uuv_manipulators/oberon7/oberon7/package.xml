@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>oberon7</name>
-  <version>0.1.0</version>
+  <version>0.3.0</version>
   <description>Meta-package for the Oberon 7, a mock-up robotic manipulator inspired on the Schilling Robotics Orion 7P</description>
 
   <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>

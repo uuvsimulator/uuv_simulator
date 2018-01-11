@@ -28,6 +28,7 @@ GaussMarkovProcess::GaussMarkovProcess()
   this->mu = 0;
   this->noiseAmp = 0;
   this->Reset();
+  std::srand(std::time(NULL));
 }
 
 /////////////////////////////////////////////////
