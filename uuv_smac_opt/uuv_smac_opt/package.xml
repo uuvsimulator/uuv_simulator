@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>uuv_smac_opt</name>
-  <version>0.1.0</version>
+  <version>0.3.0</version>
   <description>A meta package that includes all the sub-packages for each optimization process using SMAC</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>

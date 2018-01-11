@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>uuv_tutorial_simulation_runner</name>
-  <version>0.1.0</version>
+  <version>0.3.0</version>
   <description>Source code the simulation runner tutorial</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>

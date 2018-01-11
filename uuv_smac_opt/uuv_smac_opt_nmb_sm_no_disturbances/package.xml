@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>uuv_smac_opt_nmb_sm_no_disturbances</name>
-    <version>0.1.0</version>
+    <version>0.3.0</version>
     <description>
         The scenario and optimization process configuration files using SMAC to improve the performance of a
         non-model-based sliding mode controller on trajectory tracking tasks.
