@@ -26,13 +26,13 @@ can try adding the hostnames and IP addresses of your machines to the
 After running catkin build, I still can't start any nodes or launch files
 -------------------------------------------------------------------------
 
-If after compiling your catkin workspace using **catkin build** ROS seems to not 
+If after compiling your catkin workspace using **catkin build** ROS seems to not
 update the paths to the packages even after you run ::
 
   cd ~/catkin_ws
-  source devel/setup.sh
+  source devel/setup.bash
 
-you can try disabling the option to source the **install** folder of your catkin 
+you can try disabling the option to source the **install** folder of your catkin
 workspace by running ::
 
   cd ~/catkin_ws
@@ -43,18 +43,21 @@ Then rebuild your workspace ::
 
   cd ~/catkin_ws
   catkin build
-  source devel/setup.sh
+  source devel/setup.bash
 
 The Gazebo worlds don't start when running the simulation on a virtual machine
 ------------------------------------------------------------------------------
 
-Even though using a virtual machine can lead to the performance of the simulation being 
-very poor, to avoid segmentation faults when starting Gazebo in a virtual machine you can
+To avoid segmentation faults when starting Gazebo in a virtual machine you can
 add the following line to your **~/.bashrc** file ::
 
   export LIBGL_ALWAYS_SOFTWARE=1
 
 .. note::
 
-  If you are running VirtualBox, remember to install the guest additions to your virtual 
+  If you are running VirtualBox, remember to install the guest additions to your virtual
   machine as well.
+
+.. note::
+  It is **strongly** recommended to have your machine running with Linux natively to run
+  the simulation since the performance on virtual machines can be very poor.
