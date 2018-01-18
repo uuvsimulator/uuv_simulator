@@ -17,6 +17,8 @@ add_service_files(
   GetThrusterState.srv
   SetUseGlobalCurrentVel.srv
   GetModelProperties.srv
+  SetFloat.srv
+  GetFloat.srv
 )
 
 generate_messages(
