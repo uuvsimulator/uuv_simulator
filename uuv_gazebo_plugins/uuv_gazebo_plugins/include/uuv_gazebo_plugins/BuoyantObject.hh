@@ -107,6 +107,12 @@ class BuoyantObject
   /// \brief Volume of fluid displaced by the submerged object
   protected: double volume;
 
+  /// \brief Scaling factor for the volume
+  protected: double scalingVolume;
+
+  /// \brief Offset for the volume
+  protected: double offsetVolume;
+
   /// \brief Fluid density
   protected: double fluidDensity;
 
