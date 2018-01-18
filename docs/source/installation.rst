@@ -87,12 +87,7 @@ Configure the environment variables by adding the following lines in **~/.bashrc
 
   source /usr/share/gazebo-7/setup.sh
   source /opt/ros/kinetic/setup.bash
-  source $HOME/catkin_ws/devel/setup.sh
-
-  export GAZEBO_PREFIX=$HOME/catkin_ws/install
-  export GAZEBO_RESOURCE_PATH=${GAZEBO_PREFIX}/share/gazebo-7.0:${GAZEBO_RESOURCE_PATH}
-  export GAZEBO_MODEL_PATH=${GAZEBO_PREFIX}/share/gazebo-7.0/models:${GAZEBO_MODEL_PATH}
-  export GAZEBO_PLUGIN_PATH=${GAZEBO_PREFIX}/lib:${GAZEBO_PREFIX}/lib/x86_64-linux-gnu:${GAZEBO_PLUGIN_PATH}
+  source $HOME/catkin_ws/devel/setup.bash
 
 After saving these changes, remember to source the **.bashrc** by either typing ::
 
@@ -110,7 +105,7 @@ or ::
 
 in case you are using **catkin_tools**.
 
-.. note:: 
+.. note::
 
   If after compiling your catkin workspace using **catkin build** ROS seems to not update the paths to the packages even after you run ::
 
@@ -126,4 +121,4 @@ in case you are using **catkin_tools**.
   Then rebuild your workspace ::
 
     catkin build
-    source devel/setup.sh
+    source devel/setup.bash

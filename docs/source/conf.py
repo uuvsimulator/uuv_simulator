@@ -38,7 +38,6 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinxcontrib.bibtex',
-    'sphinxcontrib.email',
     'matplotlib.sphinxext.only_directives',
     'matplotlib.sphinxext.plot_directive'
 ]
