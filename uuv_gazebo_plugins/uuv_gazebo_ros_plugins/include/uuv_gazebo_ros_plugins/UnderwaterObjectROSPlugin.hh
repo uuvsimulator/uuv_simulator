@@ -34,6 +34,8 @@
 #include <uuv_gazebo_ros_plugins_msgs/SetUseGlobalCurrentVel.h>
 #include <uuv_gazebo_ros_plugins_msgs/UnderwaterObjectModel.h>
 #include <uuv_gazebo_ros_plugins_msgs/GetModelProperties.h>
+#include <uuv_gazebo_ros_plugins_msgs/SetFloat.h>
+#include <uuv_gazebo_ros_plugins_msgs/GetFloat.h>
 
 #include <map>
 
@@ -61,14 +63,114 @@ namespace uuv_simulator_ros
     public: void UpdateLocalCurrentVelocity(
       const geometry_msgs::Vector3::ConstPtr &_msg);
 
-    /// \brief Set the dynamic state efficiency factor
+    /// \brief Set flag to use the global current velocity topic input
     public: bool SetUseGlobalCurrentVel(
       uuv_gazebo_ros_plugins_msgs::SetUseGlobalCurrentVel::Request& _req,
       uuv_gazebo_ros_plugins_msgs::SetUseGlobalCurrentVel::Response& _res);
 
+    /// \brief Return the model properties, along with parameters from the
+    /// hydrodynamic and hydrostatic models
     public: bool GetModelProperties(
       uuv_gazebo_ros_plugins_msgs::GetModelProperties::Request& _req,
       uuv_gazebo_ros_plugins_msgs::GetModelProperties::Response& _res);
+
+    /// \brief Set the scaling factor for the added-mass matrix
+    public: bool SetScalingAddedMass(
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Response& _res);
+
+    /// \brief Return current scaling factor for the added-mass matrix
+    public: bool GetScalingAddedMass(
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Response& _res);
+
+    /// \brief Set a scaling factor for the overall damping matrix
+    public: bool SetScalingDamping(
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Response& _res);
+
+    /// \brief Return the scaling factor for the overall damping matrix
+    public: bool GetScalingDamping(
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Response& _res);
+
+    /// \brief Set scaling factor for the model's volume used for buoyancy
+    /// force computation
+    public: bool SetScalingVolume(
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Response& _res);
+
+    /// \brief Get scaling factor for the model's volume used for buoyancy
+    /// force computation
+    public: bool GetScalingVolume(
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Response& _res);
+
+    /// \brief Set new fluid density (this will alter the value for the
+    /// buoyancy force)
+    public: bool SetFluidDensity(
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Response& _res);
+
+    /// \brief Get current value for the fluid density
+    public: bool GetFluidDensity(
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Response& _res);
+
+    /// \brief Set offset factor for the model's volume (this will alter the
+    /// value for the buoyancy force)
+    public: bool SetOffsetVolume(
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Response& _res);
+
+    /// \brief Return the offset factor for the model's volume
+    public: bool GetOffsetVolume(
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Response& _res);
+
+    /// \brief Set the offset factor for the added-mass matrix
+    public: bool SetOffsetAddedMass(
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Response& _res);
+
+    /// \brief Return the offset factor for the added-mass matrix
+    public: bool GetOffsetAddedMass(
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Response& _res);
+
+    /// \brief Set the offset factor for the linear damping matrix
+    public: bool SetOffsetLinearDamping(
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Response& _res);
+
+    /// \brief Return the offset factor for the linear damping matrix
+    public: bool GetOffsetLinearDamping(
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Response& _res);
+
+    /// \brief Set the offset factor for the linear forward speed damping
+    /// matrix
+    public: bool SetOffsetLinearForwardSpeedDamping(
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Response& _res);
+
+    /// \brief Return the offset factor for the linear forward speed damping
+    /// matrix
+    public: bool GetOffsetLinearForwardSpeedDamping(
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Response& _res);
+
+    /// \brief Set the offset factor for the nonlinear damping
+    /// matrix
+    public: bool SetOffsetNonLinearDamping(
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::SetFloat::Response& _res);
+
+    /// \brief Return the offset factor for the nonlinear damping
+    /// matrix
+    public: bool GetOffsetNonLinearDamping(
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetFloat::Response& _res);
 
     /// \brief Publish restoring force
     /// \param[in] _link Pointer to the link where the force information will

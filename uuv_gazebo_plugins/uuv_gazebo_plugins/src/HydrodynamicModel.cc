@@ -254,6 +254,16 @@ HMFossen::HMFossen(sdf::ElementPtr _sdf,
   else
     gzmsg << "HMFossen: Using linear damping NULL" << std::endl;
 
+  // Add added mass' scaling factor to the parameter list
+  this->params.push_back("scaling_added_mass");
+  // Set default value for the added mass's scaling vector
+  this->scalingAddedMass = 1.0;
+  // Add added mass' scaling factor to the parameter list
+  this->params.push_back("offset_added_mass");
+  // Set default value for the added mass identity offset
+  this->offsetAddedMass = 0.0;
+
+  // Add linear damping to the parameter list
   this->params.push_back("linear_damping");
 
   // Load linear damping coefficients that described the damping forces
@@ -265,7 +275,8 @@ HMFossen::HMFossen(sdf::ElementPtr _sdf,
   else
     gzmsg << "HMFossen: Using linear damping for forward speed NULL"
       << std::endl;
-
+  // Add the matrix for linear damping proportional to forward speed to the
+  // parameter list
   this->params.push_back("linear_damping_forward_speed");
 
   // Load nonlinear quadratic damping coefficients, if provided. Otherwise,
@@ -276,10 +287,32 @@ HMFossen::HMFossen(sdf::ElementPtr _sdf,
   else
     gzmsg << "HMFossen: Using quad damping NULL" << std::endl;
 
+  // Add quadratic damping coefficients to the parameter list
   this->params.push_back("quadratic_damping");
+  // Add damping's scaling factor to the parameter list
+  this->params.push_back("scaling_damping");
+  // Setting the damping scaling default value
+  this->scalingDamping = 1.0;
 
-  // Adding the volume
+  // Add the offset for the linear damping coefficients to the parameter list
+  this->params.push_back("offset_linear_damping");
+  // Set the offset of the linear damping coefficients to default value
+  this->offsetLinearDamping = 0.0;
+
+  // Add the offset for the linear damping coefficients to the parameter list
+  this->params.push_back("offset_lin_forward_speed_damping");
+  // Set the offset of the linear damping coefficients to default value
+  this->offsetLinForwardSpeedDamping = 0.0;
+
+  // Add the offset for the linear damping coefficients to the parameter list
+  this->params.push_back("offset_nonlin_damping");
+  // Set the offset of the linear damping coefficients to default value
+  this->offsetNonLinDamping = 0.0;
+
+  // Adding the volume to the parameter list
   this->params.push_back("volume");
+  // Add volume's scaling factor to the parameter list
+  this->params.push_back("scaling_volume");
 
   GZ_ASSERT(addedMass.size() == 36,
             "Added-mass coefficients vector must have 36 elements");
@@ -367,7 +400,7 @@ void HMFossen::ApplyHydrodynamicForces(
   Eigen::Vector6d damping = -this->D * velRel;
 
   // Added-mass forces and torques
-  Eigen::Vector6d added = -this->Ma * this->filteredAcc;
+  Eigen::Vector6d added = -this->GetAddedMass() * this->filteredAcc;
 
   // Added Coriolis term
   Eigen::Vector6d cor = -this->Ca * velRel;
@@ -414,7 +447,7 @@ void HMFossen::ComputeAddedCoriolisMatrix(const Eigen::Vector6d& _vel,
   // This corresponds to eq. 6.43 on p. 120 in
   // Fossen, Thor, "Handbook of Marine Craft and Hydrodynamics and Motion
   // Control", 2011
-  Eigen::Vector6d ab = _Ma * _vel;
+  Eigen::Vector6d ab = this->GetAddedMass() * _vel;
   Eigen::Matrix3d Sa = -1 * CrossProductOperator(ab.head<3>());
   _Ca << Eigen::Matrix3d::Zero(), Sa,
          Sa, -1 * CrossProductOperator(ab.tail<3>());
@@ -432,13 +465,26 @@ void HMFossen::ComputeDampingMatrix(const Eigen::Vector6d& _vel,
 
   _D.setZero();
 
-  _D = -1 * this->DLin - _vel[0] * this->DLinForwardSpeed;
+  _D = -1 *
+    (this->DLin + this->offsetLinearDamping * Eigen::Matrix6d::Identity()) -
+    _vel[0] * (this->DLinForwardSpeed +
+      this->offsetLinForwardSpeedDamping * Eigen::Matrix6d::Identity());
 
   // Nonlinear damping matrix is considered as a diagonal matrix
   for (int i = 0; i < 6; i++)
   {
-    _D(i, i) += -1 * this->DNonLin(i, i) * std::fabs(_vel[i]);
+    _D(i, i) += -1 *
+      (this->DNonLin(i, i) + this->offsetNonLinDamping) *
+      std::fabs(_vel[i]);
   }
+  _D *= this->scalingDamping;
+}
+
+/////////////////////////////////////////////////
+Eigen::Matrix6d HMFossen::GetAddedMass() const
+{
+  return this->scalingAddedMass *
+    (this->Ma + this->offsetAddedMass * Eigen::Matrix6d::Identity());
 }
 
 /////////////////////////////////////////////////
@@ -486,6 +532,12 @@ bool HMFossen::GetParam(std::string _tag, double& _output)
   _output = -1.0;
   if (!_tag.compare("volume"))
     _output = this->volume;
+  else if (!_tag.compare("scaling_volume"))
+    _output = this->scalingVolume;
+  else if (!_tag.compare("scaling_added_mass"))
+    _output = this->scalingAddedMass;
+  else if (!_tag.compare("scaling_damping"))
+    _output = this->scalingDamping;
   else if (!_tag.compare("fluid_density"))
     _output = this->fluidDensity;
   else if (!_tag.compare("bbox_height"))
@@ -494,11 +546,94 @@ bool HMFossen::GetParam(std::string _tag, double& _output)
     _output = this->boundingBox.GetYLength();
   else if (!_tag.compare("bbox_length"))
     _output = this->boundingBox.GetXLength();
+  else if (!_tag.compare("offset_volume"))
+    _output = this->offsetVolume;
+  else if (!_tag.compare("offset_added_mass"))
+    _output = this->offsetAddedMass;
+  else if (!_tag.compare("offset_linear_damping"))
+    _output = this->offsetLinearDamping;
+  else if (!_tag.compare("offset_lin_forward_speed_damping"))
+    _output = this->offsetLinForwardSpeedDamping;
+  else if (!_tag.compare("offset_nonlin_damping"))
+    _output = this->offsetNonLinDamping;
   else
   {
     _output = -1.0;
     return false;
   }
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool HMFossen::SetParam(std::string _tag, double _input)
+{
+  if (!_tag.compare("scaling_volume"))
+  {
+    if (_input < 0)
+      return false;
+    this->scalingVolume = _input;
+    gzmsg << "Volume scaling factor set to " << this->scalingVolume <<
+      std::endl;
+  }
+  else if (!_tag.compare("scaling_added_mass"))
+  {
+    if (_input < 0)
+      return false;
+    this->scalingAddedMass = _input;
+    gzmsg << "Added-mass scaling factor set to " << this->scalingAddedMass <<
+      std::endl;
+  }
+  else if (!_tag.compare("scaling_damping"))
+  {
+    if (_input < 0)
+      return false;
+    this->scalingDamping = _input;
+    gzmsg << "Damping scaling factor set to " << this->scalingDamping <<
+      std::endl;
+  }
+  else if (!_tag.compare("fluid_density"))
+  {
+    if (_input < 0)
+      return false;
+    this->fluidDensity = _input;
+    gzmsg << "Fluid density set to " << this->fluidDensity <<
+      std::endl;
+  }
+  else if (!_tag.compare("offset_volume"))
+  {
+    this->offsetVolume = _input;
+    gzmsg << "Volume offset set to " << this->offsetVolume << std::endl;
+  }
+  else if (_tag.compare("offset_added_mass"))
+  {
+    this->offsetAddedMass = _input;
+    gzmsg << "Added-mass identity offset set to " << this->offsetAddedMass <<
+      std::endl;
+  }
+  else if (_tag.compare("offset_linear_damping"))
+  {
+    this->offsetLinearDamping = _input;
+    gzmsg << "Linear damping identity offset set to "
+      << this->offsetLinearDamping
+      << std::endl;
+  }
+  else if (_tag.compare("offset_lin_forward_speed_damping"))
+  {
+    this->offsetLinForwardSpeedDamping = _input;
+    gzmsg << "Lin. forward speed damping identity offset set to "
+      << this->offsetLinForwardSpeedDamping
+      << std::endl;
+  }
+  else if (_tag.compare("offset_nonlin_damping"))
+  {
+    this->offsetNonLinDamping = _input;
+    gzmsg << "Nonlinear damping identity offset set to "
+      << this->offsetNonLinDamping
+      << std::endl;
+  }
+  else
+    return false;
+
   return true;
 }
 
@@ -1002,6 +1137,6 @@ void HMBox::Print(std::string _paramName, std::string _message)
       std::cout << std::setw(12) << this->height << std::endl;
     }
     else
-        HMFossen::Print(_paramName, _message);
+      HMFossen::Print(_paramName, _message);
 }
 }

@@ -42,6 +42,8 @@ BuoyantObject::BuoyantObject(physics::LinkPtr _link)
   this->waterLevelPlaneArea = 0.0;
   this->submergedHeight = 0.0;
   this->isSurfaceVessel = false;
+  this->scalingVolume = 1.0;
+  this->offsetVolume = 0.0;
 
   this->link = _link;
   // Retrieve the bounding box
@@ -89,12 +91,12 @@ void BuoyantObject::GetBuoyancyForce(const math::Pose &_pose,
     if (z + height / 2 > 0 && z < 0)
     {
       this->isSubmerged = false;
-      volume = this->volume * (std::fabs(z) + height / 2) / height;
+      volume = this->GetVolume() * (std::fabs(z) + height / 2) / height;
     }
     else if (z + height / 2 < 0)
     {
       this->isSubmerged = true;
-      volume = this->volume;
+      volume = this->GetVolume();
     }
 
     if (!this->neutrallyBuoyant || volume != this->volume)
@@ -198,7 +200,10 @@ void BuoyantObject::SetVolume(double _volume)
 }
 
 /////////////////////////////////////////////////
-double BuoyantObject::GetVolume() { return this->volume; }
+double BuoyantObject::GetVolume()
+{
+  return this->scalingVolume * (this->volume + this->offsetVolume);
+}
 
 /////////////////////////////////////////////////
 void BuoyantObject::EstimateCoB()
