@@ -19,14 +19,17 @@
 #include <gazebo/common/common.hh>
 #include <gazebo/physics/physics.hh>
 #include <uuv_sensor_ros_plugins/Common.hh>
-#include <boost/scoped_ptr.hpp>
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
 #include <uuv_sensor_plugins_ros_msgs/ChangeSensorState.h>
-#include <tf/tfMessage.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <gazebo/sensors/Noise.hh>
 #include <string>
+#include <boost/shared_ptr.hpp>
+#include <boost/bind.hpp>
+#include <tf/tfMessage.h>
+#include <tf/tf.h>
+
 
 namespace gazebo
 {
@@ -77,7 +80,7 @@ namespace gazebo
     protected: std_msgs::Bool isOn;
 
     /// \brief ROS node handle for communication with ROS
-    protected: boost::scoped_ptr<ros::NodeHandle> rosNode;
+    protected: boost::shared_ptr<ros::NodeHandle> rosNode;
 
     /// \brief Gazebo's node handle for transporting measurement  messages.
     protected: transport::NodePtr gazeboNode;

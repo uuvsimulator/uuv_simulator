@@ -58,7 +58,8 @@ bool ROSBasePlugin::InitBasePlugin(sdf::ElementPtr _sdf)
   GetSDFParam<double>(_sdf, "update_rate", this->updateRate, 30.0);
 
   // Get flag to enable generation of Gazebo messages
-  GetSDFParam<bool>(_sdf, "enable_gazebo_messages", this->gazeboMsgEnabled, true);
+  GetSDFParam<bool>(_sdf, "enable_gazebo_messages", this->gazeboMsgEnabled,
+    true);
 
   // If output Gazebo messages have been enabled, create a Gazebo node
   this->gazeboNode = transport::NodePtr(new transport::Node());
@@ -204,4 +205,5 @@ void ROSBasePlugin::UpdateReferenceFramePose()
 #endif
   }
 }
+
 }

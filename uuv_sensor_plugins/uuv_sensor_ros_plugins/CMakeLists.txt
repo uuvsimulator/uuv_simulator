@@ -14,7 +14,8 @@ find_package(catkin REQUIRED
   roscpp
   tf
   gazebo_plugins
-  uuv_sensor_plugins_ros_msgs)
+  uuv_sensor_plugins_ros_msgs
+  message_filters)
 find_package(Eigen3 REQUIRED)
 find_package(gazebo REQUIRED)
 find_package(OGRE REQUIRED)
@@ -51,6 +52,8 @@ target_link_libraries(uuv_sensor_gazebo_msgs ${PROTOBUF_LIBRARY} ${GAZEBO_LIBRAR
 
 list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_sensor_gazebo_msgs)
 
+file(COPY ${CMAKE_CURRENT_BINARY_DIR}/ DESTINATION ${CATKIN_DEVEL_PREFIX}/include/${PACKAGE_NAME} FILES_MATCHING PATTERN "*.pb.*")
+
 catkin_package(
   INCLUDE_DIRS include
     ${CMAKE_CURRENT_BINARY_DIR} # for generated messages
@@ -60,7 +63,8 @@ catkin_package(
     ${OpenCV_INCLUDE_DIRS}
     ${EIGEN3_INCLUDE_DIR}
   DEPENDS Eigen3 gazebo
-  CATKIN_DEPENDS uuv_gazebo_plugins
+  CATKIN_DEPENDS
+    uuv_gazebo_plugins
     sensor_msgs
     uuv_sensor_plugins_ros_msgs
 )
@@ -133,8 +137,18 @@ add_library(uuv_gazebo_ros_subsea_pressure_plugin
   src/ROSBasePlugin.cc
   src/ROSBaseModelPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_subsea_pressure_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
-add_dependencies(uuv_gazebo_ros_subsea_pressure_plugin ${catkin_EXPORTED_TARGETS})
+add_dependencies(uuv_gazebo_ros_subsea_pressure_plugin uuv_sensor_gazebo_msgs ${catkin_EXPORTED_TARGETS})
 list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_subsea_pressure_plugin)
+
+###############################################################################
+
+add_library(uuv_gazebo_ros_dvl_plugin
+  src/DVLROSPlugin.cc
+  src/ROSBasePlugin.cc
+  src/ROSBaseModelPlugin.cc)
+target_link_libraries(uuv_gazebo_ros_dvl_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+add_dependencies(uuv_gazebo_ros_dvl_plugin uuv_sensor_gazebo_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_dvl_plugin)
 
 #############
 ## Install ##

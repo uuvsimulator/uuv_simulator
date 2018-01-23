@@ -39,7 +39,7 @@ void ROSBaseSensorPlugin::Load(sensors::SensorPtr _model, sdf::ElementPtr _sdf)
   // Get the world name.
   std::string worldName = _model->WorldName();
   this->world = physics::get_world(worldName);
-  
+
   this->InitBasePlugin(_sdf);
 }
 

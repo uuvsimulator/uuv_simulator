@@ -20,11 +20,25 @@ namespace gazebo
 
 /////////////////////////////////////////////////
 ROSBaseModelPlugin::ROSBaseModelPlugin()
-{ }
+{
+  // Initialize local NED frame
+  this->localNEDFrame = ignition::math::Pose3d::Zero;
+  this->localNEDFrame.Rot() = ignition::math::Quaterniond(
+    ignition::math::Vector3d(M_PI, 0, 0));
+  // Initialize the local NED frame
+  this->tfLocalNEDFrame.setOrigin(tf::Vector3(0.0, 0.0, 0.0));
+  this->tfLocalNEDFrame.setRotation(
+    tf::createQuaternionFromRPY(M_PI, 0.0, 0.0));
+  // Initialize TF broadcaster
+  this->tfBroadcaster = new tf::TransformBroadcaster();
+}
 
 /////////////////////////////////////////////////
 ROSBaseModelPlugin::~ROSBaseModelPlugin()
-{ }
+{
+  if (this->tfBroadcaster)
+    delete this->tfBroadcaster;
+}
 
 /////////////////////////////////////////////////
 void ROSBaseModelPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
@@ -40,7 +54,9 @@ void ROSBaseModelPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   GetSDFParam<std::string>(_sdf, "link_name", linkName, "");
   GZ_ASSERT(!linkName.empty(), "Link name string is empty");
 
-  gzmsg << "Link name=" << linkName << std::endl;
+  // Get flag to enable generation of Gazebo messages
+  GetSDFParam<bool>(_sdf, "enable_local_ned_frame", this->enableLocalNEDFrame,
+    true);
 
   if (_sdf->HasElement("reference_link_name"))
   {
@@ -58,7 +74,9 @@ void ROSBaseModelPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   this->link = this->model->GetLink(linkName);
   GZ_ASSERT(this->link != NULL, "Invalid link pointer");
 
-  gzmsg << "Model link loaded" << std::endl;
+  // Set the frame IDs for the local NED frame
+  this->tfLocalNEDFrame.frame_id_ = this->link->GetName();
+  this->tfLocalNEDFrame.child_frame_id_ = this->link->GetName() + "_ned";
 
   this->InitBasePlugin(_sdf);
 
@@ -71,6 +89,15 @@ void ROSBaseModelPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 bool ROSBaseModelPlugin::OnUpdate(const common::UpdateInfo&)
 {
   return true;
+}
+
+/////////////////////////////////////////////////
+void ROSBaseModelPlugin::SendLocalNEDTransform()
+{
+  geometry_msgs::TransformStamped msg;
+  this->tfLocalNEDFrame.stamp_ = ros::Time::now();
+  tf::transformStampedTFToMsg(this->tfLocalNEDFrame, msg);
+  this->tfBroadcaster->sendTransform(msg);  
 }
 
 }
