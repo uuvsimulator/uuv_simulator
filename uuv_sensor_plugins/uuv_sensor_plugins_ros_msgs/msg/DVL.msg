@@ -26,8 +26,10 @@
 # doppler velocity estimates orthogonal to the ray.
 
 Header header
-
-geometry_msgs/Vector3 velocity # [m/s]
-float64[9] velocity_covariance # row major, xyz axes
-
+# Measured velocity [m/s]
+geometry_msgs/Vector3 velocity
+# Row major, xyz axes
+float64[9] velocity_covariance
+# Altitude of the vehicle
+float64 altitude
 DVLBeam[] beams
