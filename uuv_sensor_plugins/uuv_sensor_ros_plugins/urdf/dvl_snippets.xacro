@@ -25,11 +25,45 @@
     </collision>
   </xacro:macro>
 
+
+  <xacro:macro name="default_dvl_macro" params="namespace parent_link *origin inertial_reference_frame">
+    <xacro:dvl_plugin_macro
+      namespace="${namespace}"
+      suffix=""
+      parent_link="${parent_link}"
+      reference_frame="${inertial_reference_frame}"
+      update_rate="7"
+      topic="dvl"
+      scale="1">
+      <xacro:insert_block name="origin" />
+    </xacro:dvl_plugin_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_dvl_sensor_enu" params="namespace parent_link *origin">
+    <xacro:default_dvl_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      reference_frame="world">
+      <xacro:insert_block name="origin" />
+    </xacro:default_dvl_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_dvl_sensor_ned" params="namespace parent_link *origin">
+    <xacro:default_dvl_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      reference_frame="world_ned">
+      <xacro:insert_block name="origin" />
+    </xacro:default_dvl_macro>
+  </xacro:macro>
+
+  <!-- DEPRECATED MACRO: See default_dvl_sensor_enu -->
   <xacro:macro name="default_dvl" params="namespace parent_link *origin">
     <xacro:dvl_plugin_macro
       namespace="${namespace}"
       suffix=""
       parent_link="${parent_link}"
+      reference_frame="world"
       update_rate="7"
       topic="dvl"
       scale="1">
@@ -96,7 +130,7 @@
   </xacro:macro>
 
   <xacro:macro name="dvl_plugin_macro" params="namespace suffix parent_link topic
-    scale *origin update_rate">
+    scale *origin update_rate reference_frame">
     <link name="${namespace}/dvl${suffix}_link">
       <inertial>
         <mass value="0.001" />  <!-- [kg] -->
@@ -148,6 +182,7 @@
         <gaussian_noise_sigma>0.001</gaussian_noise_sigma> <!-- std dev of position estimates in x, y, z [m/s] -->
         <enable_gazebo_messages>false</enable_gazebo_messages>
         <enable_local_ned_frame>false</enable_local_ned_frame>
+        <static_reference_frame>${reference_frame}</static_reference_frame>
         <!-- Declaring the beams -->
         <beam_link_name_0>${namespace}/dvl_sonar0_link</beam_link_name_0>
         <beam_link_name_1>${namespace}/dvl_sonar1_link</beam_link_name_1>

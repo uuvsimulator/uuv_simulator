@@ -50,7 +50,6 @@
 
   <xacro:macro name="pose_3d_sensor" params="namespace suffix parent_link
     gaussian_noise_sigma topic">
-    <!-- Default GPS. -->
     <xacro:pose_3d_macro
       namespace="${namespace}"
       parent_link="${parent_link}"
@@ -64,7 +63,6 @@
   </xacro:macro>
 
   <xacro:macro name="default_pose_3d" params="namespace parent_link">
-    <!-- Default GPS. -->
     <xacro:pose_3d_macro
       namespace="${namespace}"
       parent_link="${parent_link}"
@@ -77,23 +75,20 @@
     </xacro:pose_3d_macro>
   </xacro:macro>
 
-  <xacro:macro name="pose_3d_sensor_ned" params="namespace suffix parent_link
-    gaussian_noise_sigma topic">
-    <!-- Default GPS. -->
+  <xacro:macro name="default_pose_3d_enu" params="namespace parent_link">
     <xacro:pose_3d_macro
       namespace="${namespace}"
       parent_link="${parent_link}"
-      topic="${topic}"
+      topic="pose_gt"
       update_rate="20"
-      noise_sigma="${gaussian_noise_sigma}"
-      suffix="${suffix}"
-      reference_frame="world_ned">
+      noise_sigma="0.0"
+      suffix="default"
+      reference_frame="world">
       <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:pose_3d_macro>
   </xacro:macro>
 
   <xacro:macro name="default_pose_3d_ned" params="namespace parent_link">
-    <!-- Default GPS. -->
     <xacro:pose_3d_macro
       namespace="${namespace}"
       parent_link="${parent_link}"
@@ -104,6 +99,22 @@
       reference_frame="world_ned">
       <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:pose_3d_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_pose_3d_macro" params="namespace parent_link inertial_reference_frame">
+    <xacro:if value="${inertial_reference_frame == 'world'}">
+      <xacro:default_pose_3d_enu
+        namespace="${namespace}"
+        parent_link="${parent_link}">
+      </xacro:default_pose_3d_enu>
+    </xacro:if>
+
+    <xacro:if value="${inertial_reference_frame == 'world_ned'}">
+      <xacro:default_pose_3d_ned
+        namespace="${namespace}"
+        parent_link="${parent_link}">
+      </xacro:default_pose_3d_ned>
+    </xacro:if>
   </xacro:macro>
 
 
