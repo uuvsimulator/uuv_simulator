@@ -18,7 +18,7 @@
   <!-- Loading some constants -->
   <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
   <!-- Loading file with sensor macros -->
-  <xacro:include filename="$(find uuv_sensor_plugins_ros)/urdf/sensor_snippets.xacro"/>
+  <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
   <!-- Loading vehicle's specific macros -->
   <xacro:include filename="$(find uuv_tutorial_rov_model)/urdf/rov_example_snippets.xacro"/>
 

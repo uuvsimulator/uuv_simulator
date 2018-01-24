@@ -3,5 +3,5 @@
 ## Contents:
 
  - ```uuv_sensor_plugins```: Contains gazebo plugins for various simulated sensors.
- - ```uuv_sensor_plugins_ros```: ROS wrappers for each of the above.
+ - ```uuv_sensor_ros_plugins```: ROS wrappers for each of the above.
  
