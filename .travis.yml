@@ -10,14 +10,16 @@ env:
     - CATKIN_CONFIG='--no-install'
     - CATKIN_PARALLEL_JOBS='-p1'
     - ROS_PARALLEL_JOBS='-j1'
-    - ADDITIONAL_DEBS="build-essential python-catkin-tools python-pip dvi2ps dvipng binutils mesa-utils module-init-tools x-window-system"
-    - AFTER_SCRIPT='cd $CATKIN_WORKSPACE && source devel/setup.bash && catkin run_tests && catkin_test_results'
+    - BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+    - AFTER_SCRIPT='sh .uuv_ci_config/run_tests.sh'
 matrix:
   include:
+    - env: USE_DEB=true ROS_DISTRO=indigo ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true
     - env: USE_DEB=true ROS_DISTRO=kinetic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true
-    - env: USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='mkdir -p $CATKIN_WORKSPACE/src && git clone https://github.com/tu-darmstadt-ros-pkg/hector_localization $CATKIN_WORKSPACE/src/hector_localization && git clone https://github.com/ros-teleop/teleop_tools $CATKIN_WORKSPACE/src/teleop_tools'
+    - env: USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true
   allow_failures:
-    - env: USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='mkdir -p $CATKIN_WORKSPACE/src && git clone https://github.com/tu-darmstadt-ros-pkg/hector_localization $CATKIN_WORKSPACE/src/hector_localization && git clone https://github.com/ros-teleop/teleop_tools $CATKIN_WORKSPACE/src/teleop_tools'
+    - env: USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true
+    - env: USE_DEB=true ROS_DISTRO=indigo ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true
 install:
   - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config
 script:
