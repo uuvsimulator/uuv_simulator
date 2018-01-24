@@ -200,6 +200,7 @@ void BuoyantObject::EstimateCoB()
 {
   // User did not provide center of buoyancy,
   // compute it from collision volume.
+#if GAZEBO_MAJOR_VERSION >= 7
   double volumeSum = 0.0;
   math::Vector3 weightedPosSum = math::Vector3::Zero;
   for (auto collision : this->link->GetCollisions())
@@ -211,6 +212,7 @@ void BuoyantObject::EstimateCoB()
 
   this->SetCoB(this->link->GetWorldPose().GetInverse().CoordPositionAdd(
       weightedPosSum / volumeSum));
+#endif
 }
 
 /////////////////////////////////////////////////
