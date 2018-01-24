@@ -150,6 +150,53 @@ target_link_libraries(uuv_gazebo_ros_dvl_plugin ${catkin_LIBRARIES} ${GAZEBO_LIB
 add_dependencies(uuv_gazebo_ros_dvl_plugin uuv_sensor_gazebo_msgs ${catkin_EXPORTED_TARGETS})
 list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_dvl_plugin)
 
+###############################################################################
+
+add_library(uuv_gazebo_ros_magnetometer_plugin
+  src/MagnetometerROSPlugin.cc
+  src/ROSBasePlugin.cc
+  src/ROSBaseModelPlugin.cc)
+target_link_libraries(uuv_gazebo_ros_magnetometer_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+add_dependencies(uuv_gazebo_ros_magnetometer_plugin uuv_sensor_gazebo_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_magnetometer_plugin)
+
+###############################################################################
+
+add_library(uuv_gazebo_ros_cpc_plugin
+  src/CPCROSPlugin.cc
+  src/ROSBasePlugin.cc
+  src/ROSBaseModelPlugin.cc)
+target_link_libraries(uuv_gazebo_ros_cpc_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+add_dependencies(uuv_gazebo_ros_cpc_plugin ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_cpc_plugin)
+
+###############################################################################
+
+add_library(uuv_gazebo_ros_imu_plugin
+  src/IMUROSPlugin.cc
+  src/ROSBasePlugin.cc
+  src/ROSBaseModelPlugin.cc)
+target_link_libraries(uuv_gazebo_ros_imu_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+add_dependencies(uuv_gazebo_ros_imu_plugin uuv_sensor_gazebo_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_imu_plugin)
+
+###############################################################################
+
+add_library(uuv_gazebo_ros_rpt_plugin
+  src/RPTROSPlugin.cc
+  src/ROSBasePlugin.cc
+  src/ROSBaseModelPlugin.cc)
+target_link_libraries(uuv_gazebo_ros_rpt_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+add_dependencies(uuv_gazebo_ros_rpt_plugin uuv_sensor_gazebo_msgs ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_rpt_plugin)
+
+###############################################################################
+
+add_library(uuv_gazebo_ros_camera_plugin src/UnderwaterCameraROSPlugin.cc)
+target_link_libraries(uuv_gazebo_ros_camera_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+add_dependencies(uuv_gazebo_ros_camera_plugin ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_camera_plugin)
+
 #############
 ## Install ##
 #############
