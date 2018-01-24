@@ -72,7 +72,7 @@
       <xacro:insert_block name="origin" />
       <visual>
         <geometry>
-          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/m450-130.dae" scale="1 1 1"/>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/m450-130.dae" scale="1 1 1"/>
         </geometry>
       </visual>
     </xacro:multibeam_sonar>
@@ -96,7 +96,7 @@
       <xacro:insert_block name="origin" />
       <visual>
         <geometry>
-          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/p900.dae" scale="1 1 1"/>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/p900.dae" scale="1 1 1"/>
         </geometry>
       </visual>
     </xacro:multibeam_sonar>

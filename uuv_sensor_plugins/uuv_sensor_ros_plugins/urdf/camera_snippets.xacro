@@ -75,7 +75,7 @@
       </inertial>
       <visual>
         <geometry>
-          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/oe14-372.dae" scale="${scale} ${scale} ${scale}"/>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/oe14-372.dae" scale="${scale} ${scale} ${scale}"/>
         </geometry>
       </visual>
       <xacro:no_collision/>
@@ -168,7 +168,7 @@
       </inertial>
       <visual>
         <geometry>
-          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/oe14-372.dae" scale="1 1 1"/>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/oe14-372.dae" scale="1 1 1"/>
         </geometry>
       </visual>
       <xacro:no_collision/>

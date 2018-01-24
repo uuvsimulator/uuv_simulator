@@ -139,7 +139,7 @@
       </inertial>
       <visual>
         <geometry>
-          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/dvl.dae" scale="${scale} ${scale} ${scale}"/>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/dvl.dae" scale="${scale} ${scale} ${scale}"/>
         </geometry>
       </visual>
       <xacro:no_collision/>

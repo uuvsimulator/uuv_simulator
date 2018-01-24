@@ -48,7 +48,7 @@
       </inertial>
       <visual>
         <geometry>
-          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/duo3d.dae"/>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/duo3d.dae"/>
         </geometry>
       </visual>
       <xacro:no_collision/>
