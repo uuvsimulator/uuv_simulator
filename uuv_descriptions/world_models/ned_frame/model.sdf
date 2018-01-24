@@ -15,16 +15,17 @@
      limitations under the License.
 -->
 <sdf version='1.5'>
-    <model name="ned">
+    <model name="world_ned">
 
-      <pose>0 0 0 3.14159265359 0 0</pose>
+      <pose>0 0 0 0 0 0</pose>
       <static>true</static>
 
-      <link name="N">
+      <link name="world_ned">
         <gravity>0</gravity>
-        <pose>0 0 0 0 0 0</pose>
+        <pose>0 0 0 3.14159265359 0 1.5707963267948966</pose>
+
         <visual name="N_visual">
-          <pose>0.25 0 0 0 1.57079632679 0</pose>
+          <pose>0.25 0 0 1.5707963267948966 0 1.5707963267948966</pose>
           <geometry>
             <cylinder>
               <radius>0.01</radius>
@@ -38,13 +39,9 @@
             </script>
           </material>
         </visual>
-      </link>
 
-      <link name="E">
-        <gravity>0</gravity>
-        <pose>0 -0.25 0 1.57079632679 0 0</pose>
         <visual name="E_visual">
-          <pose>0 0 0 0 0 0</pose>
+          <pose>0 0.25 0 1.5707963267948966 0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.01</radius>
@@ -58,13 +55,9 @@
             </script>
           </material>
         </visual>
-      </link>
 
-      <link name="D">
-        <gravity>0</gravity>
-        <pose>0 0 0 0 0 0</pose>
         <visual name="D_visual">
-          <pose>0 0 -0.25 0 0 0</pose>
+          <pose>0 0 0.25 0 0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.01</radius>
@@ -79,6 +72,5 @@
           </material>
         </visual>
       </link>
-
     </model>
 </sdf>

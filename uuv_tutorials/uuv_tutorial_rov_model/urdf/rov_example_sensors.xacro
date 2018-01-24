@@ -18,7 +18,7 @@
 
   <!-- Some examples of sensors that can be added to the vehicle frame
   Set the origin of the sensor frames correctly for your application
-  Look into the sensor macros in the package uuv_sensor_plugins_ros/urdf for
+  Look into the sensor macros in the package uuv_sensor_ros_plugins/urdf for
   more examples.
   -->
 

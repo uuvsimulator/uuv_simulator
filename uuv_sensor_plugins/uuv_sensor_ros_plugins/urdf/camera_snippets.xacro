@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Macro for a minimal collision block (for when you do not want collision block but gazebo needs one) -->
+  <xacro:macro name="no_collision">
+    <collision>
+      <geometry>
+        <cylinder length="${0.000001}" radius="${0.000001}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+    </collision>
+  </xacro:macro>
+
+  <xacro:macro name="default_camera" params="namespace parent_link suffix *origin">
+    <xacro:regular_camera_plugin_macro
+      namespace="${namespace}"
+      suffix="${suffix}"
+      parent_link="${parent_link}"
+      topic="camera"
+      mass="0.1"
+      update_rate="30"
+      hfov="1.5125"
+      width="768"
+      height="492"
+      stddev="0.02"
+      scale="1.0">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />
+    </xacro:regular_camera_plugin_macro>
+  </xacro:macro>
+
+  <xacro:macro name="wideangle_camera" params="namespace parent_link suffix *origin">
+    <xacro:regular_camera_plugin_macro
+      namespace="${namespace}"
+      suffix="${suffix}"
+      parent_link="${parent_link}"
+      topic="camera"
+      mass="0.015"
+      update_rate="30"
+      hfov="1.8125"
+      width="768"
+      height="492"
+      stddev="0.02"
+      scale="1.0">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />>
+    </xacro:regular_camera_plugin_macro>
+  </xacro:macro>
+
+  <xacro:macro name="regular_camera_plugin_macro"
+    params="namespace suffix parent_link topic mass update_rate
+      hfov width height stddev scale
+      *inertia *origin">
+    <!-- Sensor link -->
+    <link name="${namespace}/camera${suffix}_link">
+      <inertial>
+        <xacro:insert_block name="inertia" />
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/oe14-372.dae" scale="${scale} ${scale} ${scale}"/>
+        </geometry>
+      </visual>
+      <xacro:no_collision/>
+    </link>
+
+    <joint name="${namespace}/camera${suffix}_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/camera${suffix}_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <link name="${namespace}/camera${suffix}_link_optical">
+      <xacro:box_inertial x="0.0001" y="0.0001" z="0.0001" mass="0.001">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </xacro:box_inertial>
+      <collision>
+        <!-- todo: gazebo needs a collision volume or it will ignore the pose of
+           the joint that leads to this link (and assume it to be the identity) -->
+        <geometry>
+          <cylinder length="0.000001" radius="0.000001"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+      </collision>
+    </link>
+
+    <joint name="${namespace}/camera${suffix}_optical_joint" type="revolute">
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+      <parent link="${namespace}/camera${suffix}_link"/>
+      <child link="${namespace}/camera${suffix}_link_optical"/>
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo reference="${namespace}/camera${suffix}_link">
+      <sensor type="camera" name="camera${suffix}">
+        <update_rate>${update_rate}</update_rate>
+        <camera name="camera${suffix}">
+          <horizontal_fov>${hfov}</horizontal_fov>
+          <image>
+            <width>${width}</width>
+            <height>${height}</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>3000</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>${stddev}</stddev>
+          </noise>
+        </camera>
+        <plugin name="camera${suffix}_controller" filename="libgazebo_ros_camera.so">
+          <updateRate>${update_rate}</updateRate>
+          <cameraName>${namespace}/camera${suffix}</cameraName>
+          <frameName>camera${suffix}_link_optical</frameName>
+
+          <attenuationR>0.0</attenuationR>
+          <attenuationG>0.0</attenuationG>
+          <attenuationB>0.0</attenuationB>
+
+          <backgroundR>0</backgroundR>
+          <backgroundG>0</backgroundG>
+          <backgroundB>0</backgroundB>
+
+          <!-- required for ros depth cam -->
+          <imageTopicName>${topic}_image</imageTopicName>
+          <pointCloudTopicName>${topic}_cloud</pointCloudTopicName>
+          <depthImageTopicName>${topic}_depth</depthImageTopicName>
+          <depthImageCameraInfoTopicName>${topic}_depth_info</depthImageCameraInfoTopicName>
+          <pointCloudCutoff>10.0</pointCloudCutoff>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="underwater_camera_plugin_macro"
+    params="namespace suffix parent_link topic mass update_rate
+      hfov width height stddev
+      *inertia *origin">
+    <!-- Sensor link -->
+    <link name="${namespace}/camera${suffix}_link">
+      <inertial>
+        <xacro:insert_block name="inertia" />
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/oe14-372.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+      <xacro:no_collision/>
+    </link>
+
+    <joint name="${namespace}/camera${suffix}_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/camera${suffix}_link" />
+      <axis xyz="1 0 0"/>
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+
+    <gazebo reference="${namespace}/camera${suffix}_link">
+      <sensor type="depth" name="camera${suffix}">
+        <update_rate>${update_rate}</update_rate>
+        <camera name="camera${suffix}">
+          <horizontal_fov>${hfov}</horizontal_fov>
+          <image>
+            <width>${width}</width>
+            <height>${height}</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>3000</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>${stddev}</stddev>
+          </noise>
+        </camera>
+        <plugin name="camera${suffix}_controller" filename="libuuv_gazebo_ros_camera_plugin.so">
+          <updateRate>${update_rate}</updateRate>
+          <cameraName>${namespace}/camera${suffix}</cameraName>
+          <frameName>${namespace}/camera${suffix}_link</frameName>
+
+          <attenuationR>0.01</attenuationR>
+          <attenuationG>0.01</attenuationG>
+          <attenuationB>0.003</attenuationB>
+
+          <backgroundR>0</backgroundR>
+          <backgroundG>0</backgroundG>
+          <backgroundB>0</backgroundB>
+
+          <!-- required for ros depth cam -->
+          <imageTopicName>${topic}_image</imageTopicName>
+          <pointCloudTopicName>${topic}_cloud</pointCloudTopicName>
+          <depthImageTopicName>${topic}_depth</depthImageTopicName>
+          <depthImageCameraInfoTopicName>${topic}_depth_info</depthImageCameraInfoTopicName>
+          <pointCloudCutoff>10.0</pointCloudCutoff>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

@@ -53,11 +53,6 @@ BuoyantObject::BuoyantObject(physics::LinkPtr _link)
   // it should come from the physics engine but it is still not resolved
   this->boundingBox = link->GetBoundingBox();
 
-  // Estimate volume, can be overwritten later
-  this->SetVolume(-1);
-  // Estimate CoB, can be overwritten later
-  this->EstimateCoB();
-
   // Set neutrally buoyant flag to false
   this->neutrallyBuoyant = false;
 }
@@ -185,18 +180,8 @@ void BuoyantObject::SetBoundingBox(const math::Box &_bBox)
 /////////////////////////////////////////////////
 void BuoyantObject::SetVolume(double _volume)
 {
-  if (_volume > 0)
-    this->volume = _volume;
-  else
-  {
-    // If volume is not given, it will be estimated from the collision
-    // geometries
-    double v = 0.0;
-    for (auto collision : link->GetCollisions())
-      v += collision->GetShape()->ComputeVolume();
-
-    this->volume = v;
-  }
+  GZ_ASSERT(_volume > 0, "Invalid input volume");
+  this->volume = _volume;
 }
 
 /////////////////////////////////////////////////
@@ -210,6 +195,7 @@ void BuoyantObject::EstimateCoB()
 {
   // User did not provide center of buoyancy,
   // compute it from collision volume.
+#if GAZEBO_MAJOR_VERSION >= 7
   double volumeSum = 0.0;
   math::Vector3 weightedPosSum = math::Vector3::Zero;
   for (auto collision : this->link->GetCollisions())
@@ -221,6 +207,7 @@ void BuoyantObject::EstimateCoB()
 
   this->SetCoB(this->link->GetWorldPose().GetInverse().CoordPositionAdd(
       weightedPosSum / volumeSum));
+#endif
 }
 
 /////////////////////////////////////////////////

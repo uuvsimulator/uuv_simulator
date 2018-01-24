@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="default_chemical_concentration_sensor_macro"
+    params="namespace parent_link *origin inertial_reference_frame">
+    <xacro:chemical_concentration_sensor_macro
+      namespace="${namespace}"
+      suffix=""
+      reference_frame="${inertial_reference_frame}"
+      parent_link="${parent_link}"
+      input_topic="/plume/particles"
+      output_topic="particle_concentration"
+      update_rate="10"
+      gamma="0.001"
+      radius="3.0">
+      <xacro:insert_block name="origin" />
+    </xacro:chemical_concentration_sensor_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_chemical_concentration_sensor_enu"
+    params="namespace parent_link *origin">
+    <xacro:default_chemical_concentration_sensor_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      inertial_reference_frame="world">
+      <xacro:insert_block name="origin" />
+    </xacro:default_chemical_concentration_sensor_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_chemical_concentration_sensor_ned"
+    params="namespace parent_link *origin">
+    <xacro:default_chemical_concentration_sensor_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      inertial_reference_frame="world_ned">
+      <xacro:insert_block name="origin" />
+    </xacro:default_chemical_concentration_sensor_macro>
+  </xacro:macro>
+
+  <!-- DEPRECATED MACRO: See default_chemical_concentration_sensor_enu -->
+  <xacro:macro name="default_chemical_concentration_sensor"
+    params="namespace parent_link *origin">
+    <xacro:chemical_concentration_sensor_macro
+      namespace="${namespace}"
+      suffix=""
+      reference_frame="world"
+      parent_link="${parent_link}"
+      input_topic="/plume/particles"
+      output_topic="particle_concentration"
+      update_rate="10"
+      gamma="0.001"
+      radius="3.0">
+      <xacro:insert_block name="origin" />
+    </xacro:chemical_concentration_sensor_macro>
+  </xacro:macro>
+
+  <xacro:macro name="chemical_concentration_sensor_macro"
+    params="namespace parent_link *origin suffix input_topic output_topic
+            gamma radius update_rate reference_frame">
+    <!-- Sensor link -->
+   <link name="${namespace}/cc_sensor_link">
+     <inertial>
+       <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+       <mass value="0.001" />  <!-- [kg] -->
+       <origin xyz="0 0 0" rpy="0 0 0" />
+     </inertial>
+   </link>
+
+   <joint name="${namespace}/cc_sensor_joint" type="revolute">
+     <xacro:insert_block name="origin" />
+     <parent link="${parent_link}" />
+     <child link="${namespace}/cc_sensor_link" />
+     <axis xyz="1 0 0"/>
+     <limit upper="0" lower="0" effort="0" velocity="0" />
+   </joint>
+
+   <gazebo>
+     <plugin filename="libuuv_gazebo_ros_cpc_plugin.so"
+       name="chemical_concentration{suffix}_sensor">
+       <robot_namespace>${namespace}</robot_namespace>
+       <link_name>${namespace}/cc_sensor_link</link_name>
+       <plume_topic>${input_topic}</plume_topic>
+       <sensor_topic>${output_topic}</sensor_topic>
+       <update_rate>${update_rate}</update_rate>
+       <gamma>${gamma}</gamma>
+       <radius>${radius}</radius>
+       <enable_gazebo_messages>false</enable_gazebo_messages>
+       <enable_local_ned_frame>false</enable_local_ned_frame>
+       <static_reference_frame>${reference_frame}</static_reference_frame>
+     </plugin>
+   </gazebo>
+  </xacro:macro>
+
+
+</robot>

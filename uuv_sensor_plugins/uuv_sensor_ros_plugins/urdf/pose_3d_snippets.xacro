@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="pose_3d_macro" params="namespace suffix parent_link topic
+    update_rate *origin noise_sigma reference_frame">
+    <!-- Mount a 3D pose sensor -->
+    <link name="${namespace}/pose_sensor_link_${suffix}">
+      <inertial>
+        <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+        <mass value="0.01" />  <!-- [kg] -->
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+    </link>
+
+    <joint name="${namespace}/pose_sensor_${suffix}_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <axis xyz="0 0 1"/>
+      <parent link="${parent_link}"/>
+      <child link="${namespace}/pose_sensor_link_${suffix}"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+    <gazebo>
+      <plugin name="pose_3d_plugin" filename="libuuv_gazebo_ros_pose_gt_plugin.so">
+        <robot_namespace>${namespace}</robot_namespace>
+        <link_name>${namespace}/base_link</link_name>
+        <sensor_topic>${topic}</sensor_topic>
+        <static_reference_frame>${reference_frame}</static_reference_frame>
+        <gaussian_noise_sigma>${noise_sigma}</gaussian_noise_sigma>
+        <update_rate>${update_rate}</update_rate>
+        <enable_gazebo_messages>false</enable_gazebo_messages>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="pose_3d_sensor" params="namespace suffix parent_link
+    gaussian_noise_sigma topic">
+    <xacro:pose_3d_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      topic="${topic}"
+      update_rate="20"
+      noise_sigma="${gaussian_noise_sigma}"
+      suffix="${suffix}"
+      reference_frame="world">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:pose_3d_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_pose_3d" params="namespace parent_link">
+    <xacro:pose_3d_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      topic="pose_gt"
+      update_rate="20"
+      noise_sigma="0.0"
+      suffix="default"
+      reference_frame="world">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:pose_3d_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_pose_3d_enu" params="namespace parent_link">
+    <xacro:pose_3d_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      topic="pose_gt"
+      update_rate="20"
+      noise_sigma="0.0"
+      suffix="default"
+      reference_frame="world">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:pose_3d_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_pose_3d_ned" params="namespace parent_link">
+    <xacro:pose_3d_macro
+      namespace="${namespace}"
+      parent_link="${parent_link}"
+      topic="pose_gt"
+      update_rate="20"
+      noise_sigma="0.0"
+      suffix="default"
+      reference_frame="world_ned">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:pose_3d_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_pose_3d_macro" params="namespace parent_link inertial_reference_frame">
+    <xacro:if value="${inertial_reference_frame == 'world'}">
+      <xacro:default_pose_3d_enu
+        namespace="${namespace}"
+        parent_link="${parent_link}">
+      </xacro:default_pose_3d_enu>
+    </xacro:if>
+
+    <xacro:if value="${inertial_reference_frame == 'world_ned'}">
+      <xacro:default_pose_3d_ned
+        namespace="${namespace}"
+        parent_link="${parent_link}">
+      </xacro:default_pose_3d_ned>
+    </xacro:if>
+  </xacro:macro>
+
+
+</robot>

@@ -1,0 +1,9 @@
+<launch>
+
+  <arg name="uuv_name" />
+
+  <group ns="$(arg uuv_name)">
+    <node pkg="tf2_ros" type="static_transform_publisher" name="sname_frame_publisher"
+          args="0 0 0 3.141592653589793 0 0 /$(arg uuv_name)/base_link /$(arg uuv_name)/base_link_ned" />
+  </group>
+</launch>

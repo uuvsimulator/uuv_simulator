@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="world_ned_frame_publisher"
+    args="0 0 0 1.5707963267948966 0 3.141592653589793 world world_ned" />
+</launch>

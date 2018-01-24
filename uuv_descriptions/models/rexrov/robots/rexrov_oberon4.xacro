@@ -19,13 +19,16 @@
 
   <xacro:arg name="debug" default="0"/>
   <xacro:arg name="namespace" default="rexrov"/>
+  <xacro:arg name="inertial_reference_frame" default="world"/>
   <!-- Include the ROV macro file -->
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov_base.xacro"/>
   <xacro:include filename="$(find uuv_descriptions)/models/rexrov/urdf/rexrov.gazebo.xacro"/>
   <xacro:include filename="$(find oberon4_description)/robots/oberon4_default.xacro" />
 
   <!-- Create the ROV -->
-  <xacro:rexrov_base namespace="$(arg namespace)">
+  <xacro:rexrov_base
+    namespace="$(arg namespace)"
+    inertial_reference_frame="$(arg inertial_reference_frame)">
     <!-- The underwater object plugin is given as an input block parameter to
      allow the addition of external models of manipulator units -->
     <gazebo>

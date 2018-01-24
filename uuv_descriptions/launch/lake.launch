@@ -14,6 +14,8 @@
         <arg name="verbose" value="true"/>
     </include>
 
+    <include file="$(find uuv_assistants)/launch/publish_world_ned_frame.launch"/>
+    
     <node name="publish_world_models"
         pkg="uuv_assistants"
         type="publish_world_models.py"
@@ -22,7 +24,7 @@
             meshes:
                 lake:
                     mesh: package://uuv_descriptions/world_models/lake/meshes/LakeBottom.dae
-                    model: lake             
+                    model: lake
         </rosparam>
     </node>
 

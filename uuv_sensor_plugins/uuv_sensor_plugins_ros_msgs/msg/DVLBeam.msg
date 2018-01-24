@@ -13,11 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-float64 range    # measured range [m] or < 0 if invalid
+# measured range [m] or < 0 if invalid
+float64 range
 float64 range_covariance
 
 float64 velocity # measured velocity [m/s] of corr. beam
 float64 velocity_covariance
 
-float64 yaw      # yaw angle [rad] of corresponding beam
-float64 pitch    # pitch angle [rad] of corresponding beam
+# Beam link pose wrt DVL link frame
+geometry_msgs/PoseStamped pose

@@ -27,8 +27,8 @@
   -->
   <!-- includes -->
   <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
-  <xacro:include filename="$(find uuv_sensor_plugins_ros)/urdf/sensor_snippets.xacro"/>
-  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro"/>
+  <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro"/>  
 
   <!-- Parameters -->
   <xacro:property name="namespace" value="rexrov"/>
@@ -38,7 +38,7 @@
   <!-- Mass, see p.28 in Berg2012 -->
   <xacro:property name="mass" value="1862.87"/>
 
-  <xacro:macro name="rexrov_base" params="namespace *gazebo">
+  <xacro:macro name="rexrov_base" params="namespace *gazebo inertial_reference_frame">
     <!-- base_link according to ROS conventions: x forward, z up -->
     <link name="${namespace}/base_link">
       <inertial>

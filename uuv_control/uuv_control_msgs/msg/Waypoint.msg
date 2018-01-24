@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+std_msgs/Header header
 geometry_msgs/Point point
 float64 max_forward_speed
 float64 heading_offset
