@@ -53,11 +53,6 @@ BuoyantObject::BuoyantObject(physics::LinkPtr _link)
   // it should come from the physics engine but it is still not resolved
   this->boundingBox = link->GetBoundingBox();
 
-  // Estimate volume, can be overwritten later
-  this->SetVolume(-1);
-  // Estimate CoB, can be overwritten later
-  this->EstimateCoB();
-
   // Set neutrally buoyant flag to false
   this->neutrallyBuoyant = false;
 }
