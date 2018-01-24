@@ -93,14 +93,14 @@ void MagnetometerROSPlugin::Load(physics::ModelPtr _model,
 /////////////////////////////////////////////////
 bool MagnetometerROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
-  if (!this->EnableMeasurement(_info) || !this->isReferenceInit)
+  if (!this->EnableMeasurement(_info))
     return false;
 
   if (this->enableLocalNEDFrame)
     this->SendLocalNEDTransform();
 
   ignition::math::Pose3d pose;
-    // Read sensor link's current pose
+  // Read sensor link's current pose
 #if GAZEBO_MAJOR_VERSION >= 8
   pose = this->link->WorldPose();
 #else

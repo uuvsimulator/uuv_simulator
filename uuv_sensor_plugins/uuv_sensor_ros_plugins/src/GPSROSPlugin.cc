@@ -67,6 +67,8 @@ void GPSROSPlugin::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 /////////////////////////////////////////////////
 bool GPSROSPlugin::OnUpdateGPS()
 {
+  // Publish sensor state
+  this->PublishState();
   common::Time currentTime = this->gazeboGPSSensor->LastMeasurementTime();
 
   this->gpsMessage.header.stamp.sec = currentTime.sec;

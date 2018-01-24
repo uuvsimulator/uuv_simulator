@@ -83,7 +83,7 @@ void PoseGTROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 /////////////////////////////////////////////////
 bool PoseGTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
-  if (!this->EnableMeasurement(_info) || !this->isReferenceInit)
+  if (!this->EnableMeasurement(_info))
     return false;
 
     // Read the current simulation time
@@ -93,112 +93,112 @@ bool PoseGTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
     common::Time curTime = this->world->GetSimTime();
 #endif
 
-    double dt = curTime.Double() - this->lastMeasurementTime.Double();
+  double dt = curTime.Double() - this->lastMeasurementTime.Double();
 
-    if (dt <= 0)
-      return false;
+  if (dt <= 0)
+    return false;
 
-    // Initialize header of the odometry message
-    this->odomMsg.header.frame_id = this->referenceFrameID;
-    this->odomMsg.header.stamp.sec = curTime.sec;
-    this->odomMsg.header.stamp.nsec = curTime.nsec;
-    this->odomMsg.child_frame_id = this->link->GetName();
+  // Initialize header of the odometry message
+  this->odomMsg.header.frame_id = this->referenceFrameID;
+  this->odomMsg.header.stamp.sec = curTime.sec;
+  this->odomMsg.header.stamp.nsec = curTime.nsec;
+  this->odomMsg.child_frame_id = this->link->GetName();
 
-    ignition::math::Pose3d linkPose, refLinkPose;
-    ignition::math::Vector3d refLinVel, refAngVel;
-    ignition::math::Vector3d linkLinVel, linkAngVel;
+  ignition::math::Pose3d linkPose, refLinkPose;
+  ignition::math::Vector3d refLinVel, refAngVel;
+  ignition::math::Vector3d linkLinVel, linkAngVel;
 
     // Read sensor link's current pose and velocity
 #if GAZEBO_MAJOR_VERSION >= 8
-    linkLinVel = this->link->WorldLinearVel();
-    linkAngVel = this->link->WorldAngularVel();
+  linkLinVel = this->link->WorldLinearVel();
+  linkAngVel = this->link->WorldAngularVel();
 
-    linkPose = this->link->WorldPose();
+  linkPose = this->link->WorldPose();
 #else
-    linkLinVel = this->link->GetWorldLinearVel().Ign();
-    linkAngVel = this->link->GetWorldAngularVel().Ign();
+  linkLinVel = this->link->GetWorldLinearVel().Ign();
+  linkAngVel = this->link->GetWorldAngularVel().Ign();
 
-    linkPose = this->link->GetWorldPose().Ign();
+  linkPose = this->link->GetWorldPose().Ign();
 #endif
 
-    this->UpdateReferenceFramePose();
-    if (this->referenceLink)
-    {
+  this->UpdateReferenceFramePose();
+  if (this->referenceLink)
+  {
 #if GAZEBO_MAJOR_VERSION >= 8
-      refLinVel = this->referenceLink->WorldLinearVel();
-      refAngVel = this->referenceLink->WorldAngularVel();
+    refLinVel = this->referenceLink->WorldLinearVel();
+    refAngVel = this->referenceLink->WorldAngularVel();
 
-      this->referenceFrame = this->referenceLink->WorldPose();
+    this->referenceFrame = this->referenceLink->WorldPose();
 #else
-      refLinVel = this->referenceLink->GetWorldLinearVel().Ign();
-      refAngVel = this->referenceLink->GetWorldAngularVel().Ign();
+    refLinVel = this->referenceLink->GetWorldLinearVel().Ign();
+    refAngVel = this->referenceLink->GetWorldAngularVel().Ign();
 
-      this->referenceFrame = this->referenceLink->GetWorldPose().Ign();
+    this->referenceFrame = this->referenceLink->GetWorldPose().Ign();
 #endif
-    }
-    else
-    {
-      refLinVel = ignition::math::Vector3d::Zero;
-      refAngVel = ignition::math::Vector3d::Zero;
-    }
+  }
+  else
+  {
+    refLinVel = ignition::math::Vector3d::Zero;
+    refAngVel = ignition::math::Vector3d::Zero;
+  }
 
-    // Transform pose and velocity vectors to be represented wrt the
-    // reference link provided
-    linkPose.Pos() = linkPose.Pos() - this->referenceFrame.Pos();
-    linkPose.Pos() = this->referenceFrame.Rot().RotateVectorReverse(linkPose.Pos());
-    linkPose.Rot() *= this->referenceFrame.Rot().Inverse();
+  // Transform pose and velocity vectors to be represented wrt the
+  // reference link provided
+  linkPose.Pos() = linkPose.Pos() - this->referenceFrame.Pos();
+  linkPose.Pos() = this->referenceFrame.Rot().RotateVectorReverse(linkPose.Pos());
+  linkPose.Rot() *= this->referenceFrame.Rot().Inverse();
 
-    linkLinVel = this->referenceFrame.Rot().RotateVector(linkLinVel - refLinVel);
-    linkAngVel = this->referenceFrame.Rot().RotateVector(linkAngVel - refAngVel);
+  linkLinVel = this->referenceFrame.Rot().RotateVector(linkLinVel - refLinVel);
+  linkAngVel = this->referenceFrame.Rot().RotateVector(linkAngVel - refAngVel);
 
-    // Apply pose offset
-    linkPose.Pos() = linkPose.Pos() + this->offset.Pos();
-    linkPose.Rot() = this->offset.Rot() * linkPose.Rot();
-    linkPose.Rot().Normalize();
+  // Apply pose offset
+  linkPose.Pos() = linkPose.Pos() + this->offset.Pos();
+  linkPose.Rot() = this->offset.Rot() * linkPose.Rot();
+  linkPose.Rot().Normalize();
 
-    // Fill out the messages
-    this->odomMsg.pose.pose.position.x = linkPose.Pos().X();
-    this->odomMsg.pose.pose.position.y = linkPose.Pos().Y();
-    this->odomMsg.pose.pose.position.z = linkPose.Pos().Z();
+  // Fill out the messages
+  this->odomMsg.pose.pose.position.x = linkPose.Pos().X();
+  this->odomMsg.pose.pose.position.y = linkPose.Pos().Y();
+  this->odomMsg.pose.pose.position.z = linkPose.Pos().Z();
 
-    this->odomMsg.pose.pose.orientation.x = linkPose.Rot().X();
-    this->odomMsg.pose.pose.orientation.y = linkPose.Rot().Y();
-    this->odomMsg.pose.pose.orientation.z = linkPose.Rot().Z();
-    this->odomMsg.pose.pose.orientation.w = linkPose.Rot().W();
+  this->odomMsg.pose.pose.orientation.x = linkPose.Rot().X();
+  this->odomMsg.pose.pose.orientation.y = linkPose.Rot().Y();
+  this->odomMsg.pose.pose.orientation.z = linkPose.Rot().Z();
+  this->odomMsg.pose.pose.orientation.w = linkPose.Rot().W();
 
-    this->odomMsg.twist.twist.angular.x = linkLinVel.X() +
-      this->GetGaussianNoise(this->gaussianNoiseSigma);
-    this->odomMsg.twist.twist.angular.y = linkLinVel.Y() +
-      this->GetGaussianNoise(this->gaussianNoiseSigma);
-    this->odomMsg.twist.twist.angular.z = linkLinVel.Z() +
-      this->GetGaussianNoise(this->gaussianNoiseSigma);
+  this->odomMsg.twist.twist.angular.x = linkLinVel.X() +
+    this->GetGaussianNoise(this->gaussianNoiseSigma);
+  this->odomMsg.twist.twist.angular.y = linkLinVel.Y() +
+    this->GetGaussianNoise(this->gaussianNoiseSigma);
+  this->odomMsg.twist.twist.angular.z = linkLinVel.Z() +
+    this->GetGaussianNoise(this->gaussianNoiseSigma);
 
-    this->odomMsg.twist.twist.angular.x = linkAngVel.X() +
-      this->GetGaussianNoise(this->gaussianNoiseSigma);
-    this->odomMsg.twist.twist.angular.y = linkAngVel.Y() +
-      this->GetGaussianNoise(this->gaussianNoiseSigma);
-    this->odomMsg.twist.twist.angular.z = linkAngVel.Z() +
-      this->GetGaussianNoise(this->gaussianNoiseSigma);
+  this->odomMsg.twist.twist.angular.x = linkAngVel.X() +
+    this->GetGaussianNoise(this->gaussianNoiseSigma);
+  this->odomMsg.twist.twist.angular.y = linkAngVel.Y() +
+    this->GetGaussianNoise(this->gaussianNoiseSigma);
+  this->odomMsg.twist.twist.angular.z = linkAngVel.Z() +
+    this->GetGaussianNoise(this->gaussianNoiseSigma);
 
-    // Fill in the covariance matrix
-    double gn2 = this->gaussianNoiseSigma * this->gaussianNoiseSigma;
-    this->odomMsg.pose.covariance[0] = gn2;
-    this->odomMsg.pose.covariance[7] = gn2;
-    this->odomMsg.pose.covariance[14] = gn2;
-    this->odomMsg.pose.covariance[21] = gn2;
-    this->odomMsg.pose.covariance[28] = gn2;
-    this->odomMsg.pose.covariance[35] = gn2;
+  // Fill in the covariance matrix
+  double gn2 = this->gaussianNoiseSigma * this->gaussianNoiseSigma;
+  this->odomMsg.pose.covariance[0] = gn2;
+  this->odomMsg.pose.covariance[7] = gn2;
+  this->odomMsg.pose.covariance[14] = gn2;
+  this->odomMsg.pose.covariance[21] = gn2;
+  this->odomMsg.pose.covariance[28] = gn2;
+  this->odomMsg.pose.covariance[35] = gn2;
 
-    this->odomMsg.twist.covariance[0] = gn2;
-    this->odomMsg.twist.covariance[7] = gn2;
-    this->odomMsg.twist.covariance[14] = gn2;
-    this->odomMsg.twist.covariance[21] = gn2;
-    this->odomMsg.twist.covariance[28] = gn2;
-    this->odomMsg.twist.covariance[35] = gn2;
+  this->odomMsg.twist.covariance[0] = gn2;
+  this->odomMsg.twist.covariance[7] = gn2;
+  this->odomMsg.twist.covariance[14] = gn2;
+  this->odomMsg.twist.covariance[21] = gn2;
+  this->odomMsg.twist.covariance[28] = gn2;
+  this->odomMsg.twist.covariance[35] = gn2;
 
-    this->rosSensorOutputPub.publish(this->odomMsg);
-    this->lastMeasurementTime = curTime;
-    return true;
+  this->rosSensorOutputPub.publish(this->odomMsg);
+  this->lastMeasurementTime = curTime;
+  return true;
 }
 
 /////////////////////////////////////////////////

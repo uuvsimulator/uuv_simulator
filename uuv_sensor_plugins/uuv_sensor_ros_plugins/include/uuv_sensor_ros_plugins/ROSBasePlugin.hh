@@ -138,6 +138,4 @@ namespace gazebo
   };
 }
 
-
-
 #endif // __ROS_BASE_PLUGIN_HH__

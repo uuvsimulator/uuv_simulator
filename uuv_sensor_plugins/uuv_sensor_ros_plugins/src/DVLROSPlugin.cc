@@ -149,7 +149,10 @@ void DVLROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 /////////////////////////////////////////////////
 bool DVLROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
-  if (!this->EnableMeasurement(_info) || !this->isReferenceInit)
+  // Publish sensor state
+  this->PublishState();
+  
+  if (!this->EnableMeasurement(_info))
     return false;
 
   if (this->enableLocalNEDFrame)

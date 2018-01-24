@@ -53,7 +53,10 @@ void SubseaPressureROSPlugin::Load(physics::ModelPtr _model,
 /////////////////////////////////////////////////
 bool SubseaPressureROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
-  if (!this->EnableMeasurement(_info) || !this->isReferenceInit)
+  // Publish sensor state
+  this->PublishState();
+
+  if (!this->EnableMeasurement(_info))
     return false;
 
   // Using the world pose wrt Gazebo's ENU reference frame
@@ -64,7 +67,7 @@ bool SubseaPressureROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   pos = this->link->GetWorldPose().Ign().Pos();
 #endif
 
-  double depth = -1 * pos.Z();
+  double depth = std::abs(pos.Z());
   double pressure = this->standardPressure;
   if (depth >= 0)
   {

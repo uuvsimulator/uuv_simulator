@@ -179,9 +179,21 @@ bool ROSBasePlugin::ChangeSensorState(
 }
 
 /////////////////////////////////////////////////
+void ROSBasePlugin::PublishState()
+{
+  this->pluginStatePub.publish(this->isOn);
+}
+
+/////////////////////////////////////////////////
 double ROSBasePlugin::GetGaussianNoise(double _sigma)
 {
   return _sigma * this->normalDist(this->rndGen);
+}
+
+/////////////////////////////////////////////////
+bool ROSBasePlugin::IsOn()
+{
+  return this->isOn.data;
 }
 
 /////////////////////////////////////////////////
@@ -189,7 +201,8 @@ bool ROSBasePlugin::EnableMeasurement(const common::UpdateInfo& _info) const
 {
     common::Time current_time  = _info.simTime;
     double dt = (current_time - this->lastMeasurementTime).Double();
-    return dt >= 1.0 / this->updateRate;
+    return dt >= 1.0 / this->updateRate && this->isReferenceInit &&
+      this->isOn.data;
 }
 
 /////////////////////////////////////////////////
