@@ -1,16 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_teleop)
 
-find_package(catkin REQUIRED COMPONENTS
-        joy_teleop 
-        joy
-        sensor_msgs
-        std_msgs
-        geometry_msgs
-        rospy
-        tf
-        uuv_gazebo_ros_plugins_msgs
-        uuv_thruster_manager)
+find_package(catkin REQUIRED)
 
 catkin_package()
 

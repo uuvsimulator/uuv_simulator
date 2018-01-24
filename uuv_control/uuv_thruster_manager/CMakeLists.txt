@@ -3,11 +3,7 @@ project(uuv_thruster_manager)
 
 find_package(catkin REQUIRED COMPONENTS
   std_msgs 
-  message_generation
-  tf
-  rospy
-  uuv_gazebo_ros_plugins_msgs
-  geometry_msgs)
+  message_generation)
 
 catkin_python_setup()
 
