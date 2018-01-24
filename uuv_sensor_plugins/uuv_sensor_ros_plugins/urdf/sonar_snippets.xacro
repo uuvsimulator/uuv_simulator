@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Macro for a minimal collision block (for when you do not want collision block but gazebo needs one) -->
+  <xacro:macro name="no_collision">
+    <collision>
+      <geometry>
+        <cylinder length="${0.000001}" radius="${0.000001}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+    </collision>
+  </xacro:macro>
+
+
+  <!-- Side scan sonar -->
+  <xacro:macro name="sidescan_sonar" params="namespace parent_link suffix *origin">
+    <xacro:multibeam_sonar
+      namespace="${namespace}"
+      suffix="${suffix}"
+      parent_link="${parent_link}"
+      topic="sss_${suffix}"
+      mass="0.015"
+      update_rate="2"
+      samples="60"
+      fov="${pi/3.0}"
+      range_min="1.0"
+      range_max="200.0"
+      range_stddev="0.027"
+      mesh="">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.001 0.001 0.001"/>
+        </geometry>
+      </visual>
+    </xacro:multibeam_sonar>
+  </xacro:macro>
+
+  <!-- Inspired by m450-130: http://www.blueview.com/products/2d-imaging-sonar/m900-series/ -->
+  <xacro:macro name="forward_multibeam_sonar_m450_130" params="namespace parent_link *origin">
+    <xacro:multibeam_sonar
+      namespace="${namespace}"
+      suffix=""
+      parent_link="${parent_link}"
+      topic="sonar"
+      mass="0.015"
+      update_rate="25"
+      samples="768"
+      fov="2.27"
+      range_min="1.0"
+      range_max="100.0"
+      range_stddev="0.027"
+      mesh="">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/m450-130.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+    </xacro:multibeam_sonar>
+  </xacro:macro>
+
+  <xacro:macro name="forward_multibeam_p900" params="namespace parent_link *origin">
+    <xacro:multibeam_sonar
+      namespace="${namespace}"
+      suffix=""
+      parent_link="${parent_link}"
+      topic="sonar"
+      mass="0.02"
+      update_rate="15"
+      samples="512"
+      fov="1.5708"
+      range_min="1.0"
+      range_max="100.0"
+      range_stddev="0.027"
+      mesh="">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find uuv_sensor_plugins)/mesh/p900.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+    </xacro:multibeam_sonar>
+  </xacro:macro>
+
+  <xacro:macro name="multibeam_sonar"
+    params="namespace suffix parent_link topic mass update_rate
+      samples fov range_min range_max range_stddev mesh
+      *inertia *origin *visual">
+    <!-- Sensor link -->
+    <link name="${namespace}/sonar${suffix}_link">
+      <inertial>
+        <xacro:insert_block name="inertia" />
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+
+      <xacro:insert_block name="visual" />
+      <xacro:no_collision/>
+    </link>
+
+  <joint name="${namespace}_sonar${suffix}_joint" type="revolute">
+    <xacro:insert_block name="origin" />
+    <parent link="${parent_link}" />
+    <child link="${namespace}/sonar${suffix}_link" />
+    <limit upper="0" lower="0" effort="0" velocity="0" />
+    <axis xyz="1 0 0"/>
+  </joint>
+
+  <gazebo reference="${namespace}/sonar${suffix}_link">
+    <sensor type="gpu_ray" name="sonar${suffix}">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>${update_rate}</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>${samples}</samples>
+            <resolution>1</resolution>
+            <min_angle>-${0.5*fov}</min_angle>
+            <max_angle>${0.5*fov}</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>${range_min}</min>
+          <max>${range_max}</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>${range_stddev}</stddev>
+        </noise>
+      </ray>
+      <plugin name="sonar${suffix}_controller" filename="libgazebo_ros_gpu_laser.so">
+        <topicName>${topic}</topicName>
+        <frameName>sonar${suffix}_link</frameName>
+      </plugin>
+      <!-- TODO: Separate switchable sonar version in another macro -->
+      <plugin name="switchable_sonar{suffix}_ros_interface" filename="libuuv_gazebo_ros_switchable_gpu_ray_sensor.so">
+          <namespace>${namespace}</namespace>
+          <input_topic>${topic}</input_topic>
+      </plugin>
+    </sensor>
+  </gazebo>
+  </xacro:macro>
+</robot>

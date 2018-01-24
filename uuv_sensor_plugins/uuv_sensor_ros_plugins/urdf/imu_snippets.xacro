@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Macro for a minimal collision block (for when you do not want collision block but gazebo needs one) -->
+  <xacro:macro name="no_collision">
+    <collision>
+      <geometry>
+        <cylinder length="${0.000001}" radius="${0.000001}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+    </collision>
+  </xacro:macro>
+
+  <xacro:macro name="default_imu" params="namespace parent_link *origin">
+    <!-- ADIS16448 IMU. -->
+    <xacro:imu_plugin_macro
+      namespace="${namespace}"
+      imu_suffix=""
+      parent_link="${parent_link}"
+      imu_topic="imu"
+      mass_imu_sensor="0.015"
+      gyroscope_noise_density="0.0003394"
+      gyroscopoe_random_walk="0.000038785"
+      gyroscope_bias_correlation_time="1000.0"
+      gyroscope_turn_on_bias_sigma="0.0087"
+      accelerometer_noise_density="0.004"
+      accelerometer_random_walk="0.006"
+      accelerometer_bias_correlation_time="300.0"
+      accelerometer_turn_on_bias_sigma="0.1960"
+      orientation_noise="0.01"
+      enable_local_ned_frame="false"
+      reference_frame="world"
+      update_rate="50">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />
+    </xacro:imu_plugin_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_imu_macro" params="namespace parent_link *origin inertial_reference_frame">
+    <!-- ADIS16448 IMU. -->
+    <xacro:if value="${inertial_reference_frame == 'world'}">
+      <xacro:default_imu_enu
+        namespace="${namespace}"
+        parent_link="${parent_link}">
+        <xacro:insert_block name="origin" />
+      </xacro:default_imu_enu>
+    </xacro:if>
+
+    <xacro:if value="${inertial_reference_frame == 'world_ned'}">
+      <xacro:default_imu_ned
+        namespace="${namespace}"
+        parent_link="${parent_link}">
+        <xacro:insert_block name="origin" />
+      </xacro:default_imu_ned>
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:macro name="default_imu_enu" params="namespace parent_link *origin">
+    <!-- ADIS16448 IMU. -->
+    <xacro:imu_plugin_macro
+      namespace="${namespace}"
+      imu_suffix=""
+      parent_link="${parent_link}"
+      imu_topic="imu"
+      mass_imu_sensor="0.015"
+      gyroscope_noise_density="0.0003394"
+      gyroscopoe_random_walk="0.000038785"
+      gyroscope_bias_correlation_time="1000.0"
+      gyroscope_turn_on_bias_sigma="0.0087"
+      accelerometer_noise_density="0.004"
+      accelerometer_random_walk="0.006"
+      accelerometer_bias_correlation_time="300.0"
+      accelerometer_turn_on_bias_sigma="0.1960"
+      orientation_noise="0.01"
+      enable_local_ned_frame="false"
+      reference_frame="world"
+      update_rate="50">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />>
+    </xacro:imu_plugin_macro>
+  </xacro:macro>
+
+  <xacro:macro name="default_imu_ned" params="namespace parent_link *origin">
+    <!-- ADIS16448 IMU. -->
+    <xacro:imu_plugin_macro
+      namespace="${namespace}"
+      imu_suffix=""
+      parent_link="${parent_link}"
+      imu_topic="imu"
+      mass_imu_sensor="0.015"
+      gyroscope_noise_density="0.0003394"
+      gyroscopoe_random_walk="0.000038785"
+      gyroscope_bias_correlation_time="1000.0"
+      gyroscope_turn_on_bias_sigma="0.0087"
+      accelerometer_noise_density="0.004"
+      accelerometer_random_walk="0.006"
+      accelerometer_bias_correlation_time="300.0"
+      accelerometer_turn_on_bias_sigma="0.1960"
+      orientation_noise="0.01"
+      enable_local_ned_frame="true"
+      reference_frame="world_ned"
+      update_rate="50">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />
+    </xacro:imu_plugin_macro>
+  </xacro:macro>
+
+  <!-- Macro to add an IMU. -->
+  <xacro:macro name="imu_plugin_macro"
+    params="namespace imu_suffix parent_link imu_topic
+      mass_imu_sensor gyroscope_noise_density gyroscopoe_random_walk
+      gyroscope_bias_correlation_time gyroscope_turn_on_bias_sigma
+      accelerometer_noise_density accelerometer_random_walk
+      accelerometer_bias_correlation_time accelerometer_turn_on_bias_sigma
+      orientation_noise
+      update_rate reference_frame
+      enable_local_ned_frame
+      *inertia *origin">
+    <!-- IMU link -->
+    <link name="${namespace}/imu${imu_suffix}_link">
+      <inertial>
+        <xacro:insert_block name="inertia" />
+        <mass value="${mass_imu_sensor}" />  <!-- [kg] -->
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+    </link>
+
+    <!-- IMU joint -->
+    <joint name="${namespace}/imu${imu_suffix}_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/imu${imu_suffix}_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo>
+      <plugin filename="libuuv_gazebo_ros_imu_plugin.so" name="libuuv_gazebo_imu${imu_suffix}_plugin">
+      <!-- A good description of the IMU parameters can be found in the kalibr documentation:
+           https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model-and-Intrinsics -->
+        <robot_namespace>${namespace}</robot_namespace> <!-- (string, required): ros namespace in which the messages are published -->
+        <link_name>${namespace}/imu${imu_suffix}_link</link_name> <!-- (string, required): name of the body which holds the IMU sensor -->
+        <sensor_topic>${imu_topic}</sensor_topic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+
+        <gyroscope_noise_density>${gyroscope_noise_density}</gyroscope_noise_density> <!-- Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)] -->
+        <gyroscope_random_walk>${gyroscopoe_random_walk}</gyroscope_random_walk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
+        <gyroscope_bias_correlation_time>${gyroscope_bias_correlation_time}</gyroscope_bias_correlation_time> <!-- Gyroscope bias correlation time constant [s] -->
+        <gyroscope_turn_on_bias_sigma>${gyroscope_turn_on_bias_sigma}</gyroscope_turn_on_bias_sigma> <!-- Gyroscope turn on bias standard deviation [rad/s] -->
+
+        <accelerometer_noise_density>${accelerometer_noise_density}</accelerometer_noise_density> <!-- Accelerometer noise density (two-sided spectrum) [m/s^2/sqrt(Hz)] -->
+        <accelerometer_random_walk>${accelerometer_random_walk}</accelerometer_random_walk> <!-- Accelerometer bias random walk. [m/s^2/s/sqrt(Hz)] -->
+        <accelerometer_bias_correlation_time>${accelerometer_bias_correlation_time}</accelerometer_bias_correlation_time> <!-- Accelerometer bias correlation time constant [s] -->
+        <accelerometer_turn_on_bias_sigma>${accelerometer_turn_on_bias_sigma}</accelerometer_turn_on_bias_sigma> <!-- Accelerometer turn on bias standard deviation [m/s^2] -->
+        <orientation_noise>${orientation_noise}</orientation_noise>
+
+        <update_rate>${update_rate}</update_rate> <!-- Update period of accelerometer and gyroscope [s] -->
+        <enable_gazebo_messages>false</enable_gazebo_messages>
+        <enable_local_ned_frame>${enable_local_ned_frame}</enable_local_ned_frame>
+        <static_reference_frame>${reference_frame}</static_reference_frame>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+</robot>
