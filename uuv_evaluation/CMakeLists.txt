@@ -1,12 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_evaluation)
 
-find_package(catkin REQUIRED COMPONENTS 
-  rospy
-  roslib
-  rosbag
-  tf
-  uuv_trajectory_control)
+find_package(catkin REQUIRED)
 
 catkin_python_setup()
 
@@ -33,7 +28,7 @@ install(PROGRAMS
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest)
   foreach(T
-      test/test_all.launch      
+      test/test_all.launch
       )
      add_rostest(${T})
   endforeach()
@@ -44,5 +39,5 @@ if(CATKIN_ENABLE_TESTING)
     test/test_kpis.py
     catkin_add_nosetests(${UNIT_TESTS}))
   endforeach()
-  
+
 endif()
