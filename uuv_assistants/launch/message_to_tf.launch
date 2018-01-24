@@ -1,12 +1,16 @@
 <launch>
   <arg name="namespace" default="rexrov"/>
+  <arg name="world_frame" default="world"/>
+  <arg name="odometry_topic" default="/$(arg namespace)/pose_gt"/>
 
-  <!-- publish state and tf for in relation to the world frame -->
-  <node name="ground_truth_to_tf_$(arg namespace)" pkg="message_to_tf" type="message_to_tf" output="screen">
-    <param name="~odometry_topic" value="/$(arg namespace)/pose_gt" />
-    <param name="~frame_id" value="world" />
-    <param name="~stabilized_frame_id" value="/$(arg namespace)/base_stabilized" />
-    <param name="~footprint_frame_id" value="/$(arg namespace)/base_footprint" />
-    <param name="~child_frame_id" value="/$(arg namespace)/base_link" />
-  </node>
+  <group ns="$(arg namespace)">
+    <!-- publish state and tf for in relation to the world frame -->
+    <node name="ground_truth_to_tf_$(arg namespace)" pkg="message_to_tf" type="message_to_tf" output="screen">
+      <param name="~odometry_topic" value="$(arg odometry_topic)" />
+      <param name="~frame_id" value="$(arg world_frame)" />
+      <param name="~stabilized_frame_id" value="/$(arg namespace)/base_stabilized" />
+      <param name="~footprint_frame_id" value="/$(arg namespace)/base_footprint" />
+      <param name="~child_frame_id" value="/$(arg namespace)/base_link" />
+    </node>
+  </group>
 </launch>
