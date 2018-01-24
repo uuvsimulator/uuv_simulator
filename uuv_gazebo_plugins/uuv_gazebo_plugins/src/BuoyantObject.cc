@@ -185,18 +185,8 @@ void BuoyantObject::SetBoundingBox(const math::Box &_bBox)
 /////////////////////////////////////////////////
 void BuoyantObject::SetVolume(double _volume)
 {
-  if (_volume > 0)
-    this->volume = _volume;
-  else
-  {
-    // If volume is not given, it will be estimated from the collision
-    // geometries
-    double v = 0.0;
-    for (auto collision : link->GetCollisions())
-      v += collision->GetShape()->ComputeVolume();
-
-    this->volume = v;
-  }
+  GZ_ASSERT(_volume > 0, "Invalid input volume");
+  this->volume = _volume;
 }
 
 /////////////////////////////////////////////////
