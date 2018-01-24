@@ -166,11 +166,11 @@ bool PoseGTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   this->odomMsg.pose.pose.orientation.z = linkPose.Rot().Z();
   this->odomMsg.pose.pose.orientation.w = linkPose.Rot().W();
 
-  this->odomMsg.twist.twist.angular.x = linkLinVel.X() +
+  this->odomMsg.twist.twist.linear.x = linkLinVel.X() +
     this->GetGaussianNoise(this->gaussianNoiseSigma);
-  this->odomMsg.twist.twist.angular.y = linkLinVel.Y() +
+  this->odomMsg.twist.twist.linear.y = linkLinVel.Y() +
     this->GetGaussianNoise(this->gaussianNoiseSigma);
-  this->odomMsg.twist.twist.angular.z = linkLinVel.Z() +
+  this->odomMsg.twist.twist.linear.z = linkLinVel.Z() +
     this->GetGaussianNoise(this->gaussianNoiseSigma);
 
   this->odomMsg.twist.twist.angular.x = linkAngVel.X() +
