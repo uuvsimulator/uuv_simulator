@@ -14,8 +14,8 @@
 # limitations under the License.
 
 Header header
-# Position of the measured value in local ENU coordinates
-geometry_msgs/Vector3 position_enu
+# Sensor link position
+geometry_msgs/Vector3 position
 # Latitude in degrees (WGS84 coordinates)
 float64 latitude
 # Longiture in degrees (WGS84 coordinates)
