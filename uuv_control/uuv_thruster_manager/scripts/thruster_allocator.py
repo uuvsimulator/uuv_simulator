@@ -21,11 +21,9 @@ import tf.transformations as trans
 from os.path import isdir, join
 from copy import deepcopy
 import yaml
-
+import tf2_ros
 from uuv_thrusters import ThrusterManager
-
-from geometry_msgs.msg import Wrench
-
+from geometry_msgs.msg import Wrench, WrenchStamped
 from uuv_thruster_manager.srv import *
 
 
@@ -43,6 +41,13 @@ class ThrusterAllocatorNode(ThrusterManager):
         # Subscriber to the wrench to be applied on the UUV
         self.input_sub = rospy.Subscriber('thruster_manager/input',
                                           Wrench, self.input_callback)
+
+        # To deliver the wrench input with an option to use another body frame
+        # (options: base_link and base_link_ned), use the wrench stamped
+        # message
+        self.input_stamped_sub = rospy.Subscriber(
+            'thruster_manager/input_stamped', WrenchStamped,
+            self.input_stamped_callback)
 
         self.thruster_info_service = rospy.Service(
             'thruster_manager/get_thrusters_info', ThrusterManagerInfo,
@@ -127,9 +132,30 @@ class ThrusterAllocatorNode(ThrusterManager):
         force = numpy.array((msg.force.x, msg.force.y, msg.force.z))
         torque = numpy.array((msg.torque.x, msg.torque.y, msg.torque.z))
 
+        # This mode assumes that the wrench is given wrt thruster manager
+        # configured base_link reference
         self.publish_thrust_forces(force, torque)
 
         self.last_update = rospy.Time.now()
+
+    def input_stamped_callback(self, msg):
+        """
+        Callback to the subscriber that receiver the stamped wrench to be
+        applied on UUV's BODY frame.
+        @param msg Stamped wrench message
+        """
+        if not self.ready:
+            return
+
+        force = numpy.array(
+            (msg.wrench.force.x, msg.wrench.force.y, msg.wrench.force.z))
+        torque = numpy.array(
+            (msg.wrench.torque.x, msg.wrench.torque.y, msg.wrench.torque.z))
+
+        # Send the frame ID for the requested wrench
+        self.publish_thrust_forces(force, torque, msg.header.frame_id.split('/')[-1])
+        self.last_update = rospy.Time.now()
+
 
 if __name__ == '__main__':
     rospy.init_node('thruster_allocator')

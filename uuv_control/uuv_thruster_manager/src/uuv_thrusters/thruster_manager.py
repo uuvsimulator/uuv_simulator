@@ -18,6 +18,7 @@ import numpy
 import rospy
 import tf
 import tf.transformations as trans
+import tf2_ros
 from os.path import isdir, join
 import yaml
 from time import sleep
@@ -65,6 +66,34 @@ class ThrusterManager:
 
         if self.config['update_rate'] < 0:
             self.config['update_rate'] = 50
+
+        self.base_link_ned_to_enu = None
+
+        tf_buffer = tf2_ros.Buffer()
+        listener = tf2_ros.TransformListener(tf_buffer)
+        tf_trans_ned_to_enu = None
+
+        try:
+            target = '%sbase_link' % self.namespace
+            target = target[1::]
+            source = '%sbase_link_ned' % self.namespace
+            source = source[1::]
+            tf_trans_ned_to_enu = tf_buffer.lookup_transform(
+                target, source, rospy.Time(), rospy.Duration(1))
+        except Exception, e:
+            print('No transform found between base_link and base_link_ned'
+                  ' for vehicle ' + self.namespace)
+            print(str(e))
+            self.base_link_ned_to_enu = None
+
+        if tf_trans_ned_to_enu is not None:
+            self.base_link_ned_to_enu = trans.quaternion_matrix(
+                (tf_trans_ned_to_enu.transform.rotation.x,
+                 tf_trans_ned_to_enu.transform.rotation.y,
+                 tf_trans_ned_to_enu.transform.rotation.z,
+                 tf_trans_ned_to_enu.transform.rotation.w))[0:3, 0:3]
+
+        print 'base_link transform NED to ENU=\n', self.base_link_ned_to_enu
 
         rospy.loginfo(
           'ThrusterManager::update_rate=' + str(self.config['update_rate']))
@@ -277,9 +306,26 @@ class ThrusterManager:
         for i in range(self.n_thrusters):
             self.thrusters[i].publish_command(self.thrust[i])
 
-    def publish_thrust_forces(self, control_forces, control_torques):
+    def publish_thrust_forces(self, control_forces, control_torques,
+                              frame_id=None):
         if not self.ready:
             return
+
+        if frame_id is not None:
+            if self.config['base_link'] != frame_id:
+                assert self.base_link_ned_to_enu is not None, 'Transform from'
+                ' base_link_ned to base_link could not be found'
+                if 'base_link_ned' not in self.config['base_link']:
+                    control_forces = numpy.dot(self.base_link_ned_to_enu,
+                                               control_forces)
+                    control_torques = numpy.dot(self.base_link_ned_to_enu,
+                                                control_torques)
+                else:
+                    control_forces = numpy.dot(self.base_link_ned_to_enu.T,
+                                               control_forces)
+                    control_torques = numpy.dot(self.base_link_ned_to_enu.T,
+                                                control_torques)
+
         gen_forces = numpy.hstack(
             (control_forces, control_torques)).transpose()
         self.thrust = self.compute_thruster_forces(gen_forces)
