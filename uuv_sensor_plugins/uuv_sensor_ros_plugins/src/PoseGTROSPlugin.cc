@@ -37,6 +37,9 @@ PoseGTROSPlugin::PoseGTROSPlugin() : ROSBaseModelPlugin()
   // Initialize the reference's velocity and acceleration vectors
   this->refLinAcc = ignition::math::Vector3d::Zero;
   this->refAngAcc = ignition::math::Vector3d::Zero;
+
+  this->nedTransform = ignition::math::Pose3d::Zero;
+  this->nedTransformIsInit = true;
 }
 
 /////////////////////////////////////////////////
@@ -59,6 +62,16 @@ void PoseGTROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     ignition::math::Vector3d::Zero);
   this->offset.Rot() = ignition::math::Quaterniond(vec);
 
+  GetSDFParam<bool>(_sdf, "publish_ned_odom", this->publishNEDOdom, false);
+
+  if (this->publishNEDOdom)
+  {
+    this->nedFrameID = this->link->GetName() + "_ned";
+    this->nedOdomPub = this->rosNode->advertise<nav_msgs::Odometry>(
+      this->sensorOutputTopic + "_ned", 1);
+    this->nedTransformIsInit = false;
+  }
+
   // Initialize the reference's velocity and acceleration vectors
   if (!this->referenceLink)
   {
@@ -75,6 +88,8 @@ void PoseGTROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     this->lastRefAngVel = this->referenceLink->GetWorldAngularVel().Ign();
 #endif
   }
+
+  this->tfListener.reset(new tf2_ros::TransformListener(this->tfBuffer));
 
   this->rosSensorOutputPub = this->rosNode->advertise<nav_msgs::Odometry>(
       this->sensorOutputTopic, 1);
@@ -98,17 +113,12 @@ bool PoseGTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   if (dt <= 0)
     return false;
 
-  // Initialize header of the odometry message
-  this->odomMsg.header.frame_id = this->referenceFrameID;
-  this->odomMsg.header.stamp.sec = curTime.sec;
-  this->odomMsg.header.stamp.nsec = curTime.nsec;
-  this->odomMsg.child_frame_id = this->link->GetName();
-
   ignition::math::Pose3d linkPose, refLinkPose;
   ignition::math::Vector3d refLinVel, refAngVel;
   ignition::math::Vector3d linkLinVel, linkAngVel;
 
-    // Read sensor link's current pose and velocity
+  this->UpdateNEDTransform();
+  // Read sensor link's current pose and velocity
 #if GAZEBO_MAJOR_VERSION >= 8
   linkLinVel = this->link->WorldLinearVel();
   linkAngVel = this->link->WorldAngularVel();
@@ -122,6 +132,9 @@ bool PoseGTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 #endif
 
   this->UpdateReferenceFramePose();
+
+  // Update the reference frame in case it is given as a Gazebo link and
+  // read the reference link's linear and angular velocity vectors
   if (this->referenceLink)
   {
 #if GAZEBO_MAJOR_VERSION >= 8
@@ -138,67 +151,201 @@ bool PoseGTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   }
   else
   {
+    // If no Gazebo link is given as a reference, the linear and angular
+    // velocity vectors are set to zero
     refLinVel = ignition::math::Vector3d::Zero;
     refAngVel = ignition::math::Vector3d::Zero;
   }
 
   // Transform pose and velocity vectors to be represented wrt the
   // reference link provided
-  linkPose.Pos() = linkPose.Pos() - this->referenceFrame.Pos();
-  linkPose.Pos() = this->referenceFrame.Rot().RotateVectorReverse(linkPose.Pos());
-  linkPose.Rot() *= this->referenceFrame.Rot().Inverse();
+  linkLinVel -= refLinVel;
+  linkAngVel -= refAngVel;
 
-  linkLinVel = this->referenceFrame.Rot().RotateVector(linkLinVel - refLinVel);
-  linkAngVel = this->referenceFrame.Rot().RotateVector(linkAngVel - refAngVel);
+  // Add noise to the link's linear velocity
+  linkLinVel += ignition::math::Vector3d(
+    this->GetGaussianNoise(this->gaussianNoiseSigma),
+    this->GetGaussianNoise(this->gaussianNoiseSigma),
+    this->GetGaussianNoise(this->gaussianNoiseSigma));
+
+  // Add noise to the link's angular velocity
+  linkAngVel += ignition::math::Vector3d(
+    this->GetGaussianNoise(this->gaussianNoiseSigma),
+    this->GetGaussianNoise(this->gaussianNoiseSigma),
+    this->GetGaussianNoise(this->gaussianNoiseSigma));
+
+  // Publish the odometry message of the base_link wrt Gazebo's ENU
+  // inertial reference frame
+  this->PublishOdomMessage(curTime, linkPose, linkLinVel, linkAngVel);
+  // If the world_ned frame exists (North-East-Down reference frame),
+  // the odometry is also published from the robot's base_link_ned wrt
+  // world_ned
+  this->PublishNEDOdomMessage(curTime, linkPose, linkLinVel, linkAngVel);
+
+  // Store the time stamp for this measurement
+  this->lastMeasurementTime = curTime;
+  return true;
+}
+
+void PoseGTROSPlugin::PublishOdomMessage(common::Time _time,
+  ignition::math::Pose3d _pose, ignition::math::Vector3d _linVel,
+  ignition::math::Vector3d _angVel)
+{
+  // Generates the odometry message of the robot's base_link frame wrt
+  // Gazebo's default ENU inertial reference frame
+  nav_msgs::Odometry odomMsg;
+
+  // Initialize header of the odometry message
+  odomMsg.header.frame_id = "world";
+  odomMsg.header.stamp.sec = _time.sec;
+  odomMsg.header.stamp.nsec = _time.nsec;
+  odomMsg.child_frame_id = this->link->GetName();
 
   // Apply pose offset
-  linkPose.Pos() = linkPose.Pos() + this->offset.Pos();
-  linkPose.Rot() = this->offset.Rot() * linkPose.Rot();
-  linkPose.Rot().Normalize();
+  _pose += this->offset;
 
   // Fill out the messages
-  this->odomMsg.pose.pose.position.x = linkPose.Pos().X();
-  this->odomMsg.pose.pose.position.y = linkPose.Pos().Y();
-  this->odomMsg.pose.pose.position.z = linkPose.Pos().Z();
+  odomMsg.pose.pose.position.x = _pose.Pos().X();
+  odomMsg.pose.pose.position.y = _pose.Pos().Y();
+  odomMsg.pose.pose.position.z = _pose.Pos().Z();
 
-  this->odomMsg.pose.pose.orientation.x = linkPose.Rot().X();
-  this->odomMsg.pose.pose.orientation.y = linkPose.Rot().Y();
-  this->odomMsg.pose.pose.orientation.z = linkPose.Rot().Z();
-  this->odomMsg.pose.pose.orientation.w = linkPose.Rot().W();
+  odomMsg.pose.pose.orientation.x = _pose.Rot().X();
+  odomMsg.pose.pose.orientation.y = _pose.Rot().Y();
+  odomMsg.pose.pose.orientation.z = _pose.Rot().Z();
+  odomMsg.pose.pose.orientation.w = _pose.Rot().W();
 
-  this->odomMsg.twist.twist.linear.x = linkLinVel.X() +
-    this->GetGaussianNoise(this->gaussianNoiseSigma);
-  this->odomMsg.twist.twist.linear.y = linkLinVel.Y() +
-    this->GetGaussianNoise(this->gaussianNoiseSigma);
-  this->odomMsg.twist.twist.linear.z = linkLinVel.Z() +
-    this->GetGaussianNoise(this->gaussianNoiseSigma);
+  odomMsg.twist.twist.linear.x = _linVel.X();
+  odomMsg.twist.twist.linear.y = _linVel.Y();
+  odomMsg.twist.twist.linear.z = _linVel.Z();
 
-  this->odomMsg.twist.twist.angular.x = linkAngVel.X() +
-    this->GetGaussianNoise(this->gaussianNoiseSigma);
-  this->odomMsg.twist.twist.angular.y = linkAngVel.Y() +
-    this->GetGaussianNoise(this->gaussianNoiseSigma);
-  this->odomMsg.twist.twist.angular.z = linkAngVel.Z() +
-    this->GetGaussianNoise(this->gaussianNoiseSigma);
+  odomMsg.twist.twist.angular.x = _angVel.X();
+  odomMsg.twist.twist.angular.y = _angVel.Y();
+  odomMsg.twist.twist.angular.z = _angVel.Z();
 
   // Fill in the covariance matrix
   double gn2 = this->gaussianNoiseSigma * this->gaussianNoiseSigma;
-  this->odomMsg.pose.covariance[0] = gn2;
-  this->odomMsg.pose.covariance[7] = gn2;
-  this->odomMsg.pose.covariance[14] = gn2;
-  this->odomMsg.pose.covariance[21] = gn2;
-  this->odomMsg.pose.covariance[28] = gn2;
-  this->odomMsg.pose.covariance[35] = gn2;
+  odomMsg.pose.covariance[0] = gn2;
+  odomMsg.pose.covariance[7] = gn2;
+  odomMsg.pose.covariance[14] = gn2;
+  odomMsg.pose.covariance[21] = gn2;
+  odomMsg.pose.covariance[28] = gn2;
+  odomMsg.pose.covariance[35] = gn2;
 
-  this->odomMsg.twist.covariance[0] = gn2;
-  this->odomMsg.twist.covariance[7] = gn2;
-  this->odomMsg.twist.covariance[14] = gn2;
-  this->odomMsg.twist.covariance[21] = gn2;
-  this->odomMsg.twist.covariance[28] = gn2;
-  this->odomMsg.twist.covariance[35] = gn2;
+  odomMsg.twist.covariance[0] = gn2;
+  odomMsg.twist.covariance[7] = gn2;
+  odomMsg.twist.covariance[14] = gn2;
+  odomMsg.twist.covariance[21] = gn2;
+  odomMsg.twist.covariance[28] = gn2;
+  odomMsg.twist.covariance[35] = gn2;
 
-  this->rosSensorOutputPub.publish(this->odomMsg);
-  this->lastMeasurementTime = curTime;
-  return true;
+  this->rosSensorOutputPub.publish(odomMsg);
+}
+
+void PoseGTROSPlugin::PublishNEDOdomMessage(common::Time _time,
+  ignition::math::Pose3d _pose, ignition::math::Vector3d _linVel,
+  ignition::math::Vector3d _angVel)
+{
+  // Generates the odometry message of the robot's base_link_ned frame
+  // wrt generated NED inertial reference frame
+  if (!this->publishNEDOdom)
+    return;
+
+  if (!this->nedTransformIsInit)
+    return;
+
+  nav_msgs::Odometry odomMsg;
+
+  // Initialize header of the odometry message
+  odomMsg.header.frame_id = this->referenceFrameID;
+  odomMsg.header.stamp.sec = _time.sec;
+  odomMsg.header.stamp.nsec = _time.nsec;
+  odomMsg.child_frame_id = this->nedFrameID;
+
+  _pose.Pos() = _pose.Pos() - this->referenceFrame.Pos();
+  _pose.Pos() = this->referenceFrame.Rot().RotateVectorReverse(_pose.Pos());
+
+  ignition::math::Quaterniond q = this->nedTransform.Rot();
+  q = _pose.Rot() * q;
+  q =  this->referenceFrame.Rot() * q;
+  _pose.Rot() = q;
+
+  _linVel = this->referenceFrame.Rot().RotateVector(_linVel);
+  _angVel = this->referenceFrame.Rot().RotateVector(_angVel);
+
+  // Apply pose offset
+  _pose += this->offset;
+
+  // Fill out the messages
+  odomMsg.pose.pose.position.x = _pose.Pos().X();
+  odomMsg.pose.pose.position.y = _pose.Pos().Y();
+  odomMsg.pose.pose.position.z = _pose.Pos().Z();
+
+  odomMsg.pose.pose.orientation.x = _pose.Rot().X();
+  odomMsg.pose.pose.orientation.y = _pose.Rot().Y();
+  odomMsg.pose.pose.orientation.z = _pose.Rot().Z();
+  odomMsg.pose.pose.orientation.w = _pose.Rot().W();
+
+  odomMsg.twist.twist.linear.x = _linVel.X();
+  odomMsg.twist.twist.linear.y = _linVel.Y();
+  odomMsg.twist.twist.linear.z = _linVel.Z();
+
+  odomMsg.twist.twist.angular.x = _angVel.X();
+  odomMsg.twist.twist.angular.y = _angVel.Y();
+  odomMsg.twist.twist.angular.z = _angVel.Z();
+
+  double gn2 = this->gaussianNoiseSigma * this->gaussianNoiseSigma;
+  odomMsg.pose.covariance[0] = gn2;
+  odomMsg.pose.covariance[7] = gn2;
+  odomMsg.pose.covariance[14] = gn2;
+  odomMsg.pose.covariance[21] = gn2;
+  odomMsg.pose.covariance[28] = gn2;
+  odomMsg.pose.covariance[35] = gn2;
+
+  odomMsg.twist.covariance[0] = gn2;
+  odomMsg.twist.covariance[7] = gn2;
+  odomMsg.twist.covariance[14] = gn2;
+  odomMsg.twist.covariance[21] = gn2;
+  odomMsg.twist.covariance[28] = gn2;
+  odomMsg.twist.covariance[35] = gn2;
+
+  this->nedOdomPub.publish(odomMsg);
+}
+
+/////////////////////////////////////////////////
+void PoseGTROSPlugin::UpdateNEDTransform()
+{
+  if (!this->publishNEDOdom)
+    return;
+  if (this->nedTransformIsInit)
+    return;
+
+  geometry_msgs::TransformStamped childTransform;
+  std::string targetFrame = this->nedFrameID;
+  std::string sourceFrame = this->link->GetName();
+  try
+  {
+    childTransform = this->tfBuffer.lookupTransform(
+      targetFrame, sourceFrame, ros::Time(0));
+  }
+  catch(tf2::TransformException &ex)
+  {
+    gzmsg << "Transform between " << targetFrame << " and " << sourceFrame
+      << std::endl;
+    gzmsg << ex.what() << std::endl;
+    return;
+  }
+
+  this->nedTransform.Pos() = ignition::math::Vector3d(
+    childTransform.transform.translation.x,
+    childTransform.transform.translation.y,
+    childTransform.transform.translation.z);
+  this->nedTransform.Rot() = ignition::math::Quaterniond(
+    childTransform.transform.rotation.w,
+    childTransform.transform.rotation.x,
+    childTransform.transform.rotation.y,
+    childTransform.transform.rotation.z);
+
+  this->nedTransformIsInit = true;
 }
 
 /////////////////////////////////////////////////
