@@ -158,7 +158,7 @@ void UnderwaterObjectROSPlugin::Load(gazebo::physics::ModelPtr _parent,
     this->rosNode->advertiseService(
       _parent->GetName() + "/get_nonlinear_damping_offset",
       &UnderwaterObjectROSPlugin::GetOffsetNonLinearDamping, this);
-  //////////////////////////////////////////////////////////////////////////
+
   this->services["get_model_properties"] =
     this->rosNode->advertiseService(
       _parent->GetName() + "/get_model_properties",
@@ -175,6 +175,18 @@ void UnderwaterObjectROSPlugin::Load(gazebo::physics::ModelPtr _parent,
   this->rosHydroPub["is_submerged"] =
     this->rosNode->advertise<std_msgs::Bool>
     (_parent->GetName() + "/is_submerged", 0);
+
+  this->nedTransform.header.frame_id = this->model->GetName() + "/base_link";
+  this->nedTransform.child_frame_id = this->model->GetName() + "/base_link_ned";
+  this->nedTransform.transform.translation.x = 0;
+  this->nedTransform.transform.translation.y = 0;
+  this->nedTransform.transform.translation.z = 0;
+  tf2::Quaternion quat;
+  quat.setRPY(M_PI, 0, 0);
+  this->nedTransform.transform.rotation.x = quat.x();
+  this->nedTransform.transform.rotation.y = quat.y();
+  this->nedTransform.transform.rotation.z = quat.z();
+  this->nedTransform.transform.rotation.w = quat.w();
 }
 
 /////////////////////////////////////////////////
@@ -185,7 +197,15 @@ void UnderwaterObjectROSPlugin::Init()
 
 /////////////////////////////////////////////////
 void UnderwaterObjectROSPlugin::Reset()
+{ }
+
+/////////////////////////////////////////////////
+void UnderwaterObjectROSPlugin::Update(const gazebo::common::UpdateInfo &_info)
 {
+  UnderwaterObjectPlugin::Update(_info);
+
+  this->nedTransform.header.stamp = ros::Time::now();
+  this->tfBroadcaster.sendTransform(this->nedTransform);
 }
 
 /////////////////////////////////////////////////

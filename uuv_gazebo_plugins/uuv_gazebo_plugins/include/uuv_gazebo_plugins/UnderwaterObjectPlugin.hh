@@ -49,7 +49,7 @@ class UnderwaterObjectPlugin : public gazebo::ModelPlugin
 
   /// \brief Update the simulation state.
   /// \param[in] _info Information used in the update event.
-  public: void Update(const gazebo::common::UpdateInfo &_info);
+  public: virtual void Update(const gazebo::common::UpdateInfo &_info);
 
   /// \brief Connects the update event callback
   protected: virtual void Connect();
