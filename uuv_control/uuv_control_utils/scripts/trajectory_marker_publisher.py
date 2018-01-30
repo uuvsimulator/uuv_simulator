@@ -94,6 +94,7 @@ class TrajectoryMarkerPublisher:
             marker.action = 3
         else:
             waypoint_path_marker = self._waypoints.to_path_marker()
+            waypoint_path_marker.header.frame_id = self._waypoints.inertial_frame_id
             waypoint_marker = self._waypoints.to_marker_list()
 
         self._waypoint_path_pub.publish(waypoint_path_marker)
@@ -104,9 +105,11 @@ class TrajectoryMarkerPublisher:
         traj_marker.header.frame_id = 'world'
 
         if self._trajectory is not None:
+            traj_marker.header.frame_id = self._trajectory.header.frame_id
             for pnt in self._trajectory.points:
                 p_msg = PoseStamped()
                 p_msg.header.stamp = pnt.header.stamp
+                p_msg.header.frame_id = self._trajectory.header.frame_id
                 p_msg.pose = pnt.pose
                 traj_marker.poses.append(p_msg)
 
