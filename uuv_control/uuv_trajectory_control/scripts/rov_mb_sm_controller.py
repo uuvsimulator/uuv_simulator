@@ -25,6 +25,7 @@ class ROV_MB_SMController(DPControllerBase):
 
     def __init__(self):
         DPControllerBase.__init__(self, True)
+        self._logger.info('Initializing: ' + self._LABEL)
 
         # Lambda - Slope of the Sliding Surface
         self._lambda = np.zeros(6)
@@ -181,6 +182,7 @@ class ROV_MB_SMController(DPControllerBase):
             GetMBSMControllerParams,
             self.get_mb_sm_controller_params_callback)
         self._is_init = True
+        self._logger.info(self._LABEL + ' ready')
 
     def _reset_controller(self):
         super(ROV_MB_SMController, self)._reset_controller()
