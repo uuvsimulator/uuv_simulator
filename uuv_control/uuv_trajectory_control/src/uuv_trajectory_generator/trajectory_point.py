@@ -32,7 +32,11 @@ class TrajectoryPoint(object):
 
     def __str__(self):
         msg = 'Time [s] = %.4f\n' % self._t
-        msg += 'Position [m] = (%.2f, %.2f, %.2f)' % (self._pos[0], self._pos[1], self._pos[2])
+        msg += 'Position [m] = (%.2f, %.2f, %.2f)\n' % (self._pos[0], self._pos[1], self._pos[2])
+        eu = [a * 180 / np.pi for a in self.rot]
+        msg += 'Rotation [degrees] = (%.2f, %.2f, %.2f)\n' % (eu[0], eu[1], eu[2])
+        msg += 'Lin. velocity [m/s] = (%.2f, %.2f, %.2f)\n' % (self._vel[0], self._vel[1], self._vel[2])
+        msg += 'Ang. velocity [m/s] = (%.2f, %.2f, %.2f)\n' % (self._vel[3], self._vel[4], self._vel[5])
         return msg
 
     def __eq__(self, pnt):

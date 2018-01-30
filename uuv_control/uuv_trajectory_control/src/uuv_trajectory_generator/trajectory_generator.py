@@ -32,7 +32,8 @@ class TrajectoryGenerator(object):
         self._is_full_dof = full_dof
         self._stamped_pose_only = stamped_pose_only
         self._wp_interp_on = False
-        self._wp_interp = WPTrajectoryGenerator(full_dof=full_dof, stamped_pose_only=stamped_pose_only)
+        self._wp_interp = WPTrajectoryGenerator(
+            full_dof=full_dof, stamped_pose_only=stamped_pose_only)
 
         self._has_started = False
         self._is_finished = False
@@ -56,7 +57,7 @@ class TrajectoryGenerator(object):
         self._wp_interp.stamped_pose_only = flag
 
     def is_using_stamped_pose_only(self):
-        return self._wp_interp.stamped_pose_only 
+        return self._wp_interp.stamped_pose_only
 
     def set_interp_method(self, method):
         return self._wp_interp.set_interpolation_method(method)
@@ -77,7 +78,7 @@ class TrajectoryGenerator(object):
         are currently in use, then sample the interpolated path and return the
         poses only.
         """
-        
+
         try:
             if self.points is None:
                 return None
@@ -111,6 +112,7 @@ class TrajectoryGenerator(object):
         """
 
         if not self.is_using_waypoints():
+            print 'NOT USING WAYPOINTS'
             return None
         return self._wp_interp.get_waypoints()
 
