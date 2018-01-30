@@ -24,10 +24,12 @@ class Waypoint(object):
     FAILED_WAYPOINT = [1.0, 0.0, 0.0]
 
     def __init__(self, x=0, y=0, z=0, max_forward_speed=0, heading_offset=0,
-        use_fixed_heading=False):
+        use_fixed_heading=False, inertial_frame_id='world'):
+        assert inertial_frame_id in ['world', 'world_ned']
         self._x = x
         self._y = y
         self._z = z
+        self._inertial_frame_id = inertial_frame_id
         self._max_forward_speed = max_forward_speed
         self._heading_offset = heading_offset
         self._violates_constraint = False
@@ -47,6 +49,15 @@ class Waypoint(object):
         return msg
 
     @property
+    def inertial_frame_id(self):
+        return self._inertial_frame_id
+
+    @inertial_frame_id.setter
+    def inertial_frame_id(self, frame_id):
+        assert frame_id in ['world', 'world_ned']
+        self._inertial_frame_id = frame_id
+
+    @property
     def x(self):
         return self._x
 
@@ -61,6 +72,18 @@ class Waypoint(object):
     @property
     def pos(self):
         return np.array([self._x, self._y, self._z])
+
+    @pos.setter
+    def pos(self, new_pos):
+        if isinstance(new_pos, list):
+            assert len(new_pos) == 3
+        elif isinstance(new_pos, np.ndarray):
+            assert new_pos.shape == (3,)
+        else:
+            raise Exception('Invalid position vector size')
+        self._x = new_pos[0]
+        self._y = new_pos[1]
+        self._z = new_pos[2]
 
     @property
     def violates_constraint(self):
@@ -101,6 +124,9 @@ class Waypoint(object):
         return self.FINAL_WAYPOINT_COLOR
 
     def from_message(self, msg):
+        self._inertial_frame_id = msg.header.frame_id
+        if len(self._inertial_frame_id) == 0:
+            self._inertial_frame_id = 'world'
         self._x = msg.point.x
         self._y = msg.point.y
         self._z = msg.point.z
@@ -116,6 +142,7 @@ class Waypoint(object):
         wp.max_forward_speed = self._max_forward_speed
         wp.use_fixed_heading = self._use_fixed_heading
         wp.heading_offset = self._heading_offset
+        wp.header.frame_id = self._inertial_frame_id
         return wp
 
     def dist(self, pos):
