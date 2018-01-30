@@ -19,8 +19,9 @@ import numpy as np
 import rospy
 import logging
 import sys
-from geometry_msgs.msg import Wrench, PoseStamped, TwistStamped, Vector3, \
-    Quaternion, Pose
+import tf
+from geometry_msgs.msg import WrenchStamped, PoseStamped, TwistStamped, \
+    Vector3, Quaternion, Pose
 from std_msgs.msg import Time
 from nav_msgs.msg import Odometry
 from uuv_control_interfaces.vehicle import Vehicle
@@ -69,8 +70,9 @@ class DPControllerBase(object):
             self._use_stamped_poses_only = rospy.get_param('~use_stamped_poses_only')
 
         # Instance of the local planner for local trajectory generation
-        self._local_planner = LocalPlanner(full_dof=planner_full_dof,
-                                           stamped_pose_only=self._use_stamped_poses_only)
+        self._local_planner = LocalPlanner(
+            full_dof=planner_full_dof,
+            stamped_pose_only=self._use_stamped_poses_only)
 
         # Instance of the vehicle model
         self._vehicle_model = None
@@ -93,7 +95,7 @@ class DPControllerBase(object):
         # Remap the following topics, if needed
         # Publisher for thruster allocator
         self._thrust_pub = rospy.Publisher('thruster_output',
-                                           Wrench, queue_size=1)
+                                           WrenchStamped, queue_size=1)
 
         self._reference_pub = rospy.Publisher('reference',
                                               TrajectoryPoint,
@@ -164,7 +166,7 @@ class DPControllerBase(object):
 
     @property
     def error_orientation_quat(self):
-        return deepcopy(self._errors['rot'])
+        return deepcopy(self._errors['rot'][0:3])
 
     @property
     def error_orientation_rpy(self):
@@ -215,7 +217,9 @@ class DPControllerBase(object):
         """
         if self._vehicle_model is not None:
             del self._vehicle_model
-        self._vehicle_model = Vehicle(self._odometry_callbacks)
+        self._vehicle_model = Vehicle(
+            self._odometry_callbacks,
+            inertial_frame_id=self._local_planner.inertial_frame_id)
 
     def _update_reference(self):
         # Update the local planner's information about the vehicle's pose
@@ -224,16 +228,19 @@ class DPControllerBase(object):
 
         t = rospy.get_time()
         reference = self._local_planner.interpolate(t)
+
         if reference is not None:
             self._reference['pos'] = reference.p
             self._reference['rot'] = reference.q
             self._reference['vel'] = np.hstack((reference.v, reference.w))
             self._reference['acc'] = np.hstack((reference.a, reference.alpha))
-
+            # print '------------------ REFERENCE\n'
+            # print reference
+        if reference is not None and self._reference_pub.get_num_connections() > 0:
             # Publish current reference
             msg = TrajectoryPoint()
             msg.header.stamp = rospy.Time.now()
-            msg.header.frame_id = 'world'
+            msg.header.frame_id = self._local_planner.inertial_frame_id
             msg.pose.position = Vector3(*self._reference['pos'])
             msg.pose.orientation = Quaternion(*self._reference['rot'])
             msg.velocity.linear = Vector3(*self._reference['vel'][0:3])
@@ -297,17 +304,18 @@ class DPControllerBase(object):
                 np.dot(rotItoB, self._reference['vel'][0:3]) - vel[0:3],
                 np.dot(rotItoB, self._reference['vel'][3:6]) - vel[3:6]))
 
-        stamp = rospy.Time.now()
-        msg = TrajectoryPoint()
-        msg.header.stamp = stamp
-        msg.header.frame_id = 'world'
-        # Publish pose error
-        msg.pose.position = Vector3(*np.dot(rotBtoI, self._errors['pos']))
-        msg.pose.orientation = Quaternion(*self._errors['rot'])
-        # Publish velocity errors in INERTIAL frame
-        msg.velocity.linear = Vector3(*np.dot(rotBtoI, self._errors['vel'][0:3]))
-        msg.velocity.angular = Vector3(*np.dot(rotBtoI, self._errors['vel'][3:6]))
-        self._error_pub.publish(msg)
+        if self._error_pub.get_num_connections() > 0:
+            stamp = rospy.Time.now()
+            msg = TrajectoryPoint()
+            msg.header.stamp = stamp
+            msg.header.frame_id = self._local_planner.inertial_frame_id
+            # Publish pose error
+            msg.pose.position = Vector3(*np.dot(rotBtoI, self._errors['pos']))
+            msg.pose.orientation = Quaternion(*self._errors['rot'])
+            # Publish velocity errors in INERTIAL frame
+            msg.velocity.linear = Vector3(*np.dot(rotBtoI, self._errors['vel'][0:3]))
+            msg.velocity.angular = Vector3(*np.dot(rotBtoI, self._errors['vel'][3:6]))
+            self._error_pub.publish(msg)
 
     def publish_control_wrench(self, force):
         if not self.odom_is_init:
@@ -319,13 +327,15 @@ class DPControllerBase(object):
             elif force[i] > self._control_saturation:
                 force[i] = self._control_saturation
 
-        force_msg = Wrench()
-        force_msg.force.x = force[0]
-        force_msg.force.y = force[1]
-        force_msg.force.z = force[2]
+        force_msg = WrenchStamped()
+        force_msg.header.stamp = rospy.Time.now()
+        force_msg.header.frame_id = '%s/%s' % (self._namespace, self._vehicle_model.body_frame_id)
+        force_msg.wrench.force.x = force[0]
+        force_msg.wrench.force.y = force[1]
+        force_msg.wrench.force.z = force[2]
 
-        force_msg.torque.x = force[3]
-        force_msg.torque.y = force[4]
-        force_msg.torque.z = force[5]
+        force_msg.wrench.torque.x = force[3]
+        force_msg.wrench.torque.y = force[4]
+        force_msg.wrench.torque.z = force[5]
 
         self._thrust_pub.publish(force_msg)
