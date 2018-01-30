@@ -18,6 +18,7 @@ import numpy as np
 from nav_msgs.msg import Odometry
 from copy import deepcopy
 from rospy.numpy_msg import numpy_msg
+import tf2_ros
 from tf.transformations import quaternion_from_euler, euler_from_quaternion, \
     quaternion_matrix, rotation_matrix, is_same_transform
 
@@ -38,14 +39,47 @@ class Vehicle(object):
 
     INSTANCE = None
 
-    def __init__(self, list_odometry_callbacks=list(), sub_to_odometry=True):
+    def __init__(self, list_odometry_callbacks=list(), sub_to_odometry=True,
+                 inertial_frame_id='world'):
         """Class constructor."""
+        assert inertial_frame_id in ['world', 'world_ned']
         # Reading current namespace
         self._namespace = rospy.get_namespace()
 
         # Load the list of callback function handles to be called in the
         # odometry callback
         self._list_callbacks = list_odometry_callbacks
+
+        self._inertial_frame_id = inertial_frame_id
+        self._body_frame_id = None
+
+        if self._inertial_frame_id == 'world':
+            self._body_frame_id = 'base_link'
+        else:
+            self._body_frame_id = 'base_link_ned'
+
+        tf_buffer = tf2_ros.Buffer()
+        listener = tf2_ros.TransformListener(tf_buffer)
+        tf_trans_ned_to_enu = None
+        try:
+            tf_trans_ned_to_enu = tf_buffer.lookup_transform(
+                'world', 'world_ned', rospy.Time(),
+                rospy.Duration(1))
+        except Exception, e:
+            self._logger.error('No transform found between world and the '
+                               'world_ned ' + self.namespace)
+            self._logger.error(str(e))
+            self.transform_ned_to_enu = None
+
+        if tf_trans_ned_to_enu is not None:
+            self.transform_ned_to_enu = quaternion_matrix(
+                (tf_trans_ned_to_enu.transform.rotation.x,
+                 tf_trans_ned_to_enu.transform.rotation.y,
+                 tf_trans_ned_to_enu.transform.rotation.z,
+                 tf_trans_ned_to_enu.transform.rotation.w))[0:3, 0:3]
+
+        print('Transform world_ned (NED) to world (ENU)=\n' +
+              str(self.transform_ned_to_enu))
 
         self._mass = 0
         if rospy.has_param('~mass'):
@@ -192,6 +226,14 @@ class Vehicle(object):
     def namespace(self):
         """Return robot namespace."""
         return self._namespace
+
+    @property
+    def body_frame_id(self):
+        return self._body_frame_id
+
+    @property
+    def inertial_frame_id(self):
+        return self._inertial_frame_id
 
     @property
     def odom_is_init(self):
@@ -393,17 +435,22 @@ class Vehicle(object):
         return T
 
     def to_SNAME(self, x):
+        if self._body_frame_id == 'base_link_ned':
+            return x
         try:
             if x.shape == (3,):
                 return np.array([x[0], -1 * x[1], -1 * x[2]])
             elif x.shape == (6,):
                 return np.array([x[0], -1 * x[1], -1 * x[2],
                                  x[3], -1 * x[4], -1 * x[5]])
-        except:
-            print('Invalid input vector, v=' + str(x))
+        except Exception, e:
+            self._logger.error('Invalid input vector, v=' + str(x))
+            self._logger.error('Message=' + str(e))
             return None
 
     def from_SNAME(self, x):
+        if self._body_frame_id == 'base_link_ned':
+            return x
         return self.to_SNAME(x)
 
     def print_info(self):
@@ -592,6 +639,13 @@ class Vehicle(object):
         # linear velocity -> world frame
         # angular velocity -> world frame
 
+        if self._inertial_frame_id != msg.header.frame_id:
+            raise rospy.ROSException('The inertial frame ID used by the '
+                                     'vehicle model does not match the '
+                                     'odometry frame ID, vehicle=%s, odom=%s' %
+                                     (self._inertial_frame_id,
+                                      msg.header.frame_id))
+
         # Update the velocity vector
         # Update the pose in the inertial frame
         self._pose['pos'] = np.array([msg.pose.pose.position.x,
@@ -618,14 +672,22 @@ class Vehicle(object):
         # Store velocity vector
         self._vel = np.hstack((lin_vel, ang_vel))
 
+        # m = '------------------ ODOMETRY\n'
+        # m += 'Inertial frame ID = %s\n' % self._inertial_frame_id
+        # m += 'Body frame ID = %s\n' % self._body_frame_id
+        # m += 'Time [s] = %s\n' % str(msg.header.stamp)
+        # m += 'Position [m] = (%.2f, %.2f, %.2f)\n' % (self._pose['pos'][0], self._pose['pos'][1], self._pose['pos'][2])
+        # eu = [a * 180 / np.pi for a in euler_from_quaternion(self._pose['rot'])]
+        # m += 'Rotation [degrees] = (%.2f, %.2f, %.2f)\n' % (eu[0], eu[1], eu[2])
+        # m += 'Lin. velocity [m/s] = (%.2f, %.2f, %.2f)\n' % (lin_vel[0], lin_vel[1], lin_vel[2])
+        # m += 'Ang. velocity [m/s] = (%.2f, %.2f, %.2f)\n' % (ang_vel[0], ang_vel[1], ang_vel[2])
+        # print m
         if not self._init_odom:
             self._init_odom = True
 
         if len(self._list_callbacks):
-            for func in self._list_callbacks:
-                func()
             try:
                 for func in self._list_callbacks:
                     func()
-            except:
-                print 'Invalid callback function handle'
+            except Exception, e:
+                print 'Invalid callback function handle, msg=' + str(e)
