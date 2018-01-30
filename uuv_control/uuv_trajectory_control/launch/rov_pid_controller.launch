@@ -9,6 +9,11 @@
   <arg name="gui_on" default="true"/>
   <!-- Flag set as true to use load controller the parameters from the file  -->
   <arg name="use_params_file" default="false"/>
+  <!--
+    Set this flag to true to compute both reference and error vectors wrt
+    world_ned frame
+  -->
+  <arg name="use_ned_frame" default="false"/>
 
   <!-- If the file is not used, read the parameters from the user input -->
   <!-- Caution: no spaces between the parameter values -->
@@ -55,7 +60,27 @@
       <node pkg="uuv_trajectory_control"
             type="rov_pid_controller.py"
             name="rov_pid_controller"
-            output="screen">
+            output="screen"
+            if="$(arg use_ned_frame)">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt_ned"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
+        <rosparam file="$(arg controller_config_file)" command="load"/>
+        <rosparam subst_value="true">
+          inertial_frame_id: world_ned
+        </rosparam>
+      </node>
+
+      <node pkg="uuv_trajectory_control"
+            type="rov_pid_controller.py"
+            name="rov_pid_controller"
+            output="screen"
+            unless="$(arg use_ned_frame)">
         <!-- Remap necessary topics -->
         <remap from="odom" to="pose_gt"/>
         <remap from="trajectory" to="dp_controller/trajectory"/>
@@ -63,8 +88,11 @@
         <remap from="waypoints" to="dp_controller/waypoints"/>
         <remap from="error" to="dp_controller/error"/>
         <remap from="reference" to="dp_controller/reference"/>
-        <remap from="thruster_output" to="thruster_manager/input"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
         <rosparam file="$(arg controller_config_file)" command="load"/>
+        <rosparam subst_value="true">
+          inertial_frame_id: world
+        </rosparam>
       </node>
     </group>
   </group>
@@ -74,7 +102,31 @@
       <node pkg="uuv_trajectory_control"
             type="rov_pid_controller.py"
             name="rov_pid_controller"
-            output="screen">
+            output="screen"
+            if="$(arg use_ned_frame)">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt_ned"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
+        <!-- Controller parameters -->
+        <rosparam subst_value="true">
+          saturation: $(arg saturation)
+          Kp: [$(arg Kp)]
+          Kd: [$(arg Kd)]
+          Ki: [$(arg Ki)]
+          inertial_frame_id: world_ned
+        </rosparam>
+      </node>
+
+      <node pkg="uuv_trajectory_control"
+            type="rov_pid_controller.py"
+            name="rov_pid_controller"
+            output="screen"
+            unless="$(arg use_ned_frame)">
         <!-- Remap necessary topics -->
         <remap from="odom" to="pose_gt"/>
         <remap from="trajectory" to="dp_controller/trajectory"/>
@@ -82,13 +134,14 @@
         <remap from="waypoints" to="dp_controller/waypoints"/>
         <remap from="error" to="dp_controller/error"/>
         <remap from="reference" to="dp_controller/reference"/>
-        <remap from="thruster_output" to="thruster_manager/input"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
         <!-- Controller parameters -->
         <rosparam subst_value="true">
           saturation: $(arg saturation)
           Kp: [$(arg Kp)]
           Kd: [$(arg Kd)]
           Ki: [$(arg Ki)]
+          inertial_frame_id: world
         </rosparam>
       </node>
     </group>
