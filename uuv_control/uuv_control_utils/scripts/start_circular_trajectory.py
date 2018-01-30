@@ -66,7 +66,7 @@ if __name__ == '__main__':
         sys.exit(-1)
 
     try:
-        rospy.wait_for_service('start_circular_trajectory', timeout=2)
+        rospy.wait_for_service('start_circular_trajectory', timeout=20)
     except rospy.ROSException:
         print 'Service not available! Closing node...'
         sys.exit(-1)
