@@ -36,6 +36,9 @@
 #include <uuv_gazebo_ros_plugins_msgs/GetModelProperties.h>
 #include <uuv_gazebo_ros_plugins_msgs/SetFloat.h>
 #include <uuv_gazebo_ros_plugins_msgs/GetFloat.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2/LinearMath/Quaternion.h>
 
 #include <map>
 
@@ -57,6 +60,10 @@ namespace uuv_simulator_ros
 
     /// \brief Reset Module.
     public: virtual void Reset();
+
+    /// \brief Update the simulation state.
+    /// \param[in] _info Information used in the update event.
+    public: virtual void Update(const gazebo::common::UpdateInfo &_info);
 
     /// \brief Update the local current velocity, this data will be used only
     /// if the useGlobalCurrent flag is set to false.
@@ -216,6 +223,10 @@ namespace uuv_simulator_ros
 
     /// \brief Map of services
     private: std::map<std::string, ros::ServiceServer> services;
+
+    private: geometry_msgs::TransformStamped nedTransform;
+
+    private: tf2_ros::TransformBroadcaster tfBroadcaster;
   };
 }
 
