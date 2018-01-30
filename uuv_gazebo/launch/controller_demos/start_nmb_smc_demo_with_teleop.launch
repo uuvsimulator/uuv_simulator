@@ -1,9 +1,10 @@
 <launch>
     <!-- Flag to start recoding a rosbag  -->
     <arg name="record" default="false"/>
-    <!-- 
+    <arg name="use_ned_frame" default="false"/>
+    <!--
         ID of the joystick (to find out the joystick's index, open jstest-gtk)
-        Default joystick mapping set for the XBox 360 controller. 
+        Default joystick mapping set for the XBox 360 controller.
     -->
     <arg name="joy_id" default="0"/>
     <arg name="axis_yaw" default="0"/>
@@ -20,17 +21,20 @@
         <arg name="y" default="0"/>
         <arg name="z" default="-20"/>
         <arg name="yaw" default="0"/>
+        <arg name="use_ned_frame" value="$(arg use_ned_frame)"/>
     </include>
 
     <!-- Start the model-free sliding mode controller with its default parameters for the RexROV vehicle  -->
     <include file="$(find uuv_trajectory_control)/launch/rov_nmb_sm_controller.launch">
         <arg name="uuv_name" value="rexrov"/>
         <arg name="model_name" value="rexrov"/>
+        <arg name="use_ned_frame" value="$(arg use_ned_frame)"/>
     </include>
 
     <!-- Initialize the recording fo the simulation according to the record flag  -->
     <include file="$(find uuv_gazebo)/launch/controller_demos/record_demo.launch">
       <arg name="record" value="$(arg record)"/>
+      <arg name="use_ned_frame" value="$(arg use_ned_frame)"/>
     </include>
 
     <!-- Start joystick teleop node  -->
@@ -47,8 +51,8 @@
         <arg name="gain_x" default="0.5"/>
         <arg name="gain_y" default="0.5"/>
         <arg name="gain_z" default="0.5"/>
-    </include> 
-    
+    </include>
+
     <!-- Start RViz  -->
     <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find uuv_gazebo)/rviz/controller_demo.rviz"/>
 

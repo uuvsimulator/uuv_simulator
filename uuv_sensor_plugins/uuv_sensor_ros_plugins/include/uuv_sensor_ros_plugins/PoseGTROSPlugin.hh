@@ -31,6 +31,8 @@
 #include <nav_msgs/Odometry.h>
 #include <gazebo/physics/physics.hh>
 #include <geometry_msgs/TransformStamped.h>
+#include <tf2_ros/transform_listener.h>
+#include <boost/shared_ptr.hpp>
 #include <uuv_sensor_ros_plugins/ROSBaseModelPlugin.hh>
 
 namespace gazebo
@@ -49,14 +51,35 @@ namespace gazebo
     /// \brief Update sensor measurement
     protected: virtual bool OnUpdate(const common::UpdateInfo& _info);
 
-    /// \brief Odometry message object
-    protected: nav_msgs::Odometry odomMsg;
+    protected: void PublishNEDOdomMessage(common::Time _time,
+      ignition::math::Pose3d _pose, ignition::math::Vector3d _linVel,
+      ignition::math::Vector3d _angVel);
+
+    protected: void PublishOdomMessage(common::Time _time,
+      ignition::math::Pose3d _pose, ignition::math::Vector3d _linVel,
+      ignition::math::Vector3d _angVel);
+
+    protected: void UpdateNEDTransform();
+
+    protected: ros::Publisher nedOdomPub;
 
     /// \brief Pose offset
     protected: ignition::math::Pose3d offset;
 
     /// \brief Gaussian noise sigma
     protected: double gaussianNoiseSigma;
+
+    protected: std::string nedFrameID;
+
+    protected: ignition::math::Pose3d nedTransform;
+
+    protected: bool nedTransformIsInit;
+
+    protected: bool publishNEDOdom;
+
+    protected: tf2_ros::Buffer tfBuffer;
+
+    protected: boost::shared_ptr<tf2_ros::TransformListener> tfListener;
 
     protected: ignition::math::Vector3d lastLinVel;
     protected: ignition::math::Vector3d lastAngVel;

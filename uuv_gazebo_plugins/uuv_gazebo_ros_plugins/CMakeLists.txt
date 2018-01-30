@@ -9,6 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
   uuv_gazebo_ros_plugins_msgs
   roscpp
   visualization_msgs
+  tf2_ros
+  tf2
 )
 
 find_package(gazebo REQUIRED)

@@ -26,6 +26,8 @@
   <build_depend>uuv_sensor_plugins_ros_msgs</build_depend>
   <build_depend>tf</build_depend>
   <build_depend>message_filters</build_depend>
+  <build_depend>tf2_ros</build_depend>
+  <build_depend>tf2</build_depend>
 
   <run_depend>gazebo</run_depend>
   <run_depend>gazebo_plugins</run_depend>
@@ -37,4 +39,6 @@
   <run_depend>uuv_sensor_plugins_ros_msgs</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>message_filters</run_depend>
+  <run_depend>tf2_ros</run_depend>
+  <run_depend>tf2</run_depend>
 </package>

@@ -1,22 +1,51 @@
 <launch>
   <arg name="record" default="false"/>
   <arg name="bag_filename" default="$(find uuv_evaluation)/bags/recording.bag"/>
+  <arg name="use_ned_frame" default="false"/>
 
-  <node pkg="rosbag" type="record" name="recording"
-    args="record -O $(arg bag_filename)
-      /rexrov/dp_controller/trajectory
-      /rexrov/dp_controller/reference
-      /rexrov/pose_gt
-      /hydrodynamics/current_velocity
-      /rexrov/thruster_manager/input
-      /rexrov/wrench_perturbation
-      /rexrov/thrusters/0/thrust
-      /rexrov/thrusters/1/thrust
-      /rexrov/thrusters/2/thrust
-      /rexrov/thrusters/3/thrust
-      /rexrov/thrusters/4/thrust
-      /rexrov/thrusters/5/thrust
-      /rexrov/thrusters/6/thrust
-      /rexrov/thrusters/7/thrust"
-    if="$(arg record)"/>
+  <group if="$(arg record)">
+    <!--
+      Record the odometry generated from the base_link_ned wrt world_ned using
+      North-East-Down convention
+    -->
+    <node pkg="rosbag" type="record" name="recording"
+      args="record -O $(arg bag_filename)
+        /rexrov/dp_controller/trajectory
+        /rexrov/dp_controller/reference
+        /rexrov/pose_gt_ned
+        /hydrodynamics/current_velocity
+        /rexrov/thruster_manager/input
+        /rexrov/wrench_perturbation
+        /rexrov/thrusters/0/thrust
+        /rexrov/thrusters/1/thrust
+        /rexrov/thrusters/2/thrust
+        /rexrov/thrusters/3/thrust
+        /rexrov/thrusters/4/thrust
+        /rexrov/thrusters/5/thrust
+        /rexrov/thrusters/6/thrust
+        /rexrov/thrusters/7/thrust"
+      if="$(arg use_ned_frame)"/>
+
+      <!--
+        Record the odometry generated from the base_link wrt world using
+        East-North-Up convention
+      -->
+      <node pkg="rosbag" type="record" name="recording"
+        args="record -O $(arg bag_filename)
+          /rexrov/dp_controller/trajectory
+          /rexrov/dp_controller/reference
+          /rexrov/pose_gt
+          /hydrodynamics/current_velocity
+          /rexrov/thruster_manager/input
+          /rexrov/wrench_perturbation
+          /rexrov/thrusters/0/thrust
+          /rexrov/thrusters/1/thrust
+          /rexrov/thrusters/2/thrust
+          /rexrov/thrusters/3/thrust
+          /rexrov/thrusters/4/thrust
+          /rexrov/thrusters/5/thrust
+          /rexrov/thrusters/6/thrust
+          /rexrov/thrusters/7/thrust"
+        unless="$(arg use_ned_frame)"/>
+    </group>
 </launch>

@@ -1,6 +1,7 @@
 <launch>
   <arg name="namespace" default="rexrov"/>
   <arg name="world_frame" default="world"/>
+  <arg name="child_frame_id" default="/$(arg namespace)/base_link"/>
   <arg name="odometry_topic" default="/$(arg namespace)/pose_gt"/>
 
   <group ns="$(arg namespace)">
@@ -10,7 +11,7 @@
       <param name="~frame_id" value="$(arg world_frame)" />
       <param name="~stabilized_frame_id" value="/$(arg namespace)/base_stabilized" />
       <param name="~footprint_frame_id" value="/$(arg namespace)/base_footprint" />
-      <param name="~child_frame_id" value="/$(arg namespace)/base_link" />
+      <param name="~child_frame_id" value="$(arg child_frame_id)" />
     </node>
   </group>
 </launch>

@@ -30,10 +30,12 @@ class WaypointSet(object):
     OK_WAYPOINT = [31. / 255, 106. / 255, 226. / 255]
     FAILED_WAYPOINT = [1.0, 0.0, 0.0]
 
-    def __init__(self, scale=0.1):
+    def __init__(self, scale=0.1, inertial_frame_id='world'):
+        assert inertial_frame_id in ['world', 'world_ned']
         self._waypoints = list()
         self._violates_constraint = False
         self._scale = scale
+        self._inertial_frame_id = inertial_frame_id
 
     def __str__(self):
         if self.num_waypoints:
@@ -45,6 +47,7 @@ class WaypointSet(object):
                 msg += '---\n'
             msg += 'Number of waypoints = %d\n' % self.num_waypoints
             msg += 'Number of valid waypoints = %d\n' % self.num_waypoints
+            msg += 'Inertial frame ID = %s\n' % self._inertial_frame_id
             return msg
         else:
             return 'Waypoint set is empty'
@@ -65,6 +68,19 @@ class WaypointSet(object):
     def z(self):
         return [wp.z for wp in self._waypoints]
 
+    @property
+    def is_empty(self):
+        return len(self._waypoints) == 0
+
+    @property
+    def inertial_frame_id(self):
+        return self._inertial_frame_id
+
+    @inertial_frame_id.setter
+    def inertial_frame_id(self, frame_id):
+        assert frame_id in ['world', 'world_ned']
+        self._inertial_frame_id = frame_id
+
     def clear_waypoints(self):
         self._waypoints = list()
 
@@ -81,11 +97,6 @@ class WaypointSet(object):
 
     def add_waypoint(self, waypoint, add_to_beginning=False):
         if len(self._waypoints):
-            # TODO: Test the current reference frame convention being used
-            # (default: Gazebo's ENU)
-            if waypoint.z > 0:
-                print 'Waypoint is above the sea surface, z=', waypoint.z
-                return False
             if self._waypoints[-1] != waypoint:
                 if not add_to_beginning:
                     self._waypoints.append(waypoint)
@@ -133,17 +144,36 @@ class WaypointSet(object):
             self.clear_waypoints()
             with open(filename, 'r') as wp_file:
                 wps = yaml.load(wp_file)
-                for wp_data in wps:
-                    wp = Waypoint(
-                        x=wp_data['point'][0],
-                        y=wp_data['point'][1],
-                        z=wp_data['point'][2],
-                        max_forward_speed=wp_data['max_forward_speed'],
-                        heading_offset=wp_data['heading'],
-                        use_fixed_heading=wp_data['use_fixed_heading'])
-                    self.add_waypoint(wp)
-        except:
+                if isinstance(wps, list):
+                    for wp_data in wps:
+                        wp = Waypoint(
+                            x=wp_data['point'][0],
+                            y=wp_data['point'][1],
+                            z=wp_data['point'][2],
+                            max_forward_speed=wp_data['max_forward_speed'],
+                            heading_offset=wp_data['heading'],
+                            use_fixed_heading=wp_data['use_fixed_heading'],
+                            inertial_frame_id='world')
+                        self.add_waypoint(wp)
+                    self._inertial_frame_id = 'world'
+                else:
+                    assert 'inertial_frame_id' in wps
+                    assert 'waypoints' in wps
+                    assert wps['inertial_frame_id'] in ['world', 'world_ned']
+                    self._inertial_frame_id = wps['inertial_frame_id']
+                    for wp_data in wps['waypoints']:
+                        wp = Waypoint(
+                            x=wp_data['point'][0],
+                            y=wp_data['point'][1],
+                            z=wp_data['point'][2],
+                            max_forward_speed=wp_data['max_forward_speed'],
+                            heading_offset=wp_data['heading'],
+                            use_fixed_heading=wp_data['use_fixed_heading'],
+                            inertial_frame_id=wps['inertial_frame_id'])
+                        self.add_waypoint(wp)
+        except Exception, e:
             print 'Error while loading the file'
+            print str(e)
             return False
         return True
 
@@ -159,21 +189,25 @@ class WaypointSet(object):
             with open(os.path.join(path, filename), 'w') as wp_file:
                 yaml.dump(wp_data, wp_file, default_flow_style=False)
             return True
-        except:
+        except Exception, e:
             print 'Error occured while exporting waypoint file'
+            print str(e)
             return False
 
     def to_message(self):
         msg = WaypointSetMessage()
         msg.header.stamp = rospy.Time().now()
-        msg.header.frame_id = 'world'
+        msg.header.frame_id = self._inertial_frame_id
         msg.waypoints = list()
         for wp in self._waypoints:
-            msg.waypoints.append(wp.to_message())
+            wp_msg = wp.to_message()
+            wp_msg.header.frame_id = self._inertial_frame_id
+            msg.waypoints.append(wp_msg)
         return msg
 
     def from_message(self, msg):
         self.clear_waypoints()
+        self.inertial_frame_id = msg.header.frame_id
         for pnt in msg.waypoints:
             self.add_waypoint_from_msg(pnt)
 
@@ -187,13 +221,13 @@ class WaypointSet(object):
         path = Path()
         t = rospy.Time.now()
         path.header.stamp = t
-        path.header.frame_id = 'world'
+        path.header.frame_id = self._inertial_frame_id
         if self.num_waypoints > 1 and not clear:
             for i in range(self.num_waypoints):
                 wp = self.get_waypoint(i)
                 pose = PoseStamped()
                 pose.header.stamp = rospy.Time(i)
-                pose.header.frame_id = 'world'
+                pose.header.frame_id = self._inertial_frame_id
                 pose.pose.position.x = wp.x
                 pose.pose.position.y = wp.y
                 pose.pose.position.z = wp.z
@@ -206,7 +240,7 @@ class WaypointSet(object):
         if self.num_waypoints == 0 or clear:
             marker = Marker()
             marker.header.stamp = t
-            marker.header.frame_id = 'world'
+            marker.header.frame_id = self._inertial_frame_id
             marker.id = 0
             marker.type = Marker.SPHERE
             marker.action = 3
@@ -216,7 +250,7 @@ class WaypointSet(object):
                 wp = self.get_waypoint(i)
                 marker = Marker()
                 marker.header.stamp = t
-                marker.header.frame_id = 'world'
+                marker.header.frame_id = self._inertial_frame_id
                 marker.id = i
                 marker.type = Marker.SPHERE
                 marker.action = Marker.ADD

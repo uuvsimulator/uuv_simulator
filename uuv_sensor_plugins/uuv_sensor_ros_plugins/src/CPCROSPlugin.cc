@@ -105,75 +105,76 @@ bool CPCROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 void CPCROSPlugin::OnPlumeParticlesUpdate(
   const sensor_msgs::PointCloud::ConstPtr &_msg)
 {
-  this->updatingCloud = true;
+  if (this->rosSensorOutputPub.getNumSubscribers() > 0)
+  {
+    this->updatingCloud = true;
 
-  double totalParticleConc = 0.0;
+    double totalParticleConc = 0.0;
+    double smoothingParam;
+    double particleConc;
+    double distToParticle;
 
-  double smoothingParam;
-  double particleConc;
-  double distToParticle;
-
-  ignition::math::Vector3d linkPos, linkPosRef;
+    ignition::math::Vector3d linkPos, linkPosRef;
 #if GAZEBO_MAJOR_VERSION >= 8
-  linkPos = this->link->WorldPose().Pos();
+    linkPos = this->link->WorldPose().Pos();
 #else
-  linkPos = this->link->GetWorldPose().Ign().Pos();
+    linkPos = this->link->GetWorldPose().Ign().Pos();
 #endif
 
-  // Apply transformation wrt to the reference frame
-  linkPosRef = linkPos - this->referenceFrame.Pos();
-  linkPosRef = this->referenceFrame.Rot().RotateVectorReverse(linkPosRef);
+    // Apply transformation wrt to the reference frame
+    linkPosRef = linkPos - this->referenceFrame.Pos();
+    linkPosRef = this->referenceFrame.Rot().RotateVectorReverse(linkPosRef);
 
-  this->outputMsg.is_measuring = true;
-  // Store the current position wrt the reference frame where this
-  // measurement was taken
-  this->outputMsg.position.x = linkPosRef.X();
-  this->outputMsg.position.y = linkPosRef.Y();
-  this->outputMsg.position.z = linkPosRef.Z();
+    this->outputMsg.is_measuring = true;
+    // Store the current position wrt the reference frame where this
+    // measurement was taken
+    this->outputMsg.position.x = linkPosRef.X();
+    this->outputMsg.position.y = linkPosRef.Y();
+    this->outputMsg.position.z = linkPosRef.Z();
 
-  // Calculate the current position in WGS84 spherical coordinates
-  ignition::math::Vector3d cartVec = linkPos;
+    // Calculate the current position in WGS84 spherical coordinates
+    ignition::math::Vector3d cartVec = linkPos;
 
-  ignition::math::Vector3d scVec =
-    this->link->GetWorld()->GetSphericalCoordinates()->SphericalFromLocal(
-      cartVec);
-  this->outputMsg.latitude = scVec.X();
-  this->outputMsg.longitude = scVec.Y();
-  this->outputMsg.depth = -1 * scVec.Z();
+    ignition::math::Vector3d scVec =
+      this->link->GetWorld()->GetSphericalCoordinates()->SphericalFromLocal(
+        cartVec);
+    this->outputMsg.latitude = scVec.X();
+    this->outputMsg.longitude = scVec.Y();
+    this->outputMsg.depth = -1 * scVec.Z();
 
-  // Store this measurement's time stamp
-  this->lastUpdateTimestamp = _msg->header.stamp;
+    // Store this measurement's time stamp
+    this->lastUpdateTimestamp = _msg->header.stamp;
 
-  double currentTime = _msg->header.stamp.toSec();
+    double currentTime = _msg->header.stamp.toSec();
 
-  double initSmoothingLength = std::pow(this->smoothingLength, 2.0 / 3);
+    double initSmoothingLength = std::pow(this->smoothingLength, 2.0 / 3);
+    ignition::math::Vector3d particle;
+    for (int i = 0; i < _msg->points.size(); i++)
+    {
+      particle = ignition::math::Vector3d(_msg->points[i].x, _msg->points[i].y,
+        _msg->points[i].z);
 
-  ignition::math::Vector3d particle;
-  for (int i = 0; i < _msg->points.size(); i++)
-  {
-    particle = ignition::math::Vector3d(_msg->points[i].x, _msg->points[i].y,
-      _msg->points[i].z);
+      smoothingParam = std::pow(initSmoothingLength +
+        this->gamma * (currentTime - _msg->channels[0].values[i]), 1.5);
+      distToParticle = linkPos.Distance(particle);
 
-    smoothingParam = std::pow(initSmoothingLength +
-      this->gamma * (currentTime - _msg->channels[0].values[i]), 1.5);
-    distToParticle = linkPos.Distance(particle);
+      // Compute particle concentration
+      if (distToParticle >= 0 && distToParticle < smoothingParam)
+        particleConc = 4.0 -
+          6.0 * std::pow(distToParticle / smoothingParam, 2) +
+          3.0 * std::pow(distToParticle / smoothingParam, 3);
+      else if (distToParticle >= smoothingParam && distToParticle < 2 * smoothingParam)
+        particleConc = std::pow(2 - distToParticle / smoothingParam, 3);
+      else
+        particleConc = 0.0;
 
-    // Compute particle concentration
-    if (distToParticle >= 0 && distToParticle < smoothingParam)
-      particleConc = 4.0 -
-        6.0 * std::pow(distToParticle / smoothingParam, 2) +
-        3.0 * std::pow(distToParticle / smoothingParam, 3);
-    else if (distToParticle >= smoothingParam && distToParticle < 2 * smoothingParam)
-      particleConc = std::pow(2 - distToParticle / smoothingParam, 3);
-    else
-      particleConc = 0.0;
+      particleConc *= 1 / (4 * M_PI * std::pow(smoothingParam, 3));
+      totalParticleConc += particleConc;
+    }
 
-    particleConc *= 1 / (4 * M_PI * std::pow(smoothingParam, 3));
-    totalParticleConc += particleConc;
+    this->outputMsg.concentration = totalParticleConc;
+    this->updatingCloud = false;
   }
-
-  this->outputMsg.concentration = totalParticleConc;
-  this->updatingCloud = false;
 }
 
 /////////////////////////////////////////////////

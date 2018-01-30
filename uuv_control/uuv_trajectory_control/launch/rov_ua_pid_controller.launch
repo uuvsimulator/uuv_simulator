@@ -63,7 +63,7 @@
         <remap from="waypoints" to="dp_controller/waypoints"/>
         <remap from="error" to="dp_controller/error"/>
         <remap from="reference" to="dp_controller/reference"/>
-        <remap from="thruster_output" to="thruster_manager/input"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
         <rosparam file="$(arg controller_config_file)" command="load"/>
       </node>
     </group>
@@ -82,7 +82,7 @@
         <remap from="waypoints" to="dp_controller/waypoints"/>
         <remap from="error" to="dp_controller/error"/>
         <remap from="reference" to="dp_controller/reference"/>
-        <remap from="thruster_output" to="thruster_manager/input"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
         <!-- Controller parameters -->
         <rosparam subst_value="true">
           saturation: $(arg saturation)

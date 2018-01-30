@@ -15,7 +15,9 @@ find_package(catkin REQUIRED
   tf
   gazebo_plugins
   uuv_sensor_plugins_ros_msgs
-  message_filters)
+  message_filters
+  tf2_ros
+  tf2)
 find_package(Eigen3 REQUIRED)
 find_package(gazebo REQUIRED)
 find_package(OGRE REQUIRED)

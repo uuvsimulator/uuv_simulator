@@ -36,6 +36,7 @@ class ROV_NLPIDController(DPPIDControllerBase):
 
     def __init__(self):
         DPPIDControllerBase.__init__(self, True)
+        self._logger.info('Initializing: ' + self._LABEL)
         # Feedback acceleration gain
         self._Hm = np.eye(6)
         if rospy.has_param('Hm'):
@@ -51,6 +52,7 @@ class ROV_NLPIDController(DPPIDControllerBase):
         # PID control vector
         self._pid_control = np.zeros(6)
         self._is_init = True
+        self._logger.info(self._LABEL + ' ready')
 
     def _reset_controller(self):
         super(ROV_NLPIDController, self)._reset_controller()
@@ -68,12 +70,13 @@ class ROV_NLPIDController(DPPIDControllerBase):
         # Update PID control action
         self._pid_control = self.update_pid()
         # Publish control forces and torques
-        self._tau = self._pid_control - self._accel_ff + self._vehicle_model.restoring_forces
+        self._tau = self._pid_control - self._accel_ff + \
+            self._vehicle_model.restoring_forces
         self.publish_control_wrench(self._tau)
         return True
 
+
 if __name__ == '__main__':
-    print('Starting NL PID Controller')
     rospy.init_node('rov_nl_pid_controller')
 
     try:

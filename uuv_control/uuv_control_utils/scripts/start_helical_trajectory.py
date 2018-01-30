@@ -62,7 +62,7 @@ if __name__ == '__main__':
         raise rospy.ROSException('Velocity limit must be positive')
 
     try:
-        rospy.wait_for_service('start_helical_trajectory', timeout=2)
+        rospy.wait_for_service('start_helical_trajectory', timeout=20)
     except rospy.ROSException:
         raise rospy.ROSException('Service not available! Closing node...')
 

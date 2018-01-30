@@ -33,11 +33,11 @@ class ROV_NMB_SMController(DPControllerBase):
         Mode Approach." Sliding Mode Control (2011): 347-368.
     """
 
-    _LABEL = 'Non-model-based Sliding Mode Controller'
+    _LABEL = 'Model-free Sliding Mode Controller'
 
     def __init__(self):
         DPControllerBase.__init__(self, is_model_based=False)
-        self._logger.info('Initializing: Non-model-based sliding mode controller')
+        self._logger.info('Initializing: ' + self._LABEL)
         self._first_pass = True
         self._t_init = 0.0
         self._s_linear_b_init = np.array([0, 0, 0])
@@ -115,7 +115,7 @@ class ROV_NMB_SMController(DPControllerBase):
             self.get_sm_controller_params_callback)
 
         self._is_init = True
-        self._logger.info('Non-model based sliding mode controller ready!')
+        self._logger.info(self._LABEL + ' ready')
 
     def _reset_controller(self):
         super(ROV_NMB_SMController, self)._reset_controller()
