@@ -89,8 +89,8 @@ class TrajectoryGenerator(object):
                 # FIXME Sometimes the time stamp of the point is NaN
                 msg.points.append(pnt.to_message())
             return msg
-        except:
-            print 'Error during creation of trajectory message'
+        except Exception, e:
+            print 'Error during creation of trajectory message, msg=' + str(e)
             return None
 
     def is_using_waypoints(self):
