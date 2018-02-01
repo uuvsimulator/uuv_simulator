@@ -2,11 +2,8 @@
     <!-- If you want to generate a ROS bag with the recorded simulated data, set this flag to true -->
     <arg name="record" default="false"/>
 
-    <!-- Start the a underwater world simulation scenario -->
-    <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="worlds/ocean_waves.world"/>
-        <arg name="paused" value="false"/>
-    </include>
+    <!-- Start the a underwater world simulation scenario -->    
+    <include file="$(find uuv_descriptions)/launch/ocean_waves.launch"/>
 
     <!-- Add the RexROV vehicle to the simulation (namespace: rexrov) -->
     <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
