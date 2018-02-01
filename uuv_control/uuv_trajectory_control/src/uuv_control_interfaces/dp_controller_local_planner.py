@@ -26,6 +26,7 @@ import uuv_waypoints
 import logging
 import sys
 import tf2_ros
+from threading import Lock
 from tf.transformations import quaternion_about_axis, quaternion_multiply, \
     quaternion_inverse, quaternion_matrix
 
@@ -43,6 +44,8 @@ class DPControllerLocalPlanner(object):
         out_hdlr.setLevel(logging.INFO)
         self._logger.addHandler(out_hdlr)
         self._logger.setLevel(logging.INFO)
+
+        self._lock = Lock()
 
         self._traj_interpolator = uuv_trajectory_generator.TrajectoryGenerator(
             full_dof=full_dof, stamped_pose_only=stamped_pose_only)
@@ -422,10 +425,12 @@ class DPControllerLocalPlanner(object):
         if len(request.waypoints) == 0:
             self._logger.error('Waypoint list is empty')
             return InitWaypointSet(False)
+        self._lock.acquire()
         self.set_station_keeping(False)
         self.set_automatic_mode(True)
         self.set_trajectory_running(True)
         self._smooth_approach_on = True
+        self._lock.release()
         return InitWaypointSet(True)
 
     def start_circle(self, request):
@@ -437,55 +442,65 @@ class DPControllerLocalPlanner(object):
         if t.to_sec() < rospy.get_time() and not request.start_now:
             self._logger.error('The trajectory starts in the past, correct the starting time!')
             return InitCircularTrajectoryResponse(False)
-        wp_set = uuv_waypoints.WaypointSet(
-            inertial_frame_id=self.inertial_frame_id)
-        success = wp_set.generate_circle(radius=request.radius,
-                                         center=request.center,
-                                         num_points=request.n_points,
-                                         max_forward_speed=request.max_forward_speed,
-                                         theta_offset=request.angle_offset,
-                                         heading_offset=request.heading_offset)
-        if not success:
-            self._logger.error('Error generating circular trajectory from waypoint set')
+
+        try:
+            wp_set = uuv_waypoints.WaypointSet(
+                inertial_frame_id=self.inertial_frame_id)
+            success = wp_set.generate_circle(radius=request.radius,
+                                             center=request.center,
+                                             num_points=request.n_points,
+                                             max_forward_speed=request.max_forward_speed,
+                                             theta_offset=request.angle_offset,
+                                             heading_offset=request.heading_offset)
+            if not success:
+                self._logger.error('Error generating circular trajectory from waypoint set')
+                return InitCircularTrajectoryResponse(False)
+            wp_set = self._apply_workspace_constraints(wp_set)
+            if wp_set.is_empty:
+                self._logger.error('Waypoints violate workspace constraints, are you using world or world_ned as reference?')
+                return InitCircularTrajectoryResponse(False)
+
+            self._lock.acquire()
+            # Activates station keeping
+            self.set_station_keeping(True)
+            self._traj_interpolator.set_interp_method('cubic_interpolator')
+            self._traj_interpolator.set_waypoints(wp_set)
+            self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
+            if request.duration > 0:
+                if self._traj_interpolator.set_duration(request.duration):
+                    self._logger.info('Setting a maximum duration, duration=%.2f s' % request.duration)
+                else:
+                    self._logger.error('Setting maximum duration failed')
+            self._update_trajectory_info()
+            # Disables station keeping to start trajectory
+            self.set_station_keeping(False)
+            self.set_automatic_mode(True)
+            self.set_trajectory_running(True)
+            self._smooth_approach_on = True
+
+            print '==========================================================='
+            print 'CIRCULAR TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION'
+            print '==========================================================='
+            print 'Radius [m] =', request.radius
+            print 'Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z)
+            print '# of points =', request.n_points
+            print 'Max. forward speed =', request.max_forward_speed
+            print 'Circle angle offset =', request.angle_offset
+            print 'Heading offset =', request.heading_offset
+            print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
+            print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
+            print 'Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time())
+            print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
+            print '==========================================================='
+            self._lock.release()
+            return InitCircularTrajectoryResponse(True)
+        except Exception, e:
+            self._logger.error('Error while setting circular trajectory, msg=' + str(e))
+            self.set_station_keeping(True)
+            self.set_automatic_mode(False)
+            self.set_trajectory_running(False)
+            self._lock.release()
             return InitCircularTrajectoryResponse(False)
-        wp_set = self._apply_workspace_constraints(wp_set)
-        if wp_set.is_empty:
-            self._logger.error('Waypoints violate workspace constraints')
-            return InitCircularTrajectoryResponse(False)
-
-        # Activates station keeping
-        self.set_station_keeping(True)
-        self._traj_interpolator.set_interp_method('cubic_interpolator')
-        self._traj_interpolator.set_waypoints(wp_set)
-        self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
-        if request.duration > 0:
-            if self._traj_interpolator.set_duration(request.duration):
-                self._logger.info('Setting a maximum duration, duration=%.2f s' % request.duration)
-            else:
-                self._logger.error('Setting maximum duration failed')
-        self._update_trajectory_info()
-        # Disables station keeping to start trajectory
-        self.set_station_keeping(False)
-        self.set_automatic_mode(True)
-        self.set_trajectory_running(True)
-        self._smooth_approach_on = True
-
-        print '==========================================================='
-        print 'CIRCULAR TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION'
-        print '==========================================================='
-        print 'Radius [m] =', request.radius
-        print 'Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z)
-        print '# of points =', request.n_points
-        print 'Max. forward speed =', request.max_forward_speed
-        print 'Circle angle offset =', request.angle_offset
-        print 'Heading offset =', request.heading_offset
-        print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-        print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
-        print 'Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time())
-        print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-        print '==========================================================='
-        return InitCircularTrajectoryResponse(True)
-
 
     def start_helix(self, request):
         if request.radius <= 0 or request.n_points <= 0 or \
@@ -498,59 +513,71 @@ class DPControllerLocalPlanner(object):
             return InitHelicalTrajectoryResponse(False)
         else:
             self._logger.info('Start helical trajectory now!')
-        wp_set = uuv_waypoints.WaypointSet(inertial_frame_id=self.inertial_frame_id)
-        success = wp_set.generate_helix(radius=request.radius,
-                                        center=request.center,
-                                        num_points=request.n_points,
-                                        max_forward_speed=request.max_forward_speed,
-                                        delta_z=request.delta_z,
-                                        num_turns=request.n_turns,
-                                        theta_offset=request.angle_offset,
-                                        heading_offset=request.heading_offset)
 
-        if not success:
-            self._logger.error('Error generating circular trajectory from waypoint set')
-            return InitCircularTrajectoryResponse(False)
-        wp_set = self._apply_workspace_constraints(wp_set)
-        if wp_set.is_empty:
-            self._logger.error('Waypoints violate workspace constraints')
-            return InitCircularTrajectoryResponse(False)
+        try:
+            wp_set = uuv_waypoints.WaypointSet(inertial_frame_id=self.inertial_frame_id)
+            success = wp_set.generate_helix(radius=request.radius,
+                                            center=request.center,
+                                            num_points=request.n_points,
+                                            max_forward_speed=request.max_forward_speed,
+                                            delta_z=request.delta_z,
+                                            num_turns=request.n_turns,
+                                            theta_offset=request.angle_offset,
+                                            heading_offset=request.heading_offset)
 
-        self.set_station_keeping(True)
-        self._traj_interpolator.set_interp_method('cubic_interpolator')
-        if not self._traj_interpolator.set_waypoints(wp_set):
-            self._logger.error('Error setting the waypoints')
-            return InitCircularTrajectoryResponse(False)
+            if not success:
+                self._logger.error('Error generating circular trajectory from waypoint set')
+                return InitHelicalTrajectoryResponse(False)
+            wp_set = self._apply_workspace_constraints(wp_set)
+            if wp_set.is_empty:
+                self._logger.error('Waypoints violate workspace constraints, are you using world or world_ned as reference?')
+                return InitHelicalTrajectoryResponse(False)
 
-        self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
-        if request.duration > 0:
-            if self._traj_interpolator.set_duration(request.duration):
-                self._logger.info('Setting a maximum duration, duration=%.2f s' % request.duration)
-            else:
-                self._logger.error('Setting maximum duration failed')
-        self._update_trajectory_info()
-        self.set_station_keeping(False)
-        self.set_automatic_mode(True)
-        self.set_trajectory_running(True)
-        self._smooth_approach_on = True
+            self._lock.acquire()
+            self.set_station_keeping(True)
+            self._traj_interpolator.set_interp_method('cubic_interpolator')
+            if not self._traj_interpolator.set_waypoints(wp_set):
+                self._logger.error('Error setting the waypoints')
+                return InitHelicalTrajectoryResponse(False)
 
-        print '==========================================================='
-        print 'HELICAL TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION'
-        print '==========================================================='
-        print 'Radius [m] =', request.radius
-        print 'Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z)
-        print '# of points =', request.n_points
-        print 'Max. forward speed =', request.max_forward_speed
-        print 'Delta Z =', request.delta_z
-        print '# of turns =', request.n_turns
-        print 'Helix angle offset =', request.angle_offset
-        print 'Heading offset =', request.heading_offset
-        print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-        print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
-        print 'Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time())
-        print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-        print '==========================================================='
-        return InitHelicalTrajectoryResponse(True)
+            self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
+
+            if request.duration > 0:
+                if self._traj_interpolator.set_duration(request.duration):
+                    self._logger.info('Setting a maximum duration, duration=%.2f s' % request.duration)
+                else:
+                    self._logger.error('Setting maximum duration failed')
+            self._update_trajectory_info()
+            self.set_station_keeping(False)
+            self.set_automatic_mode(True)
+            self.set_trajectory_running(True)
+            self._smooth_approach_on = True
+
+            print '==========================================================='
+            print 'HELICAL TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION'
+            print '==========================================================='
+            print 'Radius [m] =', request.radius
+            print 'Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z)
+            print '# of points =', request.n_points
+            print 'Max. forward speed =', request.max_forward_speed
+            print 'Delta Z =', request.delta_z
+            print '# of turns =', request.n_turns
+            print 'Helix angle offset =', request.angle_offset
+            print 'Heading offset =', request.heading_offset
+            print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
+            print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
+            print 'Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time())
+            print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
+            print '==========================================================='
+            self._lock.release()
+            return InitHelicalTrajectoryResponse(True)
+        except Exception, e:
+            self._logger.error('Error while setting helical trajectory, msg=' + str(e))
+            self.set_station_keeping(True)
+            self.set_automatic_mode(False)
+            self.set_trajectory_running(False)
+            self._lock.release()
+            return InitHelicalTrajectoryResponse(False)
 
     def init_waypoints_from_file(self, request):
         if (len(request.filename.data) == 0 or
@@ -563,6 +590,7 @@ class DPControllerLocalPlanner(object):
             return InitHelicalTrajectoryResponse(False)
         else:
             self._logger.info('Start waypoint trajectory now!')
+        self._lock.acquire()
         self.set_station_keeping(True)
         self._traj_interpolator.set_interp_method('lipb_interpolator')
 
@@ -590,9 +618,11 @@ class DPControllerLocalPlanner(object):
             print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
             print 'Inertial frame ID = ' + self.inertial_frame_id
             print '==========================================================='
+            self._lock.release()
             return InitWaypointsFromFileResponse(True)
         else:
             self._logger.error('Error occurred while parsing waypoint file')
+            self._lock.release()
             return InitWaypointsFromFileResponse(False)
 
     def go_to(self, request):
@@ -603,6 +633,7 @@ class DPControllerLocalPlanner(object):
             self._logger.error('Max. forward speed must be greater than zero')
             return GoToResponse(False)
         self.set_station_keeping(True)
+        self._lock.acquire()
         wp_set = uuv_waypoints.WaypointSet(
             inertial_frame_id=self.inertial_frame_id)
 
@@ -620,6 +651,7 @@ class DPControllerLocalPlanner(object):
         self._traj_interpolator.set_interp_method('lipb_interpolator')
         if not self._traj_interpolator.set_waypoints(wp_set):
             self._logger.error('Error while setting waypoints')
+            self._lock.release()
             return GoToResponse(False)
 
         t = rospy.Time.now().to_sec()
@@ -641,6 +673,7 @@ class DPControllerLocalPlanner(object):
         print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
         print 'Inertial frame ID = ', self.inertial_frame_id
         print '==========================================================='
+        self._lock.release()
         return GoToResponse(True)
 
     def go_to_incremental(self, request):
@@ -654,6 +687,8 @@ class DPControllerLocalPlanner(object):
         if request.max_forward_speed <= 0:
             self._logger.error('Max. forward speed must be positive')
             return GoToIncrementalResponse(False)
+
+        self._lock.acquire()
         self.set_station_keeping(True)
         wp_set = uuv_waypoints.WaypointSet(
             inertial_frame_id=self.inertial_frame_id)
@@ -676,6 +711,7 @@ class DPControllerLocalPlanner(object):
         self._traj_interpolator.set_interp_method('lipb_interpolator')
         if not self._traj_interpolator.set_waypoints(wp_set):
             self._logger.error('Error while setting waypoints')
+            self._lock.release()
             return GoToIncrementalResponse(False)
 
         self._traj_interpolator.set_start_time(rospy.Time.now().to_sec())
@@ -692,7 +728,7 @@ class DPControllerLocalPlanner(object):
         print '# waypoints =', wp_set.num_waypoints
         print 'Inertial frame ID = ', self.inertial_frame_id
         print '==========================================================='
-
+        self._lock.release()
         return GoToIncrementalResponse(True)
 
     def interpolate(self, t):
@@ -702,6 +738,7 @@ class DPControllerLocalPlanner(object):
         based on the past odometry measurements for station keeping.
         """
 
+        self._lock.acquire()
         if not self._station_keeping_on and self._traj_running:
             if self._smooth_approach_on:
                 # Generate extra waypoint before the initial waypoint
@@ -743,4 +780,5 @@ class DPControllerLocalPlanner(object):
         elif self._station_keeping_on:
             if self._is_teleop_active:
                 self._this_ref_pnt = self._calc_teleop_reference()
+        self._lock.release()
         return self._this_ref_pnt

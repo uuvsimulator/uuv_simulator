@@ -23,6 +23,9 @@
     <arg name="Kd" default="9077.459,9077.459,9077.459,18880.925,18880.925,18880.925"/>
     <arg name="Ki" default="321.417,321.417,321.417,2096.951,2096.951,2096.951"/>
 
+    <arg name="output_dir" default="$(find uuv_thruster_manager)/config/$(arg model_name)"/>
+    <arg name="config_file" default="$(find uuv_thruster_manager)/config/$(arg model_name)/thruster_manager.yaml"/>
+    <arg name="tam_file" default="$(find uuv_thruster_manager)/config/$(arg model_name)/TAM.yaml"/>
     <!--
     For the control vector to be distributed amongst the thrusters, a thruster manager node
     has to be initialized for this specific vehicle. The thruster manager will calculate the
@@ -38,6 +41,9 @@
         -->
         <arg name="uuv_name" value="$(arg uuv_name)"/>
         <arg name="model_name" value="$(arg model_name)"/>
+        <arg name="output_dir" value="$(arg output_dir)"/>
+        <arg name="config_file" value="$(arg config_file)"/>
+        <arg name="tam_file" value="$(arg tam_file)"/>
     </include>
 
     <!--
@@ -84,7 +90,7 @@
             <remap from="waypoints" to="dp_controller/waypoints"/>
             <remap from="error" to="dp_controller/error"/>
             <remap from="reference" to="dp_controller/reference"/>
-            <remap from="thruster_output" to="thruster_manager/input"/>
+            <remap from="thruster_output" to="thruster_manager/input_stamped"/>
             <!-- Set the controller parameters in the node's private namespace-->
             <rosparam subst_value="true">
                 saturation: $(arg saturation)

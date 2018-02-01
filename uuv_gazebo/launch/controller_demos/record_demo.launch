@@ -1,6 +1,6 @@
 <launch>
   <arg name="record" default="false"/>
-  <arg name="bag_filename" default="$(find uuv_evaluation)/bags/recording.bag"/>
+  <arg name="bag_filename" default="recording.bag"/>
   <arg name="use_ned_frame" default="false"/>
 
   <group if="$(arg record)">
