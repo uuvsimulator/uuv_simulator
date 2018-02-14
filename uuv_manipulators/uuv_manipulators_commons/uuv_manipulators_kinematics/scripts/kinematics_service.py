@@ -125,7 +125,7 @@ class KinematicsService(object):
                 out.joints.position.append(result_ik[i])
             out.isValid = True
         return out
-        
+
     def publish_man_index(self):
         # Retrieve current jacobian matrix
         w_msg = Float64()
@@ -135,6 +135,8 @@ class KinematicsService(object):
     def on_update_endeffector_state(self):
         state_msg = EndPointState()
         # Store everything in the end point state message
+        state_msg.header.stamp = rospy.Time.now()
+
         state_msg.pose.position.x = self._arm_interface.endeffector_pose['position'][0]
         state_msg.pose.position.y = self._arm_interface.endeffector_pose['position'][1]
         state_msg.pose.position.z = self._arm_interface.endeffector_pose['position'][2]
@@ -157,8 +159,8 @@ class KinematicsService(object):
         state_msg.wrench.force.z = self._arm_interface.endeffector_wrench['force'][2]
 
         state_msg.wrench.torque.x = self._arm_interface.endeffector_wrench['torque'][0]
-        state_msg.wrench.torque.y = self._arm_interface.endeffector_wrench['torque'][0]
-        state_msg.wrench.torque.z = self._arm_interface.endeffector_wrench['torque'][0]
+        state_msg.wrench.torque.y = self._arm_interface.endeffector_wrench['torque'][1]
+        state_msg.wrench.torque.z = self._arm_interface.endeffector_wrench['torque'][2]
 
         self._endeffector_state_pub.publish(state_msg)
 

@@ -103,9 +103,8 @@
             <parent link="${namespace}/base"/>
             <child link="${namespace}/shoulder_link"/>
             <axis xyz="0 0 1"/>
-            <dynamics damping="50" friction="200"/>
+            <dynamics damping="100" friction="150"/>
             <limit lower="${-60 * d2r}" upper="${60 * d2r}" velocity="0.17" effort="200"/>
-            <!-- <limit lower="${-60 * d2r}" upper="${60 * d2r}" velocity="0.17" effort="1000"/> -->
         </joint>
 
         <xacro:simple_transmission joint="${namespace}/azimuth" />
@@ -140,9 +139,8 @@
             <child link="${namespace}/upper_arm"/>
             <origin xyz="0.06955 0.00015 0.01536" rpy="${0.5*pi} 0 0"/>
             <axis xyz="0 0 1"/>
-            <dynamics damping="50" friction="200"/>
+            <dynamics damping="50" friction="150"/>
             <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".17" effort="5000"/>
-            <!-- <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".17" effort="1000"/> -->
         </joint>
 
         <xacro:simple_transmission joint="${namespace}/shoulder" />
@@ -176,10 +174,9 @@
             <parent link="${namespace}/upper_arm"/>
             <child link="${namespace}/elbow_link"/>
             <origin xyz="0.55616 -0.01229 0" rpy="0 0 0"/>
-            <dynamics damping="50" friction="200"/>
+            <dynamics damping="50" friction="150"/>
             <axis xyz="0 0 1"/>
             <limit lower="${-90 * d2r}" upper="${60 * d2r}" velocity=".15" effort="300"/>
-            <!-- <limit lower="${-90 * d2r}" upper="${60 * d2r}" velocity=".13" effort="1000"/> -->
         </joint>
 
         <xacro:simple_transmission joint="${namespace}/elbow" />
@@ -214,9 +211,10 @@
             <child link="${namespace}/forearm"/>
             <origin xyz="0.1349014 -0.1936267 0" rpy="${0.5*PI} 0 0"/>
             <axis xyz="0 0 1"/>
-            <dynamics damping="50" friction="200"/>
-            <!-- <limit lower="${-135 * d2r}" upper="${135 * d2r}" velocity=".15" effort="200"/> -->
+            <dynamics damping="300" friction="1000"/>
+            <!-- <dynamics damping="300" friction="400"/> -->
             <limit lower="${-135 * d2r}" upper="${135 * d2r}" velocity=".25" effort="1000"/>
+            <!-- <limit lower="${-135 * d2r}" upper="${135 * d2r}" velocity=".25" effort="800"/> -->
         </joint>
 
         <xacro:simple_transmission joint="${namespace}/roll" />
@@ -251,9 +249,8 @@
             <child link="${namespace}/wrist_link"/>
             <origin xyz="0 0 0.31595760629823427" rpy="${-0.5*PI} ${-0.5*PI} 0"/>
             <axis xyz="0 0 1"/>
-            <dynamics damping="50" friction="200"/>
-            <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".26" effort="200"/>
-            <!-- <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".26" effort="1000"/> -->
+            <dynamics damping="10.0" friction="10.0"/>
+            <limit lower="${-90 * d2r}" upper="${90 * d2r}" velocity=".3" effort="50"/>
         </joint>
 
         <xacro:simple_transmission joint="${namespace}/pitch" />
