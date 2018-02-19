@@ -18,7 +18,8 @@ import numpy as np
 from copy import deepcopy
 from uuv_waypoints import Waypoint, WaypointSet
 from ..trajectory_point import TrajectoryPoint
-from tf.transformations import quaternion_multiply, quaternion_about_axis
+from tf.transformations import quaternion_multiply, quaternion_about_axis, \
+    quaternion_from_euler, rotation_matrix, quaternion_from_matrix
 
 
 class PathGenerator(object):
@@ -44,6 +45,9 @@ class PathGenerator(object):
 
         self._start_time = None
         self._duration = None
+
+        self._init_rot = quaternion_about_axis(0.0, [0, 0, 1])
+        self._last_rot = quaternion_about_axis(0.0, [0, 0, 1])
 
     @staticmethod
     def get_generator(name, *args, **kwargs):
@@ -169,7 +173,7 @@ class PathGenerator(object):
         self._waypoints.add_waypoint(waypoint, add_to_beginning)
         return self.init_interpolator()
 
-    def init_waypoints(self, waypoints=None):
+    def init_waypoints(self, waypoints=None, init_rot=np.array([0, 0, 0, 1])):
         if waypoints is not None:
             self._waypoints = deepcopy(waypoints)
 
@@ -177,6 +181,7 @@ class PathGenerator(object):
             print 'Waypoint list has not been initialized'
             return False
 
+        self._init_rot = init_rot
         return self.init_interpolator()
 
     def interpolate(self, tag, s):
@@ -192,10 +197,9 @@ class PathGenerator(object):
         raise NotImplementedError()
 
     def _compute_rot_quat(self, dx, dy, dz):
-        rotq = quaternion_about_axis(
-            np.arctan2(dy, dx),
-            [0, 0, 1])
-
+        heading = np.arctan2(dy, dx)
+        rotq = quaternion_about_axis(heading, [0, 0, 1])
+        
         if self._is_full_dof:
             rote = quaternion_about_axis(
                 -1 * np.arctan2(dz, np.sqrt(dx**2 + dy**2)),
