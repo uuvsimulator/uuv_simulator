@@ -1,0 +1,133 @@
+<?xml version="1.0" ?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version="1.4">
+  <world name="munkholmen">
+    <physics name="default_physics" default="true" type="ode">
+      <max_step_size>0.01</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>100</real_time_update_rate>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>50</iters>
+          <sor>1.2</sor>
+        </solver>
+      </ode>
+    </physics>
+    <scene>
+      <ambient>0.01 0.01 0.01 1.0</ambient>
+      <sky>
+        <clouds>
+          <speed>12</speed>
+        </clouds>
+      </sky>
+      <shadows>1</shadows>
+      <fog>
+        <color>0.1 0.2 0.3 1.0</color>
+        <type>linear</type>
+        <density>0.1</density>
+        <start>10</start>
+        <end>40</end>
+      </fog>
+    </scene>
+
+    <!-- 
+      Location of the M/S Herkules ship wreck on the Trondheim fjord, Norway 
+      Source: http://www.dykkepedia.com/wiki/Herkules
+    -->
+    <spherical_coordinates>
+      <latitude_deg>63.4534333</latitude_deg>
+      <longitude_deg>10.4055667</longitude_deg>
+    </spherical_coordinates>
+
+    <!-- Global light source -->
+    <light type="directional" name="sun_diffuse_1">
+      <pose>-200 -200 100 0 0 0</pose>
+      <diffuse>0.6 0.6 0.6 1</diffuse>
+      <specular>0 0 0 1</specular>
+      <direction>-0.3 -0.3 -1</direction>
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <light type="directional" name="sun_diffuse_2">
+      <pose>-100 50 200 0 0 0</pose>
+      <diffuse>0.6 0.6 0.6 1</diffuse>
+      <specular>0 0 0 1</specular>
+      <direction>-0.3 -0.3 -1</direction>
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <light type="directional" name="sun_diffuse_3">
+      <pose>-150 -130 50 0 0 0</pose>
+      <diffuse>0.6 0.6 0.6 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>0.5 0.5 -1</direction>
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <!-- Seabed terrain around Munkholmen model -->
+    <include>
+      <uri>model://herkules_seabed</uri>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://herkules_ship_wreck</uri>
+      <pose>0 0 -60 0 0 1.57</pose>
+    </include>
+    
+    <plugin name="underwater_current_plugin" filename="libuuv_underwater_current_ros_plugin.so">
+      <namespace>hydrodynamics</namespace>
+      <constant_current>
+        <topic>current_velocity</topic>
+        <velocity>
+          <mean>0</mean>
+          <min>0</min>
+          <max>5</max>
+          <mu>0.0</mu>
+          <noiseAmp>0.0</noiseAmp>
+        </velocity>
+
+        <horizontal_angle>
+          <mean>0</mean>
+          <min>-3.141592653589793238</min>
+          <max>3.141592653589793238</max>
+          <mu>0.0</mu>
+          <noiseAmp>0.0</noiseAmp>
+        </horizontal_angle>
+
+        <vertical_angle>
+          <mean>0</mean>
+          <min>-3.141592653589793238</min>
+          <max>3.141592653589793238</max>
+          <mu>0.0</mu>
+          <noiseAmp>0.0</noiseAmp>
+        </vertical_angle>
+      </constant_current>
+    </plugin>
+
+    <plugin name="sc_interface" filename="libuuv_sc_ros_interface_plugin.so"/>
+
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>-25 25 -55 0 0 -0.8</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+  </world>
+</sdf>

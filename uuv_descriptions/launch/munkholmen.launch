@@ -1,0 +1,38 @@
+<launch>
+  <arg name="paused" default="false"/>
+  <arg name="gui" default="true"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="worlds/munkholmen.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="verbose" value="true" />
+  </include>
+
+  <include file="$(find uuv_assistants)/launch/publish_world_ned_frame.launch"/>
+  
+  <node name="publish_world_models"
+        pkg="uuv_assistants"
+        type="publish_world_models.py"
+        output="screen">
+        <rosparam subst_value="true">
+            meshes:
+                seabed:
+                    mesh: package://uuv_descriptions/world_models/munkholmen_seabed/meshes/seabed.dae
+                    pose:
+                      position: [0, 0, 0]
+                island:
+                    mesh: package://uuv_descriptions/world_models/munkholmen/meshes/munkholmen.dae
+                    pose:
+                      position: [-103.391, -121.403, 0]
+                herkules_ship_wreck:
+                    mesh: package://uuv_descriptions/world_models/herkules_ship_wreck/meshes/herkules.dae
+                    pose:
+                      position: [1052.025, 158.035, -50]
+                      orientation: [0, 0, 5.24]
+        </rosparam>
+  </node>
+</launch>

@@ -46,7 +46,7 @@
 
     <!-- Global light source -->
     <light type="directional" name="sun1">
-      <pose>50 0 20 0 0 0</pose>
+      <pose>-50 0 -20 0 0 0</pose>
       <diffuse>1 1 1 1</diffuse>
       <specular>.1 .1 .1 1</specular>
       <direction>0.3 0.3 -1</direction>
@@ -55,7 +55,7 @@
 
     <!-- Global light source -->
     <light type="directional" name="sun_diffuse_1">
-      <pose>0 0 800 0 0 0</pose>
+      <pose>0 0 100 0 0 0</pose>
       <diffuse>0.6 0.6 0.6 1</diffuse>
       <specular>0 0 0 1</specular>
       <direction>-0.3 -0.3 -1</direction>
@@ -80,20 +80,6 @@
     <include>
       <uri>model://mangalia</uri>
       <pose>-572.0074568380 537.7086925743 0 0 0 0</pose>
-    </include>
-
-    <!-- Aurora on the surface -->
-    <include>
-      <uri>model://aurora_static</uri>
-      <pose>350.0 290.0 0.0 0.0 0.0 -0.4</pose>
-      <name>aurora_group_1</name>
-    </include>
-
-    <!-- Aurora on the surface -->
-    <include>
-      <uri>model://aurora_static</uri>
-      <pose>1500.0 690.0 0.0 0.0 0.0 0.6</pose>
-      <name>aurora_group_2</name>
     </include>
 
     <plugin name="underwater_current_plugin" filename="libuuv_underwater_current_ros_plugin.so">

@@ -14,7 +14,7 @@ material UUVSimulator/SandAndStones
         texture soil_sand_0045_01.jpg
         filtering anistropic
         max_anisotropy 16
-        scale 0.5 0.5
+        scale 0.05 0.05
       }
     }
   }
