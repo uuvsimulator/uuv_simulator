@@ -29,6 +29,8 @@ class ROV_SFController(DPControllerBase):
     [1] O.-E. Fjellstad and T. I. Fossen, Singularity-free tracking of unmanned
         underwater vehicles in 6 DOF, Proceedings of 1994 33rd IEEE Conference
         on Decision and Control
+    [2] G. Antonelli, "Underwater Robots," Springer Tracts in Advanced Robotics, 
+        2003
     """
 
     _LABEL = 'Singularity-free tracking controller'
@@ -72,7 +74,8 @@ class ROV_SFController(DPControllerBase):
 
         # Compute the generalized pose error vector using the quaternion
         # orientation error
-        error = np.hstack((self._errors['pos'], self._errors['rot'][0:3]))
+        # error = np.hstack((self._errors['pos'], self.error_orientation_quat))
+        error = self.error_pose_euler
 
         # Calculate Kp for the position error
         Kp_p = self._lambda * np.eye(3)
