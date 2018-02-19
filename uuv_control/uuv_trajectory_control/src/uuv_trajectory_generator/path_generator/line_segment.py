@@ -44,6 +44,11 @@ class LineSegment(object):
         u = min(u, 1)
         return (1 - u) * self._p_init + u * self._p_target
 
+    def get_derivative(self, u):
+        u = max(u, 0)
+        u = min(u, 1)
+        return self._p_target - self._p_init
+
     def get_length(self):
         return np.linalg.norm(self._p_target - self._p_init)
 
@@ -98,16 +103,24 @@ if __name__ == '__main__':
     u = np.cumsum(lengths) / total_length
 
     pnts = None
+    deriv = None
     for i in np.linspace(0, 1, 100):
         idx = (u - i >= 0).nonzero()[0][0]
         if idx == 0:
             u_k = 0
             pnts = segments[idx].interpolate(u_k)
+            deriv = segments[idx].get_derivative(u_k)
         else:
             u_k = (i - u[idx - 1]) / (u[idx] - u[idx - 1])
             pnts = np.vstack((pnts, segments[idx - 1].interpolate(u_k)))
+            deriv = np.vstack((deriv, segments[idx - 1].get_derivative(u_k)))
 
     ax.plot(pnts[:, 0], pnts[:, 1], pnts[:, 2], 'c')
+    
+    # for d, p in zip(deriv, pnts):
+    #     d /= np.linalg.norm(d) 
+    #     pd = p + d * 0.001
+    #     ax.plot([p[0], p[0] + pd[0]], [p[1], p[1] + pd[1]], [p[2], p[2] + pd[2]], 'r')
 
     fig = plt.figure()
 
