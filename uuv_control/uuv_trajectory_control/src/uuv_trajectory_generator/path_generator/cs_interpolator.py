@@ -15,9 +15,10 @@
 
 from scipy.interpolate import splrep, splev
 import numpy as np
+from copy import deepcopy
 from uuv_waypoints import Waypoint, WaypointSet
 from ..trajectory_point import TrajectoryPoint
-from tf.transformations import quaternion_multiply, quaternion_about_axis
+from tf.transformations import quaternion_multiply, quaternion_about_axis, quaternion_conjugate, quaternion_from_matrix, euler_from_matrix
 from line_segment import LineSegment
 from bezier_curve import BezierCurve
 from path_generator import PathGenerator
@@ -140,16 +141,19 @@ class CSInterpolator(PathGenerator):
         s = max(0, s)
         s = min(s, 1)
 
-        last_s = s - self._s_step
-        if last_s == 0:
-            last_s = 0
+        if s == 0:
+            self._last_rot = deepcopy(self._init_rot)
+            return self._init_rot
+        
+        last_s = max(0, s - self._s_step)
 
         this_pos = self.generate_pos(s)
         last_pos = self.generate_pos(last_s)
+       
         dx = this_pos[0] - last_pos[0]
         dy = this_pos[1] - last_pos[1]
         dz = this_pos[2] - last_pos[2]
-
+        
         rotq = self._compute_rot_quat(dx, dy, dz)
 
         # Calculating the step for the heading offset
@@ -159,4 +163,5 @@ class CSInterpolator(PathGenerator):
         # Adding the heading offset to the rotation quaternion
         rotq = quaternion_multiply(rotq, q_step)
 
+        self._last_rot = rotq
         return rotq
