@@ -40,12 +40,14 @@ class TrajectoryGenerator(object):
 
     @property
     def points(self):
-        if self._points is not None:
-            return self._points
-        elif self._wp_interp_on:
+        if self._wp_interp_on:
             return self._wp_interp.get_samples(0.005)
         else:
-            return None
+            return self._points
+
+    @property
+    def time(self):
+        return self._time
 
     def use_finite_diff(self, flag):
         self._wp_interp.use_finite_diff = flag
@@ -97,9 +99,9 @@ class TrajectoryGenerator(object):
         """Return true if the waypoint interpolation is being used."""
         return self._wp_interp_on
 
-    def set_waypoints(self, waypoints):
+    def set_waypoints(self, waypoints, init_rot=(0, 0, 0, 1)):
         """Initializes the waypoint interpolator with a set of waypoints."""
-        if self._wp_interp.init_waypoints(waypoints):
+        if self._wp_interp.init_waypoints(waypoints, init_rot):
             self._wp_interp_on = True
             return True
         else:
