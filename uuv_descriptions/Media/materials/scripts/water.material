@@ -32,7 +32,7 @@ material UUVSimulator/StaticWater
         texture water_water_0076_03_s.jpg
         filtering anistropic
         max_anisotropy 16
-        scale 1.0 1.0
+        scale 0.1 0.1
       }
     }
   }

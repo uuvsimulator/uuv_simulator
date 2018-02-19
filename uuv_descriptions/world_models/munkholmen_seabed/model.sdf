@@ -1,0 +1,141 @@
+<?xml version="1.0" ?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version="1.5">
+  <model name="mulkholmen_terrain">
+    <static>true</static>
+    <link name="link">
+      <collision name="seabed">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://munkholmen_seabed/meshes/seabed.dae</uri>
+            <scale>1.0 1.0 1.0</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="seabed">
+        <cast_shadows>true</cast_shadows>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1.0 1.0 1.0</scale>
+            <uri>model://munkholmen_seabed/meshes/seabed.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/sand.material</uri>
+            <name>UUVSimulator/SandAndStones</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <link name="ocean_link">       
+      <visual name="surface">
+        <pose>207.555145 -12.266886 0.0 0 0 0</pose>        
+        <geometry>
+          <box>                        
+            <size>2361.757812 1474.349 0.1</size>
+          </box>
+        </geometry>                
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/StaticWater</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="bottom">
+        <pose>207.555145 -12.266886 -80.0 0 0 0</pose>        
+        <geometry>
+          <box>                        
+            <size>2361.757812 1474.349 0.1</size>
+          </box>
+        </geometry>                
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/SeaWall</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="north_wall">
+        <pose>207.555145 724.907614 -40.0 0 0 0</pose>        
+        <geometry>
+          <box>                        
+            <size>2361.757812 0.1 80</size>
+          </box>
+        </geometry>                
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/SeaWall</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="south_wall">
+        <pose>207.555145 -749.441386 -40.0 0 0 0</pose>        
+        <geometry>
+          <box>                        
+            <size>2361.757812 0.1 80</size>
+          </box>
+        </geometry>                
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/SeaWall</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="east_wall">
+        <pose>1388.434051 -12.266886 -40.0 0 0 0</pose>        
+        <geometry>
+          <box>                        
+            <size>0.1 1474.349 80</size>
+          </box>
+        </geometry>                
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/SeaWall</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="west_wall">
+        <pose>-973.323761 -12.266886 -40.0 0 0 0</pose>        
+        <geometry>
+          <box>                        
+            <size>0.1 1474.349 80</size>
+          </box>
+        </geometry>                
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/SeaWall</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
