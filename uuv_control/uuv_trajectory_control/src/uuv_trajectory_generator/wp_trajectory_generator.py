@@ -18,7 +18,7 @@ from .trajectory_point import TrajectoryPoint
 from uuv_waypoints import Waypoint
 from uuv_waypoints import WaypointSet
 from tf.transformations import quaternion_multiply, quaternion_inverse, \
-    quaternion_conjugate
+    quaternion_conjugate, quaternion_about_axis
 from path_generator import PathGenerator
 import logging
 import sys
@@ -86,6 +86,8 @@ class WPTrajectoryGenerator(object):
 
         # The parametric variable to use as input for the interpolator
         self._cur_s = 0
+
+        self._init_rot = quaternion_about_axis(0.0, [0, 0, 1])
 
     def __del__(self):
         # Removing logging message handlers
@@ -180,11 +182,11 @@ class WPTrajectoryGenerator(object):
         self._has_ended = False
         self._cur_s = 0
 
-    def init_waypoints(self, waypoint_set):
+    def init_waypoints(self, waypoint_set, init_rot=(0, 0, 0, 1)):
         """Initialize the waypoint set."""
         self.reset()
         self.interpolator.reset()
-        return self.interpolator.init_waypoints(waypoint_set)
+        return self.interpolator.init_waypoints(waypoint_set, init_rot)
 
     def add_waypoint(self, waypoint, add_to_beginning=False):
         """Add waypoint to the existing waypoint set. If no waypoint set has

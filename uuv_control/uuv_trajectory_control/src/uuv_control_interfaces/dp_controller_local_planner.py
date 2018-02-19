@@ -46,7 +46,7 @@ class DPControllerLocalPlanner(object):
         self._logger.setLevel(logging.INFO)
 
         self._lock = Lock()
-
+        
         self._traj_interpolator = uuv_trajectory_generator.TrajectoryGenerator(
             full_dof=full_dof, stamped_pose_only=stamped_pose_only)
 
@@ -396,6 +396,12 @@ class DPControllerLocalPlanner(object):
         self._vehicle_pose.rotq = quat
         self._vehicle_pose.t = rospy.get_time()
 
+    def get_vehicle_rot(self):
+        if self._vehicle_pose is None:
+            return np.array([0, 0, 0, 1])
+        else:
+            return self._vehicle_pose.rotq
+        
     def _update_trajectory_from_msg(self, msg):
         self._stamp_trajectory_received = rospy.get_time()
         self._traj_interpolator.init_from_trajectory_message(msg)
@@ -464,7 +470,7 @@ class DPControllerLocalPlanner(object):
             # Activates station keeping
             self.set_station_keeping(True)
             self._traj_interpolator.set_interp_method('cubic_interpolator')
-            self._traj_interpolator.set_waypoints(wp_set)
+            self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot())
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             if request.duration > 0:
                 if self._traj_interpolator.set_duration(request.duration):
@@ -498,7 +504,7 @@ class DPControllerLocalPlanner(object):
             self._logger.error('Error while setting circular trajectory, msg=' + str(e))
             self.set_station_keeping(True)
             self.set_automatic_mode(False)
-            self.set_trajectory_running(False)
+            self.set_trajectory_running(False)            
             self._lock.release()
             return InitCircularTrajectoryResponse(False)
 
@@ -536,7 +542,7 @@ class DPControllerLocalPlanner(object):
             self._lock.acquire()
             self.set_station_keeping(True)
             self._traj_interpolator.set_interp_method('cubic_interpolator')
-            if not self._traj_interpolator.set_waypoints(wp_set):
+            if not self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
                 self._logger.error('Error setting the waypoints')
                 return InitHelicalTrajectoryResponse(False)
 
@@ -601,7 +607,7 @@ class DPControllerLocalPlanner(object):
         wp_set = self._transform_waypoint_set(wp_set)
         wp_set = self._apply_workspace_constraints(wp_set)
 
-        if self._traj_interpolator.set_waypoints(wp_set):
+        if self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
             t = (t.to_sec() if not request.start_now else rospy.get_time())
             self._traj_interpolator.set_start_time(t)
             self._update_trajectory_info()
@@ -649,7 +655,7 @@ class DPControllerLocalPlanner(object):
         wp_set.add_waypoint_from_msg(request.waypoint)
         wp_set = self._transform_waypoint_set(wp_set)
         self._traj_interpolator.set_interp_method('lipb_interpolator')
-        if not self._traj_interpolator.set_waypoints(wp_set):
+        if not self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
             self._logger.error('Error while setting waypoints')
             self._lock.release()
             return GoToResponse(False)
@@ -709,7 +715,7 @@ class DPControllerLocalPlanner(object):
         wp_set.add_waypoint(wp)
 
         self._traj_interpolator.set_interp_method('lipb_interpolator')
-        if not self._traj_interpolator.set_waypoints(wp_set):
+        if not self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
             self._logger.error('Error while setting waypoints')
             self._lock.release()
             return GoToIncrementalResponse(False)

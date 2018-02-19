@@ -118,15 +118,26 @@ class BezierCurve(object):
         u = max(u, 0)
         u = min(u, 1)
 
-        b = np.zeros(3)
-        n = len(self._control_pnts) - 1
+        b = np.zeros(3)        
         for i in range(len(self._control_pnts)):
-            b = b + self._get_binomial(n, i) * (1 - u)**(n - i) * u**i * self._control_pnts[i]
+            b += self.compute_polynomial(self._order, i, u) * self._control_pnts[i]
+        return b
+
+    def get_derivative(self, u):
+        u = max(u, 0)
+        u = min(u, 1)
+
+        b = np.zeros(3)        
+        for i in range(len(self._control_pnts) - 1):
+            b = b + self._order * self.compute_polynomial(self._order - 1, i, u) * \
+                 (self._control_pnts[i + 1] - self._control_pnts[i])        
         return b
 
     def get_length(self):
         return self._order * np.linalg.norm(self._control_pnts[1] - self._control_pnts[0])
 
+    def compute_polynomial(self, n, i, u):
+        return self._get_binomial(n, i) * (1 - u)**(n - i) * u**i
 
     @staticmethod
     def _get_binomial(n, i):
@@ -189,16 +200,24 @@ if __name__ == '__main__':
     u = np.cumsum(lengths) / total_length
 
     pnts = None
+    deriv = None
     for i in np.linspace(0, 1, 100):
         idx = (u - i >= 0).nonzero()[0][0]
         if idx == 0:
             u_k = 0
             pnts = segments[idx].interpolate(u_k)
+            deriv = segments[idx].get_derivative(u_k)
         else:
             u_k = (i - u[idx - 1]) / (u[idx] - u[idx - 1])
             pnts = np.vstack((pnts, segments[idx - 1].interpolate(u_k)))
+            deriv = np.vstack((deriv, segments[idx - 1].get_derivative(u_k)))
 
     ax.plot(pnts[:, 0], pnts[:, 1], pnts[:, 2], 'g')
+
+    # for d, p in zip(deriv, pnts):
+    #     d /= np.linalg.norm(d) 
+    #     pd = p + d * 0.001
+    #     ax.plot([p[0], p[0] + pd[0]], [p[1], p[1] + pd[1]], [p[2], p[2] + pd[2]], 'r')
 
     fig = plt.figure()
 

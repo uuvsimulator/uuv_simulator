@@ -672,22 +672,9 @@ class Vehicle(object):
         # Store velocity vector
         self._vel = np.hstack((lin_vel, ang_vel))
 
-        # m = '------------------ ODOMETRY\n'
-        # m += 'Inertial frame ID = %s\n' % self._inertial_frame_id
-        # m += 'Body frame ID = %s\n' % self._body_frame_id
-        # m += 'Time [s] = %s\n' % str(msg.header.stamp)
-        # m += 'Position [m] = (%.2f, %.2f, %.2f)\n' % (self._pose['pos'][0], self._pose['pos'][1], self._pose['pos'][2])
-        # eu = [a * 180 / np.pi for a in euler_from_quaternion(self._pose['rot'])]
-        # m += 'Rotation [degrees] = (%.2f, %.2f, %.2f)\n' % (eu[0], eu[1], eu[2])
-        # m += 'Lin. velocity [m/s] = (%.2f, %.2f, %.2f)\n' % (lin_vel[0], lin_vel[1], lin_vel[2])
-        # m += 'Ang. velocity [m/s] = (%.2f, %.2f, %.2f)\n' % (ang_vel[0], ang_vel[1], ang_vel[2])
-        # print m
         if not self._init_odom:
             self._init_odom = True
 
         if len(self._list_callbacks):
-            try:
-                for func in self._list_callbacks:
-                    func()
-            except Exception, e:
-                print 'Invalid callback function handle, msg=' + str(e)
+            for func in self._list_callbacks:
+                func()

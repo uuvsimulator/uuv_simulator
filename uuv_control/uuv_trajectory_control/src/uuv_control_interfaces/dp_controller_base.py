@@ -295,7 +295,7 @@ class DPControllerBase(object):
             self._errors['pos'] = np.dot(
                 rotItoB, self._reference['pos'] - pos)
 
-            # Update orientation error with respect to the BODY frame
+            # Update orientation error
             self._errors['rot'] = quaternion_multiply(
                 quaternion_inverse(quat), self._reference['rot'])
 
