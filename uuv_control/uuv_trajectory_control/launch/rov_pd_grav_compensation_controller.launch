@@ -1,0 +1,154 @@
+<launch>
+  <!-- Vehicle namespace -->
+  <arg name="uuv_name"/>
+  <!-- Name of the vehicle model -->
+  <arg name="model_name" default="$(arg uuv_name)"/>
+  <!-- Thruster saturation -->
+  <arg name="saturation" default="1200"/>
+  <!-- Flag to start the trajectory visual markers publisher -->
+  <arg name="gui_on" default="true"/>
+  <!-- Flag set as true to use load controller the parameters from the file  -->
+  <arg name="use_params_file" default="false"/>
+  <!--
+    Set this flag to true to compute both reference and error vectors wrt
+    world_ned frame
+  -->
+  <arg name="use_ned_frame" default="false"/>
+
+  <!-- If the file is not used, read the parameters from the user input -->
+  <!-- Caution: no spaces between the parameter values -->
+  <!-- The following controller parameters have been optimized for the RexROV
+       vehicle using SMAC (https://github.com/automl/SMAC3)
+  -->
+  <arg name="Kp" default="11993.888,11993.888,11993.888,19460.069,19460.069,19460.069"/>
+  <arg name="Kd" default="9077.459,9077.459,9077.459,18880.925,18880.925,18880.925"/>
+
+  <arg name="controller_config_file" default="$(find uuv_trajectory_control)/config/controllers/pid/$(arg model_name)/params.yaml"/>
+
+  <!-- Model parameters -->
+  <arg name="model_params_file" default="$(find uuv_trajectory_control)/config/models/$(arg model_name)/params.yaml"/>
+
+  <!--Thruster manager configuration  -->
+  <arg name="thruster_manager_output_dir" default="$(find uuv_thruster_manager)/config/$(arg model_name)"/>
+  <arg name="thruster_manager_config_file" default="$(find uuv_thruster_manager)/config/$(arg model_name)/thruster_manager.yaml"/>
+  <!-- File containing the thruster allocation matrix -->
+  <arg name="tam_file" default="$(find uuv_thruster_manager)/config/$(arg model_name)/TAM.yaml"/>
+
+  <!-- Start the thruster allocation manager -->
+  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch">
+     <arg name="uuv_name" value="$(arg uuv_name)" />
+     <arg name="model_name" value="$(arg model_name)" />
+     <arg name="output_dir" value="$(arg thruster_manager_output_dir)" />
+     <arg name="config_file" value="$(arg thruster_manager_config_file)" />
+     <arg name="tam_file" value="$(arg tam_file)" />
+   </include>
+
+  <!-- This node just reads the trajectory and waypoint topics and publishes
+       visualization markers for RViz -->
+  <group if="$(arg gui_on)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_control_utils"
+            type="trajectory_marker_publisher.py"
+            name="trajectory_marker_publisher"
+            output="screen">
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+      </node>
+    </group>
+  </group>
+
+  <group if="$(arg use_params_file)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_trajectory_control"
+            type="rov_pd_grav_compensation_controller.py"
+            name="rov_pd_grav_compensation_controller"
+            output="screen"
+            if="$(arg use_ned_frame)">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt_ned"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
+        <rosparam file="$(arg controller_config_file)" command="load"/>
+        <rosparam file="$(arg model_params_file)" command="load"/>
+        <rosparam subst_value="true">
+          inertial_frame_id: world_ned
+        </rosparam>
+      </node>
+
+      <node pkg="uuv_trajectory_control"
+            type="rov_pd_grav_compensation_controller.py"
+            name="rov_pd_grav_compensation_controller"
+            output="screen"
+            unless="$(arg use_ned_frame)">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
+        <rosparam file="$(arg controller_config_file)" command="load"/>
+        <rosparam file="$(arg model_params_file)" command="load"/>
+        <rosparam subst_value="true">
+          inertial_frame_id: world
+        </rosparam>
+      </node>
+    </group>
+  </group>
+
+  <group unless="$(arg use_params_file)">
+    <group ns="$(arg uuv_name)">
+      <node pkg="uuv_trajectory_control"
+            type="rov_pd_grav_compensation_controller.py"
+            name="rov_pd_grav_compensation_controller"
+            output="screen"
+            if="$(arg use_ned_frame)">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt_ned"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
+        <rosparam file="$(arg model_params_file)" command="load"/>
+        <!-- Controller parameters -->
+        <rosparam subst_value="true">
+          saturation: $(arg saturation)
+          Kp: [$(arg Kp)]
+          Kd: [$(arg Kd)]          
+          inertial_frame_id: world_ned
+        </rosparam>
+      </node>
+
+      <node pkg="uuv_trajectory_control"
+            type="rov_pd_grav_compensation_controller.py"
+            name="rov_pd_grav_compensation_controller"
+            output="screen"
+            unless="$(arg use_ned_frame)">
+        <!-- Remap necessary topics -->
+        <remap from="odom" to="pose_gt"/>
+        <remap from="trajectory" to="dp_controller/trajectory"/>
+        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
+        <remap from="waypoints" to="dp_controller/waypoints"/>
+        <remap from="error" to="dp_controller/error"/>
+        <remap from="reference" to="dp_controller/reference"/>
+        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
+        <rosparam file="$(arg model_params_file)" command="load"/>
+        <!-- Controller parameters -->
+        <rosparam subst_value="true">
+          saturation: $(arg saturation)
+          Kp: [$(arg Kp)]
+          Kd: [$(arg Kd)]          
+          inertial_frame_id: world
+        </rosparam>
+      </node>
+    </group>
+  </group>
+
+</launch>
