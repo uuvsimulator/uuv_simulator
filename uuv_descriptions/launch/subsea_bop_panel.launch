@@ -1,0 +1,35 @@
+<launch>
+  <arg name="paused" default="false"/>
+  <arg name="gui" default="true"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="worlds/subsea_bop_panel.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="verbose" value="true" />
+  </include>
+
+  <include file="$(find uuv_assistants)/launch/publish_world_ned_frame.launch"/>
+  
+  <!-- <node name="publish_world_models"
+        pkg="uuv_assistants"
+        type="publish_world_models.py"
+        output="screen">
+        <rosparam subst_value="true">
+            meshes:
+                herkules_seabed:
+                    mesh: package://uuv_descriptions/world_models/herkules_seabed/meshes/herkules_seabed.dae
+                    pose:
+                      position: [0, 0, -60]
+                    scale: [4, 4, 1]
+                herkules_ship_wreck:
+                    mesh: package://uuv_descriptions/world_models/herkules_ship_wreck/meshes/herkules.dae
+                    pose:
+                      position: [0, 0, -60]
+                      orientation: [0, 0, 1.57]
+        </rosparam>
+  </node> -->
+</launch>

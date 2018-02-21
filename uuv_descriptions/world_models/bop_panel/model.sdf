@@ -1,0 +1,503 @@
+<?xml version="1.0" ?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<sdf version="1.5">
+  <model name="bop_panel">
+    <pose>0 0 0.1 0 0 0</pose>        
+    <link name="block">     
+      <inertial>
+        <mass>1000</mass>
+        <inertia>
+          <ixx>16083.333333333</ixx>
+          <iyy>16083.333333333</iyy>
+          <izz>8166.666666667</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>      
+
+      <collision name="block_collision">        
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/VentilBlock.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="block_visual">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/VentilBlock.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <self_collide>0</self_collide>
+    </link>
+
+    <joint name="world_joint" type="fixed">
+      <child>block</child>
+      <parent>world</parent>
+      <axis>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+        <xyz>0 1 0</xyz>
+        <dynamics>
+          <damping>1.0</damping>
+        </dynamics>
+        <use_parent_model_frame>true</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <cfm_damping>1</cfm_damping>
+        </ode>
+      </physics>
+    </joint>
+
+    <!-- Valve 1 - April tag -->
+
+    <link name="april_tag_valve_1">
+      <pose>3.31813 0.000387 8.33784 0 0 0</pose>      
+      <collision name="april_tag_valve_1_collision">
+        <pose>0 0 0 0 1.57 0</pose>
+        <geometry>
+            <box>
+              <size>0.15 0.15 0.001</size>
+            </box>
+        </geometry>
+      </collision>
+
+      <visual name="april_tag_valve_1_visual">
+        <pose>0 0 0 0 1.57 0</pose>
+        <geometry>
+            <box>
+              <size>0.1 0.1 0.002</size>
+            </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/fiducials.material</uri>
+            <name>AprilTag/Tag36_11_00000</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="marker_1_joint" type="fixed">
+      <parent>block</parent>
+      <child>april_tag_valve_1</child>      
+    </joint>
+
+    <!-- Valve 1 -->
+
+    <link name="valve_1">
+      <pose>3.33279 0.000387 8.23068 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_1_collision">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_1_visual">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_1_joint" type="revolute">
+      <parent>block</parent>
+      <child>valve_1</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Valve 2 - April tag -->
+
+    <link name="april_tag_valve_2">
+      <pose>3.31813 0.000668 7.94273 0 0 0</pose>      
+      <collision name="april_tag_valve_2_collision">
+        <geometry>
+            <box>
+              <size>0.15 0.15 0.001</size>
+            </box>
+        </geometry>
+      </collision>
+
+      <visual name="april_tag_valve_2_visual">
+        <pose>0 0 0 0 1.57 0</pose>
+        <geometry>
+            <box>
+              <size>0.1 0.1 0.002</size>
+            </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/fiducials.material</uri>
+            <name>AprilTag/Tag36_11_00000</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="marker_2_joint" type="fixed">
+      <parent>block</parent>
+      <child>april_tag_valve_2</child>
+      <pose>0 0 0 0 0 0</pose>
+    </joint>
+
+    <!-- Valve 2 -->
+
+    <link name="valve_2">
+      <pose>3.33279 0.000387 7.83558 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_2_collision">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_2_visual">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_2_joint" type="revolute">
+      <parent>block</parent>
+      <child>valve_2</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Valve 3 - April tag -->
+
+    <link name="april_tag_valve_3">
+      <pose>3.31813 0.000668 7.59716 0 0 0</pose>      
+      <collision name="april_tag_valve_3_collision">
+        <geometry>
+            <box>
+              <size>0.15 0.15 0.001</size>
+            </box>
+        </geometry>
+      </collision>
+
+      <visual name="april_tag_valve_3_visual">
+        <pose>0 0 0 0 1.57 0</pose>
+        <geometry>
+            <box>
+              <size>0.1 0.1 0.002</size>
+            </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/fiducials.material</uri>
+            <name>AprilTag/Tag36_11_00000</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="marker_3_joint" type="fixed">
+      <parent>block</parent>
+      <child>april_tag_valve_3</child>
+      <pose>0 0 0 0 0 0</pose>
+    </joint>
+
+    <!-- Valve 3 -->
+
+    <link name="valve_3">
+      <pose>3.33279 0.000387 7.46961 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_3_collision">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_3_visual">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_3_joint" type="revolute">
+      <parent>block</parent>
+      <child>valve_3</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Valve 4 - April tag -->
+
+    <link name="april_tag_valve_4">
+      <pose>3.31813 0.000668 7.24173 0 0 0</pose>      
+      <collision name="april_tag_valve_4_collision">
+        <geometry>
+            <box>
+              <size>0.15 0.15 0.001</size>
+            </box>
+        </geometry>
+      </collision>
+
+      <visual name="april_tag_valve_4_visual">
+        <pose>0 0 0 0 1.57 0</pose>
+        <geometry>
+            <box>
+              <size>0.1 0.1 0.002</size>
+            </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/fiducials.material</uri>
+            <name>AprilTag/Tag36_11_00000</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="marker_4_joint" type="fixed">
+      <parent>block</parent>
+      <child>april_tag_valve_4</child>
+      <pose>0 0 0 0 0 0</pose>
+    </joint>
+
+    <!-- Valve 4 -->
+
+    <link name="valve_4">
+      <pose>3.33279 0.000387 7.10469 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_4_collision">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_4_visual">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_4_joint" type="revolute">
+      <parent>block</parent>
+      <child>valve_4</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Valve 5 - April tag -->
+
+    <link name="april_tag_valve_5">
+      <pose>3.31813 0.000387 6.88629 0 0 0</pose>      
+      <collision name="april_tag_valve_5_collision">
+        <geometry>
+            <box>
+              <size>0.15 0.15 0.001</size>
+            </box>
+        </geometry>
+      </collision>
+
+      <visual name="april_tag_valve_5_visual">
+        <pose>0 0 0 0 1.57 0</pose>
+        <geometry>
+            <box>
+              <size>0.1 0.1 0.002</size>
+            </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/fiducials.material</uri>
+            <name>AprilTag/Tag36_11_00000</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <joint name="marker_5_joint" type="fixed">
+      <parent>block</parent>
+      <child>april_tag_valve_5</child>
+      <pose>0 0 0 0 0 0</pose>
+    </joint>
+
+    <!-- Valve 5 -->
+
+    <link name="valve_5">
+      <pose>3.33279 0.000387 6.74452 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.0017520833333333331</ixx>
+          <iyy>0.0017520833333333331</iyy>
+          <izz>0.0017520833333333331</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="valve_5_collision">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="valve_5_visual">
+        <geometry>
+          <mesh>
+            <uri>model://bop_panel/meshes/Valve.dae</uri>
+            <scale>1.0 1.2 1.2</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="valve_5_joint" type="revolute">
+      <parent>block</parent>
+      <child>valve_5</child>
+      <pose>0 0 0 0 0 0</pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>-1.57</lower>
+        </limit>
+        <dynamics>
+          <damping>0.5</damping>
+          <friction>10</friction>
+        </dynamics>
+      </axis>
+    </joint>
+  </model>
+</sdf>
