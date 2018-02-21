@@ -518,16 +518,17 @@ class Vehicle(object):
         """
         Update the restoring forces for the current orientation.
         """
-        Fg = np.array([0, 0, -self._mass * self._gravity])
-        Fb = np.array([0, 0, self._volume * self._gravity * self._density])
+        if use_sname:
+            Fg = np.array([0, 0, -self._mass * self._gravity])
+            Fb = np.array([0, 0, self._volume * self._gravity * self._density])
+        else:
+            Fg = np.array([0, 0, self._mass * self._gravity])
+            Fb = np.array([0, 0, -self._volume * self._gravity * self._density])
         self._g = np.zeros(6)
 
         self._g[0:3] = -1 * np.dot(self.rotItoB, Fg + Fb)
         self._g[3:6] = -1 * np.dot(self.rotItoB,
-                                   np.cross(self._cog, Fg) + np.cross(self._cob, Fb))
-
-        if use_sname:
-            self._g = self.to_SNAME(self._g)
+                                   np.cross(self._cog, Fg) + np.cross(self._cob, Fb))        
 
     def set_added_mass(self, Ma):
         """Set added-mass matrix coefficients."""
