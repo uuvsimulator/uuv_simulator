@@ -74,7 +74,7 @@
       <direction>0.5 0.5 -1</direction>
       <cast_shadows>true</cast_shadows>
     </light>
-    
+
     <include>
       <uri>model://herkules_seabed</uri>
       <pose>0 0 0 0 0 0</pose>
@@ -82,9 +82,9 @@
 
     <include>
       <uri>model://bop_panel</uri>
-      <pose>0 0 -60 0 0 0</pose>
+      <pose>0 0 -59.9 0 0 0</pose>
     </include>
-    
+
     <plugin name="underwater_current_plugin" filename="libuuv_underwater_current_ros_plugin.so">
       <namespace>hydrodynamics</namespace>
       <constant_current>
