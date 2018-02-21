@@ -119,8 +119,8 @@
         <rosparam subst_value="true">
           saturation: $(arg saturation)
           Kd: [$(arg Kd)]
-          lambda: $(arg lambda)
-          c: $(arg c)
+          lambda: [$(arg lambda)]
+          c: [$(arg c)]
           inertial_frame_id: world_ned
         </rosparam>
       </node>
@@ -143,8 +143,8 @@
         <rosparam subst_value="true">
           saturation: $(arg saturation)
           Kd: [$(arg Kd)]
-          lambda: $(arg lambda)
-          c: $(arg c)
+          lambda: [$(arg lambda)]
+          c: [$(arg c)]
           inertial_frame_id: world
         </rosparam>
       </node>

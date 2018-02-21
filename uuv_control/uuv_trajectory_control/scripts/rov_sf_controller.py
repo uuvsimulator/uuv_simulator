@@ -52,13 +52,30 @@ class ROV_SFController(DPControllerBase):
 
         self._logger.info('Kd=' + str(self._Kd))
 
-        self._lambda = rospy.get_param('~lambda', 0.0)
+        # Build delta matrix
+        self._delta = np.zeros(shape=(6, 6))
 
-        self._logger.info('lambda=' + str(self._lambda))
+        l = rospy.get_param('~lambda', [0.0])
 
-        self._c = rospy.get_param('~c', 0.0)
+        if len(l) == 1:
+            self._delta[0:3, 0:3] = l[0] * np.eye(3)
+        elif len(l) == 3:
+            self._delta[0:3, 0:3] = np.diag(l)
+        else:
+            raise rospy.ROSException(
+                'lambda: either a scalar or a 3 element vector must be provided')
 
-        self._logger.info('c=' + str(self._c))
+        c = rospy.get_param('~c', [0.0])
+
+        if len(c) == 1:
+            self._delta[3:6, 3:6] = c[0] * np.eye(3)
+        elif len(c) == 3:
+            self._delta[3:6, 3:6] = np.diag(c)
+        else:
+            raise rospy.ROSException(
+                'c: either a scalar or a 3 element vector must be provided')               
+
+        self._logger.info('delta=' + str(self._delta))
 
         self._prev_t = None
         self._prev_vel_r = np.zeros(6)
@@ -76,20 +93,9 @@ class ROV_SFController(DPControllerBase):
         # orientation error
         # error = np.hstack((self._errors['pos'], self.error_orientation_quat))
         error = self.error_pose_euler
-
-        # Calculate Kp for the position error
-        Kp_p = self._lambda * np.eye(3)
-
-        # Calculate Kp for the orientation error
-        Kp_r = self._c * np.eye(3)
-
-        # Build delta matrix
-        delta = np.zeros(shape=(6, 6))
-        delta[0:3, 0:3] = Kp_p
-        delta[3:6, 3:6] = Kp_r
-
+        
         # Compute the virtual velocity signal
-        vel_r = self._reference['vel'] + np.dot(delta, error)
+        vel_r = self._reference['vel'] + np.dot(self._delta, error)
 
         if self._prev_t is None:
             self._prev_t = t
@@ -104,7 +110,7 @@ class ROV_SFController(DPControllerBase):
         # Compute virtual velocity error
         vel = self._vehicle_model.to_SNAME(self._vehicle_model.vel)
         # s = vel - self._vehicle_model.to_SNAME(vel_r)
-        s = self._errors['vel'] + np.dot(delta, error)
+        s = self._errors['vel'] + np.dot(self._delta, error)
 
         # Compute numerical derivative for virtual velocity signal
         d_vel_r = (vel_r - self._prev_vel_r) / dt
