@@ -16,8 +16,8 @@
 -->
 <sdf version="1.5">
   <model name="bop_panel">
-    <pose>0 0 0.1 0 0 0</pose>        
-    <link name="block">     
+    <pose>0 0 0.1 0 0 0</pose>
+    <link name="block">
       <inertial>
         <mass>1000</mass>
         <inertia>
@@ -28,9 +28,9 @@
           <ixz>0</ixz>
           <iyz>0</iyz>
         </inertia>
-      </inertial>      
+      </inertial>
 
-      <collision name="block_collision">        
+      <collision name="block_collision">
         <geometry>
           <mesh>
             <uri>model://bop_panel/meshes/VentilBlock.dae</uri>
@@ -73,7 +73,8 @@
     <!-- Valve 1 - April tag -->
 
     <link name="april_tag_valve_1">
-      <pose>3.31813 0.000387 8.33784 0 0 0</pose>      
+      <!-- <pose>3.31813 0.000387 8.33784 0 0 0</pose> -->
+      <pose>3.31813 -0.45 8.13 0 0 0</pose>
       <collision name="april_tag_valve_1_collision">
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
@@ -84,10 +85,10 @@
       </collision>
 
       <visual name="april_tag_valve_1_visual">
-        <pose>0 0 0 0 1.57 0</pose>
+        <pose>0.0 0.0 0.0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.1 0.1 0.002</size>
+              <size>0.15 0.15 0.001</size>
             </box>
         </geometry>
         <material>
@@ -101,13 +102,14 @@
 
     <joint name="marker_1_joint" type="fixed">
       <parent>block</parent>
-      <child>april_tag_valve_1</child>      
+      <child>april_tag_valve_1</child>
     </joint>
 
     <!-- Valve 1 -->
 
     <link name="valve_1">
-      <pose>3.33279 0.000387 8.23068 0 0 0</pose>
+      <!-- <pose>3.33279 0.000387 8.23068 0 0 0</pose> -->
+      <pose>3.33279 0.000387 8.28 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -150,8 +152,8 @@
           <lower>-1.57</lower>
         </limit>
         <dynamics>
-          <damping>0.5</damping>
-          <friction>10</friction>
+          <damping>0.2</damping>
+          <friction>1.0</friction>
         </dynamics>
       </axis>
     </joint>
@@ -159,8 +161,10 @@
     <!-- Valve 2 - April tag -->
 
     <link name="april_tag_valve_2">
-      <pose>3.31813 0.000668 7.94273 0 0 0</pose>      
+      <!-- <pose>3.31813 0.000668 7.94273 0 0 0</pose> -->
+      <pose>3.31813 -0.45 7.77 0 0 0</pose>
       <collision name="april_tag_valve_2_collision">
+        <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
               <size>0.15 0.15 0.001</size>
@@ -172,13 +176,13 @@
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.1 0.1 0.002</size>
+              <size>0.15 0.15 0.001</size>
             </box>
         </geometry>
         <material>
           <script>
             <uri>file://Media/materials/scripts/fiducials.material</uri>
-            <name>AprilTag/Tag36_11_00000</name>
+            <name>AprilTag/Tag36_11_00001</name>
           </script>
         </material>
       </visual>
@@ -193,7 +197,8 @@
     <!-- Valve 2 -->
 
     <link name="valve_2">
-      <pose>3.33279 0.000387 7.83558 0 0 0</pose>
+      <!-- <pose>3.33279 0.000387 7.83558 0 0 0</pose> -->
+      <pose>3.33279 0.000387 7.92 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -236,8 +241,8 @@
           <lower>-1.57</lower>
         </limit>
         <dynamics>
-          <damping>0.5</damping>
-          <friction>10</friction>
+          <damping>0.2</damping>
+          <friction>1.0</friction>
         </dynamics>
       </axis>
     </joint>
@@ -245,8 +250,10 @@
     <!-- Valve 3 - April tag -->
 
     <link name="april_tag_valve_3">
-      <pose>3.31813 0.000668 7.59716 0 0 0</pose>      
+      <!-- <pose>3.31813 0.000668 7.59716 0 0 0</pose> -->
+      <pose>3.31813 -0.45 7.34 0 0 0</pose>
       <collision name="april_tag_valve_3_collision">
+        <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
               <size>0.15 0.15 0.001</size>
@@ -258,13 +265,13 @@
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.1 0.1 0.002</size>
+              <size>0.15 0.15 0.001</size>
             </box>
         </geometry>
         <material>
           <script>
             <uri>file://Media/materials/scripts/fiducials.material</uri>
-            <name>AprilTag/Tag36_11_00000</name>
+            <name>AprilTag/Tag36_11_00003</name>
           </script>
         </material>
       </visual>
@@ -279,7 +286,8 @@
     <!-- Valve 3 -->
 
     <link name="valve_3">
-      <pose>3.33279 0.000387 7.46961 0 0 0</pose>
+      <!-- <pose>3.33279 0.000387 7.46961 0 0 0</pose> -->
+      <pose>3.33279 0.000387 7.49 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -322,8 +330,8 @@
           <lower>-1.57</lower>
         </limit>
         <dynamics>
-          <damping>0.5</damping>
-          <friction>10</friction>
+          <damping>0.2</damping>
+          <friction>1.0</friction>
         </dynamics>
       </axis>
     </joint>
@@ -331,7 +339,8 @@
     <!-- Valve 4 - April tag -->
 
     <link name="april_tag_valve_4">
-      <pose>3.31813 0.000668 7.24173 0 0 0</pose>      
+      <!-- <pose>3.31813 0.000668 7.24173 0 0 0</pose> -->
+      <pose>3.31813 -0.45 6.98 0 0 0</pose>
       <collision name="april_tag_valve_4_collision">
         <geometry>
             <box>
@@ -344,13 +353,13 @@
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.1 0.1 0.002</size>
+              <size>0.15 0.15 0.001</size>
             </box>
         </geometry>
         <material>
           <script>
             <uri>file://Media/materials/scripts/fiducials.material</uri>
-            <name>AprilTag/Tag36_11_00000</name>
+            <name>AprilTag/Tag36_11_00004</name>
           </script>
         </material>
       </visual>
@@ -365,7 +374,8 @@
     <!-- Valve 4 -->
 
     <link name="valve_4">
-      <pose>3.33279 0.000387 7.10469 0 0 0</pose>
+      <!-- <pose>3.33279 0.000387 7.10469 0 0 0</pose> -->
+      <pose>3.33279 0.000387 7.13 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -408,8 +418,8 @@
           <lower>-1.57</lower>
         </limit>
         <dynamics>
-          <damping>0.5</damping>
-          <friction>10</friction>
+          <damping>0.2</damping>
+          <friction>1.0</friction>
         </dynamics>
       </axis>
     </joint>
@@ -417,7 +427,8 @@
     <!-- Valve 5 - April tag -->
 
     <link name="april_tag_valve_5">
-      <pose>3.31813 0.000387 6.88629 0 0 0</pose>      
+      <!-- <pose>3.31813 0.000387 6.88629 0 0 0</pose> -->
+      <pose>3.31813 -0.45 6.63 0 0 0</pose>
       <collision name="april_tag_valve_5_collision">
         <geometry>
             <box>
@@ -430,13 +441,13 @@
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.1 0.1 0.002</size>
+              <size>0.15 0.15 0.001</size>
             </box>
         </geometry>
         <material>
           <script>
             <uri>file://Media/materials/scripts/fiducials.material</uri>
-            <name>AprilTag/Tag36_11_00000</name>
+            <name>AprilTag/Tag36_11_00005</name>
           </script>
         </material>
       </visual>
@@ -451,7 +462,8 @@
     <!-- Valve 5 -->
 
     <link name="valve_5">
-      <pose>3.33279 0.000387 6.74452 0 0 0</pose>
+      <!-- <pose>3.33279 0.000387 6.74452 0 0 0</pose> -->
+      <pose>3.33279 0.000387 6.78 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -494,8 +506,8 @@
           <lower>-1.57</lower>
         </limit>
         <dynamics>
-          <damping>0.5</damping>
-          <friction>10</friction>
+          <damping>0.2</damping>
+          <friction>1.0</friction>
         </dynamics>
       </axis>
     </joint>
