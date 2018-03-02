@@ -10,8 +10,8 @@ material AprilTag/Tag36_11_00000
 
       texture_unit
       {
-        texture fiducials/tag36_11_00000.jpg
-        filtering anistropic
+        texture ../textures/fiducials/tag36_11_00000.jpg
+        filtering bilinear
         max_anisotropy 16
       }
     }
@@ -30,8 +30,8 @@ material AprilTag/Tag36_11_00001
 
       texture_unit
       {
-        texture fiducials/tag36_11_00001.jpg
-        filtering anistropic
+        texture ../textures/fiducials/tag36_11_00001.jpg
+        filtering bilinear
         max_anisotropy 16
       }
     }
@@ -50,8 +50,8 @@ material AprilTag/Tag36_11_00003
 
       texture_unit
       {
-        texture fiducials/tag36_11_00003.jpg
-        filtering anistropic
+        texture ../textures/fiducials/tag36_11_00003.jpg
+        filtering bilinear
         max_anisotropy 16
       }
     }
@@ -70,8 +70,8 @@ material AprilTag/Tag36_11_00004
 
       texture_unit
       {
-        texture fiducials/tag36_11_00004.jpg
-        filtering anistropic
+        texture ../textures/fiducials/tag36_11_00004.jpg
+        filtering bilinear
         max_anisotropy 16
       }
     }
@@ -90,8 +90,8 @@ material AprilTag/Tag36_11_00005
 
       texture_unit
       {
-        texture fiducials/tag36_11_00005.jpg
-        filtering anistropic
+        texture ../textures/fiducials/tag36_11_00005.jpg
+        filtering bilinear
         max_anisotropy 16
       }
     }
