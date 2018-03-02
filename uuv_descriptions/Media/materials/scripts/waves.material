@@ -1,3 +1,13 @@
+vertex_program SimpleWavesVS glsl
+{
+  source ../programs/SimpleWaves.vert
+}
+
+fragment_program SimpleWavesFS glsl
+{
+  source ../programs/SimpleWaves.frag
+}
+
 material UUVSimulator/SimpleWaves
 {
   technique GLSL
@@ -29,7 +39,7 @@ material UUVSimulator/SimpleWaves
 
       texture_unit
       {
-        texture wave_normals.dds
+        texture ../textures/wave_normals.dds
         tex_coord_set 0
         scale 0.1 0.1
         filtering linear linear linear
@@ -37,7 +47,7 @@ material UUVSimulator/SimpleWaves
 
       texture_unit
       {
-        cubic_texture clouds.jpg combinedUVW
+        cubic_texture ../textures/clouds.jpg combinedUVW
         tex_address_mode clamp
         tex_coord_set 1
         filtering linear linear linear

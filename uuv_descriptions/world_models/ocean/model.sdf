@@ -30,8 +30,7 @@
     </geometry>
     <material>
       <script>
-        <uri>file://Media/materials/scripts</uri>
-        <uri>file://Media/materials/textures</uri>
+        <uri>file://Media/materials/scripts/waves.material</uri>
         <name>UUVSimulator/SimpleWaves</name>
       </script>
     </material>
@@ -47,8 +46,7 @@
     </geometry>
     <material>
       <script>
-        <uri>file://Media/materials/scripts</uri>
-        <uri>file://Media/materials/textures</uri>
+        <uri>file://Media/materials/scripts/water.material</uri>
         <name>UUVSimulator/StaticWater</name>
       </script>
     </material>
@@ -64,8 +62,7 @@
     </geometry>
     <material>
       <script>
-        <uri>file://Media/materials/scripts</uri>
-        <uri>file://Media/materials/textures</uri>
+        <uri>file://Media/materials/scripts/sand.material</uri>
         <name>UUVSimulator/SandAndStones</name>
       </script>
     </material>
@@ -85,8 +82,7 @@
     <geometry><plane><normal>0 0 1</normal><size>100 2000</size></plane></geometry>
     <material>
       <script>
-        <uri>file://Media/materials/scripts</uri>
-        <uri>file://Media/materials/textures</uri>
+        <uri>file://Media/materials/scripts/water.material</uri>
         <name>UUVSimulator/SeaWall</name>
       </script>
     </material>
@@ -97,8 +93,7 @@
     <geometry><plane><normal>0 0 1</normal><size>100 2000</size></plane></geometry>
     <material>
       <script>
-        <uri>file://Media/materials/scripts</uri>
-        <uri>file://Media/materials/textures</uri>
+        <uri>file://Media/materials/scripts/water.material</uri>
         <name>UUVSimulator/SeaWall</name>
       </script>
     </material>
@@ -109,8 +104,7 @@
     <geometry><plane><normal>0 0 1</normal><size>2000 100</size></plane></geometry>
     <material>
       <script>
-        <uri>file://Media/materials/scripts</uri>
-        <uri>file://Media/materials/textures</uri>
+        <uri>file://Media/materials/scripts/water.material</uri>
         <name>UUVSimulator/SeaWall</name>
       </script>
     </material>
@@ -121,8 +115,7 @@
     <geometry><plane><normal>0 0 1</normal><size>2000 100</size></plane></geometry>
     <material>
       <script>
-        <uri>file://Media/materials/scripts</uri>
-        <uri>file://Media/materials/textures</uri>
+        <uri>file://Media/materials/scripts/water.material</uri>
         <name>UUVSimulator/SeaWall</name>
       </script>
     </material>

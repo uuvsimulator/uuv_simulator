@@ -10,8 +10,8 @@ material AprilTag/Tag36_11_00000
 
       texture_unit
       {
-        texture fiducials/tag36_11_00000.jpg
-        filtering anistropic
+        texture ../textures/fiducials/tag36_11_00000.jpg
+        filtering bilinear
         max_anisotropy 16
       }
     }
