@@ -17,3 +17,83 @@ material AprilTag/Tag36_11_00000
     }
   }
 }
+
+material AprilTag/Tag36_11_00001
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      specular 0 0 0 0
+
+      texture_unit
+      {
+        texture ../textures/fiducials/tag36_11_00001.jpg
+        filtering bilinear
+        max_anisotropy 16
+      }
+    }
+  }
+}
+
+material AprilTag/Tag36_11_00003
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      specular 0 0 0 0
+
+      texture_unit
+      {
+        texture ../textures/fiducials/tag36_11_00003.jpg
+        filtering bilinear
+        max_anisotropy 16
+      }
+    }
+  }
+}
+
+material AprilTag/Tag36_11_00004
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      specular 0 0 0 0
+
+      texture_unit
+      {
+        texture ../textures/fiducials/tag36_11_00004.jpg
+        filtering bilinear
+        max_anisotropy 16
+      }
+    }
+  }
+}
+
+material AprilTag/Tag36_11_00005
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      specular 0 0 0 0
+
+      texture_unit
+      {
+        texture ../textures/fiducials/tag36_11_00005.jpg
+        filtering bilinear
+        max_anisotropy 16
+      }
+    }
+  }
+}
