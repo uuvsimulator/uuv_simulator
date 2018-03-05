@@ -15,6 +15,11 @@
 # limitations under the License.
 
 sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+
+wget http://packages.osrfoundation.org/gazebo.key
+
+sudo apt-key add gazebo.key
+
 sudo apt update
+
 sudo apt -qq install --no-install-recommends --allow-unauthenticated -y gazebo9 libgazebo9-dev ros-kinetic-gazebo9-*
