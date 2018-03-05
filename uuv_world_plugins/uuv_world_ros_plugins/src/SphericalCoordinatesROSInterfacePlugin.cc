@@ -27,7 +27,11 @@ SphericalCoordinatesROSInterfacePlugin::SphericalCoordinatesROSInterfacePlugin()
 /////////////////////////////////////////////////
 SphericalCoordinatesROSInterfacePlugin::~SphericalCoordinatesROSInterfacePlugin()
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->rosPublishConnection.reset();
+#else
   event::Events::DisconnectWorldUpdateBegin(this->rosPublishConnection);
+#endif
   this->rosNode->shutdown();
 }
 
@@ -91,9 +95,13 @@ bool SphericalCoordinatesROSInterfacePlugin::TransformToSphericalCoord(
   ignition::math::Vector3d cartVec = ignition::math::Vector3d(
     _req.input.x, _req.input.y, _req.input.z);
 
+#if GAZEBO_MAJOR_VERSION >= 8
+  ignition::math::Vector3d scVec =
+    this->world->SphericalCoordinates()->SphericalFromLocal(cartVec);
+#else
   ignition::math::Vector3d scVec =
     this->world->GetSphericalCoordinates()->SphericalFromLocal(cartVec);
-
+#endif
   _res.latitude_deg = scVec.X();
   _res.longitude_deg = scVec.Y();
   _res.altitude = scVec.Z();
@@ -107,10 +115,13 @@ bool SphericalCoordinatesROSInterfacePlugin::TransformFromSphericalCoord(
 {
   ignition::math::Vector3d scVec = ignition::math::Vector3d(
     _req.latitude_deg, _req.longitude_deg, _req.altitude);
-
+#if GAZEBO_MAJOR_VERSION >= 8
+  ignition::math::Vector3d cartVec =
+    this->world->SphericalCoords()->LocalFromSpherical(scVec);
+#else
   ignition::math::Vector3d cartVec =
     this->world->GetSphericalCoordinates()->LocalFromSpherical(scVec);
-
+#endif
   _res.output.x = cartVec.X();
   _res.output.y = cartVec.Y();
   _res.output.z = cartVec.Z();
@@ -122,12 +133,21 @@ bool SphericalCoordinatesROSInterfacePlugin::GetOriginSphericalCoord(
     uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Request& _req,
     uuv_world_ros_plugins_msgs::GetOriginSphericalCoord::Response& _res)
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+  _res.latitude_deg =
+    this->world->SphericalCoords()->LatitudeReference().Degree();
+  _res.longitude_deg =
+    this->world->SphericalCoords()->LongitudeReference().Degree();
+  _res.altitude =
+    this->world->SphericalCoords()->GetElevationReference();
+#else
   _res.latitude_deg =
     this->world->GetSphericalCoordinates()->LatitudeReference().Degree();
   _res.longitude_deg =
     this->world->GetSphericalCoordinates()->LongitudeReference().Degree();
   _res.altitude =
     this->world->GetSphericalCoordinates()->GetElevationReference();
+#endif
   return true;
 }
 

@@ -49,7 +49,7 @@ class HydrodynamicModel : public BuoyantObject
 
   /// \brief Computation of the hydrodynamic forces
   public: virtual void ApplyHydrodynamicForces(
-    double time, const math::Vector3 &_flowVelWorld) = 0;
+    double time, const ignition::math::Vector3d &_flowVelWorld) = 0;
 
   /// \brief Prints parameters
   public: virtual void Print(std::string _paramName,
@@ -75,10 +75,10 @@ class HydrodynamicModel : public BuoyantObject
   protected: bool CheckParams(sdf::ElementPtr _sdf);
 
   /// \brief Convert vector to comply with the NED reference frame
-  protected: math::Vector3 ToNEDConvention(math::Vector3 _vec);
+  protected: ignition::math::Vector3d ToNED(ignition::math::Vector3d _vec);
 
   /// \brief Convert vector to comply with the NED reference frame
-  protected: math::Vector3 FromNEDConvention(math::Vector3 _vec);
+  protected: ignition::math::Vector3d FromNED(ignition::math::Vector3d _vec);
 
   /// \brief Filtered linear & angular acceleration vector in link frame.
   /// This is used to prevent the model to become unstable given that Gazebo
@@ -183,7 +183,7 @@ class HMFossen : public HydrodynamicModel
 
   /// \brief Computation of the hydrodynamic forces
   public: virtual void ApplyHydrodynamicForces(double time,
-                            const math::Vector3 &_flowVelWorld);
+                            const ignition::math::Vector3d &_flowVelWorld);
 
   /// \brief Computes the added-mass Coriolis matrix Ca.
   protected: void ComputeAddedCoriolisMatrix(const Eigen::Vector6d& _vel,

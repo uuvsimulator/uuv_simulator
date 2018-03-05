@@ -22,7 +22,6 @@
 #include <gazebo/physics/World.hh>
 #include <gazebo/transport/TransportTypes.hh>
 #include <gazebo/transport/transport.hh>
-#include <gazebo/math/Vector3.hh>
 
 #include <ros/ros.h>
 #include <geometry_msgs/Accel.h>
@@ -42,7 +41,11 @@ AccelerationsTestPlugin::AccelerationsTestPlugin()
 /////////////////////////////////////////////////
 AccelerationsTestPlugin::~AccelerationsTestPlugin()
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->updateConnection.reset();
+#else
   event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
+#endif
 }
 
 /////////////////////////////////////////////////
@@ -57,7 +60,11 @@ void AccelerationsTestPlugin::Load(physics::ModelPtr _model,
 
   // Initialize the transport node
   this->node = transport::NodePtr(new transport::Node());
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->node->Init(this->world->Name());
+#else
   this->node->Init(this->world->GetName());
+#endif
 
   std::string link_name;
   if (_sdf->HasElement("link_name"))
@@ -112,12 +119,12 @@ geometry_msgs::Accel accelFromEigen(const Eigen::Vector6d& acc)
   return amsg;
 }
 
-Eigen::Matrix3d Matrix3ToEigen(const math::Matrix3& m)
+Eigen::Matrix3d Matrix3ToEigen(const ignition::math::Matrix3d& m)
 {
   Eigen::Matrix3d r;
-  r << m[0][0], m[0][1], m[0][2],
-    m[1][0], m[1][1], m[1][2],
-    m[2][0], m[2][1], m[2][2];
+  r << m(0, 0), m(0, 1), m(0, 2),
+    m(1, 0), m(1, 1), m(1, 2),
+    m(2, 0), m(2, 1), m(2, 1);
   return r;
 }
 
@@ -127,32 +134,60 @@ void AccelerationsTestPlugin::Update(const common::UpdateInfo &_info)
   double dt = (_info.simTime - lastTime).Double();
 
   // Link's pose
-  const math::Pose pose_w_b = this->link->GetWorldPose();
+  ignition::math::Pose3d pose_w_b;
+#if GAZEBO_MAJOR_VERSION >= 8
+  pose_w_b = this->link->WorldPose();
+#else
+  pose_w_b = this->link->GetWorldPose().Ign();
+#endif
 
+
+#if GAZEBO_MAJOR_VERSION >= 8
+// Velocities of this link in link frame.
+Eigen::Vector6d gazebo_b_v_w_b = EigenStack(
+  this->link->RelativeLinearVel(),
+  this->link->RelativeAngularVel());
+
+// Velocities of this link in world frame
+Eigen::Vector6d gazebo_w_v_w_b = EigenStack(
+  this->link->WorldLinearVel(),
+  this->link->WorldAngularVel());
+
+
+// Accelerations of this link in world frame
+Eigen::Vector6d gazebo_w_a_w_b = EigenStack(
+  this->link->WorldLinearAccel(),
+  this->link->WorldAngularAccel());
+
+// Accelerations of this link in link frame
+Eigen::Vector6d gazebo_b_a_w_b = EigenStack(
+  this->link->RelativeLinearAccel(),
+  this->link->RelativeAngularAccel());
+#else
   // Velocities of this link in link frame.
   Eigen::Vector6d gazebo_b_v_w_b = EigenStack(
-    this->link->GetRelativeLinearVel(),
-    this->link->GetRelativeAngularVel());
+    this->link->GetRelativeLinearVel().Ign(),
+    this->link->GetRelativeAngularVel().Ign());
 
   // Velocities of this link in world frame
   Eigen::Vector6d gazebo_w_v_w_b = EigenStack(
-    this->link->GetWorldLinearVel(),
-    this->link->GetWorldAngularVel());
+    this->link->GetWorldLinearVel().Ign(),
+    this->link->GetWorldAngularVel().Ign());
 
 
   // Accelerations of this link in world frame
   Eigen::Vector6d gazebo_w_a_w_b = EigenStack(
-    this->link->GetWorldLinearAccel(),
-    this->link->GetWorldAngularAccel());
+    this->link->GetWorldLinearAccel().Ign(),
+    this->link->GetWorldAngularAccel().Ign());
 
   // Accelerations of this link in link frame
   Eigen::Vector6d gazebo_b_a_w_b = EigenStack(
-    this->link->GetRelativeLinearAccel(),
-    this->link->GetRelativeAngularAccel());
+    this->link->GetRelativeLinearAccel().Ign(),
+    this->link->GetRelativeAngularAccel().Ign());
+#endif
 
   // Numerically computed accelerations
-  math::Quaternion q_b_w = pose_w_b.rot.GetInverse();
-  math::Matrix3 R_b_w = q_b_w.GetAsMatrix3();
+  ignition::math::Matrix3d R_b_w = ignition::math::Matrix3d(pose_w_b.Rot().Inverse());
 
   Eigen::Matrix3d R_b_w_eigen = Matrix3ToEigen(R_b_w);
   Eigen::Matrix6d R6_b_w_eigen;
@@ -160,8 +195,8 @@ void AccelerationsTestPlugin::Update(const common::UpdateInfo &_info)
                   Eigen::Matrix3d::Zero(), R_b_w_eigen;
 
   // Actual numeric differentiation
-  Eigen::Vector6d num_w_a_w_b = (gazebo_w_v_w_b - last_w_v_w_b)/dt;
-  Eigen::Vector6d num_b_a_w_b = R6_b_w_eigen*num_w_a_w_b;
+  Eigen::Vector6d num_w_a_w_b = (gazebo_w_v_w_b - last_w_v_w_b) / dt;
+  Eigen::Vector6d num_b_a_w_b = R6_b_w_eigen * num_w_a_w_b;
 
   // Publish all four variants via ROS for easy comparison
   this->pub_accel_w_gazebo.publish(accelFromEigen(gazebo_w_a_w_b));

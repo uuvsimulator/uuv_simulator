@@ -36,17 +36,24 @@ FinPlugin::~FinPlugin()
 {
   if (this->updateConnection)
   {
+#if GAZEBO_MAJOR_VERSION >= 8
+    this->updateConnection.reset();
+#else
     event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
+#endif
   }
 }
 
 /////////////////////////////////////////////////
-void FinPlugin::Load(physics::ModelPtr _model,
-                          sdf::ElementPtr _sdf)
+void FinPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
   // Initializing the transport node
   this->node = transport::NodePtr(new transport::Node());
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->node->Init(_model->GetWorld()->Name());
+#else
   this->node->Init(_model->GetWorld()->GetName());
+#endif
 
   // Fin ID
   GZ_ASSERT(_sdf->HasElement("fin_id"), "Could not find fin_id parameter.");
@@ -132,24 +139,38 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
   GZ_ASSERT(!std::isnan(this->inputCommand),
             "nan in this->inputCommand");
 
+  double upperLimit, lowerLimit;
+#if GAZEBO_MAJOR_VERSION >= 8
+  upperLimit = this->joint->UpperLimit(0);
+  lowerLimit = this->joint->LowerLimit(0);
+#else
+  upperLimit = this->joint->GetUpperLimit(0).Radian();
+  lowerLimit = this->joint->GetLowerLimit(0).Radian();
+#endif
   // Limit the input command using the fin joint limits
-  if (this->inputCommand > this->joint->GetUpperLimit(0).Radian())
-    this->inputCommand = this->joint->GetUpperLimit(0).Radian();
-
-  if (this->inputCommand < this->joint->GetLowerLimit(0).Radian())
-      this->inputCommand = this->joint->GetLowerLimit(0).Radian();
+  this->inputCommand = std::min(upperLimit, this->inputCommand);
+  this->inputCommand = std::max(lowerLimit, this->inputCommand);
 
   // Update dynamics model:
   double angle = this->dynamics->update(this->inputCommand,
                                         _info.simTime.Double());
 
   // Determine velocity in lift/drag plane:
-  math::Pose finPose = this->link->GetWorldPose();
-  math::Vector3 ldNormalI = finPose.rot.RotateVector(math::Vector3::UnitZ);
+  ignition::math::Pose3d finPose;
+  ignition::math::Vector3d linVel;
+#if GAZEBO_MAJOR_VERSION >= 8
+  finPose = this->link->WorldPose();
+  linVel = this->link->WorldLinearVel();
+#else
+  finPose = this->link->GetWorldPose().Ign();
+  linVel = this->link->GetWorldLinearVel().Ign();
+#endif
+  ignition::math::Vector3d ldNormalI = finPose.Rot().RotateVector(
+    ignition::math::Vector3d::UnitZ);
 
-  math::Vector3 velI = this->link->GetWorldLinearVel() - this->currentVelocity;
-  math::Vector3 velInLDPlaneI = ldNormalI.Cross(velI.Cross(ldNormalI));
-  math::Vector3 velInLDPlaneL = finPose.rot.RotateVectorReverse(velInLDPlaneI);
+  ignition::math::Vector3d velI = linVel - this->currentVelocity;
+  ignition::math::Vector3d velInLDPlaneI = ldNormalI.Cross(velI.Cross(ldNormalI));
+  ignition::math::Vector3d velInLDPlaneL = finPose.Rot().RotateVectorReverse(velInLDPlaneI);
 
   // Compute lift and drag forces:
   this->finForce = this->liftdrag->compute(velInLDPlaneL);
@@ -172,8 +193,8 @@ void FinPlugin::UpdateInput(ConstDoublePtr &_msg)
 /////////////////////////////////////////////////
 void FinPlugin::UpdateCurrentVelocity(ConstVector3dPtr &_msg)
 {
-  this->currentVelocity.x = _msg->x();
-  this->currentVelocity.y = _msg->y();
-  this->currentVelocity.z = _msg->z();
+  this->currentVelocity.X() = _msg->x();
+  this->currentVelocity.Y() = _msg->y();
+  this->currentVelocity.Z() = _msg->z();
 }
 }

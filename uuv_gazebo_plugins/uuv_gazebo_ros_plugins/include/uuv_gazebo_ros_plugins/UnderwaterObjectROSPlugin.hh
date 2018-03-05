@@ -196,7 +196,7 @@ namespace uuv_simulator_ros
     /// \param[in] _torque Torque vector
     /// \param[in] _output Stamped wrench message to be updated
     protected: virtual void GenWrenchMsg(
-      gazebo::math::Vector3 _force, gazebo::math::Vector3 _torque,
+      ignition::math::Vector3d _force, ignition::math::Vector3d _torque,
       geometry_msgs::WrenchStamped &_output);
 
     /// \brief Sets the topics used for publishing the intermediate data during

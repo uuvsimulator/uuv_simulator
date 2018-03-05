@@ -32,8 +32,12 @@ FinROSPlugin::FinROSPlugin()
 
 FinROSPlugin::~FinROSPlugin()
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->rosPublishConnection.reset();
+#else
   gazebo::event::Events::DisconnectWorldUpdateBegin(
         this->rosPublishConnection);
+#endif
   this->rosNode->shutdown();
 }
 
@@ -143,9 +147,9 @@ void FinROSPlugin::RosPublishStates()
     geometry_msgs::WrenchStamped msg;
     msg.header.stamp = ros::Time().now();
     msg.header.frame_id = this->link->GetName();
-    msg.wrench.force.x = this->finForce.x;
-    msg.wrench.force.y = this->finForce.y;
-    msg.wrench.force.z = this->finForce.z;
+    msg.wrench.force.x = this->finForce.X();
+    msg.wrench.force.y = this->finForce.Y();
+    msg.wrench.force.z = this->finForce.Z();
 
     this->pubFinForce.publish(msg);
   }

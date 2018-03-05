@@ -76,11 +76,11 @@ void UnderwaterCameraROSPlugin::Load(sensors::SensorPtr _sensor,
 
   // Compute camera intrinsics fx, fy from FOVs:
 #if GAZEBO_MAJOR_VERSION >= 7
-  math::Angle hfov = math::Angle(this->depthCamera->HFOV().Radian());
-  math::Angle vfov = math::Angle(this->depthCamera->VFOV().Radian());
+  ignition::math::Angle hfov = ignition::math::Angle(this->depthCamera->HFOV().Radian());
+  ignition::math::Angle vfov = ignition::math::Angle(this->depthCamera->VFOV().Radian());
 #else
-  math::Angle hfov = this->depthCamera->GetHFOV();
-  math::Angle vfov = this->depthCamera->GetVFOV();
+  ignition::math::Angle hfov = this->depthCamera->GetHFOV();
+  ignition::math::Angle vfov = this->depthCamera->GetVFOV();
 #endif
 
   double fx = (0.5*this->width) / tan(0.5 * hfov.Radian());

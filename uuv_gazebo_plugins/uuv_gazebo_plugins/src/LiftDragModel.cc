@@ -104,10 +104,11 @@ LiftDrag* LiftDragQuadratic::create(sdf::ElementPtr _sdf)
 }
 
 /////////////////////////////////////////////////
-math::Vector3 LiftDragQuadratic::compute(const math::Vector3 &_velL)
+ignition::math::Vector3d LiftDragQuadratic::compute(
+  const ignition::math::Vector3d &_velL)
 {
-  math::Vector3 velL = _velL;
-  double angle = atan2(_velL.y, _velL.x);
+  ignition::math::Vector3d velL = _velL;
+  double angle = atan2(_velL.Y(), _velL.X());
 
   if (angle > M_PI_2)
   {
@@ -120,12 +121,12 @@ math::Vector3 LiftDragQuadratic::compute(const math::Vector3 &_velL)
     velL = -_velL;
   }
 
-  double u = velL.GetLength();
-  double u2  = u*u;
-  double du2 = angle*u2;
+  double u = velL.Length();
+  double u2  = u * u;
+  double du2 = angle * u2;
 
-  double drag = angle*du2*this->dragConstant;
-  double lift = du2*this->liftConstant;
+  double drag = angle * du2 * this->dragConstant;
+  double lift = du2 * this->liftConstant;
 
   //  std::cout << "vel: " << _velL << std::endl;
   //  std::cout << " u: " << u
@@ -133,8 +134,9 @@ math::Vector3 LiftDragQuadratic::compute(const math::Vector3 &_velL)
   //            << " drag: " << drag
   //            << " lift: " << lift << std::endl;
 
-  math::Vector3 liftDirectionL = -math::Vector3::UnitZ.Cross(_velL).Normalize();
-  math::Vector3 dragDirectionL = -_velL;
+  ignition::math::Vector3d liftDirectionL =
+    -ignition::math::Vector3d::UnitZ.Cross(_velL).Normalize();
+  ignition::math::Vector3d dragDirectionL = -_velL;
 
   return lift*liftDirectionL + drag*dragDirectionL.Normalize();
 }
@@ -170,7 +172,7 @@ LiftDrag* LiftDragTwoLines::create(sdf::ElementPtr _sdf)
 }
 
 /////////////////////////////////////////////////
-math::Vector3 LiftDragTwoLines::compute(const math::Vector3 &_velL)
+ignition::math::Vector3d LiftDragTwoLines::compute(const ignition::math::Vector3d &_velL)
 {
   // The following computations are based on the LiftDragPlugin included
   // in Gazebo simulator 7.0 (http://gazebosim.org)
@@ -178,8 +180,8 @@ math::Vector3 LiftDragTwoLines::compute(const math::Vector3 &_velL)
   // This source code is licensed under the Apache-2.0 License found in
   // the open_source_licenses.txt file in the root directory of this source
   // tree.
-  math::Vector3 velL = _velL;
-  double angle = atan2(_velL.y, _velL.x);
+  ignition::math::Vector3d velL = _velL;
+  double angle = atan2(_velL.Y(), _velL.X());
 
   // Make sure angle is in [-pi/2, pi/2]
   if (angle > M_PI_2)
@@ -201,7 +203,7 @@ math::Vector3 LiftDragTwoLines::compute(const math::Vector3 &_velL)
     alpha = alpha > 0 ? alpha - M_PI : alpha + M_PI;
   }
 
-  double u = velL.GetLength();
+  double u = velL.Length();
 
   // Compute dynamic pressure:
   double q = 0.5 * this->fluidDensity * u * u;
@@ -236,8 +238,8 @@ math::Vector3 LiftDragTwoLines::compute(const math::Vector3 &_velL)
   double lift = cl*q*this->area;
   double drag = cd*q*this->area;
 
-  math::Vector3 liftDirectionL = -math::Vector3::UnitZ.Cross(_velL).Normalize();
-  math::Vector3 dragDirectionL = -_velL;
+  ignition::math::Vector3d liftDirectionL = -ignition::math::Vector3d::UnitZ.Cross(_velL).Normalize();
+  ignition::math::Vector3d dragDirectionL = -_velL;
 
   return lift*liftDirectionL + drag*dragDirectionL.Normalize();
 }

@@ -23,7 +23,6 @@
 #include <map>
 
 #include <gazebo/gazebo.hh>
-#include <gazebo/math/Vector3.hh>
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/Collision.hh>
 #include <gazebo/physics/Shape.hh>
@@ -43,8 +42,9 @@ class BuoyantObject
   public: ~BuoyantObject();
 
   /// \brief Returns the buoyancy force vector in the world frame
-  public: void GetBuoyancyForce(const math::Pose &_pose,
-    math::Vector3 &buoyancyForce, math::Vector3 &buoyancyTorque);
+  public: void GetBuoyancyForce(const ignition::math::Pose3d &_pose,
+    ignition::math::Vector3d &buoyancyForce,
+    ignition::math::Vector3d &buoyancyTorque);
 
   /// \brief Applies buoyancy force on link
   public: void ApplyBuoyancyForce();
@@ -62,14 +62,10 @@ class BuoyantObject
   public: double GetFluidDensity();
 
   /// \brief Sets the position of the center of buoyancy on the body frame
-  public: void SetCoB(const gazebo::math::Vector3 &_centerOfBuoyancy);
-
-  /// \brief If the center of buoyancy is not given, it can be estimated from
-  /// collision geometries
-  public: void EstimateCoB();
+  public: void SetCoB(const ignition::math::Vector3d &_centerOfBuoyancy);
 
   /// \brief Returns the stored center of buoyancy
-  public: gazebo::math::Vector3 GetCoB();
+  public: ignition::math::Vector3d GetCoB();
 
   /// \brief Set acceleration of gravity
   public: void SetGravity(double _g);
@@ -78,13 +74,13 @@ class BuoyantObject
   public: double GetGravity();
 
   /// \brief Sets bounding box
-  public: void SetBoundingBox(const gazebo::math::Box &_bBox);
+  public: void SetBoundingBox(const ignition::math::Box &_bBox);
 
   /// \brief Adds a field in the hydroWrench map
   public: void SetStoreVector(std::string _tag);
 
   /// \brief Get vector from the hydroWrench map
-  public: gazebo::math::Vector3 GetStoredVector(std::string _tag);
+  public: ignition::math::Vector3d GetStoredVector(std::string _tag);
 
   /// \brief Set debug flag to store intermediate forces and torques
   public: void SetDebugFlag(bool _debugOn = true);
@@ -102,7 +98,7 @@ class BuoyantObject
   public: void SetNeutrallyBuoyant();
 
   /// \brief Store vector in the hydroWrench map if the field has been created
-  protected: void StoreVector(std::string _tag, gazebo::math::Vector3 _vec);
+  protected: void StoreVector(std::string _tag, ignition::math::Vector3d _vec);
 
   /// \brief Volume of fluid displaced by the submerged object
   protected: double volume;
@@ -120,15 +116,15 @@ class BuoyantObject
   protected: double g;
 
   /// \brief Center of buoyancy in the body frame
-  protected: gazebo::math::Vector3 centerOfBuoyancy;
+  protected: ignition::math::Vector3d centerOfBuoyancy;
 
   /// \brief TEMP for calculation of the buoyancy
   /// force close to the surface
-  protected: gazebo::math::Box boundingBox;
+  protected: ignition::math::Box boundingBox;
 
   /// \brief Storage for hydrodynamic and hydrostatic forces and torques
   /// for debugging purposes
-  protected: std::map<std::string, gazebo::math::Vector3> hydroWrench;
+  protected: std::map<std::string, ignition::math::Vector3d> hydroWrench;
 
   /// \brief Debug flag, storing all intermediate forces and torques
   protected: bool debugFlag;

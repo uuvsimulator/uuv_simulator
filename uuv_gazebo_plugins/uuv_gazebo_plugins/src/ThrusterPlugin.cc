@@ -21,7 +21,6 @@
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/msgs/msgs.hh>
-#include <gazebo/math/Pose.hh>
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
@@ -31,8 +30,8 @@
 
 #include <math.h>
 
-#include "uuv_gazebo_plugins/ThrusterPlugin.hh"
-#include "uuv_gazebo_plugins/Def.hh"
+#include <uuv_gazebo_plugins/ThrusterPlugin.hh>
+#include <uuv_gazebo_plugins/Def.hh>
 
 
 GZ_REGISTER_MODEL_PLUGIN(gazebo::ThrusterPlugin)
@@ -59,7 +58,11 @@ ThrusterPlugin::~ThrusterPlugin()
 {
   if (this->updateConnection)
   {
+#if GAZEBO_MAJOR_VERSION >= 8
+    this->updateConnection.reset();
+#else
     event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
+#endif
   }
 }
 
@@ -71,7 +74,11 @@ void ThrusterPlugin::Load(physics::ModelPtr _model,
 
   // Initializing the transport node
   this->node = transport::NodePtr(new transport::Node());
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->node->Init(_model->GetWorld()->Name());
+#else
   this->node->Init(_model->GetWorld()->GetName());
+#endif
 
   // Retrieve the link name on which the thrust will be applied
   GZ_ASSERT(_sdf->HasElement("linkName"), "Could not find linkName.");
@@ -224,7 +231,7 @@ void ThrusterPlugin::Update(const common::UpdateInfo &_info)
   this->thrustForce = std::min(this->thrustForce, this->thrustMax);
 
   this->thrustForceStamp = _info.simTime;
-  math::Vector3 force(this->thrustForce, 0, 0);
+  ignition::math::Vector3d force(this->thrustForce, 0, 0);
 
   this->thrusterLink->AddRelativeForce(force);
 

@@ -93,7 +93,7 @@ namespace gazebo
     protected: common::Time lastUpdate;
 
     /// \brief Current linear velocity vector
-    protected: gazebo::math::Vector3 currentVelocity;
+    protected: ignition::math::Vector3d currentVelocity;
   };
 }
 

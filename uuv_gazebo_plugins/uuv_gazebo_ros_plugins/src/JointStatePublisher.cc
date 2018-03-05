@@ -66,9 +66,17 @@ void JointStatePublisher::Load(gazebo::physics::ModelPtr _parent,
 
   gzmsg << "JointStatePublisher::Retrieving moving joints:" << std::endl;
   this->movingJoints.clear();
+  double upperLimit, lowerLimit;
   for (auto &joint : this->model->GetJoints())
   {
-    if (joint->GetLowerLimit(0).Radian() == 0 && joint->GetUpperLimit(0).Radian() == 0)
+#if GAZEBO_MAJOR_VERSION >= 8
+  lowerLimit = joint->LowerLimit(0);
+  upperLimit = joint->UpperLimit(0);
+#else
+  lowerLimit = joint->GetLowerLimit(0).Radian();
+  upperLimit = joint->GetUpperLimit(0).Radian();
+#endif
+    if (lowerLimit  == 0 && upperLimit == 0)
       continue;
     else if (joint->GetType() == gazebo::physics::Base::EntityType::FIXED_JOINT)
       continue;
@@ -88,8 +96,11 @@ void JointStatePublisher::Load(gazebo::physics::ModelPtr _parent,
   this->jointStatePub =
     this->node->advertise<sensor_msgs::JointState>(
       this->robotNamespace + "/joint_states", 1);
-
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->lastUpdate = this->world->SimTime();
+#else
   this->lastUpdate = this->world->GetSimTime();
+#endif
   // Connect the update function to the Gazebo callback
   this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
     boost::bind(&JointStatePublisher::OnUpdate, this, _1));
@@ -97,10 +108,15 @@ void JointStatePublisher::Load(gazebo::physics::ModelPtr _parent,
 
 void JointStatePublisher::OnUpdate(const gazebo::common::UpdateInfo &_info)
 {
-  if (this->world->GetSimTime() - this->lastUpdate >= this->updatePeriod)
+#if GAZEBO_MAJOR_VERSION >= 8
+  gazebo::common::Time simTime = this->world->SimTime();
+#else
+  gazebo::common::Time simTime = this->world->GetSimTime();
+#endif
+  if (simTime - this->lastUpdate >= this->updatePeriod)
   {
     this->PublishJointStates();
-    this->lastUpdate = this->world->GetSimTime();
+    this->lastUpdate = simTime;
   }
 }
 
@@ -122,7 +138,11 @@ void JointStatePublisher::PublishJointStates()
     if (!this->IsIgnoredJoint(joint->GetName()))
     {
       jointState.name[i] = joint->GetName();
+#if GAZEBO_MAJOR_VERSION >= 8
+      jointState.position[i] = joint->Position(0);
+#else
       jointState.position[i] = joint->GetAngle(0).Radian();
+#endif
       jointState.velocity[i] = joint->GetVelocity(0);
       jointState.effort[i] = joint->GetForce(0);
     }

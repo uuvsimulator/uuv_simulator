@@ -21,7 +21,6 @@
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/msgs/msgs.hh>
-#include <gazebo/math/Pose.hh>
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
@@ -46,7 +45,11 @@ UnderwaterCurrentPlugin::UnderwaterCurrentPlugin()
 /////////////////////////////////////////////////
 UnderwaterCurrentPlugin::~UnderwaterCurrentPlugin()
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->updateConnection.reset();
+#else
   event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
+#endif
 }
 
 /////////////////////////////////////////////////
@@ -64,8 +67,11 @@ void UnderwaterCurrentPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sd
   gzmsg << "Loading underwater world..." << std::endl;
   // Initializing the transport node
   this->node = transport::NodePtr(new transport::Node());
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->node->Init(this->world->Name());
+#else
   this->node->Init(this->world->GetName());
-
+#endif
   // Retrieve the current velocity configuration, if existent
   GZ_ASSERT(this->sdf->HasElement("constant_current"),
     "Constant current configuration not available");
@@ -78,7 +84,7 @@ void UnderwaterCurrentPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sd
       currentVelocityParams->Get<std::string>("topic");
   else
     this->currentVelocityTopic = "current_velocity";
-    
+
   GZ_ASSERT(!this->currentVelocityTopic.empty(),
     "Empty current velocity topic");
 
@@ -190,7 +196,11 @@ void UnderwaterCurrentPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sd
   this->currentHorzAngleModel.Print();
 
   // Initialize the time update
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->lastUpdate = this->world->SimTime();
+#else
   this->lastUpdate = this->world->GetSimTime();
+#endif
   this->currentVelModel.lastUpdate = this->lastUpdate.Double();
   this->currentHorzAngleModel.lastUpdate = this->lastUpdate.Double();
   this->currentVertAngleModel.lastUpdate = this->lastUpdate.Double();
@@ -216,42 +226,46 @@ void UnderwaterCurrentPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sd
 /////////////////////////////////////////////////
 void UnderwaterCurrentPlugin::Init()
 {
-    // Doing nothing for now
+  // Doing nothing for now
 }
 
 /////////////////////////////////////////////////
 void UnderwaterCurrentPlugin::Update(const common::UpdateInfo & /** _info */)
 {
-    common::Time time = this->world->GetSimTime();
-    // Calculate the flow velocity and the direction using the Gauss-Markov
-    // model
+#if GAZEBO_MAJOR_VERSION >= 8
+  common::Time time = this->world->SimTime();
+#else
+  common::Time time = this->world->GetSimTime();
+#endif
+  // Calculate the flow velocity and the direction using the Gauss-Markov
+  // model
 
-    // Update current velocity
-    double currentVelMag = this->currentVelModel.Update(time.Double());
+  // Update current velocity
+  double currentVelMag = this->currentVelModel.Update(time.Double());
 
-    // Update current horizontal direction around z axis of flow frame
-    double horzAngle = this->currentHorzAngleModel.Update(time.Double());
+  // Update current horizontal direction around z axis of flow frame
+  double horzAngle = this->currentHorzAngleModel.Update(time.Double());
 
-    // Update current horizontal direction around z axis of flow frame
-    double vertAngle = this->currentVertAngleModel.Update(time.Double());
+  // Update current horizontal direction around z axis of flow frame
+  double vertAngle = this->currentVertAngleModel.Update(time.Double());
 
-    // Generating the current velocity vector as in the NED frame
-    this->currentVelocity = math::Vector3(
-        currentVelMag * cos(horzAngle) * cos(vertAngle),
-        currentVelMag * sin(horzAngle) * cos(vertAngle),
-        currentVelMag * sin(vertAngle));
+  // Generating the current velocity vector as in the NED frame
+  this->currentVelocity = ignition::math::Vector3d(
+      currentVelMag * cos(horzAngle) * cos(vertAngle),
+      currentVelMag * sin(horzAngle) * cos(vertAngle),
+      currentVelMag * sin(vertAngle));
 
-    // Update time stamp
-    this->lastUpdate = time;
-    this->PublishCurrentVelocity();
+  // Update time stamp
+  this->lastUpdate = time;
+  this->PublishCurrentVelocity();
 }
 
 /////////////////////////////////////////////////
 void UnderwaterCurrentPlugin::PublishCurrentVelocity()
 {
-    msgs::Vector3d currentVel;
-    msgs::Set(&currentVel, ignition::math::Vector3d(this->currentVelocity.x,
-                                                    this->currentVelocity.y,
-                                                    this->currentVelocity.z));
-    this->publishers[this->currentVelocityTopic]->Publish(currentVel);
+  msgs::Vector3d currentVel;
+  msgs::Set(&currentVel, ignition::math::Vector3d(this->currentVelocity.X(),
+                                                  this->currentVelocity.Y(),
+                                                  this->currentVelocity.Z()));
+  this->publishers[this->currentVelocityTopic]->Publish(currentVel);
 }
