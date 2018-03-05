@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # DEP PACKAGES
-sudo apt -qq install --no-install-recommends --allow-unauthenticated -y \
+apt -qq install --no-install-recommends --allow-unauthenticated -y \
   build-essential python-catkin-tools python-pip dvi2ps dvipng binutils \
   mesa-utils module-init-tools x-window-system
 
