@@ -16,9 +16,9 @@
 
 sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
 
-wget http://packages.osrfoundation.org/gazebo.key
+wget http://packages.osrfoundation.org/gazebo.key -O /tmp/gazebo.key
 
-sudo apt-key add gazebo.key
+sudo apt-key add /tmp/gazebo.key
 
 sudo apt update
 
