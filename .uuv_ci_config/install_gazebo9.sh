@@ -23,3 +23,5 @@ apt-key add /tmp/gazebo.key
 apt update
 
 apt -qq install --no-install-recommends --allow-unauthenticated -y gazebo9 libgazebo9-dev ros-kinetic-gazebo9-*
+
+source /usr/share/gazebo-9/setup.sh
