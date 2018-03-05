@@ -10,7 +10,7 @@ env:
     - CATKIN_CONFIG='--no-install'
     - CATKIN_PARALLEL_JOBS='-p1'
     - ROS_PARALLEL_JOBS='-j1'
-    - ROSDEP_SKIP_KEYS='gazebo'
+    - ROSDEP_SKIP_KEYS='gazebo ros-$ROS_DISTRO-gazebo-dev ros-$ROS_DISTRO-gazebo-msgs ros-$ROS_DISTRO-gazebo-plugins ros-$ROS_DISTRO-gazebo-ros ros-$ROS_DISTRO-gazebo-ros-control ros-$ROS_DISTRO-gazebo-ros-pkgs'
     - AFTER_SCRIPT='sh .uuv_ci_config/run_tests.sh'
 matrix:
   include:
