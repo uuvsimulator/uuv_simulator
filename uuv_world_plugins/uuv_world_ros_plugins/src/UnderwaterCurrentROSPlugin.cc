@@ -15,9 +15,6 @@
 
 #include <uuv_world_ros_plugins/UnderwaterCurrentROSPlugin.hh>
 
-#include <gazebo/gazebo.hh>
-#include <gazebo/physics/World.hh>
-
 namespace uuv_simulator_ros
 {
 /////////////////////////////////////////////////
@@ -30,8 +27,12 @@ UnderwaterCurrentROSPlugin::UnderwaterCurrentROSPlugin()
 /////////////////////////////////////////////////
 UnderwaterCurrentROSPlugin::~UnderwaterCurrentROSPlugin()
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->rosPublishConnection.reset();
+#else
   gazebo::event::Events::DisconnectWorldUpdateBegin(
     this->rosPublishConnection);
+#endif
   this->rosNode->shutdown();
 }
 
@@ -138,9 +139,9 @@ void UnderwaterCurrentROSPlugin::OnUpdateCurrentVel()
     flowVelMsg.header.stamp = ros::Time().now();
     flowVelMsg.header.frame_id = "/world";
 
-    flowVelMsg.twist.linear.x = this->currentVelocity.x;
-    flowVelMsg.twist.linear.y = this->currentVelocity.y;
-    flowVelMsg.twist.linear.z = this->currentVelocity.z;
+    flowVelMsg.twist.linear.x = this->currentVelocity.X();
+    flowVelMsg.twist.linear.y = this->currentVelocity.Y();
+    flowVelMsg.twist.linear.z = this->currentVelocity.Z();
 
     this->flowVelocityPub.publish(flowVelMsg);
   }

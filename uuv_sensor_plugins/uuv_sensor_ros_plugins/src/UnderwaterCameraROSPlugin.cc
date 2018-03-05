@@ -66,14 +66,23 @@ void UnderwaterCameraROSPlugin::Load(sensors::SensorPtr _sensor,
   lastImage = new unsigned char[this->width * this->height * this->depth];
 
   // Only need to load settings specific to this sensor.
-  GetSDFParam<float>(_sdf, "attenuationR", attenuation[0], 1.f / 30.f);
-  GetSDFParam<float>(_sdf, "attenuationG", attenuation[1], 1.f / 30.f);
-  GetSDFParam<float>(_sdf, "attenuationB", attenuation[2], 1.f / 30.f);
+  GetSDFParam<float>(_sdf, "attenuationR", this->attenuation[0], 1.f / 30.f);
+  GetSDFParam<float>(_sdf, "attenuationG", this->attenuation[1], 1.f / 30.f);
+  GetSDFParam<float>(_sdf, "attenuationB", this->attenuation[2], 1.f / 30.f);
 
-  GetSDFParam<unsigned char>(_sdf, "backgroundR", background[0], 0);
-  GetSDFParam<unsigned char>(_sdf, "backgroundG", background[1], 0);
-  GetSDFParam<unsigned char>(_sdf, "backgroundB", background[2], 0);
+  this->background[0] = (unsigned char)0;
+  this->background[1] = (unsigned char)0;
+  this->background[2] = (unsigned char)0;
 
+  if (_sdf->HasElement("backgroundR"))
+    this->background[0] = (unsigned char)_sdf->GetElement(
+      "backgroundR")->Get<int>();
+  if (_sdf->HasElement("backgroundG"))
+    this->background[1] = (unsigned char)_sdf->GetElement(
+      "backgroundG")->Get<int>();
+  if (_sdf->HasElement("backgroundB"))
+    this->background[2] = (unsigned char)_sdf->GetElement(
+      "backgroundB")->Get<int>();
   // Compute camera intrinsics fx, fy from FOVs:
 #if GAZEBO_MAJOR_VERSION >= 7
   ignition::math::Angle hfov = ignition::math::Angle(this->depthCamera->HFOV().Radian());
