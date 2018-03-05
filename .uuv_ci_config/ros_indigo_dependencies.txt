@@ -16,6 +16,7 @@ ros-indigo-viz
 python-wstool
 python-catkin-tools
 python-catkin-lint
+python-tk
 ros-indigo-hector-localization
 ros-indigo-joy
 ros-indigo-joy-teleop
