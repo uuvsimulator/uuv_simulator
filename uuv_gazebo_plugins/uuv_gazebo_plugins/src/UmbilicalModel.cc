@@ -15,8 +15,6 @@
 
 #include <uuv_gazebo_plugins/UmbilicalModel.hh>
 
-#include <gazebo/common/Assert.hh>
-
 namespace gazebo
 {
 /////////////////////////////////////////////////
@@ -103,22 +101,33 @@ UmbilicalModel* UmbilicalModelBerg::create(sdf::ElementPtr _sdf,
 
 /////////////////////////////////////////////////
 void UmbilicalModelBerg::OnUpdate(const common::UpdateInfo &_info,
-                                  const gazebo::math::Vector3& _flow)
+                                  const ignition::math::Vector3d& _flow)
 {
-  const math::Pose& pose = this->connector->GetWorldPose();
+  ignition::math::Pose3d pose;
+#if GAZEBO_MAJOR_VERSION >= 8
+  pose = this->connector->WorldPose();
+#else
+  pose = this->connector->GetWorldPose().Ign();
+#endif
 
-  double h = -pose.pos.z;
+  double h = -pose.Pos().Z();
 
   GZ_ASSERT(h < 10.0,  // Allow for some wiggle room when the UUV emerges.
             "z coordinate should be negative");
 
-  const math::Vector3& uvR = _flow - this->connector->GetWorldLinearVel();
+  ignition::math::Vector3d uvR;
 
-  double uR2 = uvR.x*std::abs(uvR.x);
-  double vR2 = uvR.y*std::abs(uvR.y);
-  double factor = 0.25*1.2*this->rho;
+#if GAZEBO_MAJOR_VERSION >= 8
+  uvR = _flow - this->connector->WorldLinearVel();
+#else
+  uvR = _flow - this->connector->GetWorldLinearVel().Ign();
+#endif
 
-  math::Vector3 fWorld(uR2, vR2, 0.);
-  this->connector->AddForce(fWorld*factor);
+  double uR2 = uvR.X() * std::abs(uvR.X());
+  double vR2 = uvR.Y() * std::abs(uvR.Y());
+  double factor = 0.25 * 1.2 * this->rho;
+
+  ignition::math::Vector3d fWorld(uR2, vR2, 0.);
+  this->connector->AddForce(fWorld * factor);
 }
 }

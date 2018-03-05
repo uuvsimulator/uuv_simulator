@@ -24,7 +24,6 @@
 #include <map>
 
 #include <gazebo/gazebo.hh>
-#include <gazebo/math/Vector3.hh>
 
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Geometry>
@@ -74,29 +73,29 @@ inline Eigen::Matrix3d CrossProductOperator(Eigen::Vector3d _x)
 
 /// \brief Returns the cross product operator matrix
 /// for Gazebo vectors
-inline Eigen::Matrix3d CrossProductOperator(gazebo::math::Vector3 _x)
+inline Eigen::Matrix3d CrossProductOperator(ignition::math::Vector3d _x)
 {
   Eigen::Matrix3d output;
   output << 0.0, -_x[2], _x[1], _x[2], 0.0, -_x[0], -_x[1], _x[0], 0.0;
   return output;
 }
 
-inline Eigen::Vector3d ToEigen(const gazebo::math::Vector3 &_x)
+inline Eigen::Vector3d ToEigen(const ignition::math::Vector3d &_x)
 {
   return Eigen::Vector3d(_x[0], _x[1], _x[2]);
 }
 
-inline Eigen::Matrix3d ToEigen(const gazebo::math::Matrix3 &_x)
+inline Eigen::Matrix3d ToEigen(const ignition::math::Matrix3d &_x)
 {
   Eigen::Matrix3d m;
-  m << _x[0][0], _x[0][1], _x[0][2],
-      _x[1][0], _x[1][1], _x[1][2],
-      _x[2][0], _x[2][1], _x[2][2];
+  m << _x(0, 0), _x(0, 1), _x(0, 2),
+       _x(1, 0), _x(1, 1), _x(1, 2),
+       _x(2, 0), _x(2, 1), _x(2, 2);
   return m;
 }
 
-inline Eigen::Vector6d EigenStack(const gazebo::math::Vector3 &_x,
-                                  const gazebo::math::Vector3 &_y)
+inline Eigen::Vector6d EigenStack(const ignition::math::Vector3d &_x,
+                                  const ignition::math::Vector3d &_y)
 {
     Eigen::Vector3d xe = ToEigen(_x);
     Eigen::Vector3d ye = ToEigen(_y);
@@ -105,17 +104,18 @@ inline Eigen::Vector6d EigenStack(const gazebo::math::Vector3 &_x,
     return out;
 }
 
-inline gazebo::math::Vector3 Vec3dToGazebo(const Eigen::Vector3d &_x)
+inline ignition::math::Vector3d Vec3dToGazebo(const Eigen::Vector3d &_x)
 {
-  return gazebo::math::Vector3(_x[0], _x[1], _x[2]);
+  return ignition::math::Vector3d(_x[0], _x[1], _x[2]);
 }
 
-inline gazebo::math::Matrix3 Mat3dToGazebo(const Eigen::Matrix3d &_x)
+inline ignition::math::Matrix3d Mat3dToGazebo(const Eigen::Matrix3d &_x)
 {
-  return gazebo::math::Matrix3(_x(0, 0), _x(0, 1), _x(0, 2),
-                               _x(1, 0), _x(1, 1), _x(1, 2),
-                               _x(2, 0), _x(2, 1), _x(2, 2));
+  return ignition::math::Matrix3d(_x(0, 0), _x(0, 1), _x(0, 2),
+     _x(1, 0), _x(1, 1), _x(1, 2),
+     _x(2, 0), _x(2, 1), _x(2, 2));
 }
+
 }
 
 #endif

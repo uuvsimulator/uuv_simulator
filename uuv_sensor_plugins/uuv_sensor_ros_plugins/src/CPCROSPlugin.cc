@@ -134,10 +134,15 @@ void CPCROSPlugin::OnPlumeParticlesUpdate(
 
     // Calculate the current position in WGS84 spherical coordinates
     ignition::math::Vector3d cartVec = linkPos;
-
+#if GAZEBO_MAJOR_VERSION >= 8
+    ignition::math::Vector3d scVec =
+      this->link->GetWorld()->SphericalCoords()->SphericalFromLocal(
+        cartVec);
+#else
     ignition::math::Vector3d scVec =
       this->link->GetWorld()->GetSphericalCoordinates()->SphericalFromLocal(
         cartVec);
+#endif
     this->outputMsg.latitude = scVec.X();
     this->outputMsg.longitude = scVec.Y();
     this->outputMsg.depth = -1 * scVec.Z();

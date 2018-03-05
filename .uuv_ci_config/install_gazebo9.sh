@@ -14,10 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-sh .uuv_ci_config/install_gazebo7.sh
+sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
 
-xargs -a .uuv_ci_config/ros_indigo_dependencies.txt apt -qq install --no-install-recommends --allow-unauthenticated -y
+wget http://packages.osrfoundation.org/gazebo.key -O /tmp/gazebo.key
 
-source /usr/share/gazebo-7/setup.sh
+apt-key add /tmp/gazebo.key
 
-sh .uuv_ci_config/uuv_dependencies.sh
+apt update
+
+apt -qq install --no-install-recommends --allow-unauthenticated -y gazebo9 libgazebo9-dev ros-kinetic-gazebo9-*
+
+# source /usr/share/gazebo-9/setup.sh

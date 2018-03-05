@@ -15,14 +15,6 @@
 
 #include <uuv_gazebo_plugins/UmbilicalPlugin.hh>
 
-#include <gazebo/common/Events.hh>
-#include <gazebo/physics/Model.hh>
-#include <gazebo/physics/Joint.hh>
-#include <gazebo/physics/Link.hh>
-#include <gazebo/physics/World.hh>
-#include <gazebo/physics/PhysicsEngine.hh>
-#include <gazebo/transport/Node.hh>
-
 namespace gazebo
 {
 /////////////////////////////////////////////////
@@ -36,13 +28,20 @@ UmbilicalPlugin::~UmbilicalPlugin()
 {
   if (this->updateConnection)
   {
+#if GAZEBO_MAJOR_VERSION >= 8
+    this->updateConnection.reset();
+#else
     event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
+#endif
   }
 }
 
 /////////////////////////////////////////////////
 void UmbilicalPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
+  this->model = _model;
+  this->world = _model->GetWorld();
+
   GZ_ASSERT(_sdf->HasElement("umbilical_model"),
             "Could not find umbilical_model.");
   this->umbilical.reset(
@@ -53,7 +52,13 @@ void UmbilicalPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   // Initialize the transport node
   this->node = transport::NodePtr(new transport::Node());
-  this->node->Init(_model->GetWorld()->GetName());
+  std::string worldName;
+#if GAZEBO_MAJOR_VERSION >= 8
+  worldName = this->world->Name();
+#else
+  worldName = this->world->GetName();
+#endif
+  this->node->Init(worldName);
 
   // If fluid topic is available, subscribe to it
   GZ_ASSERT(_sdf->HasElement("flow_velocity_topic"),
@@ -74,9 +79,9 @@ void UmbilicalPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 /////////////////////////////////////////////////
 void UmbilicalPlugin::UpdateFlowVelocity(ConstVector3dPtr &_msg)
 {
-  this->flowVelocity.x = _msg->x();
-  this->flowVelocity.y = _msg->y();
-  this->flowVelocity.z = _msg->z();
+  this->flowVelocity.X() = _msg->x();
+  this->flowVelocity.Y() = _msg->y();
+  this->flowVelocity.Z() = _msg->z();
 }
 
 /////////////////////////////////////////////////

@@ -85,7 +85,7 @@ class FinPlugin : public gazebo::ModelPlugin
     protected: gazebo::transport::PublisherPtr anglePublisher;
 
     /// \brief Force component calculated from the lift and drag module
-    protected: gazebo::math::Vector3 finForce;
+    protected: ignition::math::Vector3d finForce;
 
     /// \brief Latest input command.
     protected: double inputCommand;
@@ -106,7 +106,7 @@ class FinPlugin : public gazebo::ModelPlugin
     protected: gazebo::transport::SubscriberPtr currentSubscriber;
 
     /// \brief Current velocity vector read from topic
-    protected: gazebo::math::Vector3 currentVelocity;
+    protected: ignition::math::Vector3d currentVelocity;
 };
 }
 

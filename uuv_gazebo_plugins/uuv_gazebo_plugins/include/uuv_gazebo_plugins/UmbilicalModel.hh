@@ -21,7 +21,7 @@
 
 #include <string>
 #include <map>
-
+#include <gazebo/gazebo.hh>
 #include <gazebo/common/UpdateInfo.hh>
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/Model.hh>
@@ -42,7 +42,7 @@ class UmbilicalModel
 
   /// \brief Update Umbilical (and apply forces)
   public: virtual void OnUpdate(const common::UpdateInfo &_info,
-                                const gazebo::math::Vector3& _flow) = 0;
+                                const ignition::math::Vector3d& _flow) = 0;
 
   /// \brief Gazebo model to which this umbilical belongs.
   protected: physics::ModelPtr model;
@@ -98,7 +98,7 @@ class UmbilicalModelBerg : public UmbilicalModel
 
   /// \brief Update Umbilical (and apply forces)
   public: virtual void OnUpdate(const common::UpdateInfo &_info,
-                                const gazebo::math::Vector3& _flow);
+                                const ignition::math::Vector3d& _flow);
 
   /// \brief Register this UmbilicalModel function with the factory.
   private: REGISTER_UMBILICALMODEL(UmbilicalModelBerg);

@@ -64,7 +64,7 @@ HydrodynamicModel::HydrodynamicModel(sdf::ElementPtr _sdf,
   if (_sdf->HasElement("center_of_buoyancy"))
   {
     cob = Str2Vector(_sdf->Get<std::string>("center_of_buoyancy"));
-    this->SetCoB(math::Vector3(cob[0], cob[1], cob[2]));
+    this->SetCoB(ignition::math::Vector3d(cob[0], cob[1], cob[2]));
   }
   // FIXME(mam0box) This is a work around the problem of the invalid bounding
   // box returned by Gazebo
@@ -77,12 +77,9 @@ HydrodynamicModel::HydrodynamicModel(sdf::ElementPtr _sdf,
       double width = sdfModel->Get<double>("width");
       double length = sdfModel->Get<double>("length");
       double height = sdfModel->Get<double>("height");
-      math::Box boundingBox = math::Box(math::Vector3(-width/2,
-                                                      -length/2,
-                                                      -height/2),
-                                        math::Vector3(width/2,
-                                                      length/2,
-                                                      height/2));
+      ignition::math::Box boundingBox = ignition::math::Box(
+        ignition::math::Vector3d(-width / 2, -length / 2, -height / 2),
+        ignition::math::Vector3d(width / 2, length / 2, height / 2));
       // Setting the the bounding box from the given dimensions
       this->SetBoundingBox(boundingBox);
     }
@@ -130,18 +127,18 @@ void HydrodynamicModel::ComputeAcc(Eigen::Vector6d _velRel, double _time,
 }
 
 /////////////////////////////////////////////////
-math::Vector3 HydrodynamicModel::ToNEDConvention(math::Vector3 _vec)
+ignition::math::Vector3d HydrodynamicModel::ToNED(ignition::math::Vector3d _vec)
 {
-  math::Vector3 output = _vec;
-  output.y = -1 * output.y;
-  output.z = -1 * output.z;
+  ignition::math::Vector3d output = _vec;
+  output.Y() = -1 * output.Y();
+  output.Z() = -1 * output.Z();
   return output;
 }
 
 /////////////////////////////////////////////////
-math::Vector3 HydrodynamicModel::FromNEDConvention(math::Vector3 _vec)
+ignition::math::Vector3d HydrodynamicModel::FromNED(ignition::math::Vector3d _vec)
 {
-  return this->ToNEDConvention(_vec);
+  return this->ToNED(_vec);
 }
 
 /////////////////////////////////////////////////
@@ -363,26 +360,37 @@ HMFossen::HMFossen(sdf::ElementPtr _sdf,
 
 /////////////////////////////////////////////////
 void HMFossen::ApplyHydrodynamicForces(
-  double _time, const math::Vector3 &_flowVelWorld)
+  double _time, const ignition::math::Vector3d &_flowVelWorld)
 {
   // Link's pose
-  const math::Pose pose = this->link->GetWorldPose();
+  ignition::math::Pose3d pose;
+  ignition::math::Vector3d linVel, angVel;
 
-  // Compute velocities in body frame (usually called q or nu)
-  const math::Vector3 linVel = this->link->GetRelativeLinearVel();
-  const math::Vector3 angVel = this->link->GetRelativeAngularVel();
+#if GAZEBO_MAJOR_VERSION >= 8
+  pose = this->link->WorldPose();
+  linVel = this->link->RelativeLinearVel();
+  angVel = this->link->RelativeAngularVel();
+#else
+  pose = this->link->GetWorldPose().Ign();
 
-  // Compute accelerations in body frame (\dot q or \dot nu):
-  math::Quaternion rotWorld2Body = pose.rot.GetInverse();
+  gazebo::math::Vector3 linVelG, angVelG;
+  linVelG = this->link->GetRelativeLinearVel();
+  angVelG = this->link->GetRelativeAngularVel();
+  linVel = ignition::math::Vector3d(
+    linVelG.x, linVelG.y, linVelG.z);
+  angVel = ignition::math::Vector3d(
+    angVelG.x, angVelG.y, angVelG.z);
+#endif
 
   // Transform the flow velocity to the BODY frame
-  math::Vector3 flowVel = pose.rot.GetInverse().RotateVector(_flowVelWorld);
+  ignition::math::Vector3d flowVel = pose.Rot().RotateVectorReverse(
+    _flowVelWorld);
 
   Eigen::Vector6d velRel, acc;
   // Compute the relative velocity
   velRel = EigenStack(
-    this->ToNEDConvention(linVel - flowVel),
-    this->ToNEDConvention(angVel));
+    this->ToNED(linVel - flowVel),
+    this->ToNED(angVel));
 
   // Update added Coriolis matrix
   this->ComputeAddedCoriolisMatrix(velRel, this->Ma, this->Ca);
@@ -413,10 +421,10 @@ void HMFossen::ApplyHydrodynamicForces(
   if (!std::isnan(tau.norm()))
   {
     // Convert the forces and moments back to Gazebo's reference frame
-    math::Vector3 hydForce =
-      this->FromNEDConvention(Vec3dToGazebo(tau.head<3>()));
-    math::Vector3 hydTorque =
-      this->FromNEDConvention(Vec3dToGazebo(tau.tail<3>()));
+    ignition::math::Vector3d hydForce =
+      this->FromNED(Vec3dToGazebo(tau.head<3>()));
+    ignition::math::Vector3d hydTorque =
+      this->FromNED(Vec3dToGazebo(tau.tail<3>()));
 
     // Forces and torques are also wrt link frame
     this->link->AddRelativeForce(hydForce);
@@ -517,9 +525,9 @@ bool HMFossen::GetParam(std::string _tag, std::vector<double>& _output)
   }
   else if (!_tag.compare("center_of_buoyancy"))
   {
-    _output.push_back(this->centerOfBuoyancy.x);
-    _output.push_back(this->centerOfBuoyancy.y);
-    _output.push_back(this->centerOfBuoyancy.z);
+    _output.push_back(this->centerOfBuoyancy.X());
+    _output.push_back(this->centerOfBuoyancy.Y());
+    _output.push_back(this->centerOfBuoyancy.Z());
   }
   else
     return false;
@@ -541,11 +549,11 @@ bool HMFossen::GetParam(std::string _tag, double& _output)
   else if (!_tag.compare("fluid_density"))
     _output = this->fluidDensity;
   else if (!_tag.compare("bbox_height"))
-    _output = this->boundingBox.GetZLength();
+    _output = this->boundingBox.ZLength();
   else if (!_tag.compare("bbox_width"))
-    _output = this->boundingBox.GetYLength();
+    _output = this->boundingBox.YLength();
   else if (!_tag.compare("bbox_length"))
-    _output = this->boundingBox.GetXLength();
+    _output = this->boundingBox.XLength();
   else if (!_tag.compare("offset_volume"))
     _output = this->offsetVolume;
   else if (!_tag.compare("offset_added_mass"))
@@ -725,9 +733,9 @@ HMSphere::HMSphere(sdf::ElementPtr _sdf,
   {
     gzmsg << "HMSphere: Using the smallest length of bounding box as radius"
           << std::endl;
-    this->radius = std::min(this->boundingBox.GetXLength(),
-                            std::min(this->boundingBox.GetYLength(),
-                                     this->boundingBox.GetZLength()));
+    this->radius = std::min(this->boundingBox.XLength(),
+                            std::min(this->boundingBox.YLength(),
+                                     this->boundingBox.ZLength()));
   }
   gzmsg << "HMSphere::radius=" << this->radius << std::endl;
   gzmsg << "HMSphere: Computing added mass" << std::endl;
@@ -817,9 +825,9 @@ HMCylinder::HMCylinder(sdf::ElementPtr _sdf,
   {
     gzmsg << "HMCylinder: Using the smallest length of bounding box as radius"
           << std::endl;
-    this->radius = std::min(this->boundingBox.GetXLength(),
-                            std::min(this->boundingBox.GetYLength(),
-                                     this->boundingBox.GetZLength()));
+    this->radius = std::min(this->boundingBox.XLength(),
+                            std::min(this->boundingBox.YLength(),
+                                     this->boundingBox.ZLength()));
   }
   gzmsg << "HMCylinder::radius=" << this->radius << std::endl;
 
@@ -829,9 +837,9 @@ HMCylinder::HMCylinder(sdf::ElementPtr _sdf,
   {
       gzmsg << "HMCylinder: Using the biggest length of bounding box as length"
             << std::endl;
-      this->length = std::max(this->boundingBox.GetXLength(),
-                              std::max(this->boundingBox.GetYLength(),
-                                       this->boundingBox.GetZLength()));
+      this->length = std::max(this->boundingBox.XLength(),
+                              std::max(this->boundingBox.YLength(),
+                                       this->boundingBox.ZLength()));
   }
   gzmsg << "HMCylinder::length=" << this->length << std::endl;
 
@@ -866,12 +874,12 @@ HMCylinder::HMCylinder(sdf::ElementPtr _sdf,
   {
     gzmsg << "HMCylinder: Using the direction of biggest length as axis"
           << std::endl;
-    double maxLength = std::max(this->boundingBox.GetXLength(),
-                                std::max(this->boundingBox.GetYLength(),
-                                         this->boundingBox.GetZLength()));
-    if (maxLength == this->boundingBox.GetXLength())
+    double maxLength = std::max(this->boundingBox.XLength(),
+                                std::max(this->boundingBox.YLength(),
+                                         this->boundingBox.ZLength()));
+    if (maxLength == this->boundingBox.XLength())
       this->axis = "i";
-    else if (maxLength == this->boundingBox.GetYLength())
+    else if (maxLength == this->boundingBox.YLength())
       this->axis = "j";
     else
       this->axis = "k";
@@ -991,9 +999,9 @@ HMSpheroid::HMSpheroid(sdf::ElementPtr _sdf,
   {
     gzmsg << "HMSpheroid: Using the smallest length of bounding box as radius"
           << std::endl;
-    this->radius = std::min(this->boundingBox.GetXLength(),
-                            std::min(this->boundingBox.GetYLength(),
-                                     this->boundingBox.GetZLength()));
+    this->radius = std::min(this->boundingBox.XLength(),
+                            std::min(this->boundingBox.YLength(),
+                                     this->boundingBox.ZLength()));
   }
   GZ_ASSERT(this->radius > 0, "Radius cannot be negative");
   gzmsg << "HMSpheroid::radius=" << this->radius << std::endl;
@@ -1004,9 +1012,9 @@ HMSpheroid::HMSpheroid(sdf::ElementPtr _sdf,
   {
       gzmsg << "HMSpheroid: Using the biggest length of bounding box as length"
             << std::endl;
-      this->length = std::max(this->boundingBox.GetXLength(),
-                              std::max(this->boundingBox.GetYLength(),
-                                       this->boundingBox.GetZLength()));
+      this->length = std::max(this->boundingBox.XLength(),
+                              std::max(this->boundingBox.YLength(),
+                                       this->boundingBox.ZLength()));
   }
   GZ_ASSERT(this->length > 0, "Length cannot be negative");
   gzmsg << "HMSpheroid::length=" << this->length << std::endl;
@@ -1028,7 +1036,12 @@ HMSpheroid::HMSpheroid(sdf::ElementPtr _sdf,
   gzmsg << "alpha=" << alpha << std::endl;
   gzmsg << "beta=" << beta << std::endl;
 
-  double mass = this->link->GetInertial()->GetMass();
+  double mass;
+#if GAZEBO_MAJOR_VERSION >= 8
+  mass = this->link->GetInertial()->Mass();
+#else
+  mass = this->link->GetInertial()->GetMass();
+#endif
 
   this->Ma(0, 0) = mass * alpha / (2 - alpha);
   this->Ma(1, 1) = mass * beta / (2 - beta);

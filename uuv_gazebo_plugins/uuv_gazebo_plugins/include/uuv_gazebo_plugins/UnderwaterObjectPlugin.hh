@@ -80,7 +80,7 @@ class UnderwaterObjectPlugin : public gazebo::ModelPlugin
   /// \param[in] _torque Torque vector
   /// \param[in] _output Stamped wrench message to be updated
   protected: virtual void GenWrenchMsg(
-    gazebo::math::Vector3 _force, gazebo::math::Vector3 _torque,
+    ignition::math::Vector3d _force, ignition::math::Vector3d _torque,
     gazebo::msgs::WrenchStamped &_output);
 
   /// \brief Sets the topics used for publishing the intermediate data during
@@ -95,7 +95,7 @@ class UnderwaterObjectPlugin : public gazebo::ModelPlugin
                       HydrodynamicModelPtr> models;
 
   /// \brief Flow velocity vector read from topic
-  protected: gazebo::math::Vector3 flowVelocity;
+  protected: ignition::math::Vector3d flowVelocity;
 
   /// \brief Update event
   protected: gazebo::event::ConnectionPtr updateConnection;

@@ -66,21 +66,30 @@ void UnderwaterCameraROSPlugin::Load(sensors::SensorPtr _sensor,
   lastImage = new unsigned char[this->width * this->height * this->depth];
 
   // Only need to load settings specific to this sensor.
-  GetSDFParam<float>(_sdf, "attenuationR", attenuation[0], 1.f / 30.f);
-  GetSDFParam<float>(_sdf, "attenuationG", attenuation[1], 1.f / 30.f);
-  GetSDFParam<float>(_sdf, "attenuationB", attenuation[2], 1.f / 30.f);
+  GetSDFParam<float>(_sdf, "attenuationR", this->attenuation[0], 1.f / 30.f);
+  GetSDFParam<float>(_sdf, "attenuationG", this->attenuation[1], 1.f / 30.f);
+  GetSDFParam<float>(_sdf, "attenuationB", this->attenuation[2], 1.f / 30.f);
 
-  GetSDFParam<unsigned char>(_sdf, "backgroundR", background[0], 0);
-  GetSDFParam<unsigned char>(_sdf, "backgroundG", background[1], 0);
-  GetSDFParam<unsigned char>(_sdf, "backgroundB", background[2], 0);
+  this->background[0] = (unsigned char)0;
+  this->background[1] = (unsigned char)0;
+  this->background[2] = (unsigned char)0;
 
+  if (_sdf->HasElement("backgroundR"))
+    this->background[0] = (unsigned char)_sdf->GetElement(
+      "backgroundR")->Get<int>();
+  if (_sdf->HasElement("backgroundG"))
+    this->background[1] = (unsigned char)_sdf->GetElement(
+      "backgroundG")->Get<int>();
+  if (_sdf->HasElement("backgroundB"))
+    this->background[2] = (unsigned char)_sdf->GetElement(
+      "backgroundB")->Get<int>();
   // Compute camera intrinsics fx, fy from FOVs:
 #if GAZEBO_MAJOR_VERSION >= 7
-  math::Angle hfov = math::Angle(this->depthCamera->HFOV().Radian());
-  math::Angle vfov = math::Angle(this->depthCamera->VFOV().Radian());
+  ignition::math::Angle hfov = ignition::math::Angle(this->depthCamera->HFOV().Radian());
+  ignition::math::Angle vfov = ignition::math::Angle(this->depthCamera->VFOV().Radian());
 #else
-  math::Angle hfov = this->depthCamera->GetHFOV();
-  math::Angle vfov = this->depthCamera->GetVFOV();
+  ignition::math::Angle hfov = this->depthCamera->GetHFOV();
+  ignition::math::Angle vfov = this->depthCamera->GetVFOV();
 #endif
 
   double fx = (0.5*this->width) / tan(0.5 * hfov.Radian());

@@ -21,12 +21,13 @@
 
 #include <string>
 
+#include <gazebo/gazebo.hh>
 #include <gazebo/common/UpdateInfo.hh>
 #include <gazebo/common/Plugin.hh>
-#include <gazebo/math/Pose.hh>
+#include <gazebo/physics/World.hh>
 #include <gazebo/transport/TransportTypes.hh>
 
-#include "UmbilicalModel.hh"
+#include <uuv_gazebo_plugins/UmbilicalModel.hh>
 
 namespace gazebo
 {
@@ -37,8 +38,8 @@ class UmbilicalSegment
 
     UmbilicalSegment(const std::string& _name,
                      const std::string& _fromLink,
-                     const math::Pose& _fromPose,
-                     const math::Pose& _toPose,
+                     const ignition::math::Pose3d& _fromPose,
+                     const ignition::math::Pose3d& _toPose,
                      physics::ModelPtr _model);
 
     void initSdfSegment();
@@ -78,6 +79,9 @@ class UmbilicalPlugin : public ModelPlugin
   /// \brief Pointer to the model structure
   protected: gazebo::physics::ModelPtr model;
 
+  /// \brief Pointer to the world plugin
+  protected: gazebo::physics::WorldPtr world;
+
   /// \brief Gazebo node
   protected: gazebo::transport::NodePtr node;
 
@@ -85,7 +89,7 @@ class UmbilicalPlugin : public ModelPlugin
   protected: gazebo::transport::SubscriberPtr flowSubscriber;
 
   /// \brief Flow velocity vector read from topic
-  protected: gazebo::math::Vector3 flowVelocity;
+  protected: ignition::math::Vector3d flowVelocity;
 
   /// \brief Pointer to UmbilicalModel used in this plugin.
   protected: boost::scoped_ptr<UmbilicalModel> umbilical;

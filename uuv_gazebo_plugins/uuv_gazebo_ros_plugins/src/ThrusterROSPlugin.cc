@@ -36,8 +36,13 @@ ThrusterROSPlugin::ThrusterROSPlugin()
 /////////////////////////////////////////////////
 ThrusterROSPlugin::~ThrusterROSPlugin()
 {
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->rosPublishConnection.reset();
+#else
   gazebo::event::Events::DisconnectWorldUpdateBegin(
-        this->rosPublishConnection);
+    this->rosPublishConnection);
+#endif
+
   this->rosNode->shutdown();
 }
 

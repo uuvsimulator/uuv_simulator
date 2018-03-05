@@ -16,11 +16,7 @@
 #include <cmath>
 
 #include <gazebo/gazebo.hh>
-#include <gazebo/math/Box.hh>
-#include <gazebo/math/Pose.hh>
-#include <gazebo/math/Vector3.hh>
-
-#include "uuv_gazebo_plugins/BuoyantObject.hh"
+#include <uuv_gazebo_plugins/BuoyantObject.hh>
 
 namespace gazebo {
 
@@ -51,8 +47,13 @@ BuoyantObject::BuoyantObject(physics::LinkPtr _link)
 
   // TODO(mam0box) Change the way the bounding box is retrieved,
   // it should come from the physics engine but it is still not resolved
-  this->boundingBox = link->GetBoundingBox();
-
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->boundingBox = link->BoundingBox();
+#else
+  math::Box bBox = link->GetBoundingBox();
+  this->boundingBox = ignition::math::Box(bBox.min.x, bBox.min.y, bBox.min.z,
+      bBox.max.x, bBox.max.y, bBox.max.z);
+#endif
   // Set neutrally buoyant flag to false
   this->neutrallyBuoyant = false;
 }
@@ -66,20 +67,27 @@ void BuoyantObject::SetNeutrallyBuoyant()
   this->neutrallyBuoyant = true;
   // Calculate the equivalent volume for the submerged body
   // so that it will be neutrally buoyant
-  this->volume = this->link->GetInertial()->GetMass() / this->fluidDensity;
+  double mass;
+#if GAZEBO_MAJOR_VERSION >= 8
+  mass = this->link->GetInertial()->Mass();
+#else
+  mass = this->link->GetInertial()->GetMass();
+#endif
+  this->volume = mass / this->fluidDensity;
   gzmsg << this->link->GetName() << " is neutrally buoyant" << std::endl;
 }
 
 /////////////////////////////////////////////////
-void BuoyantObject::GetBuoyancyForce(const math::Pose &_pose,
-  math::Vector3 &buoyancyForce, math::Vector3 &buoyancyTorque)
+void BuoyantObject::GetBuoyancyForce(const ignition::math::Pose3d &_pose,
+  ignition::math::Vector3d &buoyancyForce,
+  ignition::math::Vector3d &buoyancyTorque)
 {
-  double height = this->boundingBox.GetZLength();
-  double z = _pose.pos.z;
+  double height = this->boundingBox.ZLength();
+  double z = _pose.Pos().Z();
   double volume = 0.0;
 
-  buoyancyForce = math::Vector3(0, 0, 0);
-  buoyancyTorque = math::Vector3(0, 0, 0);
+  buoyancyForce = ignition::math::Vector3d(0, 0, 0);
+  buoyancyTorque = ignition::math::Vector3d(0, 0, 0);
 
   if (!this->isSurfaceVessel)
   {
@@ -94,11 +102,19 @@ void BuoyantObject::GetBuoyancyForce(const math::Pose &_pose,
       volume = this->GetVolume();
     }
 
+    double mass;
+#if GAZEBO_MAJOR_VERSION >= 8
+    mass = this->link->GetInertial()->Mass();
+#else
+    mass = this->link->GetInertial()->GetMass();
+#endif
+
     if (!this->neutrallyBuoyant || volume != this->volume)
-      buoyancyForce = math::Vector3(0, 0, volume * this->fluidDensity * this->g);
+      buoyancyForce = ignition::math::Vector3d(0, 0,
+        volume * this->fluidDensity * this->g);
     else if (this->neutrallyBuoyant)
-      buoyancyForce = math::Vector3(
-          0, 0, this->link->GetInertial()->GetMass() * this->g);
+      buoyancyForce = ignition::math::Vector3d(
+          0, 0, mass * this->g);
   }
   else
   {
@@ -108,8 +124,8 @@ void BuoyantObject::GetBuoyancyForce(const math::Pose &_pose,
     // Page 65
     if (this->waterLevelPlaneArea <= 0)
     {
-      this->waterLevelPlaneArea = this->boundingBox.GetXLength() *
-        this->boundingBox.GetYLength();
+      this->waterLevelPlaneArea = this->boundingBox.XLength() *
+        this->boundingBox.YLength();
       gzmsg << this->link->GetName() << "::" << "waterLevelPlaneArea = " <<
         this->waterLevelPlaneArea << std::endl;
     }
@@ -120,22 +136,22 @@ void BuoyantObject::GetBuoyancyForce(const math::Pose &_pose,
     if (z + height / 2.0 > 0.5)
     {
       // Vessel is completely out of the water
-      buoyancyForce = math::Vector3(0, 0, 0);
-      buoyancyTorque = math::Vector3(0, 0, 0);
+      buoyancyForce = ignition::math::Vector3d(0, 0, 0);
+      buoyancyTorque = ignition::math::Vector3d(0, 0, 0);
       // Store the restoring force vector, if needed
       this->StoreVector(RESTORING_FORCE, buoyancyForce);
       return;
     }
     else if (z + height / 2.0 < 0)
-      this->submergedHeight = this->boundingBox.GetZLength();
+      this->submergedHeight = this->boundingBox.ZLength();
     else
-      this->submergedHeight = this->boundingBox.GetZLength() / 2 - z;
+      this->submergedHeight = this->boundingBox.ZLength() / 2 - z;
 
     volume = this->submergedHeight * this->waterLevelPlaneArea;
-    buoyancyForce = math::Vector3(0, 0, volume * this->fluidDensity * this->g);
-    buoyancyTorque = math::Vector3(
-      -1 * this->metacentricWidth * sin(_pose.rot.GetAsEuler().x) * buoyancyForce.z,
-      -1 * this->metacentricLength * sin(_pose.rot.GetAsEuler().y) * buoyancyForce.z,
+    buoyancyForce = ignition::math::Vector3d(0, 0, volume * this->fluidDensity * this->g);
+    buoyancyTorque = ignition::math::Vector3d(
+      -1 * this->metacentricWidth * sin(_pose.Rot().Roll()) * buoyancyForce.Z(),
+      -1 * this->metacentricLength * sin(_pose.Rot().Pitch()) * buoyancyForce.Z(),
       0);
 
   }
@@ -148,30 +164,48 @@ void BuoyantObject::GetBuoyancyForce(const math::Pose &_pose,
 void BuoyantObject::ApplyBuoyancyForce()
 {
   // Link's pose
-  const math::Pose pose = this->link->GetWorldPose();
+  ignition::math::Pose3d pose;
+#if GAZEBO_MAJOR_VERSION >= 8
+  pose = this->link->WorldPose();
+#else
+  pose = this->link->GetWorldPose().Ign();
+#endif
   // Get the buoyancy force in world coordinates
-  math::Vector3 buoyancyForce, buoyancyTorque;
+  ignition::math::Vector3d buoyancyForce, buoyancyTorque;
 
   this->GetBuoyancyForce(pose, buoyancyForce, buoyancyTorque);
 
-  GZ_ASSERT(!std::isnan(buoyancyForce.GetLength()),
+  GZ_ASSERT(!std::isnan(buoyancyForce.Length()),
     "Buoyancy force is invalid");
-  GZ_ASSERT(!std::isnan(buoyancyTorque.GetLength()),
+  GZ_ASSERT(!std::isnan(buoyancyTorque.Length()),
     "Buoyancy torque is invalid");
   if (!this->isSurfaceVessel)
+#if GAZEBO_MAJOR_VERSION >= 8
     this->link->AddForceAtRelativePosition(buoyancyForce, this->GetCoB());
+#else
+    this->link->AddForceAtRelativePosition(
+      math::Vector3(buoyancyForce.X(), buoyancyForce.Y(), buoyancyForce.Z()),
+      math::Vector3(this->GetCoB().X(), this->GetCoB().Y(), this->GetCoB().Z()));
+#endif
   else
   {
+#if GAZEBO_MAJOR_VERSION >= 8
     this->link->AddRelativeForce(buoyancyForce);
     this->link->AddRelativeTorque(buoyancyTorque);
+#else
+    this->link->AddRelativeForce(
+      math::Vector3(buoyancyForce.X(), buoyancyForce.Y(), buoyancyForce.Z()));
+    this->link->AddRelativeTorque(
+      math::Vector3(buoyancyTorque.X(), buoyancyTorque.Y(), buoyancyTorque.Z()));
+#endif
   }
 
 }
 
 /////////////////////////////////////////////////
-void BuoyantObject::SetBoundingBox(const math::Box &_bBox)
+void BuoyantObject::SetBoundingBox(const ignition::math::Box &_bBox)
 {
-  this->boundingBox = math::Box(_bBox);
+  this->boundingBox = ignition::math::Box(_bBox);
 
   gzmsg << "New bounding box for " << this->link->GetName() << "::"
     << this->boundingBox << std::endl;
@@ -191,26 +225,6 @@ double BuoyantObject::GetVolume()
 }
 
 /////////////////////////////////////////////////
-void BuoyantObject::EstimateCoB()
-{
-  // User did not provide center of buoyancy,
-  // compute it from collision volume.
-#if GAZEBO_MAJOR_VERSION >= 7
-  double volumeSum = 0.0;
-  math::Vector3 weightedPosSum = math::Vector3::Zero;
-  for (auto collision : this->link->GetCollisions())
-  {
-    double volume = collision->GetShape()->ComputeVolume();
-    volumeSum += volume;
-    weightedPosSum += volume * collision->GetWorldPose().pos;
-  }
-
-  this->SetCoB(this->link->GetWorldPose().GetInverse().CoordPositionAdd(
-      weightedPosSum / volumeSum));
-#endif
-}
-
-/////////////////////////////////////////////////
 void BuoyantObject::SetFluidDensity(double _fluidDensity)
 {
   GZ_ASSERT(_fluidDensity > 0, "Fluid density must be a positive value");
@@ -221,14 +235,14 @@ void BuoyantObject::SetFluidDensity(double _fluidDensity)
 double BuoyantObject::GetFluidDensity() { return this->fluidDensity; }
 
 /////////////////////////////////////////////////
-void BuoyantObject::SetCoB(const math::Vector3 &_centerOfBuoyancy)
+void BuoyantObject::SetCoB(const ignition::math::Vector3d &_centerOfBuoyancy)
 {
-  this->centerOfBuoyancy.Set(_centerOfBuoyancy.x, _centerOfBuoyancy.y,
-                             _centerOfBuoyancy.z);
+  this->centerOfBuoyancy = ignition::math::Vector3d(
+    _centerOfBuoyancy.X(), _centerOfBuoyancy.Y(), _centerOfBuoyancy.Z());
 }
 
 /////////////////////////////////////////////////
-math::Vector3 BuoyantObject::GetCoB() { return this->centerOfBuoyancy; }
+ignition::math::Vector3d BuoyantObject::GetCoB() { return this->centerOfBuoyancy; }
 
 /////////////////////////////////////////////////
 void BuoyantObject::SetGravity(double _g)
@@ -253,22 +267,23 @@ void BuoyantObject::SetStoreVector(std::string _tag)
     return;
   // Test if field exists
   if (!this->hydroWrench.count(_tag))
-    this->hydroWrench[_tag] = math::Vector3(0, 0, 0);
+    this->hydroWrench[_tag] = ignition::math::Vector3d(0, 0, 0);
 }
 
 /////////////////////////////////////////////////
-math::Vector3 BuoyantObject::GetStoredVector(std::string _tag)
+ignition::math::Vector3d BuoyantObject::GetStoredVector(std::string _tag)
 {
   if (!this->debugFlag)
-    return math::Vector3(0, 0, 0);
+    return ignition::math::Vector3d(0, 0, 0);
   if (this->hydroWrench.count(_tag))
     return this->hydroWrench[_tag];
   else
-    return math::Vector3(0, 0, 0);
+    return ignition::math::Vector3d(0, 0, 0);
 }
 
 /////////////////////////////////////////////////
-void BuoyantObject::StoreVector(std::string _tag, math::Vector3 _vec)
+void BuoyantObject::StoreVector(std::string _tag,
+  ignition::math::Vector3d _vec)
 {
   if (!this->debugFlag)
     return;

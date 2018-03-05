@@ -106,7 +106,7 @@ void IMUROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   // Store the acc. gravity vector
 #if GAZEBO_MAJOR_VERSION >= 8
-  this->gravityWorld = this->world->Physics()->Gravity();
+  this->gravityWorld = this->world->Gravity();
 #else
   this->gravityWorld = this->world->GetPhysicsEngine()->GetGravity().Ign();
 #endif
