@@ -75,6 +75,18 @@ void SphericalCoordinatesROSInterfacePlugin::Load(
       "/gazebo/transform_from_spherical_coordinates",
       &SphericalCoordinatesROSInterfacePlugin::TransformFromSphericalCoord, this);
 
+#if GAZEBO_MAJOR_VERSION >= 8
+  gzmsg << "Spherical coordinates reference=" << std::endl
+    << "\t- Latitude [degrees]="
+    << this->world->SphericalCoords()->LatitudeReference().Degree()
+    << std::endl
+    << "\t- Longitude [degrees]="
+    << this->world->SphericalCoords()->LongitudeReference().Degree()
+    << std::endl
+    << "\t- Altitude [m]="
+    << this->world->SphericalCoords()->GetElevationReference()
+    << std::endl;
+#else
   gzmsg << "Spherical coordinates reference=" << std::endl
     << "\t- Latitude [degrees]="
     << this->world->GetSphericalCoordinates()->LatitudeReference().Degree()
@@ -85,6 +97,7 @@ void SphericalCoordinatesROSInterfacePlugin::Load(
     << "\t- Altitude [m]="
     << this->world->GetSphericalCoordinates()->GetElevationReference()
     << std::endl;
+#endif
 }
 
 /////////////////////////////////////////////////
@@ -97,7 +110,7 @@ bool SphericalCoordinatesROSInterfacePlugin::TransformToSphericalCoord(
 
 #if GAZEBO_MAJOR_VERSION >= 8
   ignition::math::Vector3d scVec =
-    this->world->SphericalCoordinates()->SphericalFromLocal(cartVec);
+    this->world->SphericalCoords()->SphericalFromLocal(cartVec);
 #else
   ignition::math::Vector3d scVec =
     this->world->GetSphericalCoordinates()->SphericalFromLocal(cartVec);
@@ -158,12 +171,20 @@ bool SphericalCoordinatesROSInterfacePlugin::SetOriginSphericalCoord(
 {
   ignition::math::Angle angle;
   angle.Degree(_req.latitude_deg);
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->world->SphericalCoords()->SetLatitudeReference(angle);
+#else
   this->world->GetSphericalCoordinates()->SetLatitudeReference(angle);
+#endif
 
   angle.Degree(_req.longitude_deg);
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->world->SphericalCoords()->SetLongitudeReference(angle);
+  this->world->SphericalCoords()->SetElevationReference(_req.altitude);
+#else
   this->world->GetSphericalCoordinates()->SetLongitudeReference(angle);
-
   this->world->GetSphericalCoordinates()->SetElevationReference(_req.altitude);
+#endif
   _res.success = true;
   return true;
 }
