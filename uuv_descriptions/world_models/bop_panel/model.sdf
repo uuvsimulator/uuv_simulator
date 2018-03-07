@@ -33,7 +33,7 @@
       <collision name="block_collision">
         <geometry>
           <mesh>
-            <uri>model://bop_panel/meshes/VentilBlock.dae</uri>
+            <uri>model://bop_panel/meshes/VentilBlock.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -41,11 +41,10 @@
       <visual name="block_visual">
         <geometry>
           <mesh>
-            <uri>model://bop_panel/meshes/VentilBlock.dae</uri>
+            <uri>model://bop_panel/meshes/VentilBlock.obj</uri>
           </mesh>
         </geometry>
       </visual>
-
       <self_collide>0</self_collide>
     </link>
 
@@ -86,6 +85,7 @@
 
       <visual name="april_tag_valve_1_visual">
         <pose>0.0 0.0 0.0 0 1.57 0</pose>
+        <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
               <size>0.15 0.15 0.001</size>
@@ -109,7 +109,7 @@
 
     <link name="valve_1">
       <!-- <pose>3.33279 0.000387 8.23068 0 0 0</pose> -->
-      <pose>3.33279 0.000387 8.28 0 0 0</pose>
+      <pose>3.31279 0.000387 8.28 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -132,6 +132,7 @@
       </collision>
 
       <visual name="valve_1_visual">
+        <cast_shadows>false</cast_shadows>
         <geometry>
           <mesh>
             <uri>model://bop_panel/meshes/Valve.dae</uri>
@@ -174,6 +175,7 @@
 
       <visual name="april_tag_valve_2_visual">
         <pose>0 0 0 0 1.57 0</pose>
+        <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
               <size>0.15 0.15 0.001</size>
@@ -198,7 +200,7 @@
 
     <link name="valve_2">
       <!-- <pose>3.33279 0.000387 7.83558 0 0 0</pose> -->
-      <pose>3.33279 0.000387 7.92 0 0 0</pose>
+      <pose>3.31279 0.000387 7.92 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -221,6 +223,7 @@
       </collision>
 
       <visual name="valve_2_visual">
+        <cast_shadows>false</cast_shadows>
         <geometry>
           <mesh>
             <uri>model://bop_panel/meshes/Valve.dae</uri>
@@ -263,6 +266,7 @@
 
       <visual name="april_tag_valve_3_visual">
         <pose>0 0 0 0 1.57 0</pose>
+        <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
               <size>0.15 0.15 0.001</size>
@@ -287,7 +291,7 @@
 
     <link name="valve_3">
       <!-- <pose>3.33279 0.000387 7.46961 0 0 0</pose> -->
-      <pose>3.33279 0.000387 7.49 0 0 0</pose>
+      <pose>3.31279 0.000387 7.49 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -300,7 +304,7 @@
         </inertia>
       </inertial>
 
-      <collision name="valve_3_collision">
+      <collision name="valve_3_collision">        
         <geometry>
           <mesh>
             <uri>model://bop_panel/meshes/Valve.dae</uri>
@@ -310,6 +314,7 @@
       </collision>
 
       <visual name="valve_3_visual">
+        <cast_shadows>false</cast_shadows>
         <geometry>
           <mesh>
             <uri>model://bop_panel/meshes/Valve.dae</uri>
@@ -351,6 +356,7 @@
 
       <visual name="april_tag_valve_4_visual">
         <pose>0 0 0 0 1.57 0</pose>
+        <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
               <size>0.15 0.15 0.001</size>
@@ -375,7 +381,7 @@
 
     <link name="valve_4">
       <!-- <pose>3.33279 0.000387 7.10469 0 0 0</pose> -->
-      <pose>3.33279 0.000387 7.13 0 0 0</pose>
+      <pose>3.31279 0.000387 7.13 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -398,6 +404,7 @@
       </collision>
 
       <visual name="valve_4_visual">
+        <cast_shadows>false</cast_shadows>
         <geometry>
           <mesh>
             <uri>model://bop_panel/meshes/Valve.dae</uri>
@@ -439,6 +446,7 @@
 
       <visual name="april_tag_valve_5_visual">
         <pose>0 0 0 0 1.57 0</pose>
+        <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
               <size>0.15 0.15 0.001</size>
@@ -463,7 +471,7 @@
 
     <link name="valve_5">
       <!-- <pose>3.33279 0.000387 6.74452 0 0 0</pose> -->
-      <pose>3.33279 0.000387 6.78 0 0 0</pose>
+      <pose>3.31279 0.000387 6.78 0 0 0</pose>
       <inertial>
         <mass>0.5</mass>
         <inertia>
@@ -486,6 +494,7 @@
       </collision>
 
       <visual name="valve_5_visual">
+        <cast_shadows>false</cast_shadows>
         <geometry>
           <mesh>
             <uri>model://bop_panel/meshes/Valve.dae</uri>
