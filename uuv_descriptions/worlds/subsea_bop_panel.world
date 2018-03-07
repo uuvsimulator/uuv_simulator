@@ -52,15 +52,15 @@
 
     <!-- Global light source -->
     <light type="directional" name="sun_diffuse_1">
-      <pose>-200 -200 100 0 0 0</pose>
-      <diffuse>0.6 0.6 0.6 1</diffuse>
-      <specular>0 0 0 1</specular>
-      <direction>-0.3 -0.3 -1</direction>
+      <pose>-200 -200 -20 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>1 1 1 1</specular>
+      <direction>-1 -1 0</direction>
       <cast_shadows>true</cast_shadows>
     </light>
 
     <light type="directional" name="sun_diffuse_2">
-      <pose>-100 50 200 0 0 0</pose>
+      <pose>-10 50 20 0 0 0</pose>
       <diffuse>0.6 0.6 0.6 1</diffuse>
       <specular>0 0 0 1</specular>
       <direction>-0.3 -0.3 -1</direction>
