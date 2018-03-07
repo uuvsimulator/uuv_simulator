@@ -49,6 +49,7 @@
     <link name="ocean_link">       
       <visual name="surface">
         <pose>207.555145 -12.266886 0.0 0 0 0</pose>        
+        <cast_shadows>false</cast_shadows>
         <geometry>
           <box>                        
             <size>2361.757812 1474.349 0.1</size>
