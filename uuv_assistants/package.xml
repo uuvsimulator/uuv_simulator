@@ -25,5 +25,6 @@
   <run_depend>visualization_msgs</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>python-numpy</run_depend>
+  <run_depend>message_to_tf</run_depend>
 
 </package>
