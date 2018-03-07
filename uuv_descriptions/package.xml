@@ -21,6 +21,7 @@
   <run_depend>message_to_tf</run_depend>
   <run_depend>uuv_sensor_ros_plugins</run_depend>
   <run_depend>uuv_gazebo_ros_plugins</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
   
   <export>
     <gazebo_ros gazebo_media_path="${prefix}"
