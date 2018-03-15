@@ -121,7 +121,7 @@ void UnderwaterObjectROSPlugin::Load(gazebo::physics::ModelPtr _parent,
 
   this->services["set_added_mass_offset"] =
     this->rosNode->advertiseService(
-      _parent->GetName() + "/set_added_offset",
+      _parent->GetName() + "/set_added_mass_offset",
       &UnderwaterObjectROSPlugin::SetOffsetAddedMass, this);
 
   this->services["get_added_mass_offset"] =
