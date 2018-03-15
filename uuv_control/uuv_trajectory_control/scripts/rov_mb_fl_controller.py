@@ -69,7 +69,7 @@ class ROV_MBFLController(DPPIDControllerBase):
 
         self._vehicle_model._update_damping(vel)
         self._vehicle_model._update_coriolis(vel)
-        self._vehicle_model._update_restoring(use_sname=True)
+        self._vehicle_model._update_restoring(q=self._reference['rot'], use_sname=True)
 
         self._tau = np.dot(self._vehicle_model.Mtotal, acc) + \
                     np.dot(self._vehicle_model.Ctotal, vel) + \
