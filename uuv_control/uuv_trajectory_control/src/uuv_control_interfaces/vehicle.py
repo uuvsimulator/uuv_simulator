@@ -222,6 +222,23 @@ class Vehicle(object):
             self._init_odom = True
             self._odom_topic_sub = None
 
+    @staticmethod
+    def q_to_matrix(q):
+        e1 = q[0]
+        e2 = q[1]
+        e3 = q[2]
+        eta = q[3]
+        R = np.array([[1 - 2 * (e2**2 + e3**2),
+                       2 * (e1 * e2 - e3 * eta),
+                       2 * (e1 * e3 + e2 * eta)],
+                      [2 * (e1 * e2 + e3 * eta),
+                       1 - 2 * (e1**2 + e3**2),
+                       2 * (e2 * e3 - e1 * eta)],
+                      [2 * (e1 * e3 - e2 * eta),
+                       2 * (e2 * e3 + e1 * eta),
+                       1 - 2 * (e1**2 + e2**2)]])
+        return R
+
     @property
     def namespace(self):
         """Return robot namespace."""
@@ -382,20 +399,7 @@ class Vehicle(object):
            to retrieve Euler angles from the quaternion vector (Fossen, 2011).
         """
         # Using the (x, y, z, w) format to describe quaternions
-        e1 = self._pose['rot'][0]
-        e2 = self._pose['rot'][1]
-        e3 = self._pose['rot'][2]
-        eta = self._pose['rot'][3]
-        R = np.array([[1 - 2 * (e2**2 + e3**2),
-                       2 * (e1 * e2 - e3 * eta),
-                       2 * (e1 * e3 + e2 * eta)],
-                      [2 * (e1 * e2 + e3 * eta),
-                       1 - 2 * (e1**2 + e3**2),
-                       2 * (e2 * e3 - e1 * eta)],
-                      [2 * (e1 * e3 - e2 * eta),
-                       2 * (e2 * e3 + e1 * eta),
-                       1 - 2 * (e1**2 + e2**2)]])
-        return R
+        return self.q_to_matrix(self._pose['rot'])
 
     @property
     def TItoBeuler(self):
@@ -514,7 +518,7 @@ class Vehicle(object):
              [self._inertial['ixz'], self._inertial['iyz'],
               self._inertial['izz']]])
 
-    def _update_restoring(self, use_sname=False):
+    def _update_restoring(self, q=None, use_sname=False):
         """
         Update the restoring forces for the current orientation.
         """
@@ -524,10 +528,14 @@ class Vehicle(object):
         else:
             Fg = np.array([0, 0, self._mass * self._gravity])
             Fb = np.array([0, 0, -self._volume * self._gravity * self._density])
+        if q is not None:
+            rotItoB = self.q_to_matrix(q).T
+        else:
+            rotItoB = self.rotItoB   
         self._g = np.zeros(6)
 
-        self._g[0:3] = -1 * np.dot(self.rotItoB, Fg + Fb)
-        self._g[3:6] = -1 * np.dot(self.rotItoB,
+        self._g[0:3] = -1 * np.dot(rotItoB, Fg + Fb)
+        self._g[3:6] = -1 * np.dot(rotItoB,
                                    np.cross(self._cog, Fg) + np.cross(self._cob, Fb))        
 
     def set_added_mass(self, Ma):
