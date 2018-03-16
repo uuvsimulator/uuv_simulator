@@ -221,7 +221,7 @@ void BuoyantObject::SetVolume(double _volume)
 /////////////////////////////////////////////////
 double BuoyantObject::GetVolume()
 {
-  return this->scalingVolume * (this->volume + this->offsetVolume);
+  return std::max(0.0, this->scalingVolume * (this->volume + this->offsetVolume));
 }
 
 /////////////////////////////////////////////////
