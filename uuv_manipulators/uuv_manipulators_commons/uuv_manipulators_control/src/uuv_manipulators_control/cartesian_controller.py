@@ -56,8 +56,10 @@ class CartesianController(object):
         # Get latest transform available
         latest = rospy.Time(0)
         base = self._arm_interface.namespace + 'base_link'
+        # self.listener.waitForTransform(base, self._arm_interface.base_link,
+        #                                latest, latest + rospy.Duration(100))
         self.listener.waitForTransform(base, self._arm_interface.base_link,
-                                       latest, latest + rospy.Duration(100))
+                                       latest, rospy.Duration(100))
         [pos, quat] = self.listener.lookupTransform(
             base, self._arm_interface.base_link, latest)
 
@@ -119,10 +121,10 @@ class CartesianController(object):
 
     def _get_goal(self):
         if self._command is None or rospy.get_time() - self._last_reference_update > 0.1:
-            return self._last_goal       
-        
+            return self._last_goal
+
         next_goal = deepcopy(self._last_goal)
-        next_goal.p += PyKDL.Vector(self._command[0], self._command[1], self._command[2]) 
+        next_goal.p += PyKDL.Vector(self._command[0], self._command[1], self._command[2])
 
         q_step = trans.quaternion_from_euler(self._command[3],
                                              self._command[4],
@@ -154,7 +156,6 @@ class CartesianController(object):
 
         if self._command is None:
             self._command = np.zeros(6)
-        
         self._command[0] = self._filter_input(self._command[0], msg.linear.x, dt) * dt
         self._command[1] = self._filter_input(self._command[1], msg.linear.y, dt) * dt
         self._command[2] = self._filter_input(self._command[2], msg.linear.z, dt) * dt
