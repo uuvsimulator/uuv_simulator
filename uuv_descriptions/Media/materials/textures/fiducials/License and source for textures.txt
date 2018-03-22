@@ -1,4 +1,4 @@
-Project:         	AprilTags Visual Fiducial System
+Project:         	ArUco: a minimal library for Augmented Reality applications based on OpenCV
 License: 	        BSD
-Current Version: 	2015-03-18
-Source Download: 	https://april.eecs.umich.edu/software/apriltag/
+Current Version: 	2018-03-14
+Source Download: 	http://www.uco.es/investiga/grupos/ava/node/26

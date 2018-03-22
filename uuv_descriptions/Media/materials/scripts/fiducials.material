@@ -1,4 +1,4 @@
-material AprilTag/Tag36_11_00000
+material Aruco/Tag1
 {
   technique
   {
@@ -10,7 +10,7 @@ material AprilTag/Tag36_11_00000
 
       texture_unit
       {
-        texture ../textures/fiducials/tag36_11_00000.jpg
+        texture ../textures/fiducials/aruco_1.png
         filtering bilinear
         max_anisotropy 16
       }
@@ -18,7 +18,7 @@ material AprilTag/Tag36_11_00000
   }
 }
 
-material AprilTag/Tag36_11_00001
+material Aruco/Tag2
 {
   technique
   {
@@ -30,7 +30,7 @@ material AprilTag/Tag36_11_00001
 
       texture_unit
       {
-        texture ../textures/fiducials/tag36_11_00001.jpg
+        texture ../textures/fiducials/aruco_2.png
         filtering bilinear
         max_anisotropy 16
       }
@@ -38,7 +38,7 @@ material AprilTag/Tag36_11_00001
   }
 }
 
-material AprilTag/Tag36_11_00003
+material Aruco/Tag3
 {
   technique
   {
@@ -50,7 +50,7 @@ material AprilTag/Tag36_11_00003
 
       texture_unit
       {
-        texture ../textures/fiducials/tag36_11_00003.jpg
+        texture ../textures/fiducials/aruco_3.png
         filtering bilinear
         max_anisotropy 16
       }
@@ -58,7 +58,7 @@ material AprilTag/Tag36_11_00003
   }
 }
 
-material AprilTag/Tag36_11_00004
+material Aruco/Tag4
 {
   technique
   {
@@ -70,7 +70,7 @@ material AprilTag/Tag36_11_00004
 
       texture_unit
       {
-        texture ../textures/fiducials/tag36_11_00004.jpg
+        texture ../textures/fiducials/aruco_4.png
         filtering bilinear
         max_anisotropy 16
       }
@@ -78,7 +78,7 @@ material AprilTag/Tag36_11_00004
   }
 }
 
-material AprilTag/Tag36_11_00005
+material Aruco/Tag5
 {
   technique
   {
@@ -90,7 +90,7 @@ material AprilTag/Tag36_11_00005
 
       texture_unit
       {
-        texture ../textures/fiducials/tag36_11_00005.jpg
+        texture ../textures/fiducials/aruco_5.png
         filtering bilinear
         max_anisotropy 16
       }

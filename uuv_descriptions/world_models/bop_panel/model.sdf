@@ -78,7 +78,7 @@
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -88,13 +88,13 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
         <material>
           <script>
             <uri>file://Media/materials/scripts/fiducials.material</uri>
-            <name>AprilTag/Tag36_11_00000</name>
+            <name>Aruco/Tag1</name>
           </script>
         </material>
       </visual>
@@ -168,7 +168,7 @@
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -178,13 +178,13 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
         <material>
           <script>
             <uri>file://Media/materials/scripts/fiducials.material</uri>
-            <name>AprilTag/Tag36_11_00001</name>
+            <name>Aruco/Tag2</name>
           </script>
         </material>
       </visual>
@@ -259,7 +259,7 @@
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -269,13 +269,13 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
         <material>
           <script>
             <uri>file://Media/materials/scripts/fiducials.material</uri>
-            <name>AprilTag/Tag36_11_00003</name>
+            <name>Aruco/Tag3</name>
           </script>
         </material>
       </visual>
@@ -304,7 +304,7 @@
         </inertia>
       </inertial>
 
-      <collision name="valve_3_collision">        
+      <collision name="valve_3_collision">
         <geometry>
           <mesh>
             <uri>model://bop_panel/meshes/Valve.dae</uri>
@@ -349,7 +349,7 @@
       <collision name="april_tag_valve_4_collision">
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -359,13 +359,13 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
         <material>
           <script>
             <uri>file://Media/materials/scripts/fiducials.material</uri>
-            <name>AprilTag/Tag36_11_00004</name>
+            <name>Aruco/Tag4</name>
           </script>
         </material>
       </visual>
@@ -439,7 +439,7 @@
       <collision name="april_tag_valve_5_collision">
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -449,13 +449,13 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.15 0.15 0.001</size>
+              <size>0.16 0.16 0.001</size>
             </box>
         </geometry>
         <material>
           <script>
             <uri>file://Media/materials/scripts/fiducials.material</uri>
-            <name>AprilTag/Tag36_11_00005</name>
+            <name>Aruco/Tag5</name>
           </script>
         </material>
       </visual>
