@@ -73,12 +73,12 @@
 
     <link name="april_tag_valve_1">
       <!-- <pose>3.31813 0.000387 8.33784 0 0 0</pose> -->
-      <pose>3.31813 -0.45 8.13 0 0 0</pose>
+      <pose>3.31813 -0.43 8.13 0 0 0</pose>
       <collision name="april_tag_valve_1_collision">
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -88,7 +88,7 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
         <material>
@@ -163,12 +163,12 @@
 
     <link name="april_tag_valve_2">
       <!-- <pose>3.31813 0.000668 7.94273 0 0 0</pose> -->
-      <pose>3.31813 -0.45 7.77 0 0 0</pose>
+      <pose>3.31813 -0.43 7.77 0 0 0</pose>
       <collision name="april_tag_valve_2_collision">
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -178,7 +178,7 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
         <material>
@@ -254,12 +254,12 @@
 
     <link name="april_tag_valve_3">
       <!-- <pose>3.31813 0.000668 7.59716 0 0 0</pose> -->
-      <pose>3.31813 -0.45 7.34 0 0 0</pose>
+      <pose>3.31813 -0.43 7.34 0 0 0</pose>
       <collision name="april_tag_valve_3_collision">
         <pose>0 0 0 0 1.57 0</pose>
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -269,7 +269,7 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
         <material>
@@ -345,11 +345,11 @@
 
     <link name="april_tag_valve_4">
       <!-- <pose>3.31813 0.000668 7.24173 0 0 0</pose> -->
-      <pose>3.31813 -0.45 6.98 0 0 0</pose>
+      <pose>3.31813 -0.43 6.98 0 0 0</pose>
       <collision name="april_tag_valve_4_collision">
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -359,7 +359,7 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
         <material>
@@ -435,11 +435,11 @@
 
     <link name="april_tag_valve_5">
       <!-- <pose>3.31813 0.000387 6.88629 0 0 0</pose> -->
-      <pose>3.31813 -0.45 6.63 0 0 0</pose>
+      <pose>3.31813 -0.43 6.63 0 0 0</pose>
       <collision name="april_tag_valve_5_collision">
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
       </collision>
@@ -449,7 +449,7 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <box>
-              <size>0.16 0.16 0.001</size>
+              <size>0.14 0.14 0.001</size>
             </box>
         </geometry>
         <material>
