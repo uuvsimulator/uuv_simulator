@@ -152,8 +152,8 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
   this->inputCommand = std::max(lowerLimit, this->inputCommand);
 
   // Update dynamics model:
-  double angle = this->dynamics->update(this->inputCommand,
-                                        _info.simTime.Double());
+  this->angle = this->dynamics->update(this->inputCommand,
+                                       _info.simTime.Double());
 
   // Determine velocity in lift/drag plane:
   ignition::math::Pose3d finPose;
@@ -164,10 +164,11 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
 #else
   finPose = this->link->GetWorldPose().Ign();
   linVel = this->link->GetWorldLinearVel().Ign();
-#endif
+#endif  
+  
   ignition::math::Vector3d ldNormalI = finPose.Rot().RotateVector(
     ignition::math::Vector3d::UnitZ);
-
+      
   ignition::math::Vector3d velI = linVel - this->currentVelocity;
   ignition::math::Vector3d velInLDPlaneI = ldNormalI.Cross(velI.Cross(ldNormalI));
   ignition::math::Vector3d velInLDPlaneL = finPose.Rot().RotateVectorReverse(velInLDPlaneI);
@@ -175,11 +176,11 @@ void FinPlugin::OnUpdate(const common::UpdateInfo &_info)
   // Compute lift and drag forces:
   this->finForce = this->liftdrag->compute(velInLDPlaneL);
 
-  // Apply forces at cg (with torques for position shift).
   this->link->AddRelativeForce(this->finForce);
+  // Apply forces at cg (with torques for position shift).
 
   // Apply new fin angle. Do this last since this sets link's velocity to zero.
-  this->joint->SetPosition(0, angle);
+  this->joint->SetPosition(0, this->angle);
 
   this->angleStamp = _info.simTime;
 }
