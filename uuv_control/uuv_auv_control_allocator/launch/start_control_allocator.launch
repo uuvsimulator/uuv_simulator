@@ -1,0 +1,67 @@
+<launch>    
+    <arg name="uuv_name" />
+    <arg name="base_link" default="base_link"/>
+        
+    <arg name="output_dir" />
+
+    <arg name="input_topic" default="control_allocation/control_input"/>
+
+    <!-- Thruster configuration -->
+    <arg name="thruster_topic_prefix" default="thrusters" />
+    <arg name="thruster_topic_suffix" default="input" />
+    <arg name="thruster_frame_base" default="thruster_" />
+    <arg name="max_thrust" default="120"/>
+    <arg name="thruster_conversion_fcn" default="proportional" />
+    <!-- For proportional thruster model: gain * rotor_ang_vel * |rotor_ang_vel| -->
+    <arg name="thruster_gain" default="0.0"/>
+    <!-- For custom thruster model: interpolation of input to output -->
+    <arg name="thruster_input" default="0,1,2,3"/>
+    <arg name="thruster_output" default="0,1,2,3"/>
+
+    <!-- Fin configuration -->
+    <arg name="fin_frame_base" default="fin"/>
+    <arg name="fluid_density" default="1028.0"/>
+    <arg name="lift_coefficient" default="0.0"/>
+    <arg name="fin_area" default="0.0"/>
+    <arg name="fin_topic_prefix" default="fins"/>
+    <arg name="fin_topic_suffix" default="input"/>
+    <arg name="fin_lower_joint_limit" default="-1.57"/>
+    <arg name="fin_upper_joint_limit" default="1.57"/>
+
+    <arg name="timeout" default="-1"/>
+    <arg name="update_rate" default="10"/>
+
+    <group ns="$(arg uuv_name)">
+        <node pkg="uuv_auv_control_allocator"
+              type="control_allocator"
+              name="control_allocator"
+              output="screen">
+            <rosparam subst_value="true">
+                output_dir: $(arg output_dir)
+                base_link: $(arg base_link)
+                thruster_config:
+                    topic_prefix: $(arg thruster_topic_prefix)
+                    topic_suffix: $(arg thruster_topic_suffix)
+                    frame_base: $(arg thruster_frame_base)
+                    max_thrust: $(arg max_thrust)
+                    conversion_fcn: $(arg thruster_conversion_fcn)
+                    conversion_fcn_params:
+                        gain: $(arg thruster_gain)
+                        input: [$(arg thruster_input)]
+                        output: [$(arg thruster_output)]
+                fin_config:
+                    frame_base: $(arg fin_frame_base)
+                    fluid_density: $(arg fluid_density)
+                    lift_coefficient: $(arg lift_coefficient)
+                    fin_area: $(arg fin_area)
+                    topic_prefix: $(arg fin_topic_prefix)
+                    topic_suffix: $(arg fin_topic_suffix)  
+                    lower_limit: $(arg fin_lower_joint_limit)
+                    upper_limit: $(arg fin_upper_joint_limit)
+                timeout: $(arg timeout)
+                update_rate: $(arg update_rate)
+            </rosparam>
+            <remap from="control_input" to="$(arg input_topic)"/>
+        </node>
+    </group>
+</launch>
