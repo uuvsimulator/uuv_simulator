@@ -30,12 +30,13 @@ class WaypointSet(object):
     OK_WAYPOINT = [31. / 255, 106. / 255, 226. / 255]
     FAILED_WAYPOINT = [1.0, 0.0, 0.0]
 
-    def __init__(self, scale=0.1, inertial_frame_id='world'):
+    def __init__(self, scale=0.1, inertial_frame_id='world', max_surge_speed=None):
         assert inertial_frame_id in ['world', 'world_ned']
         self._waypoints = list()
         self._violates_constraint = False
         self._scale = scale
         self._inertial_frame_id = inertial_frame_id
+        self._max_surge_speed = max_surge_speed
 
     def __str__(self):
         if self.num_waypoints:
@@ -216,6 +217,16 @@ class WaypointSet(object):
         if wp is not None:
             return wp.dist(pos)
         return None
+
+    def set_radius_of_acceptance(self, index, radius):
+        if index >= 0 and index < len(self._waypoints):
+            self._waypoints[index].radius_of_acceptance = radius
+
+    def get_radius_of_acceptance(self, index):
+        if index >= 0 and index < len(self._waypoints):
+            return self._waypoints[index].radius_of_acceptance
+        else:
+            return None
 
     def to_path_marker(self, clear=False):
         path = Path()
