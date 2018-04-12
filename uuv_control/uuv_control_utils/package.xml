@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>uuv_control_utils</name>
-  <version>0.3.0</version>
+  <version>0.5.0</version>
   <description>The uuv_control_utils package</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
