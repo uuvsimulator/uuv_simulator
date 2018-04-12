@@ -21,6 +21,7 @@ from std_msgs.msg import Bool
 from geometry_msgs.msg import Twist
 from uuv_control_msgs.srv import *
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint, WaypointSet
+from visualization_msgs.msg import MarkerArray
 import uuv_trajectory_generator
 import uuv_waypoints
 import logging
@@ -28,7 +29,7 @@ import sys
 import tf2_ros
 from threading import Lock
 from tf.transformations import quaternion_about_axis, quaternion_multiply, \
-    quaternion_inverse, quaternion_matrix
+    quaternion_inverse, quaternion_matrix, euler_from_quaternion
 
 
 class DPControllerLocalPlanner(object):
@@ -51,14 +52,13 @@ class DPControllerLocalPlanner(object):
             full_dof=full_dof, stamped_pose_only=stamped_pose_only)
 
         # Max. allowed forward speed
-        self._max_forward_speed = 1.0
+        self._max_forward_speed = rospy.get_param('~max_forward_speed', 1.0)
+        self._max_forward_speed = max(1.0, self._max_forward_speed)
 
-        if rospy.has_param('~max_forward_speed'):
-            speed = rospy.get_param('~max_forward_speed')
-            if speed >= 0:
-                self._max_forward_speed = speed
-            else:
-                self._logger.error('Invalid max. forward speed, keeping 1 m/s')
+        self._logger.info('Max. forward speed [m/s]=%.2f' % self._max_forward_speed)    
+
+        # Is underactuated?
+        self._is_underactuated = rospy.get_param('~is_underactuated', False)   
 
         self.inertial_frame_id = 'world'
         self.transform_ned_to_enu = None
@@ -95,6 +95,16 @@ class DPControllerLocalPlanner(object):
         self._logger.info('Max. forward speed = ' +
                           str(self._max_forward_speed))
 
+        for method in self._traj_interpolator.get_interpolator_tags():
+            if rospy.has_param('~' + method):
+                self._logger.info('Parameters for interpolation method <%s> found' % method)
+                params = rospy.get_param('~' + method)
+                self._logger.info('\t' + str(params))
+                
+                self._traj_interpolator.set_interpolator_parameters(method, params)                                    
+            else:
+                self._logger.info('No parameters for interpolation method <%s> found' % method)
+
         # dt used to compute the pose reference from the joystick input
         self._dt = 0.0
         # Time stamp for the last velocity reference received
@@ -125,14 +135,18 @@ class DPControllerLocalPlanner(object):
                                                   Bool,
                                                   queue_size=1)
 
+        self._interp_visual_markers = rospy.Publisher('interpolator_visual_markers', 
+                                                      MarkerArray, 
+                                                      queue_size=1)
+
         self._teleop_sub = rospy.Subscriber('cmd_vel', Twist, self._update_teleop)
 
         self._waypoints_msg = None
         self._trajectory_msg = None
 
-        # Publishing topic for the trajectory given to the controller
+        # Subscribing topic for the trajectory given to the controller
         self._input_trajectory_sub = rospy.Subscriber(
-            'input_trajectory', Trajectory, self._update_trajectory_from_msg)
+            'input_trajectory', Trajectory, self._update_trajectory_from_msg)        
 
         self._traj_info_update_timer = rospy.Timer(rospy.Duration(0.2),
             self._publish_trajectory_info)
@@ -218,6 +232,11 @@ class DPControllerLocalPlanner(object):
             self._waypoints_pub.publish(self._waypoints_msg)
         if self._trajectory_msg is not None:
             self._trajectory_pub.publish(self._trajectory_msg)
+        markers = self._traj_interpolator.get_visual_markers()
+        if markers is not None:
+            self._interp_visual_markers.publish(markers)
+        else:
+            self._interp_visual_markers.publish(MarkerArray())
         self._station_keeping_pub.publish(Bool(self._station_keeping_on))
         self._automatic_control_pub.publish(Bool(self._is_automatic))
         self._traj_tracking_pub.publish(Bool(self._traj_running))
@@ -317,10 +336,7 @@ class DPControllerLocalPlanner(object):
             self._is_teleop_active = False
             ref_pnt = deepcopy(self._vehicle_pose)
         return ref_pnt
-
-    def _display_message(self, msg):
-        print 'DP Local Planner - ' + str(msg)
-
+    
     def _calc_smooth_approach(self):
         """
         Add the current vehicle position as waypoint to allow a smooth
@@ -332,11 +348,14 @@ class DPControllerLocalPlanner(object):
         if not self._traj_interpolator.is_using_waypoints():
             self._logger.error('Not using the waypoint interpolation method')
             return
+
+        heading = euler_from_quaternion(self._vehicle_pose.rotq)[2]
         init_wp = uuv_waypoints.Waypoint(
             x=self._vehicle_pose.pos[0],
             y=self._vehicle_pose.pos[1],
             z=self._vehicle_pose.pos[2],
-            max_forward_speed=self._traj_interpolator.get_waypoints().get_waypoint(0).max_forward_speed)
+            max_forward_speed=self._traj_interpolator.get_waypoints().get_waypoint(0).max_forward_speed,
+            heading_offset=heading)
         first_wp = self._traj_interpolator.get_waypoints().get_waypoint(0)
 
         dx = first_wp.x - init_wp.x
@@ -469,7 +488,7 @@ class DPControllerLocalPlanner(object):
             self._lock.acquire()
             # Activates station keeping
             self.set_station_keeping(True)
-            self._traj_interpolator.set_interp_method('cubic_interpolator')
+            self._traj_interpolator.set_interp_method('cubic')
             self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot())
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             if request.duration > 0:
@@ -484,20 +503,19 @@ class DPControllerLocalPlanner(object):
             self.set_trajectory_running(True)
             self._smooth_approach_on = True
 
-            print '==========================================================='
-            print 'CIRCULAR TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION'
-            print '==========================================================='
-            print 'Radius [m] =', request.radius
-            print 'Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z)
-            print '# of points =', request.n_points
-            print 'Max. forward speed =', request.max_forward_speed
-            print 'Circle angle offset =', request.angle_offset
-            print 'Heading offset =', request.heading_offset
-            print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-            print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
-            print 'Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time())
-            print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-            print '==========================================================='
+            self._logger.info('============================')
+            self._logger.info('CIRCULAR TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION')
+            self._logger.info('============================')
+            self._logger.info('Radius [m] = %.2f' % request.radius)
+            self._logger.info('Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z))
+            self._logger.info('# of points = %d' % request.n_points)
+            self._logger.info('Max. forward speed = %.2f' % request.max_forward_speed)
+            self._logger.info('Circle angle offset = %.2f' % request.angle_offset)
+            self._logger.info('Heading offset = %.2f' % request.heading_offset)
+            self._logger.info('# waypoints = %d' % self._traj_interpolator.get_waypoints().num_waypoints)
+            self._logger.info('Starting from = ' + str(self._traj_interpolator.get_waypoints().get_waypoint(0).pos))
+            self._logger.info('Starting time [s] = %.2f' % (t.to_sec() if not request.start_now else rospy.get_time()))            
+            self._logger.info('============================')
             self._lock.release()
             return InitCircularTrajectoryResponse(True)
         except Exception, e:
@@ -541,7 +559,7 @@ class DPControllerLocalPlanner(object):
 
             self._lock.acquire()
             self.set_station_keeping(True)
-            self._traj_interpolator.set_interp_method('cubic_interpolator')
+            self._traj_interpolator.set_interp_method('cubic')
             if not self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
                 self._logger.error('Error setting the waypoints')
                 return InitHelicalTrajectoryResponse(False)
@@ -559,22 +577,21 @@ class DPControllerLocalPlanner(object):
             self.set_trajectory_running(True)
             self._smooth_approach_on = True
 
-            print '==========================================================='
-            print 'HELICAL TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION'
-            print '==========================================================='
-            print 'Radius [m] =', request.radius
-            print 'Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z)
-            print '# of points =', request.n_points
-            print 'Max. forward speed =', request.max_forward_speed
-            print 'Delta Z =', request.delta_z
-            print '# of turns =', request.n_turns
-            print 'Helix angle offset =', request.angle_offset
-            print 'Heading offset =', request.heading_offset
-            print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-            print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
-            print 'Starting time [s] =', (t.to_sec() if not request.start_now else rospy.get_time())
-            print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-            print '==========================================================='
+            self._logger.info('============================')
+            self._logger.info('HELICAL TRAJECTORY GENERATED FROM WAYPOINT INTERPOLATION')
+            self._logger.info('============================')
+            self._logger.info('Radius [m] = %.2f' % request.radius)
+            self._logger.info('Center [m] = (%.2f, %.2f, %.2f)' % (request.center.x, request.center.y, request.center.z))
+            self._logger.info('# of points = %d' % request.n_points)
+            self._logger.info('Max. forward speed = %.2f' % request.max_forward_speed)
+            self._logger.info('Delta Z = %.2f' % request.delta_z)
+            self._logger.info('# of turns = %d' % request.n_turns)
+            self._logger.info('Helix angle offset = %.2f' % request.angle_offset)
+            self._logger.info('Heading offset = %.2f' % request.heading_offset)
+            self._logger.info('# waypoints = %d' % self._traj_interpolator.get_waypoints().num_waypoints)
+            self._logger.info('Starting from = ' + str(self._traj_interpolator.get_waypoints().get_waypoint(0).pos))
+            self._logger.info('Starting time [s] = %.2f' % (t.to_sec() if not request.start_now else rospy.get_time()))            
+            self._logger.info('============================')
             self._lock.release()
             return InitHelicalTrajectoryResponse(True)
         except Exception, e:
@@ -598,7 +615,7 @@ class DPControllerLocalPlanner(object):
             self._logger.info('Start waypoint trajectory now!')
         self._lock.acquire()
         self.set_station_keeping(True)
-        self._traj_interpolator.set_interp_method('lipb_interpolator')
+        self._traj_interpolator.set_interp_method(request.interpolator.data)
 
         wp_set = uuv_waypoints.WaypointSet()
         if not wp_set.read_from_file(request.filename.data):
@@ -616,14 +633,15 @@ class DPControllerLocalPlanner(object):
             self.set_trajectory_running(True)
             self._smooth_approach_on = True
 
-            print '==========================================================='
-            print 'IMPORT WAYPOINTS FROM FILE'
-            print '==========================================================='
-            print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-            print 'Starting time =', t
-            print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-            print 'Inertial frame ID = ' + self.inertial_frame_id
-            print '==========================================================='
+            self._logger.info('============================')
+            self._logger.info('IMPORT WAYPOINTS FROM FILE')
+            self._logger.info('============================')
+            self._logger.info('Filename = ' + request.filename.data)
+            self._logger.info('Interpolator = ' + request.interpolator.data)
+            self._logger.info('# waypoints = %d' % self._traj_interpolator.get_waypoints().num_waypoints)
+            self._logger.info('Starting time = %.2f' % t)
+            self._logger.info('Inertial frame ID = ' + self.inertial_frame_id)
+            self._logger.info('============================')
             self._lock.release()
             return InitWaypointsFromFileResponse(True)
         else:
@@ -654,31 +672,29 @@ class DPControllerLocalPlanner(object):
         wp_set.add_waypoint(init_wp)
         wp_set.add_waypoint_from_msg(request.waypoint)
         wp_set = self._transform_waypoint_set(wp_set)
-        self._traj_interpolator.set_interp_method('lipb_interpolator')
+        self._traj_interpolator.set_interp_method(request.interpolator)
         if not self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
             self._logger.error('Error while setting waypoints')
             self._lock.release()
             return GoToResponse(False)
 
-        t = rospy.Time.now().to_sec()
-        self._traj_interpolator.set_start_time(t)
+        t = rospy.get_time()
+        self._traj_interpolator.set_start_time(t)        
         self._update_trajectory_info()
         self.set_station_keeping(False)
         self.set_automatic_mode(True)
         self.set_trajectory_running(True)
         self._smooth_approach_on = False
 
-        print '==========================================================='
-        print 'GO TO'
-        print '==========================================================='
-        print wp_set
-        print 'Heading offset =', request.waypoint.heading_offset
-        print '# waypoints =', self._traj_interpolator.get_waypoints().num_waypoints
-        print 'Starting from =', self._traj_interpolator.get_waypoints().get_waypoint(0).pos
-        print 'Start time [s]: ', t
-        print 'Estimated max. time [s] = ', self._traj_interpolator.get_max_time()
-        print 'Inertial frame ID = ', self.inertial_frame_id
-        print '==========================================================='
+        self._logger.info('============================')
+        self._logger.info('GO TO')
+        self._logger.info('============================')        
+        self._logger.info('Heading offset [rad] = %.2f' % request.waypoint.heading_offset)
+        self._logger.info('# waypoints = %d' % self._traj_interpolator.get_waypoints().num_waypoints)
+        self._logger.info('Starting from = ' + str(self._traj_interpolator.get_waypoints().get_waypoint(0).pos))
+        self._logger.info('Start time [s] = %.2f ' % t)
+        self._logger.info('Inertial frame ID = ' + self.inertial_frame_id)
+        self._logger.info('============================')
         self._lock.release()
         return GoToResponse(True)
 
@@ -714,7 +730,7 @@ class DPControllerLocalPlanner(object):
             inertial_frame_id=self.inertial_frame_id)
         wp_set.add_waypoint(wp)
 
-        self._traj_interpolator.set_interp_method('lipb_interpolator')
+        self._traj_interpolator.set_interp_method(request.interpolator)
         if not self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
             self._logger.error('Error while setting waypoints')
             self._lock.release()
@@ -727,13 +743,13 @@ class DPControllerLocalPlanner(object):
         self.set_trajectory_running(True)
         self._smooth_approach_on = False
 
-        print '==========================================================='
-        print 'GO TO INCREMENTAL'
-        print '==========================================================='
-        print wp_set
-        print '# waypoints =', wp_set.num_waypoints
-        print 'Inertial frame ID = ', self.inertial_frame_id
-        print '==========================================================='
+        self._logger.info('============================')
+        self._logger.info('GO TO INCREMENTAL')
+        self._logger.info('============================')
+        self._logger.info(str(wp_set))
+        self._logger.info('# waypoints = %d' % wp_set.num_waypoints)
+        self._logger.info('Inertial frame ID = ' + self.inertial_frame_id)
+        self._logger.info('============================')
         self._lock.release()
         return GoToIncrementalResponse(True)
 
@@ -749,10 +765,11 @@ class DPControllerLocalPlanner(object):
             if self._smooth_approach_on:
                 # Generate extra waypoint before the initial waypoint
                 self._calc_smooth_approach()
+                self._update_trajectory_info()
                 self._smooth_approach_on = False
                 self._logger.info('Adding waypoints to approach the given waypoint trajectory')
             # Get interpolated reference from the reference trajectory
-            self._this_ref_pnt = self._traj_interpolator.interpolate(t)
+            self._this_ref_pnt = self._traj_interpolator.interpolate(t, self._vehicle_pose.pos, self._vehicle_pose.rotq)
 
             if not self._traj_running:
                 self._traj_running = True
