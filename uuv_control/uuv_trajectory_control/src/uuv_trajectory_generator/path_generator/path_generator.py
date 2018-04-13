@@ -20,6 +20,7 @@ from uuv_waypoints import Waypoint, WaypointSet
 from ..trajectory_point import TrajectoryPoint
 from tf.transformations import quaternion_multiply, quaternion_about_axis, \
     quaternion_from_euler, rotation_matrix, quaternion_from_matrix
+from visualization_msgs.msg import MarkerArray
 
 
 class PathGenerator(object):
@@ -46,8 +47,15 @@ class PathGenerator(object):
         self._start_time = None
         self._duration = None
 
+        self._termination_by_time = True
+
+        self._final_pos_tolerance = 0.1
+
         self._init_rot = quaternion_about_axis(0.0, [0, 0, 1])
         self._last_rot = quaternion_about_axis(0.0, [0, 0, 1])
+
+        self._markers_msg = MarkerArray()
+        self._marker_id = 0
 
     @staticmethod
     def get_generator(name, *args, **kwargs):
@@ -118,6 +126,10 @@ class PathGenerator(object):
         assert 0 < step < 1
         self._s_step = step
 
+    @property
+    def termination_by_time(self):
+        return self._termination_by_time
+
     def reset(self):
         self._s = list()
         self._segment_to_wp_map = list()
@@ -164,6 +176,9 @@ class PathGenerator(object):
     def get_samples(self, max_time, step=0.005):
         raise NotImplementedError()
 
+    def get_visual_markers(self):
+        return self._markers_msg
+
     def add_waypoint(self, waypoint, add_to_beginning=False):
         """Add waypoint to the existing waypoint set. If no waypoint set has
         been initialized, create new waypoint set structure and add the given
@@ -182,10 +197,22 @@ class PathGenerator(object):
             return False
 
         self._init_rot = init_rot
-        return self.init_interpolator()
+        return True
 
     def interpolate(self, tag, s):
         return self._interp_fcns[tag](s)
+
+    def is_finished(self, t):
+        if self._termination_by_time:
+            return t > self.max_time
+        else:
+            return True
+
+    def has_started(self, t):
+        if self._termination_by_time:
+            return t - self.start_time > 0
+        else:
+            return True
 
     def generate_pnt(self, s):
         raise NotImplementedError()
@@ -195,6 +222,9 @@ class PathGenerator(object):
 
     def generate_quat(self, s):
         raise NotImplementedError()
+
+    def set_parameters(self, params):
+        raise NotImplementedError()    
 
     def _compute_rot_quat(self, dx, dy, dz):
         heading = np.arctan2(dy, dx)

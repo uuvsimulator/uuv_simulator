@@ -45,6 +45,9 @@ if __name__ == '__main__':
     else:
         start_now = True
 
+    
+    interpolator = rospy.get_param('~interpolator', 'lipb')
+
     try:
         rospy.wait_for_service('init_waypoints_from_file', timeout=30)
     except rospy.ROSException:
@@ -59,7 +62,8 @@ if __name__ == '__main__':
 
     success = init_wp(Time(rospy.Time(start_time)),
                       start_now,
-                      String(filename))
+                      String(filename),
+                      String(interpolator))
 
     if success:
         print 'Waypoints file successfully received, file=', filename

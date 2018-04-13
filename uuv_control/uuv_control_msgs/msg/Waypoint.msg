@@ -18,3 +18,4 @@ geometry_msgs/Point point
 float64 max_forward_speed
 float64 heading_offset
 bool use_fixed_heading
+float64 radius_of_acceptance

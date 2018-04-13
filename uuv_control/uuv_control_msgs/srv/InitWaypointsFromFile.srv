@@ -13,8 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+string LIPB='lipb'
+string CUBIC='cubic'
+string DUBINS='dubins'
+string LINEAR='linear'
+
 std_msgs/Time start_time
 bool start_now
 std_msgs/String filename
+std_msgs/String interpolator
 ---
 bool success

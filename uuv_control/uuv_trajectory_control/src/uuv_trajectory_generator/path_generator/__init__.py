@@ -13,10 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__all__ = ['PathGenerator', 'CSInterpolator', 'BezierCurve', 'LineSegment', 'LIPBInterpolator']
+__all__ = ['PathGenerator', 'CSInterpolator', 'BezierCurve', 'LineSegment', 
+           'LIPBInterpolator', 'DubinsInterpolator', 'LinearInterpolator']
 
 from .path_generator import PathGenerator
 from .cs_interpolator import CSInterpolator
 from .lipb_interpolator import LIPBInterpolator
+from .dubins_interpolator import DubinsInterpolator
+from .linear_interpolator import LinearInterpolator
 from .bezier_curve import BezierCurve
 from .line_segment import LineSegment

@@ -24,7 +24,7 @@ class Waypoint(object):
     FAILED_WAYPOINT = [1.0, 0.0, 0.0]
 
     def __init__(self, x=0, y=0, z=0, max_forward_speed=0, heading_offset=0,
-        use_fixed_heading=False, inertial_frame_id='world'):
+        use_fixed_heading=False, inertial_frame_id='world', radius_acceptance=0.0):
         assert inertial_frame_id in ['world', 'world_ned']
         self._x = x
         self._y = y
@@ -34,6 +34,7 @@ class Waypoint(object):
         self._heading_offset = heading_offset
         self._violates_constraint = False
         self._use_fixed_heading = use_fixed_heading
+        self._radius_acceptance = radius_acceptance
 
     def __eq__(self, other):
         return self._x == other.x and self._y == other.y and self._z == other.z
@@ -114,6 +115,15 @@ class Waypoint(object):
         self._heading = angle
 
     @property
+    def radius_of_acceptance(self):
+        return self._radius_acceptance
+
+    @radius_of_acceptance.setter
+    def radius_of_acceptance(self, radius):
+        assert radius >= 0, 'Radius must be greater or equal to zero'
+        self._radius_acceptance = radius
+
+    @property
     def using_heading_offset(self):
         return self._use_fixed_heading
 
@@ -133,6 +143,7 @@ class Waypoint(object):
         self._max_forward_speed = msg.max_forward_speed
         self._use_fixed_heading = msg.use_fixed_heading
         self._heading_offset = msg.heading_offset
+        self._radius_acceptance = msg.radius_of_acceptance
 
     def to_message(self):
         wp = WaypointMessage()
@@ -143,9 +154,17 @@ class Waypoint(object):
         wp.use_fixed_heading = self._use_fixed_heading
         wp.heading_offset = self._heading_offset
         wp.header.frame_id = self._inertial_frame_id
+        wp.radius_of_acceptance = self._radius_acceptance
         return wp
 
     def dist(self, pos):
         return np.sqrt((self._x - pos[0])**2 +
                        (self._y - pos[1])**2 +
                        (self._z - pos[2])**2)
+        
+    def calculate_heading(self, target):        
+        dy = target.y - self.y
+        dx = target.x - self.x
+        return np.arctan2(dy, dx)
+    
+    

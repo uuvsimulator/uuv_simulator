@@ -13,6 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+string LIPB='lipb'
+string CUBIC='cubic'
+string DUBINS='dubins'
+string LINEAR='linear'
+
 uuv_control_msgs/Waypoint waypoint
+float64 max_forward_speed
+string interpolator
 ---
 bool success

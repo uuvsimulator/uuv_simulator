@@ -22,6 +22,7 @@ from tf.transformations import quaternion_multiply, quaternion_inverse, \
 from path_generator import PathGenerator
 import logging
 import sys
+import time
 
 
 class WPTrajectoryGenerator(object):
@@ -36,7 +37,7 @@ class WPTrajectoryGenerator(object):
     """
 
     def __init__(self, full_dof=False, use_finite_diff=True,
-                 interpolation_method='cubic_interpolator',
+                 interpolation_method='cubic',
                  stamped_pose_only=False):
         """Class constructor."""
         self._logger = logging.getLogger('wp_trajectory_generator')
@@ -47,7 +48,9 @@ class WPTrajectoryGenerator(object):
         self._logger.setLevel(logging.INFO)
 
         self._path_generators = dict()
+        self._logger.info('Waypoint interpolators available:')
         for gen in PathGenerator.get_all_generators():
+            self._logger.info('\t - ' + gen.get_label())
             self._path_generators[gen.get_label()] = gen
             self._path_generators[gen.get_label()].set_full_dof(full_dof)
         # Time step between interpolated samples
@@ -117,6 +120,10 @@ class WPTrajectoryGenerator(object):
         return self._path_generators[self._interp_method]
 
     @property
+    def interpolator_tags(self):
+        return [gen.get_label() for gen in PathGenerator.get_all_generators()]
+
+    @property
     def use_finite_diff(self):
         return self._use_finite_diff
 
@@ -136,14 +143,23 @@ class WPTrajectoryGenerator(object):
     def get_interpolation_method(self):
         return self._interp_method
 
+    def get_visual_markers(self):
+        return self.interpolator.get_visual_markers()
+
     def set_interpolation_method(self, method):
         if method in self._path_generators:
             self._interp_method = method
-            self._logger.info('Interpolation method set: ' + method)
+            self._logger.info('Interpolation method set: ' + str(method))
             return True
         else:
             self._logger.info('Invalid interpolation method, keeping the current method <%s>' % self._interp_method)
             return False
+
+    def set_interpolator_parameters(self, method, params):
+        if method not in self.interpolator_tags:
+            self._logger.error('Invalid interpolation method: ' + str(method))
+            return False
+        return self._path_generators[method].set_parameters(params)
 
     def is_full_dof(self):
         """Return true if the trajectory is generated for all 6 degrees of
@@ -213,8 +229,7 @@ class WPTrajectoryGenerator(object):
     def get_samples(self, step=0.005):
         """Return pose samples from the interpolated path."""
         assert step > 0, 'Step size must be positive'
-        return self.interpolator.get_samples(
-            self.interpolator.max_time, step)
+        return self.interpolator.get_samples(0.0, step)
 
     def set_start_time(self, t):
         """Set a custom starting time to the interpolated trajectory."""
@@ -303,39 +318,47 @@ class WPTrajectoryGenerator(object):
 
         return np.hstack((lin_vel, ang_vel[0:3])), np.hstack((lin_acc, ang_acc[0:3]))
 
-    def generate_pnt(self, s=None):
+    def generate_pnt(self, t, pos, rot):
         """Return trajectory sample for the current parameter s."""
-        cur_s = (self._cur_s if s is None else s)
+        cur_s = self._cur_s
         last_s = cur_s - self.interpolator.s_step
         # Generate position and rotation quaternion for the current path
         # generator method
         pnt = self.interpolator.generate_pnt(
-            cur_s, cur_s * (self.interpolator.max_time - self.interpolator.start_time) + self.interpolator.start_time)
-        if self._use_finite_diff:
-            # Set linear velocity
-            pnt.vel = self._generate_vel(cur_s)
-            # Compute linear and angular accelerations
-            last_vel = self._generate_vel(last_s)
-            pnt.acc = (pnt.vel - last_vel) / self._t_step
-        else:
-            pnts = list()
-            for ti in np.arange(pnt.t - self._regression_window / 2, pnt.t + self._regression_window, self._t_step):
-                if ti < 0:
-                    si = 0
-                elif ti > self.interpolator.max_time - self.interpolator.start_time:
-                    si = 1
-                else:
-                    si = (ti - self.interpolator.start_time) / self.interpolator.max_time
-                pnts.append(dict(pos=self.interpolator.generate_pos(si),
-                                 rot=self.interpolator.generate_quat(si),
-                                 t=ti))
-            if not self._stamped_pose_only:
-                vel, acc = self._motion_regression_6d(pnts, pnt.rotq, pnt.t)
-                pnt.vel = vel
-                pnt.acc = acc
+            cur_s, 
+            cur_s * (self.interpolator.max_time - self.interpolator.start_time) + self.interpolator.start_time, 
+            pos,
+            rot)
+            
+        if self.get_interpolation_method() is not 'los':
+            if self._use_finite_diff:
+                # Set linear velocity
+                pnt.vel = self._generate_vel(cur_s)            
+                # Compute linear and angular accelerations
+                last_vel = self._generate_vel(last_s)
+                pnt.acc = (pnt.vel - last_vel) / self._t_step
             else:
-                pnt.vel = np.zeros(6)
-                pnt.acc = np.zeros(6)
+                pnts = list()
+                for ti in np.arange(pnt.t - self._regression_window / 2, pnt.t + self._regression_window, self._t_step):
+                    if ti < 0:
+                        si = 0
+                    elif ti > self.interpolator.max_time - self.interpolator.start_time:
+                        si = 1
+                    else:
+                        si = (ti - self.interpolator.start_time) / self.interpolator.max_time
+                    pnts.append(dict(pos=self.interpolator.generate_pos(si),
+                                    rot=self.interpolator.generate_quat(si),
+                                    t=ti))
+                if not self._stamped_pose_only:
+                    vel, acc = self._motion_regression_6d(pnts, pnt.rotq, pnt.t)
+                    pnt.vel = vel
+                    pnt.acc = acc
+                else:
+                    pnt.vel = np.zeros(6)
+                    pnt.acc = np.zeros(6)
+        else:
+            pnt.vel = np.zeros(6)
+            pnt.acc = np.zeros(6)
         return pnt
 
     def _generate_vel(self, s=None):
@@ -369,12 +392,13 @@ class WPTrajectoryGenerator(object):
                ang_vel[2]]
         return np.array(vel)
 
-    def interpolate(self, t):
+    def interpolate(self, t, *args):
         if not self._has_started:
+            tic = time.time()
             if not self.interpolator.init_interpolator():
                 self._logger.error('Error initializing the waypoint interpolator')
-                return None
-
+                return None            
+            self.set_start_time(t + (time.time() - tic))
             self.interpolator.s_step = self._t_step / (self.interpolator.max_time - self.interpolator.start_time)
             self.update_dt(t)
             # Generate first point
@@ -383,23 +407,22 @@ class WPTrajectoryGenerator(object):
             self._has_ended = False
             self._logger.info('Waypoint interpolator initialized! Start time: %.2f s' % self.interpolator.start_time)
 
-        if t > self.interpolator.max_time or t - self.interpolator.start_time < 0:
-            if t > self.interpolator.max_time:
+        if self.interpolator.is_finished(t) or not self.interpolator.has_started(t):
+            if self.interpolator.is_finished(t):
                 self._has_ended = True
                 self._cur_s = 1
             else:
-                self._this_pnt = self.generate_pnt(0)
+                self._this_pnt = self.generate_pnt(0, *args)
                 self._this_pnt.vel = np.zeros(6)
                 self._this_pnt.acc = np.zeros(6)
                 self._this_pnt.t = t
-
         else:
             self._has_started = True
             self._has_ended = False
 
             # Retrieving current position and heading
             self._cur_s = (t - self.interpolator.start_time) / (self.interpolator.max_time - self.interpolator.start_time)
-            self._this_pnt = self.generate_pnt()
+            self._this_pnt = self.generate_pnt(t, *args)
             self._this_pnt.t = t
 
             self._last_pnt = deepcopy(self._this_pnt)

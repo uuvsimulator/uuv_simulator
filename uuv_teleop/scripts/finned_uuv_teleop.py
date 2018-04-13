@@ -108,9 +108,19 @@ class FinnedUUVControllerNode:
                 self._thruster_params['max_thrust'] * \
                 self._thruster_joy_gain
 
-            rpy = numpy.array([msg.axes[self._joy_axis['axis_roll']],
-                               msg.axes[self._joy_axis['axis_pitch']],
-                               msg.axes[self._joy_axis['axis_yaw']]])
+            cmd_roll = msg.axes[self._joy_axis['axis_roll']]
+            if abs(cmd_roll) < 0.2:
+                cmd_roll = 0.0
+
+            cmd_pitch = msg.axes[self._joy_axis['axis_pitch']]
+            if abs(cmd_pitch) < 0.2:
+                cmd_pitch = 0.0
+
+            cmd_yaw = msg.axes[self._joy_axis['axis_yaw']]
+            if abs(cmd_yaw) < 0.2:
+                cmd_yaw = 0.0
+
+            rpy = numpy.array([cmd_roll, cmd_pitch, cmd_yaw])
             fins = self._rpy_to_fins.dot(rpy)
 
             self._thruster_model.publish_command(thrust)

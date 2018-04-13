@@ -48,7 +48,6 @@ class ThrusterAllocatorNode(ThrusterManager):
         self.input_stamped_sub = rospy.Subscriber(
             'thruster_manager/input_stamped', WrenchStamped,
             self.input_stamped_callback)
-
         self.thruster_info_service = rospy.Service(
             'thruster_manager/get_thrusters_info', ThrusterManagerInfo,
             self.get_thruster_info)

@@ -81,9 +81,9 @@ class ThrusterManager:
             tf_trans_ned_to_enu = tf_buffer.lookup_transform(
                 target, source, rospy.Time(), rospy.Duration(1))
         except Exception, e:
-            print('No transform found between base_link and base_link_ned'
+            rospy.loginfo('No transform found between base_link and base_link_ned'
                   ' for vehicle ' + self.namespace)
-            print(str(e))
+            rospy.loginfo(str(e))
             self.base_link_ned_to_enu = None
 
         if tf_trans_ned_to_enu is not None:
@@ -93,7 +93,7 @@ class ThrusterManager:
                  tf_trans_ned_to_enu.transform.rotation.z,
                  tf_trans_ned_to_enu.transform.rotation.w))[0:3, 0:3]
 
-        print 'base_link transform NED to ENU=\n', self.base_link_ned_to_enu
+            rospy.loginfo('base_link transform NED to ENU=\n' + str(self.base_link_ned_to_enu))
 
         rospy.loginfo(
           'ThrusterManager::update_rate=' + str(self.config['update_rate']))
@@ -109,7 +109,7 @@ class ThrusterManager:
             if not isdir(self.output_dir):
                 raise rospy.ROSException(
                     'Invalid output directory, output_dir=' + self.output_dir)
-            print 'output_dir=', self.output_dir
+            rospy.loginfo('output_dir=' + self.output_dir) 
 
         # Number of thrusters
         self.n_thrusters = 0
@@ -153,9 +153,9 @@ class ThrusterManager:
                                        'function=%s'
                                        % self.config['conversion_fcn'])
                 self.thrusters.append(thruster)
-            print 'Thruster allocation matrix provided!'
-            print 'TAM='
-            print self.configuration_matrix
+            rospy.loginfo('Thruster allocation matrix provided!') 
+            rospy.loginfo('TAM=')
+            rospy.loginfo(self.configuration_matrix)
             self.thrust = numpy.zeros(self.n_thrusters)
 
         if not self.update_tam():
@@ -174,21 +174,21 @@ class ThrusterManager:
                     yaml.safe_dump(
                         dict(tam=self.configuration_matrix.tolist())))
         else:
-            print 'Invalid output directory for the TAM matrix, dir=', self.output_dir
+            rospy.loginfo('Invalid output directory for the TAM matrix, dir=' + str(self.output_dir))
 
         self.ready = True
-        print ('ThrusterManager: ready')
+        rospy.loginfo('ThrusterManager: ready')
 
     def update_tam(self, recalculate=False):
         """Calculate the thruster allocation matrix, if one is not given."""
         if self.configuration_matrix is not None and not recalculate:
             self.ready = True
-            print 'TAM provided, skipping...'
-            print ('ThrusterManager: ready')
+            rospy.loginfo('TAM provided, skipping...')
+            rospy.loginfo('ThrusterManager: ready')
             return True
 
         self.ready = False
-        print('ThrusterManager: updating thruster poses')
+        rospy.loginfo('ThrusterManager: updating thruster poses')
         # Small margin to make sure we get thruster frames via tf
         now = rospy.Time.now() + rospy.Duration(1.0)
 
@@ -208,8 +208,8 @@ class ThrusterManager:
                     ' must have equal length')
             equal_thrusters = False
 
-        print 'conversion_fcn=', self.config['conversion_fcn']
-        print 'conversion_fcn_params=', self.config['conversion_fcn_params']
+        rospy.loginfo('conversion_fcn=' + str(self.config['conversion_fcn'])) 
+        rospy.loginfo('conversion_fcn_params=' + str(self.config['conversion_fcn_params']))
 
         listener = tf.TransformListener()
         sleep(5)
@@ -219,7 +219,7 @@ class ThrusterManager:
                 self.config['thruster_frame_base'] + str(i)
             try:
                 # try to get thruster pose with respect to base frame via tf
-                print('transform: ' + base + ' -> ' + frame)
+                rospy.loginfo('transform: ' + base + ' -> ' + frame)
                 now = rospy.Time.now() + rospy.Duration(1.0)
                 listener.waitForTransform(base, frame,
                                                now, rospy.Duration(30.0))
@@ -251,11 +251,11 @@ class ThrusterManager:
                                        % self.config['conversion_fcn'])
                 self.thrusters.append(thruster)
             except tf.Exception:
-                print('could not get transform from: ' + base)
-                print('to: ' + frame)
+                rospy.loginfo('could not get transform from: ' + base)
+                rospy.loginfo('to: ' + frame)
                 break
 
-        print self.thrusters
+        rospy.loginfo(str(self.thrusters)) 
         if len(self.thrusters) == 0:
             return False
 
@@ -275,9 +275,8 @@ class ThrusterManager:
         self.configuration_matrix[numpy.abs(
             self.configuration_matrix) < 1e-3] = 0.0
 
-        print 'TAM='
-        print self.configuration_matrix
-
+        rospy.loginfo('TAM= %s', str(self.configuration_matrix))
+        
         # Once we know the configuration matrix we can compute its
         # (pseudo-)inverse:
         self.inverse_configuration_matrix = numpy.linalg.pinv(
