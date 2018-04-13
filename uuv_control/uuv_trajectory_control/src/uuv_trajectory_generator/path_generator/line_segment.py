@@ -44,9 +44,7 @@ class LineSegment(object):
         u = min(u, 1)
         return (1 - u) * self._p_init + u * self._p_target
 
-    def get_derivative(self, u):
-        u = max(u, 0)
-        u = min(u, 1)
+    def get_derivative(self, *args):        
         return self._p_target - self._p_init
 
     def get_length(self):
