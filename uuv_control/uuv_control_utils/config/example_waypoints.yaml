@@ -36,12 +36,22 @@ waypoints:
     heading: 0
     use_fixed_heading: False
   -
-    point: [40, 50, -30]
+    point: [60, 70, -45]
     max_forward_speed: 0.4
     heading: 0
     use_fixed_heading: False
   -
-    point: [47, 56, -33]
+    point: [105, 56, -60]
+    max_forward_speed: 0.4
+    heading: 0
+    use_fixed_heading: False
+  -
+    point: [100, -20, -60]
+    max_forward_speed: 0.4
+    heading: 0
+    use_fixed_heading: False
+  -
+    point: [100, -20, -59]
     max_forward_speed: 0.4
     heading: 0
     use_fixed_heading: False
