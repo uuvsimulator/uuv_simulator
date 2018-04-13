@@ -22,6 +22,7 @@ from tf.transformations import quaternion_multiply, quaternion_about_axis
 from line_segment import LineSegment
 from bezier_curve import BezierCurve
 from path_generator import PathGenerator
+from visualization_msgs.msg import MarkerArray
 
 
 class LIPBInterpolator(PathGenerator):
@@ -31,12 +32,12 @@ class LIPBInterpolator(PathGenerator):
     [1] Biagiotti, Luigi, and Claudio Melchiorri. Trajectory planning for
         automatic machines and robots. Springer Science & Business Media, 2008.
     """
-    LABEL = 'lipb_interpolator'
+    LABEL = 'lipb'
 
     def __init__(self):
         super(LIPBInterpolator, self).__init__(self)
 
-        self._radius = 5
+        self._radius = 10
         # Set of interpolation functions for each degree of freedom
         # The heading function interpolates the given heading offset and its
         # value is added to the heading computed from the trajectory
@@ -47,6 +48,9 @@ class LIPBInterpolator(PathGenerator):
     def init_interpolator(self):
         if self._waypoints is None:
             return False
+
+        self._markers_msg = MarkerArray()
+        self._marker_id = 0
 
         self._interp_fcns['pos'] = list()
         self._segment_to_wp_map = [0]
@@ -113,21 +117,30 @@ class LIPBInterpolator(PathGenerator):
 
         return True
 
-    def get_samples(self, max_time, step=0.005):
+    def set_parameters(self, params):
+        if 'radius' in params:
+            assert params['radius'] > 0, 'Radius must be greater than zero'
+            self._radius = params['radius']            
+        return True
+
+    def get_samples(self, max_time, step=0.001):
         if self._waypoints is None:
             return None
+        if self._interp_fcns['pos'] is None:
+            return None
         s = np.arange(0, 1 + step, step)
-        t = s * self._duration + self._start_time
-
+        
         pnts = list()
-        for i in range(t.size):
+        for i in s:
             pnt = TrajectoryPoint()
-            pnt.pos = self.generate_pos(s[i]).tolist()
-            pnt.t = t[i]
+            pnt.pos = self.generate_pos(i).tolist()
+            pnt.t = 0.0
             pnts.append(pnt)
         return pnts
 
-    def generate_pos(self, s):
+    def generate_pos(self, s, *args):
+        if self._interp_fcns['pos'] is None:
+            return None
         idx = self.get_segment_idx(s)
         if idx == 0:
             u_k = 0
@@ -137,7 +150,7 @@ class LIPBInterpolator(PathGenerator):
             pos = self._interp_fcns['pos'][idx - 1].interpolate(u_k)
         return pos
 
-    def generate_pnt(self, s, t=0.0):
+    def generate_pnt(self, s, t=0.0, *args):        
         pnt = TrajectoryPoint()
         # Trajectory time stamp
         pnt.t = t
