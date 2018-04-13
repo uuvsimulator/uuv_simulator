@@ -2,6 +2,7 @@
   <arg name="uuv_name" />
   <arg name="filename" default="$(find uuv_control_utils)/config/example_waypoints.yaml"/>
   <arg name="start_time" default="-1"/>
+  <arg name="interpolator" default="lipb"/>
 
   <group ns="$(arg uuv_name)">
     <node pkg="uuv_control_utils"
@@ -11,6 +12,7 @@
           <rosparam subst_value="true">
             filename: $(arg filename)
             start_time: $(arg start_time)
+            interpolator: $(arg interpolator)
           </rosparam>
     </node>
   </group>
