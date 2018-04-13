@@ -22,6 +22,7 @@ import sys
 import tf
 from geometry_msgs.msg import WrenchStamped, PoseStamped, TwistStamped, \
     Vector3, Quaternion, Pose
+from uuv_auv_control_allocator.msg import AUVCommand
 from std_msgs.msg import Time
 from nav_msgs.msg import Odometry
 from uuv_control_interfaces.vehicle import Vehicle
@@ -72,30 +73,38 @@ class DPControllerBase(object):
         # Instance of the local planner for local trajectory generation
         self._local_planner = LocalPlanner(
             full_dof=planner_full_dof,
-            stamped_pose_only=self._use_stamped_poses_only)
-
-        # Instance of the vehicle model
-        self._vehicle_model = None
-        # If list of callbacks is empty, set the default
-        if len(list_odometry_callbacks):
-            self._odometry_callbacks = list_odometry_callbacks
-        else:
-            self._odometry_callbacks = [self.update_errors,
-                                        self.update_controller]
-        # Initialize vehicle, if model based
-        self._create_vehicle_model()
+            stamped_pose_only=self._use_stamped_poses_only)        
 
         self._control_saturation = 5000
-
+        # TODO: Fix the saturation term and how it is applied
         if rospy.has_param('~saturation'):
             self._thrust_saturation = rospy.get_param('~saturation')
             if self._control_saturation <= 0:
                 raise rospy.ROSException('Invalid control saturation forces')
 
+        # Flag indicating if the vehicle has only thrusters, otherwise
+        # the AUV allocation node will be used
+        self.thrusters_only = rospy.get_param('~thrusters_only', True)
+
+        # Flag indicating either use of the AUV control allocator or 
+        # direct command of fins and thruster
+        self.use_auv_control_allocator = False
+        if not self.thrusters_only:
+            self.use_auv_control_allocator = rospy.get_param('~use_auv_control_allocator', False)
+        
         # Remap the following topics, if needed
-        # Publisher for thruster allocator
-        self._thrust_pub = rospy.Publisher('thruster_output',
-                                           WrenchStamped, queue_size=1)
+        # Publisher for thruster allocator                    
+        if self.thrusters_only:
+            self._thrust_pub = rospy.Publisher(
+                'thruster_output', WrenchStamped, queue_size=1)
+        else:
+            self._thrust_pub = None
+
+        if not self.thrusters_only:            
+            self._auv_command_pub = rospy.Publisher(
+                'auv_command_output', AUVCommand, queue_size=1)
+        else:
+            self._auv_command_pub = None
 
         self._reference_pub = rospy.Publisher('reference',
                                               TrajectoryPoint,
@@ -128,6 +137,17 @@ class DPControllerBase(object):
 
         # Time stamp for the received trajectory
         self._stamp_trajectory_received = rospy.get_time()
+
+        # Instance of the vehicle model
+        self._vehicle_model = None
+        # If list of callbacks is empty, set the default
+        if len(list_odometry_callbacks):
+            self._odometry_callbacks = list_odometry_callbacks
+        else:
+            self._odometry_callbacks = [self.update_errors,
+                                        self.update_controller]
+        # Initialize vehicle, if model based
+        self._create_vehicle_model()
 
         # Stores last simulation time
         self._prev_t = -1.0
@@ -320,6 +340,7 @@ class DPControllerBase(object):
     def publish_control_wrench(self, force):
         if not self.odom_is_init:
             return
+
         # Apply saturation
         for i in range(6):
             if force[i] < -self._control_saturation:
@@ -327,6 +348,11 @@ class DPControllerBase(object):
             elif force[i] > self._control_saturation:
                 force[i] = self._control_saturation
 
+        if not self.thrusters_only:
+            surge_speed = self._vehicle_model.vel[0]
+            self.publish_auv_command(surge_speed, force)
+            return
+        
         force_msg = WrenchStamped()
         force_msg.header.stamp = rospy.Time.now()
         force_msg.header.frame_id = '%s/%s' % (self._namespace, self._vehicle_model.body_frame_id)
@@ -339,3 +365,23 @@ class DPControllerBase(object):
         force_msg.wrench.torque.z = force[5]
 
         self._thrust_pub.publish(force_msg)
+
+    def publish_auv_command(self, surge_speed, wrench):
+        if not self.odom_is_init:
+            return
+
+        surge_speed = max(0, surge_speed)
+
+        msg = AUVCommand()
+        msg.header.stamp = rospy.Time.now()
+        msg.header.frame_id = '%s/%s' % (self._namespace, self._vehicle_model.body_frame_id)
+        msg.surge_speed = surge_speed
+        msg.command.force.x = wrench[0]
+        msg.command.force.y = wrench[1]
+        msg.command.force.z = wrench[2]
+        msg.command.torque.x = wrench[3]
+        msg.command.torque.y = wrench[4]
+        msg.command.torque.z = wrench[5]
+
+        self._auv_command_pub.publish(msg)
+    
