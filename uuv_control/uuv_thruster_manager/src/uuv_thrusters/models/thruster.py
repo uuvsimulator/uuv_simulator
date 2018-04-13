@@ -46,7 +46,7 @@ class Thruster(object):
         self._pos = None
         self._orientation = None
         self._force_dist = None
-        if None not in [pos, orientation]:
+        if pos is not None and orientation is not None:
             self._pos = pos
             self._orientation = orientation
             # compute contribution to configuration matrix of this thruster
