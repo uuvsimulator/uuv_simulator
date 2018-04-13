@@ -16,6 +16,7 @@
 string LIPB='lipb'
 string CUBIC='cubic'
 string DUBINS='dubins'
+string LINEAR='linear'
 
 std_msgs/Time start_time
 bool start_now
