@@ -12,6 +12,8 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <exec_depend>oberon4_control</exec_depend>
+  <exec_depend>oberon4_description</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

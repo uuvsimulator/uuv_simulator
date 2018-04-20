@@ -18,6 +18,29 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <exec_depend>uuv_assistants</exec_depend>
+  <exec_depend>uuv_auv_control_allocator</exec_depend>
+  <exec_depend>uuv_control_cascaded_pid</exec_depend>
+  <exec_depend>uuv_control_msgs</exec_depend>
+  <exec_depend>uuv_control_utils</exec_depend>
+  <exec_depend>uuv_thruster_manager</exec_depend>
+  <exec_depend>uuv_trajectory_control</exec_depend>
+  <exec_depend>uuv_descriptions</exec_depend>
+  <exec_depend>uuv_gazebo</exec_depend>
+  <exec_depend>uuv_gazebo_plugins</exec_depend>
+  <exec_depend>uuv_gazebo_ros_plugins</exec_depend>
+  <exec_depend>uuv_gazebo_ros_plugins_msgs</exec_depend>
+  <exec_depend>oberon4</exec_depend>
+  <exec_depend>oberon7</exec_depend>
+  <exec_depend>uuv_manipulators_commons</exec_depend>
+  <exec_depend>uuv_sensor_plugins_ros_msgs</exec_depend>
+  <exec_depend>uuv_sensor_ros_plugins</exec_depend>
+  <exec_depend>uuv_teleop</exec_depend>
+  <exec_depend>uuv_tutorials</exec_depend>
+  <exec_depend>uuv_world_plugins</exec_depend>
+  <exec_depend>uuv_world_ros_plugins</exec_depend>
+  <exec_depend>uuv_world_ros_plugins_msgs</exec_depend>
+
   <export>
     <metapackage/>
   </export>

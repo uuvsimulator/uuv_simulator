@@ -12,6 +12,9 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <exec_depend>oberon7_control</exec_depend>
+  <exec_depend>oberon7_description</exec_depend>
+
   <export>
     <metapackage/>
   </export>

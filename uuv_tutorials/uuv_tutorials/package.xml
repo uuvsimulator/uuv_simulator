@@ -16,6 +16,10 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <exec_depend>uuv_tutorial_disturbances</exec_depend>
+  <exec_depend>uuv_tutorial_dp_controller</exec_depend>
+  <exec_depend>uuv_tutorial_seabed_world</exec_depend>
+
   <export>
     <metapackage/>
   </export>

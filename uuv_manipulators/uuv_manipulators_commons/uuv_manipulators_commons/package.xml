@@ -12,6 +12,11 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <exec_depend>uuv_manipulators_control</exec_depend>
+  <exec_depend>uuv_manipulators_description</exec_depend>
+  <exec_depend>uuv_manipulators_kinematics</exec_depend>
+  <exec_depend>uuv_manipulators_msgs</exec_depend>
+
   <export>
     <metapackage/>
   </export>
