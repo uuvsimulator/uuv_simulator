@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_tutorials</name>
   <version>0.5.0</version>
   <description>Meta package for all templates and tutorials.</description>

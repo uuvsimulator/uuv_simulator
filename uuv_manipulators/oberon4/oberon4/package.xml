@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>oberon4</name>
   <version>0.5.0</version>
   <description>The oberon4 package</description>

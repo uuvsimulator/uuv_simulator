@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_manipulators_commons</name>
   <version>0.5.0</version>
   <description>Common nodes and configurations for underwater manipulators.</description>
