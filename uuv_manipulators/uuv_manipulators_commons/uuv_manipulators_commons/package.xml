@@ -11,4 +11,8 @@
   <license>Apache-2.0</license>
 
   <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <metapackage/>
+  </export>
 </package>

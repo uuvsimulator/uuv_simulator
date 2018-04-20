@@ -18,4 +18,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <export>
+    <metapackage/>
+  </export>
 </package>
