@@ -29,6 +29,6 @@
   </xacro:$ROBOT_NAME_base>
 
   <!-- Joint state publisher plugin -->
-  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="50"/>
+  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="10"/>
 
 </robot>
