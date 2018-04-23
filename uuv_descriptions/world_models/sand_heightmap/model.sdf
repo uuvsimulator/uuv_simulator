@@ -36,6 +36,9 @@
             <uri>file://Media/materials/scripts/sand.material</uri>
             <name>UUVSimulator/SandAndStones</name>
           </script>
+          <emissive>
+            0.6 0.6 0.6 1.0
+          </emissive>
         </material>
       </visual>
     </link>
