@@ -42,6 +42,8 @@ if __name__ == '__main__':
             print 'Negative start time, setting it to 0.0'
             start_time = 0.0
             start_now = True
+        else:
+            start_now = False
     else:
         start_now = True
 

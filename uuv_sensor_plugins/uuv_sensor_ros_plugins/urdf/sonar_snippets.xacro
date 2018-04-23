@@ -156,10 +156,10 @@
         <frameName>sonar${suffix}_link</frameName>
       </plugin>
       <!-- TODO: Separate switchable sonar version in another macro -->
-      <plugin name="switchable_sonar{suffix}_ros_interface" filename="libuuv_gazebo_ros_switchable_gpu_ray_sensor.so">
+      <!-- <plugin name="switchable_sonar{suffix}_ros_interface" filename="libuuv_gazebo_ros_switchable_gpu_ray_sensor.so">
           <namespace>${namespace}</namespace>
           <input_topic>${topic}</input_topic>
-      </plugin>
+      </plugin> -->
     </sensor>
   </gazebo>
   </xacro:macro>

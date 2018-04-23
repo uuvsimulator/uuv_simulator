@@ -22,6 +22,7 @@
 
   <visual name="ocean_surface">
     <pose>0 0 0 0 0 0</pose>
+    <cast_shadows>false</cast_shadows>
     <geometry>
       <mesh>
         <uri>file://Media/models/sea_surface_1000m_x_1000m.dae</uri>
@@ -38,6 +39,7 @@
 
   <visual name="ocean_below">
     <pose>0 0 0 3.14 0 0</pose>
+    <cast_shadows>false</cast_shadows>
     <geometry>
       <mesh>
         <uri>file://Media/models/sea_surface_1000m_x_1000m.dae</uri>
@@ -65,6 +67,9 @@
         <uri>file://Media/materials/scripts/sand.material</uri>
         <name>UUVSimulator/SandAndStones</name>
       </script>
+      <emissive>
+        0.6 0.6 0.6 1.0
+      </emissive>
     </material>
   </visual>
 
@@ -85,6 +90,9 @@
         <uri>file://Media/materials/scripts/water.material</uri>
         <name>UUVSimulator/SeaWall</name>
       </script>
+      <emissive>
+        0.6 0.6 0.6 1.0
+      </emissive>
     </material>
   </visual>
 
@@ -96,6 +104,9 @@
         <uri>file://Media/materials/scripts/water.material</uri>
         <name>UUVSimulator/SeaWall</name>
       </script>
+      <emissive>
+        0.6 0.6 0.6 1.0
+      </emissive>
     </material>
   </visual>
 
@@ -107,6 +118,9 @@
         <uri>file://Media/materials/scripts/water.material</uri>
         <name>UUVSimulator/SeaWall</name>
       </script>
+      <emissive>
+        0.6 0.6 0.6 1.0
+      </emissive>
     </material>
   </visual>
 
@@ -118,6 +132,9 @@
         <uri>file://Media/materials/scripts/water.material</uri>
         <name>UUVSimulator/SeaWall</name>
       </script>
+      <emissive>
+        0.6 0.6 0.6 1.0
+      </emissive>
     </material>
   </visual>
   </link>

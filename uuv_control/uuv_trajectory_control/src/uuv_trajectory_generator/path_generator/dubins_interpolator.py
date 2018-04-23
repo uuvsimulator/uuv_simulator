@@ -102,6 +102,7 @@ class DubinsInterpolator(PathGenerator):
         self._s = np.cumsum(lengths) / np.sum(lengths)
         mean_vel = np.mean(
             [self._waypoints.get_waypoint(k).max_forward_speed for k in range(self._waypoints.num_waypoints)])
+
         if self._duration is None:
             self._duration = np.sum(lengths) / mean_vel
         if self._start_time is None:

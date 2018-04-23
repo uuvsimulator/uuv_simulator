@@ -20,6 +20,7 @@ import rospy
 import logging
 import sys
 import tf
+from rospy.numpy_msg import numpy_msg
 from geometry_msgs.msg import WrenchStamped, PoseStamped, TwistStamped, \
     Vector3, Quaternion, Pose
 from uuv_auv_control_allocator.msg import AUVCommand
@@ -70,21 +71,22 @@ class DPControllerBase(object):
         if rospy.has_param('~use_stamped_poses_only'):
             self._use_stamped_poses_only = rospy.get_param('~use_stamped_poses_only')
 
+        # Flag indicating if the vehicle has only thrusters, otherwise
+        # the AUV allocation node will be used
+        self.thrusters_only = rospy.get_param('~thrusters_only', True)
+
         # Instance of the local planner for local trajectory generation
         self._local_planner = LocalPlanner(
             full_dof=planner_full_dof,
-            stamped_pose_only=self._use_stamped_poses_only)        
+            stamped_pose_only=self._use_stamped_poses_only,
+            thrusters_only=self.thrusters_only)        
 
         self._control_saturation = 5000
         # TODO: Fix the saturation term and how it is applied
         if rospy.has_param('~saturation'):
             self._thrust_saturation = rospy.get_param('~saturation')
             if self._control_saturation <= 0:
-                raise rospy.ROSException('Invalid control saturation forces')
-
-        # Flag indicating if the vehicle has only thrusters, otherwise
-        # the AUV allocation node will be used
-        self.thrusters_only = rospy.get_param('~thrusters_only', True)
+                raise rospy.ROSException('Invalid control saturation forces')        
 
         # Flag indicating either use of the AUV control allocator or 
         # direct command of fins and thruster
@@ -105,6 +107,8 @@ class DPControllerBase(object):
                 'auv_command_output', AUVCommand, queue_size=1)
         else:
             self._auv_command_pub = None
+
+        self._min_thrust = rospy.get_param('~min_thrust', 40.0)
 
         self._reference_pub = rospy.Publisher('reference',
                                               TrajectoryPoint,
@@ -148,6 +152,11 @@ class DPControllerBase(object):
                                         self.update_controller]
         # Initialize vehicle, if model based
         self._create_vehicle_model()
+        # Flag to indicate that odometry topic is receiving data
+        self._init_odom = False
+        # Subscribe to odometry topic
+        self._odom_topic_sub = rospy.Subscriber(
+            'odom', numpy_msg(Odometry), self._odometry_callback)
 
         # Stores last simulation time
         self._prev_t = -1.0
@@ -178,7 +187,7 @@ class DPControllerBase(object):
 
     @property
     def odom_is_init(self):
-        return self._vehicle_model.odom_is_init
+        return self._init_odom
 
     @property
     def error_pos_world(self):
@@ -238,7 +247,6 @@ class DPControllerBase(object):
         if self._vehicle_model is not None:
             del self._vehicle_model
         self._vehicle_model = Vehicle(
-            self._odometry_callbacks,
             inertial_frame_id=self._local_planner.inertial_frame_id)
 
     def _update_reference(self):
@@ -376,7 +384,7 @@ class DPControllerBase(object):
         msg.header.stamp = rospy.Time.now()
         msg.header.frame_id = '%s/%s' % (self._namespace, self._vehicle_model.body_frame_id)
         msg.surge_speed = surge_speed
-        msg.command.force.x = wrench[0]
+        msg.command.force.x = max(self._min_thrust, wrench[0])
         msg.command.force.y = wrench[1]
         msg.command.force.z = wrench[2]
         msg.command.torque.x = wrench[3]
@@ -384,4 +392,14 @@ class DPControllerBase(object):
         msg.command.torque.z = wrench[5]
 
         self._auv_command_pub.publish(msg)
-    
+
+    def _odometry_callback(self, msg):
+        """Odometry topic subscriber callback function."""
+        self._vehicle_model.update_odometry(msg)
+
+        if not self._init_odom:
+            self._init_odom = True
+
+        if len(self._odometry_callbacks):
+            for func in self._odometry_callbacks:
+                func()

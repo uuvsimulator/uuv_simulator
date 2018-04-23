@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from .vehicle import Vehicle
+from .sym_vehicle import SymVehicle
 from .dp_controller_base import DPControllerBase
 from .dp_pid_controller_base import DPPIDControllerBase
 from .dp_controller_local_planner import DPControllerLocalPlanner

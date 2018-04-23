@@ -49,6 +49,9 @@ class TrajectoryMarkerPublisher:
         self._station_keeping_mode_sub = rospy.Subscriber(
             'station_keeping_on', Bool, self._update_station_keeping_mode)
 
+        self._reference_sub = rospy.Subscriber(
+            'reference', TrajectoryPoint, self._reference_callback)
+
         # Waypoint set received
         self._waypoints = None
         # Trajectory received
@@ -74,6 +77,9 @@ class TrajectoryMarkerPublisher:
 
         self._waypoint_path_pub = rospy.Publisher(
             'waypoint_path_marker', Path, queue_size=1)
+
+        self._reference_marker_pub = rospy.Publisher(
+            'reference_marker', Marker, queue_size=1)
 
         self._update_markers_timer = rospy.Timer(
             rospy.Duration(0.5), self._update_markers)
@@ -132,6 +138,25 @@ class TrajectoryMarkerPublisher:
     def _update_traj_tracking_mode(self, msg):
         self._is_traj_tracking_on = msg.data
 
+    def _reference_callback(self, msg):
+        marker = Marker()
+        marker.header.stamp = rospy.Time.now()
+        marker.header.frame_id = msg.header.frame_id
+        marker.id = 0
+        marker.type = Marker.SPHERE
+        marker.action = Marker.MODIFY
+
+        marker.pose.position = msg.pose.position
+        marker.scale.x = 0.3
+        marker.scale.y = 0.3
+        marker.scale.z = 0.3
+
+        marker.color.a = 1.0
+        marker.color.r = 0.0
+        marker.color.g = 1.0
+        marker.color.b = 0.0
+
+        self._reference_marker_pub.publish(marker)
 
 if __name__ == '__main__':
     print('Starting trajectory and waypoint marker publisher')

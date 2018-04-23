@@ -122,7 +122,7 @@
             Kd: [$(arg Kd)]
             Ki: [$(arg Ki)]
             slope: [$(arg slope)]
-            inertial_frame_id: world_ned
+            inertial_frame_id: world_ned            
           </rosparam>
       </node>
 

@@ -22,6 +22,12 @@ import tf2_ros
 from tf.transformations import quaternion_from_euler, euler_from_quaternion, \
     quaternion_matrix, rotation_matrix, is_same_transform
 
+try: 
+    import casadi
+    casadi_exists = True
+except ImportError:
+    casadi_exists = False
+
 
 def cross_product_operator(x):
     """Return a cross product operator for the given vector."""
@@ -39,16 +45,11 @@ class Vehicle(object):
 
     INSTANCE = None
 
-    def __init__(self, list_odometry_callbacks=list(), sub_to_odometry=True,
-                 inertial_frame_id='world'):
+    def __init__(self, inertial_frame_id='world'):
         """Class constructor."""
         assert inertial_frame_id in ['world', 'world_ned']
         # Reading current namespace
         self._namespace = rospy.get_namespace()
-
-        # Load the list of callback function handles to be called in the
-        # odometry callback
-        self._list_callbacks = list_odometry_callbacks
 
         self._inertial_frame_id = inertial_frame_id
         self._body_frame_id = None
@@ -211,16 +212,7 @@ class Vehicle(object):
         # Acceleration in the body frame
         self._acc = np.zeros(6)
         # Generalized forces
-        self._gen_forces = np.zeros(6)
-        # Flag to indicate that odometry topic is receiving data
-        self._init_odom = False
-        if sub_to_odometry:
-            # Subscribe to odometry topic
-            self._odom_topic_sub = rospy.Subscriber(
-                'odom', numpy_msg(Odometry), self._odometry_callback)
-        else:
-            self._init_odom = True
-            self._odom_topic_sub = None
+        self._gen_forces = np.zeros(6)        
 
     @staticmethod
     def q_to_matrix(q):
@@ -253,12 +245,20 @@ class Vehicle(object):
         return self._inertial_frame_id
 
     @property
-    def odom_is_init(self):
-        return self._init_odom
-
-    @property
     def mass(self):
         return self._mass
+
+    @property
+    def volume(self):
+        return self._volume
+
+    @property
+    def gravity(self):
+        return self._gravity
+
+    @property
+    def density(self):
+        return self._density
 
     @property
     def height(self):
@@ -635,11 +635,8 @@ class Vehicle(object):
         jac[0:3, 0:3] = self.rotBtoI
         jac[3:6, 3:6] = self.TBtoIeuler
         return jac
-
-    def add_odometry_callback(self, callback):
-        self._list_callbacks.append(callback)
-
-    def _odometry_callback(self, msg):
+    
+    def update_odometry(self, msg):
         """Odometry topic subscriber callback function."""
         # The frames of reference delivered by the odometry seems to be as
         # follows
@@ -681,9 +678,3 @@ class Vehicle(object):
         # Store velocity vector
         self._vel = np.hstack((lin_vel, ang_vel))
 
-        if not self._init_odom:
-            self._init_odom = True
-
-        if len(self._list_callbacks):
-            for func in self._list_callbacks:
-                func()

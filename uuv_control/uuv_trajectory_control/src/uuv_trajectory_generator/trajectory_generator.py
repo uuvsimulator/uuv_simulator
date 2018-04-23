@@ -286,6 +286,12 @@ class TrajectoryGenerator(object):
             return True
         return False
 
+    def generate_reference(self, t, *args):
+        if self._wp_interp_on:
+            return self._wp_interp.generate_reference(t, *args)
+        else:
+            return None            
+
     def interpolate(self, t, *args):
         if not self._wp_interp_on:
             self._this_pnt = TrajectoryPoint()

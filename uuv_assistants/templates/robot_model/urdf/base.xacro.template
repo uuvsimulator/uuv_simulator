@@ -4,6 +4,8 @@
   <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
   <!-- Loading file with sensor macros -->
   <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
+  <!-- Loading the UUV simulator ROS plugin macros -->
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro"/>  
   <!-- Loading vehicle's specific macros -->
   <xacro:include filename="$(find $CATKIN_PACKAGE)/urdf/snippets.xacro"/>
 
@@ -31,7 +33,7 @@
   <xacro:property name="collision_mesh_file" value="file://$(find $CATKIN_PACKAGE)/meshes/vehicle.stl"/>
 
   <!-- Vehicle macro -->
-  <xacro:macro name="$ROBOT_NAME_base" params="namespace debug *gazebo">
+  <xacro:macro name="$ROBOT_NAME_base" params="namespace *gazebo">
 
       <!-- Rigid body description of the base link -->
       <link name="${namespace}/base_link">
@@ -70,7 +72,7 @@
     <xacro:insert_block name="gazebo"/>
 
     <!-- Include the thruster modules -->
-    <xacro:include filename="$(find $CATKIN_PACKAGE)/urdf/thrusters.xacro"/>
+    <xacro:include filename="$(find $CATKIN_PACKAGE)/urdf/actuators.xacro"/>
 
     <!-- Include the sensor modules -->
     <xacro:include filename="$(find $CATKIN_PACKAGE)/urdf/sensors.xacro"/>
