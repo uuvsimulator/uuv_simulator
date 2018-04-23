@@ -80,11 +80,11 @@ class DPControllerLocalPlanner(object):
         try:
             tf_trans_ned_to_enu = tf_buffer.lookup_transform(
                 'world', 'world_ned', rospy.Time(),
-                rospy.Duration(1))
+                rospy.Duration(10))
         except Exception, e:
-            raise rospy.Exception('No transform found between world and the '
-                                  'inertial_frame_id provided ' +
-                                  self.namespace)
+            raise rospy.ROSException('No transform found between world and the '
+                                     'inertial_frame_id provided ' +
+                                     rospy.get_namespace())
 
         if tf_trans_ned_to_enu is not None:
             self.transform_ned_to_enu = quaternion_matrix(
