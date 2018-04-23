@@ -320,7 +320,7 @@ class WPTrajectoryGenerator(object):
 
     def generate_pnt(self, t, pos, rot):
         """Return trajectory sample for the current parameter s."""
-        cur_s = self._cur_s
+        cur_s = (t - self.interpolator.start_time) / (self.interpolator.max_time - self.interpolator.start_time)
         last_s = cur_s - self.interpolator.s_step
         # Generate position and rotation quaternion for the current path
         # generator method
@@ -347,8 +347,8 @@ class WPTrajectoryGenerator(object):
                     else:
                         si = (ti - self.interpolator.start_time) / self.interpolator.max_time
                     pnts.append(dict(pos=self.interpolator.generate_pos(si),
-                                    rot=self.interpolator.generate_quat(si),
-                                    t=ti))
+                                     rot=self.interpolator.generate_quat(si),
+                                     t=ti))
                 if not self._stamped_pose_only:
                     vel, acc = self._motion_regression_6d(pnts, pnt.rotq, pnt.t)
                     pnt.vel = vel
@@ -391,6 +391,13 @@ class WPTrajectoryGenerator(object):
                ang_vel[1],
                ang_vel[2]]
         return np.array(vel)
+
+    def generate_reference(self, t, *args):
+        t = max(t, self.interpolator.start_time)
+        t = min(t, self.interpolator.max_time)
+        pnt = self.generate_pnt(t, *args)
+        pnt.t = t
+        return pnt
 
     def interpolate(self, t, *args):
         if not self._has_started:
