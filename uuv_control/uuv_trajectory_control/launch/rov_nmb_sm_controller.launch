@@ -15,6 +15,8 @@
   -->
   <arg name="use_ned_frame" default="false"/>
 
+  <arg name="max_forward_speed" default="0.5"/>
+
   <!-- If the file is not used, read the parameters from the user input -->
   <!-- Caution: no spaces between the parameter values -->
   <!-- The following controller parameters have been optimized for the RexROV
@@ -76,6 +78,7 @@
           <rosparam subst_value="true">
             inertial_frame_id: world_ned
             saturation: $(arg saturation)
+            max_forward_speed: $(arg max_forward_speed)
           </rosparam>
       </node>
 
@@ -96,6 +99,7 @@
           <rosparam subst_value="true">
             inertial_frame_id: world
             saturation: $(arg saturation)
+            max_forward_speed: $(arg max_forward_speed)
           </rosparam>
       </node>
     </group>
@@ -123,6 +127,7 @@
             Ki: [$(arg Ki)]
             slope: [$(arg slope)]
             inertial_frame_id: world_ned            
+            max_forward_speed: $(arg max_forward_speed)
           </rosparam>
       </node>
 
@@ -147,6 +152,7 @@
             Ki: [$(arg Ki)]
             slope: [$(arg slope)]
             inertial_frame_id: world
+            max_forward_speed: $(arg max_forward_speed)
           </rosparam>
       </node>
     </group>

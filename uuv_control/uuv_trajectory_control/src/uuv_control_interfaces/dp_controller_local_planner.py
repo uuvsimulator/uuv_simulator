@@ -55,7 +55,6 @@ class DPControllerLocalPlanner(object):
 
         # Max. allowed forward speed
         self._max_forward_speed = rospy.get_param('~max_forward_speed', 1.0)
-        self._max_forward_speed = max(1.0, self._max_forward_speed)
 
         self._idle_circle_center = None
         self._idle_z = None
@@ -82,9 +81,10 @@ class DPControllerLocalPlanner(object):
                 'world', 'world_ned', rospy.Time(),
                 rospy.Duration(10))
         except Exception, e:
-            raise rospy.ROSException('No transform found between world and the '
-                                     'inertial_frame_id provided ' +
-                                     rospy.get_namespace())
+            tf_trans_ned_to_enu = None
+            self._logger.error('No transform found between world and the '
+                               'inertial_frame_id provided ' +
+                               rospy.get_namespace())
 
         if tf_trans_ned_to_enu is not None:
             self.transform_ned_to_enu = quaternion_matrix(
