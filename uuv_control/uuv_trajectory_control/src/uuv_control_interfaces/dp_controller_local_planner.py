@@ -59,7 +59,10 @@ class DPControllerLocalPlanner(object):
         self._idle_circle_center = None
         self._idle_z = None
 
-        self._logger.info('Max. forward speed [m/s]=%.2f' % self._max_forward_speed)    
+        self._logger.info('Max. forward speed [m/s]=%.2f' % self._max_forward_speed)
+
+        self._idle_radius = rospy.get_param('~idle_radius', 10.0) 
+        assert self._idle_radius > 0
 
         # Is underactuated?
         self._is_underactuated = rospy.get_param('~is_underactuated', False)   
@@ -70,6 +73,8 @@ class DPControllerLocalPlanner(object):
             self.inertial_frame_id = rospy.get_param('~inertial_frame_id')
             assert len(self.inertial_frame_id) > 0
             assert self.inertial_frame_id in ['world', 'world_ned']
+
+        self._logger.info('Inertial frame ID=' + self.inertial_frame_id)
 
         rospy.set_param('inertial_frame_id', self.inertial_frame_id)
 
@@ -380,12 +385,6 @@ class DPControllerLocalPlanner(object):
                 z=self._vehicle_pose.pos[2],
                 max_forward_speed=max_speed,
                 heading_offset=heading)
-            self._logger.info('======================================================')
-            self._logger.info('FIRST WP WITH LOOK AHEAD')
-            self._logger.info('pos=' + str(self._vehicle_pose.pos))
-            self._logger.info('wp=')
-            self._logger.info(init_wp)
-            self._logger.info('======================================================')
         first_wp = self._traj_interpolator.get_waypoints().get_waypoint(0)
 
         dx = first_wp.x - init_wp.x
