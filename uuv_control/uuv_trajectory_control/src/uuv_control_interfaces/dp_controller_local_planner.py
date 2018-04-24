@@ -124,6 +124,9 @@ class DPControllerLocalPlanner(object):
         # Teleop node twist message
         self._teleop_vel_ref = None
 
+        self._timeout_idle_mode = rospy.get_param('~timeout_idle_mode', 5)
+        self._start_count_idle = rospy.get_time()
+
         self._thrusters_only = thrusters_only
 
         if not self._thrusters_only:
@@ -868,6 +871,7 @@ class DPControllerLocalPlanner(object):
                         self._this_ref_pnt = deepcopy(self._vehicle_pose)
                 self._this_ref_pnt.vel = np.zeros(6)
                 self._this_ref_pnt.acc = np.zeros(6)
+                self._start_count_idle = rospy.get_time()
                 self.set_station_keeping(True)
                 self.set_automatic_mode(False)
                 self.set_trajectory_running(False)
@@ -887,7 +891,7 @@ class DPControllerLocalPlanner(object):
                 self._this_ref_pnt = self._calc_teleop_reference()
 
             #######################################################################
-            if not self._thrusters_only and not self._is_teleop_active:                
+            if not self._thrusters_only and not self._is_teleop_active and rospy.get_time() - self._start_count_idle > self._timeout_idle_mode:                
                 self._logger.info('AUV STATION KEEPING')
                 if self._station_keeping_center is None:
                     self._station_keeping_center = self._this_ref_pnt
