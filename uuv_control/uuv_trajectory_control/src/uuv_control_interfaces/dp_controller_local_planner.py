@@ -43,7 +43,8 @@ class DPControllerLocalPlanner(object):
     def __init__(self, full_dof=False, stamped_pose_only=False, thrusters_only=True):
         self._logger = logging.getLogger('dp_local_planner')
         out_hdlr = logging.StreamHandler(sys.stdout)
-        out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+        out_hdlr.setFormatter(logging.Formatter(
+            rospy.get_namespace().replace('/', '').upper() + ' -- %(asctime)s | %(levelname)s | %(module)s | %(message)s'))
         out_hdlr.setLevel(logging.INFO)
         self._logger.addHandler(out_hdlr)
         self._logger.setLevel(logging.INFO)
@@ -224,6 +225,7 @@ class DPControllerLocalPlanner(object):
                                               self.inertial_frame_id,
                                               output.inertial_frame_id)
         output.inertial_frame_id = self.inertial_frame_id
+        output.max_forward_speed = min(waypoint.max_forward_speed, self._max_forward_speed)
         return output
 
     def _transform_waypoint_set(self, waypoint_set):

@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from rospy import get_namespace
 import numpy as np
 from copy import deepcopy
 from .trajectory_point import TrajectoryPoint
@@ -42,7 +43,8 @@ class WPTrajectoryGenerator(object):
         """Class constructor."""
         self._logger = logging.getLogger('wp_trajectory_generator')
         out_hdlr = logging.StreamHandler(sys.stdout)
-        out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+        out_hdlr.setFormatter(logging.Formatter(
+            get_namespace().replace('/', '').upper() + ' -- %(asctime)s | %(levelname)s | %(module)s | %(message)s'))
         out_hdlr.setLevel(logging.INFO)
         self._logger.addHandler(out_hdlr)
         self._logger.setLevel(logging.INFO)
