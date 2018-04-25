@@ -397,7 +397,7 @@ class DPControllerLocalPlanner(object):
         # One new waypoint at each meter
         self._logger.info('Adding waypoints to approach the first position in the given waypoint set')
         steps = int(np.floor(first_wp.dist(init_wp.pos)) / 10)
-        if steps > 0:
+        if steps > 0 and self._traj_interpolator.get_interp_method() != 'dubins':
             for i in range(1, steps):
                 wp = uuv_waypoints.Waypoint(
                     x=first_wp.x - i * dx / steps,
