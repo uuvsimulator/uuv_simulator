@@ -51,7 +51,8 @@ class DPControllerBase(object):
         self._is_init = False
         self._logger = logging.getLogger('dp_controller')
         out_hdlr = logging.StreamHandler(sys.stdout)
-        out_hdlr.setFormatter(logging.Formatter('%(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+        out_hdlr.setFormatter(logging.Formatter(
+            rospy.get_namespace().replace('/', '').upper() + ' -- %(asctime)s | %(levelname)s | %(module)s | %(message)s'))
         out_hdlr.setLevel(logging.INFO)
         self._logger.addHandler(out_hdlr)
         self._logger.setLevel(logging.INFO)
