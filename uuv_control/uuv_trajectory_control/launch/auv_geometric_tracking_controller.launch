@@ -5,30 +5,34 @@
   <arg name="use_params_file" default="false"/>
   <!-- Flag to start the trajectory visual markers publisher -->
   <arg name="gui_on" default="true"/>
+  <!--
+    Set this flag to true to compute both reference and error vectors wrt
+    world_ned frame
+  -->
+  <arg name="use_ned_frame" default="false"/>
 
-  <!-- AUV controller parameters that will be used in case the use_params_file
-       flag is set to false -->
-  <arg name="thrust_gain" default="100"/>
-  <arg name="roll_gain" default="0.2"/>
-  <arg name="pitch_gain" default="1.0"/>
-  <arg name="yaw_gain" default="0.5"/>
-  <arg name="max_fin_angle" default="4.71238898"/>
-  <arg name="n_fins" default="4"/>
-  <arg name="fin_contribution_roll" default="1,1,1,1"/>
-  <arg name="fin_contribution_pitch" default="1,1,-1,-1"/>
-  <arg name="fin_contribution_yaw" default="-1,1,1,-1"/>
-  <arg name="fin_topic_prefix" default="fins/"/>
-  <arg name="fin_topic_suffix" default="/input"/>
-  <arg name="thruster_topic" default="thrusters/0/input"/>
-  <arg name="thruster_model_name" default="proportional"/>
-  <arg name="max_thrust" default="100"/>
+  <arg name="max_forward_speed" default="2"/>
+  <arg name="dubins_radius" default="10"/>
+  <arg name="dubins_max_pitch" default="0.09"/>
   <arg name="min_thrust" default="70"/>
-  <arg name="thruster_rotor_gain" default="0.0009"/>
-  <arg name="pitch_abs_saturation" default="0.2"/>
-  <arg name="yaw_abs_saturation" default="0.3"/>
+  <arg name="max_thrust" default="200"/>
+  <arg name="thruster_topic" default="thrusters/0/input"/>
+  <arg name="thrust_gain" default="1"/>
+  <arg name="gain_roll" default="1"/>
+  <arg name="gain_pitch" default="1"/>
+  <arg name="gain_yaw" default="1"/>
+  <arg name="n_fins" default="4"/>
+  <arg name="map_roll" default="0,0,0,0"/>
+  <arg name="map_pitch" default="0,0,0,0"/>
+  <arg name="map_yaw" default="0,0,0,0"/>
+  <arg name="max_fin_angle" default="0.0"/>
+  <arg name="fin_topic_prefix" default="fins"/>
+  <arg name="fin_topic_suffix" default="input"/>
+  <arg name="idle_radius" default="10.0"/>
+  <arg name="look_ahead_delay" default="5.0"/>
+  <arg name="desired_pitch_limit" default="0.26"/>
+  <arg name="yaw_error_limit" default="1.0"/>
 
-  <!-- In case use_param_file is set to true, replace the path to the YAML file containing the parameters -->
-  <arg name="controller_config_file" default="$(find uuv_trajectory_control)/config/controllers/ua_pid/$(arg uuv_name)/params.yaml"/>
   <!-- This node just reads the trajectory and waypoint topics and publishes
        visualization markers for RViz -->
   <group if="$(arg gui_on)">
@@ -36,72 +40,78 @@
       <node pkg="uuv_control_utils"
             type="trajectory_marker_publisher.py"
             name="trajectory_marker_publisher"
-            output="screen">
-        <remap from="trajectory" to="dp_controller/trajectory"/>
-        <remap from="waypoints" to="dp_controller/waypoints"/>
-      </node>
+            output="screen"/>
     </group>
   </group>
 
-  <group if="$(arg use_params_file)">
     <group ns="$(arg uuv_name)">
       <node pkg="uuv_trajectory_control"
             type="auv_geometric_tracking_controller.py"
             name="auv_geometric_tracking_controller"
-            output="screen">
-        <!-- Remap necessary topics -->
+            output="screen"
+            unless="$(arg use_ned_frame)">
         <remap from="odom" to="pose_gt"/>
-        <remap from="trajectory" to="dp_controller/trajectory"/>
-        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
-        <remap from="waypoints" to="dp_controller/waypoints"/>
-        <remap from="error" to="dp_controller/error"/>
-        <remap from="reference" to="dp_controller/reference"/>
-        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
-        <rosparam file="$(arg controller_config_file)" command="load"/>
-      </node>
-    </group>
-  </group>
-
-  <group unless="$(arg use_params_file)">
-    <group ns="$(arg uuv_name)">
-      <node pkg="uuv_trajectory_control"
-            type="auv_geometric_tracking_controller.py"
-            name="auv_geometric_tracking_controller"
-            output="screen">
-        <!-- Remap necessary topics -->
-        <remap from="odom" to="pose_gt"/>
-        <remap from="trajectory" to="dp_controller/trajectory"/>
-        <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
-        <remap from="waypoints" to="dp_controller/waypoints"/>
-        <remap from="error" to="dp_controller/error"/>
-        <remap from="reference" to="dp_controller/reference"/>
-        <remap from="thruster_output" to="thruster_manager/input_stamped"/>
-        <!-- Controller parameters -->
         <rosparam subst_value="true">
-          saturation: 1000
-          thrust_gain: $(arg thrust_gain)
+          max_forward_speed: $(arg max_forward_speed)
+          is_underactuated: true
+          inertial_frame_id: world
           min_thrust: $(arg min_thrust)
-          roll_gain: $(arg roll_gain)
-          pitch_gain: $(arg pitch_gain)
-          yaw_gain: $(arg yaw_gain)
-          pitch_abs_saturation: $(arg pitch_abs_saturation)
-          yaw_abs_saturation: $(arg yaw_abs_saturation)
-          max_fin_angle: $(arg max_fin_angle)
+          max_thrust: $(arg max_thrust)
+          thruster_topic: $(arg thruster_topic)
+          thrust_gain: $(arg thrust_gain)
+          gain_roll: $(arg gain_roll)
+          gain_pitch: $(arg gain_pitch)
+          gain_yaw: $(arg gain_yaw)
           n_fins: $(arg n_fins)
-          fin_contribution_roll: [$(arg fin_contribution_roll)]
-          fin_contribution_pitch: [$(arg fin_contribution_pitch)]
-          fin_contribution_yaw: [$(arg fin_contribution_yaw)]
+          map_roll: [$(arg map_roll)]
+          map_pitch: [$(arg map_pitch)]
+          map_yaw: [$(arg map_yaw)]
           fin_topic_prefix: $(arg fin_topic_prefix)
           fin_topic_suffix: $(arg fin_topic_suffix)
+          max_fin_angle: $(arg max_fin_angle)
+          idle_radius: $(arg idle_radius)
+          look_ahead_delay: $(arg look_ahead_delay)
+          desired_pitch_limit: $(arg desired_pitch_limit)
+          yaw_error_limit: $(arg yaw_error_limit)
+          dubins:
+            radius: $(arg dubins_radius)
+            max_pitch: $(arg dubins_max_pitch)
+        </rosparam>
+      </node>
+
+      <node pkg="uuv_trajectory_control"
+            type="auv_geometric_tracking_controller.py"
+            name="auv_geometric_tracking_controller"
+            output="screen"
+            if="$(arg use_ned_frame)">
+        <remap from="odom" to="pose_gt_ned"/>
+        <rosparam subst_value="true">
+          max_forward_speed: $(arg max_forward_speed)
+          is_underactuated: true
+          inertial_frame_id: world_ned
+          min_thrust: $(arg min_thrust)
+          max_thrust: $(arg max_thrust)
           thruster_topic: $(arg thruster_topic)
-          thruster_model:
-            name: proportional
-            max_thrust: $(arg max_thrust)
-            params:
-              gain: $(arg thruster_rotor_gain)
+          thrust_gain: $(arg thrust_gain)
+          gain_roll: $(arg gain_roll)
+          gain_pitch: $(arg gain_pitch)
+          gain_yaw: $(arg gain_yaw)
+          n_fins: $(arg n_fins)
+          map_roll: [$(arg map_roll)]
+          map_pitch: [$(arg map_pitch)]
+          map_yaw: [$(arg map_yaw)]
+          fin_topic_prefix: $(arg fin_topic_prefix)
+          fin_topic_suffix: $(arg fin_topic_suffix)
+          max_fin_angle: $(arg max_fin_angle)
+          idle_radius: $(arg idle_radius)
+          look_ahead_delay: $(arg look_ahead_delay)
+          desired_pitch_limit: $(arg desired_pitch_limit)
+          yaw_error_limit: $(arg yaw_error_limit)
+          dubins:
+            radius: $(arg dubins_radius)
+            max_pitch: $(arg dubins_max_pitch)
         </rosparam>
       </node>
     </group>
-  </group>
 
 </launch>

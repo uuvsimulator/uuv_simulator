@@ -1,281 +1,222 @@
 #!/usr/bin/env python
-# Copyright (c) 2014 The UUV Simulator Authors.
-# All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-import numpy as np
+import math
+import numpy
 import rospy
-from uuv_control_msgs.srv import *
-from uuv_control_interfaces.dp_controller_base import DPControllerBase
+
+import geometry_msgs.msg as geometry_msgs
+import uuv_control_msgs.msg as uuv_control_msgs
+import tf
+import tf.transformations as trans
+
+from rospy.numpy_msg import numpy_msg
+from nav_msgs.msg import Odometry
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
-from uuv_thrusters.models import Thruster
-from tf.transformations import euler_from_quaternion
+from uuv_control_msgs.msg import TrajectoryPoint
+from uuv_control_interfaces import DPControllerLocalPlanner
 
 
-class AUVGeometricTrackingController(DPControllerBase):
-    """
-    Simple P-controller for finned AUVs.
-    """
-    def __init__(self, *args):
-        # Start the super class
-        DPControllerBase.__init__(self, *args)
-        self._logger.info('Initializing: AUV Geometric Tracking Controller')
+class AUVGeometricTrackingController:
+    def __init__(self):
+        print('AUVGeometricTrackingController initializing')
 
-        # Thrust gain
-        self._thrust_gain = 0.0
+        self.local_planner = DPControllerLocalPlanner(full_dof=True, thrusters_only=False)
 
-        if rospy.has_param('~thrust_gain'):
-            self._thrust_gain = rospy.get_param('~thrust_gain')
+        # Reading the minimum thrust generated
+        self.min_thrust = rospy.get_param('~min_thrust', 0)
+        assert self.min_thrust > 0
+        
+        # Reading the maximum thrust generated
+        self.max_thrust = rospy.get_param('~max_thrust', 0)
+        assert self.max_thrust > 0 and self.max_thrust > self.min_thrust
 
-        self._min_thrust = 0.0
-        if rospy.has_param('~min_thrust'):
-            self._min_thrust = rospy.get_param('~min_thrust')
+        # Reading the thruster topic
+        self.thruster_topic = rospy.get_param('~thruster_topic', 'thrusters/0/input')
+        assert len(self.thruster_topic) > 0
 
-        self._min_thrust = max(0.0, self._min_thrust)
+        # Reading the thruster gain
+        self.gain_thrust = rospy.get_param('~thrust_gain', 0.0)
+        assert self.gain_thrust > 0
 
-        if self._thrust_gain <= 0:
-            raise rospy.ROSException('Thrust gain must be greater than zero')
+        # Reading the roll gain
+        self.gain_roll = rospy.get_param('~gain_roll', 0.0)
+        assert self.gain_roll > 0
 
-        self._logger.info('Thrust gain=' + str(self._thrust_gain))
+        # Reading the pitch gain
+        self.gain_pitch = rospy.get_param('~gain_pitch', 0.0)
+        assert self.gain_pitch > 0
 
-        # Maximum absolute fin angle displacement should be given in radians
-        self._max_fin_angle = 0.0
+        # Reading the yaw gain
+        self.gain_yaw = rospy.get_param('~gain_yaw', 0.0)
+        assert self.gain_yaw > 0
 
-        if rospy.has_param('~max_fin_angle'):
-            self._max_fin_angle = rospy.get_param('~max_fin_angle')
+        # Reading the saturation for the desired pitch
+        self.desired_pitch_limit = rospy.get_param('~desired_pitch_limit', 15 * numpy.pi / 180)
+        assert self.desired_pitch_limit > 0
 
-        if self._max_fin_angle <= 0.0:
-            raise rospy.ROSException('Max. fin displacement angle must be greater than zero')
+        # Reading the saturation for yaw error
+        self.yaw_error_limit = rospy.get_param('~yaw_error_limit', 1.0)
+        assert self.yaw_error_limit > 0 
 
-        # Proportional gain for the roll angle
-        self._roll_gain = 0.0
-        if rospy.has_param('~roll_gain'):
-            self._roll_gain = rospy.get_param('~roll_gain')
+        # Reading the number of fins
+        self.n_fins = rospy.get_param('~n_fins', 0)
+        assert self.n_fins > 0
 
-        if self._roll_gain <= 0:
-            raise rospy.ROSException('Roll gain must be greater than zero')
+        # Reading the mapping for roll commands
+        self.map_roll = rospy.get_param('~map_roll', [0, 0, 0, 0])
+        assert isinstance(self.map_roll, list)
+        assert len(self.map_roll) == self.n_fins
+        
+        # Reading the mapping for the pitch commands
+        self.map_pitch = rospy.get_param('~map_pitch', [0, 0, 0, 0])
+        assert isinstance(self.map_pitch, list)
+        assert len(self.map_pitch) == self.n_fins
 
-        self._logger.info('Roll gain=' + str(self._roll_gain))
+        # Reading the mapping for the yaw commands
+        self.map_yaw = rospy.get_param('~map_yaw', [0, 0, 0, 0])
+        assert isinstance(self.map_yaw, list)
+        assert len(self.map_yaw) == self.n_fins
 
-        # Proportional gain for the pitch angle
-        self._pitch_gain = 0.0
-        if rospy.has_param('~pitch_gain'):
-            self._pitch_gain = rospy.get_param('~pitch_gain')
+        self.max_fin_angle = rospy.get_param('~max_fin_angle', 0.0)
+        assert self.max_fin_angle > 0
 
-        if self._pitch_gain <= 0:
-            raise rospy.ROSException('Pitch gain must be greater than zero')
+        # Reading the fin input topic prefix
+        self.fin_topic_prefix = rospy.get_param('~fin_topic_prefix', 'fins')
+        self.fin_topic_suffix = rospy.get_param('~fin_topic_suffix', 'input')
 
-        self._logger.info('Pitch gain=' + str(self._pitch_gain))
+        self.rpy_to_fins = numpy.vstack((self.map_roll, self.map_pitch, self.map_yaw)).T
 
-        if not rospy.has_param('~pitch_abs_saturation'):
-            raise rospy.ROSException('Pitch absolute saturation missing')
+        self.pub_thrust = rospy.Publisher(
+            self.thruster_topic, FloatStamped, queue_size=10)
+        
+        self.pub_cmd = list()
 
-        self._pitch_abs_saturation = rospy.get_param('~pitch_abs_saturation')
+        for i in range(self.n_fins):
+            topic = '%s/%d/%s' % (self.fin_topic_prefix, i, self.fin_topic_suffix)
+            self.pub_cmd.append(
+              rospy.Publisher(topic, FloatStamped, queue_size=10))
 
-        if self._pitch_abs_saturation <= 0:
-            raise rospy.ROSException('Absolute saturation for pitch must be'
-                                     ' greater than zero')
+        self.odometry_sub = rospy.Subscriber(
+            'odom', numpy_msg(Odometry), self.odometry_callback)
 
-        # Proportional gain for the yaw angle
-        self._yaw_gain = 0.0
-        if rospy.has_param('~yaw_gain'):
-            self._yaw_gain = rospy.get_param('~yaw_gain')
+        self.reference_pub = rospy.Publisher(
+            'reference', TrajectoryPoint, queue_size=1)
 
-        if self._yaw_gain <= 0:
-            raise rospy.ROSException('Yaw gain must be greater than zero')
-
-        self._logger.info('Yaw gain=' + str(self._yaw_gain))
-
-        if not rospy.has_param('~yaw_abs_saturation'):
-            raise rospy.ROSException('Yaw absolute saturation missing')
-
-        self._yaw_abs_saturation = rospy.get_param('~yaw_abs_saturation')
-
-        if self._yaw_abs_saturation <= 0:
-            raise rospy.ROSException('Absolute saturation for yaw must be'
-                                     ' greater than zero')
-
-        # Number of fins
-        self._n_fins = 4
-        if rospy.has_param('~n_fins'):
-            self._n_fins = rospy.get_param('~n_fins')
-
-        if self._n_fins <= 0:
-            raise rospy.ROSException('Number of fins must be greater than zero')
-
-        self._logger.info('Number of fins=' + str(self._n_fins))
-
-        # Contribution of each fin to the orientation angles (roll, pitch and
-        # yaw)
-        self._fin_contribution_roll = [0, 0, 0, 0]
-        self._fin_contribution_pitch = [0, 0, 0, 0]
-        self._fin_contribution_yaw = [0, 0, 0, 0]
-
-        if rospy.has_param('~fin_contribution_roll'):
-            self._fin_contribution_roll = np.array(
-                rospy.get_param('~fin_contribution_roll'))
-
-        if self._fin_contribution_roll.size != self._n_fins:
-            raise rospy.ROSException(
-                'Number of elements in the roll contribution vector must be'
-                ' equal to the number of fins')
-
-        if np.max(self._fin_contribution_roll) > 1 or \
-            np.min(self._fin_contribution_roll) < -1:
-            raise rospy.ROSException('Values in the roll contribution vector'
-                ' must be -1 <= i <= 1')
-
-        if rospy.has_param('~fin_contribution_pitch'):
-            self._fin_contribution_pitch = np.array(
-                rospy.get_param('~fin_contribution_pitch'))
-
-        if self._fin_contribution_pitch.size != self._n_fins:
-            raise rospy.ROSException(
-                'Number of elements in the pitch contribution vector must be'
-                ' equal to the number of fins')
-
-        if np.max(self._fin_contribution_pitch) > 1 or \
-            np.min(self._fin_contribution_pitch) < -1:
-            raise rospy.ROSException('Values in the pitch contribution vector'
-                ' must be -1 <= i <= 1')
-
-        if rospy.has_param('~fin_contribution_yaw'):
-            self._fin_contribution_yaw = np.array(
-                rospy.get_param('~fin_contribution_yaw'))
-
-        if self._fin_contribution_yaw.size != self._n_fins:
-            raise rospy.ROSException(
-                'Number of elements in the yaw contribution vector must be'
-                ' equal to the number of fins')
-
-        if np.max(self._fin_contribution_yaw) > 1 or \
-            np.min(self._fin_contribution_yaw) < -1:
-            raise rospy.ROSException('Values in the yaw contribution vector'
-                ' must be -1 <= i <= 1')
-
-        # Generating vehicle orientation to fins conversion matrix
-        self._rpy_to_fins = np.vstack((self._fin_contribution_roll,
-                                       self._fin_contribution_pitch,
-                                       self._fin_contribution_yaw)).T
-
-        # Prefix to the fin command topic relative to the robot model
-        self._fin_topic_prefix = 'fins/'
-
-        if rospy.has_param('~fin_topic_prefix'):
-            self._fin_topic_prefix = rospy.get_param('~fin_topic_prefix')
-
-        # Fin command topic suffix
-        self._fin_topic_suffix = '/input'
-
-        if rospy.has_param('~fin_topic_suffix'):
-            self._fin_topic_suffix = rospy.get_param('~fin_topic_suffix')
-
-        # Initialize fin command publishers
-        self._fin_pubs = list()
-        for i in range(self._n_fins):
-            topic = self._fin_topic_prefix + str(i) + self._fin_topic_suffix
-            self._fin_pubs.append(rospy.Publisher(topic, FloatStamped,
-                                                  queue_size=10))
-            self._logger.info('Publishing command to #%i fin=%s' % (i, topic))
-
-        # Suffix for the thruster topic relative to the robot model
-        self._thruster_topic = 'thrusters/0/input'
-
-        if rospy.has_param('~thruster_topic'):
-            self._thruster_topic = rospy.get_param('~thruster_topic')
-
-        # Get thruster parameters
-        if not rospy.has_param('~thruster_model'):
-            raise rospy.ROSException('Thruster parameters were not provided')
-
-        self._thruster_params = rospy.get_param('~thruster_model')
-
-        if 'max_thrust' not in self._thruster_params:
-            raise rospy.ROSException('No limit to thruster output was given')
-        self._thruster_model = Thruster.create_thruster(
-                    self._thruster_params['name'], 0,
-                    self._thruster_topic, None, None,
-                    **self._thruster_params['params'])
-
-        self._logger.info('Publishing to thruster=%s' % self._thruster_topic)
-
-        self._is_init = True
-        self._logger.info('AUV Geometric Tracking Controller ready!')
+        # Publish error (for debugging)
+        self.error_pub = rospy.Publisher(
+            'error', TrajectoryPoint, queue_size=1)
 
     @staticmethod
     def unwrap_angle(t):
-        return np.arctan2(np.sin(t), np.cos(t))
+        return math.atan2(math.sin(t),math.cos(t))
 
-    def update_controller(self):
-        if not self._is_init:
-            self._logger.info('Controller not initialized yet')
-            return False
+    @staticmethod
+    def vector_to_numpy(v):
+        return numpy.array([v.x, v.y, v.z])
 
-        world_pos_error = self._vehicle_model.rotBtoI.dot(self._errors['pos'])
-        world_rpy = euler_from_quaternion(self._vehicle_model.quat, axes='sxyz')
+    @staticmethod
+    def quaternion_to_numpy(q):
+        return numpy.array([q.x, q.y, q.z, q.w])
 
-        thrust_control = self._thrust_gain * np.linalg.norm(self._errors['pos'])
+    def odometry_callback(self, msg):
+        """Handle odometry callback: The actual control loop."""
 
-        # Check for saturation
-        thrust_control = min(self._thruster_params['max_thrust'], thrust_control)
-        thrust_control = -1 * max(self._min_thrust, thrust_control)
-        # Not using the custom wrench publisher that is configured per default
-        # for thruster-actuated vehicles
+        # Update local planner's vehicle position and orientation
+        pos = [msg.pose.pose.position.x,
+               msg.pose.pose.position.y,
+               msg.pose.pose.position.z]
+
+        quat = [msg.pose.pose.orientation.x,
+                msg.pose.pose.orientation.y,
+                msg.pose.pose.orientation.z,
+                msg.pose.pose.orientation.w]
+
+        self.local_planner.update_vehicle_pose(pos, quat)
+
+        # Compute the desired position
+        t = rospy.Time.now().to_sec()
+        des = self.local_planner.interpolate(t)
+
+        # Publish the reference
+        ref_msg = TrajectoryPoint()
+        ref_msg.header.stamp = rospy.Time.now()
+        ref_msg.header.frame_id = self.local_planner.inertial_frame_id
+        ref_msg.pose.position = geometry_msgs.Vector3(*des.p)
+        ref_msg.pose.orientation = geometry_msgs.Quaternion(*des.q)
+        
+        self.reference_pub.publish(ref_msg)
+
+        p = self.vector_to_numpy(msg.pose.pose.position)
+
+        q = self.quaternion_to_numpy(msg.pose.pose.orientation)
+        R = trans.quaternion_matrix(q)[0:3, 0:3]
+        v = self.vector_to_numpy(msg.twist.twist.linear)
+        rpy = trans.euler_from_quaternion(q, axes='sxyz')
+
+        # Compute tracking errors wrt world frame:
+        e_p = des.p - p
+        n_e_p = numpy.linalg.norm(e_p)
+
+        # Generate error message
+        error_msg = TrajectoryPoint()
+        error_msg.header.stamp = rospy.Time.now()
+        error_msg.header.frame_id = self.local_planner.inertial_frame_id
+        error_msg.pose.position = geometry_msgs.Vector3(*e_p)
+        error_msg.pose.orientation = geometry_msgs.Quaternion(
+            *trans.quaternion_multiply(trans.quaternion_inverse(q), des.q))
 
         # Based on position tracking error: Compute desired orientation
-        pitch_des = -1 * np.arctan2(world_pos_error[2],
-                                    np.linalg.norm(world_pos_error[0:2]))
+        pitch_des = -math.atan2(e_p[2], numpy.linalg.norm(e_p[0:2]))
         # Limit desired pitch angle:
-        pitch_err = self.unwrap_angle(pitch_des - world_rpy[1])
+        pitch_des = max(-self.desired_pitch_limit, min(pitch_des, self.desired_pitch_limit))
 
-        yaw_des = np.arctan2(world_pos_error[1], world_pos_error[0])
-        yaw_err = self.unwrap_angle(yaw_des - world_rpy[2])
+        yaw_des = math.atan2(e_p[1], e_p[0])
+        yaw_err = self.unwrap_angle(yaw_des - rpy[2])
+        
         # Limit yaw effort
-        yaw_err = min(np.pi / 4, max(-np.pi / 4, yaw_err))
+        yaw_err = min(self.yaw_error_limit, max(-self.yaw_error_limit, yaw_err))
 
-        rpy_control = np.array([self._roll_gain * world_rpy[0],
-                                self._pitch_gain * pitch_err,
-                                self._yaw_gain * yaw_err])
+        # Roll: P controller to keep roll == 0
+        roll_control = self.gain_roll * rpy[0]
 
-        fins_command = self._rpy_to_fins.dot(rpy_control)
+        # Pitch: P controller to reach desired pitch angle
+        pitch_control = self.gain_pitch * self.unwrap_angle(pitch_des - rpy[1])
+
+        # Yaw: P controller to reach desired yaw angle
+        yaw_control = self.gain_yaw * yaw_err
+
+        # Limit thrust
+        thrust = min(self.max_thrust, self.gain_thrust * n_e_p)
+        thrust = max(self.min_thrust, thrust)
+
+        rpy = numpy.array([roll_control, pitch_control, yaw_control])
+
+        # Transform orientation command into fin angle set points
+        fins = self.rpy_to_fins.dot(rpy)
 
         # Check for saturation
-        for i in range(fins_command.size):
-            if np.abs(fins_command[i]) > self._max_fin_angle:
-                fins_command[i] = np.sign(fins_command[i]) * self._max_fin_angle
-
-        # Publishing the commands to thruster and fins
-        self._thruster_model.publish_command(thrust_control)
+        max_angle = max(numpy.abs(fins))
+        if max_angle >= self.max_fin_angle:
+            fins = fins*max_angle/self.max_fin_angle
 
         cmd = FloatStamped()
         cmd.header.stamp = rospy.Time.now()
+        cmd.data = -1 * thrust
+        self.pub_thrust.publish(cmd)
 
-        for i in range(self._n_fins):
-            cmd.data = fins_command[i]
-            self._fin_pubs[i].publish(cmd)
+        for i in range(self.n_fins):
+            cmd.data = min(fins[i], self.max_fin_angle)
+            cmd.data = max(cmd.data, -self.max_fin_angle)
+            self.pub_cmd[i].publish(cmd)
 
-        return True
+        self.error_pub.publish(error_msg)
 
 
 if __name__ == '__main__':
-    print('Starting AUV Geometric Tracking Controller')
+    print('Starting AUV trajectory tracker')
     rospy.init_node('auv_geometric_tracking_controller')
 
     try:
-        # Setting up the local planner to generate trajectories in 6 DoF
-        node = AUVGeometricTrackingController(False, list(), True)
+        node = AUVGeometricTrackingController()
         rospy.spin()
     except rospy.ROSInterruptException:
         print('caught exception')
-    print('exiting')
