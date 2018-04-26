@@ -17,7 +17,7 @@ import rospy
 import numpy as np
 from copy import deepcopy
 from os.path import isfile
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Float64
 from geometry_msgs.msg import Twist
 from uuv_control_msgs.srv import *
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint, WaypointSet
@@ -169,7 +169,9 @@ class DPControllerLocalPlanner(object):
 
         # Subscribing topic for the trajectory given to the controller
         self._input_trajectory_sub = rospy.Subscriber(
-            'input_trajectory', Trajectory, self._update_trajectory_from_msg)        
+            'input_trajectory', Trajectory, self._update_trajectory_from_msg)      
+
+        self._max_time_pub = rospy.Publisher('time_to_target', Float64, queue_size=1)  
 
         self._traj_info_update_timer = rospy.Timer(rospy.Duration(0.2),
             self._publish_trajectory_info)
@@ -859,6 +861,8 @@ class DPControllerLocalPlanner(object):
             if self._look_ahead_delay > 0:
                 self._this_ref_pnt = self.generate_reference(t + self._look_ahead_delay)
 
+            self._max_time_pub.publish(Float64(self._traj_interpolator.get_max_time() - rospy.get_time()))
+
             if not self._traj_running:
                 self._traj_running = True
                 self._logger.info(rospy.get_namespace() + ' - Trajectory running')
@@ -892,7 +896,7 @@ class DPControllerLocalPlanner(object):
         elif self._station_keeping_on:
             if self._is_teleop_active:
                 self._this_ref_pnt = self._calc_teleop_reference()
-
+            self._max_time_pub.publish(Float64(0))
             #######################################################################
             if not self._thrusters_only and not self._is_teleop_active and rospy.get_time() - self._start_count_idle > self._timeout_idle_mode:                
                 self._logger.info('AUV STATION KEEPING')
