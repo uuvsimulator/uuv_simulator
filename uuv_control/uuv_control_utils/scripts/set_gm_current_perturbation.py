@@ -37,10 +37,6 @@ if __name__ == '__main__':
     if values['component'] == 'velocity':
         assert values['mean'] > 0
     else:
-        assert -90 <= values['mean'] <= 90
-        assert -90 <= values['min'] <= 90
-        assert -90 <= values['max'] <= 90
-
         values['min'] *= pi / 180.0
         values['max'] *= pi / 180.0
         values['mean'] *= pi / 180.0
