@@ -518,10 +518,10 @@ class DubinsInterpolator(PathGenerator):
             
         pnts = list()
 
-        if abs(wp_init.z - wp_final.z) <= 0.01:
+        if np.isclose(abs(wp_init.z - wp_final.z), 0):
             for pnt in path:
                 pnts.append(np.array([pnt[0], pnt[1], wp_final.z]))
-        elif abs(wp_init.z - wp_final.z) <= max_step_z and not (abs(wp_init.z - wp_final.z) <= 0.01):
+        elif abs(wp_init.z - wp_final.z) <= max_step_z and not np.isclose(abs(wp_init.z - wp_final.z), 0):
             
             d = [0.0] + [np.sqrt(np.sum((path[i] - path[i - 1])**2)) for i in range(1, len(path))]            
             dz = float(wp_final.z - wp_init.z) * np.cumsum(d) / np.sum(d)            

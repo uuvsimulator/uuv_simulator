@@ -707,7 +707,7 @@ class DPControllerLocalPlanner(object):
             y=self._vehicle_pose.pos[1],
             z=self._vehicle_pose.pos[2],
             max_forward_speed=request.waypoint.max_forward_speed,
-            heading_offset=request.waypoint.heading_offset,
+            heading_offset=euler_from_quaternion(self._vehicle_pose.rotq)[2],
             use_fixed_heading=request.waypoint.use_fixed_heading,
             inertial_frame_id=self.inertial_frame_id)
         wp_set.add_waypoint(init_wp)
@@ -762,6 +762,7 @@ class DPControllerLocalPlanner(object):
             y=self._vehicle_pose.pos[1],
             z=self._vehicle_pose.pos[2],
             max_forward_speed=request.max_forward_speed,
+            heading_offset=euler_from_quaternion(self._vehicle_pose.rotq)[2],
             inertial_frame_id=self.inertial_frame_id)
         wp_set.add_waypoint(init_wp)
 
