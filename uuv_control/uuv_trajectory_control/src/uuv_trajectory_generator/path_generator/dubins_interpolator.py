@@ -429,7 +429,7 @@ class DubinsInterpolator(PathGenerator):
     def _generate_path(self, wp_init, heading_init, wp_final, heading_final):     
         pnts = list()
 
-        max_step_z = 2 * np.pi * self._radius * np.tan(self._max_pitch_angle)
+        max_step_z = 2 * np.pi * self._radius * np.cos(self._max_pitch_angle)
 
         frame_init = np.array([[np.cos(heading_init), -np.sin(heading_init), 0],
                                [np.sin(heading_init), np.cos(heading_init), 0],
