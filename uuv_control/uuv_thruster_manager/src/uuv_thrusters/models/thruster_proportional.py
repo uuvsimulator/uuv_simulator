@@ -31,10 +31,12 @@ class ThrusterProportional(Thruster):
         if 'gain' not in kwargs:
             rospy.ROSException('Thruster gain not given')
         self._gain = kwargs['gain']
+        rospy.loginfo('Thruster model:')
+        rospy.loginfo('\tGain=' + str(self._gain))
 
     def get_command_value(self, thrust):
-        return numpy.sign(self._thrust) * \
-            numpy.sqrt(numpy.abs(self._thrust) / self._gain)
+        return numpy.sign(thrust) * \
+            numpy.sqrt(numpy.abs(thrust) / self._gain)
 
     def get_thrust_value(self, command):
         """Computes the thrust force for the given command."""
