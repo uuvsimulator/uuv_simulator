@@ -40,6 +40,7 @@ BuoyantObject::BuoyantObject(physics::LinkPtr _link)
   this->isSurfaceVessel = false;
   this->scalingVolume = 1.0;
   this->offsetVolume = 0.0;
+  this->isSurfaceVesselFloating = false;
 
   this->link = _link;
   // Retrieve the bounding box
@@ -89,6 +90,13 @@ void BuoyantObject::GetBuoyancyForce(const ignition::math::Pose3d &_pose,
   buoyancyForce = ignition::math::Vector3d(0, 0, 0);
   buoyancyTorque = ignition::math::Vector3d(0, 0, 0);
 
+  double mass;
+#if GAZEBO_MAJOR_VERSION >= 8
+  mass = this->link->GetInertial()->Mass();
+#else
+  mass = this->link->GetInertial()->GetMass();
+#endif
+
   if (!this->isSurfaceVessel)
   {
     if (z + height / 2 > 0 && z < 0)
@@ -101,13 +109,6 @@ void BuoyantObject::GetBuoyancyForce(const ignition::math::Pose3d &_pose,
       this->isSubmerged = true;
       volume = this->GetVolume();
     }
-
-    double mass;
-#if GAZEBO_MAJOR_VERSION >= 8
-    mass = this->link->GetInertial()->Mass();
-#else
-    mass = this->link->GetInertial()->GetMass();
-#endif
 
     if (!this->neutrallyBuoyant || volume != this->volume)
       buoyancyForce = ignition::math::Vector3d(0, 0,
@@ -130,30 +131,37 @@ void BuoyantObject::GetBuoyancyForce(const ignition::math::Pose3d &_pose,
         this->waterLevelPlaneArea << std::endl;
     }
 
+    this->waterLevelPlaneArea = mass / (this->fluidDensity * this->submergedHeight);    
+    double curSubmergedHeight;
     GZ_ASSERT(this->waterLevelPlaneArea > 0.0,
       "Water level plane area must be greater than zero");
 
-    if (z + height / 2.0 > 0.5)
+    if (z - height / 2.0 >= -this->submergedHeight && !this->isSurfaceVesselFloating)
     {
       // Vessel is completely out of the water
       buoyancyForce = ignition::math::Vector3d(0, 0, 0);
-      buoyancyTorque = ignition::math::Vector3d(0, 0, 0);
-      // Store the restoring force vector, if needed
-      this->StoreVector(RESTORING_FORCE, buoyancyForce);
+      buoyancyTorque = ignition::math::Vector3d(0, 0, 0);      
       return;
     }
-    else if (z + height / 2.0 < 0)
-      this->submergedHeight = this->boundingBox.ZLength();
+    else if (z - height / 2.0 < -this->submergedHeight && !this->isSurfaceVesselFloating)
+    {
+      curSubmergedHeight = this->boundingBox.ZLength();
+    }      
     else
-      this->submergedHeight = this->boundingBox.ZLength() / 2 - z;
-
-    volume = this->submergedHeight * this->waterLevelPlaneArea;
+    { 
+      curSubmergedHeight = this->submergedHeight;
+      this->isSurfaceVesselFloating = true;
+    }
+                  
+    volume = curSubmergedHeight * this->waterLevelPlaneArea;
     buoyancyForce = ignition::math::Vector3d(0, 0, volume * this->fluidDensity * this->g);
     buoyancyTorque = ignition::math::Vector3d(
       -1 * this->metacentricWidth * sin(_pose.Rot().Roll()) * buoyancyForce.Z(),
       -1 * this->metacentricLength * sin(_pose.Rot().Pitch()) * buoyancyForce.Z(),
       0);
 
+    // Store the restoring force vector, if needed
+    this->StoreVector(RESTORING_FORCE, buoyancyForce);
   }
 
   // Store the restoring force vector, if needed
@@ -196,8 +204,8 @@ void BuoyantObject::ApplyBuoyancyForce()
     this->link->AddRelativeForce(
       math::Vector3(buoyancyForce.X(), buoyancyForce.Y(), buoyancyForce.Z()));
     this->link->AddRelativeTorque(
-      math::Vector3(buoyancyTorque.X(), buoyancyTorque.Y(), buoyancyTorque.Z()));
-#endif
+      math::Vector3(buoyancyTorque.X(), buoyancyTorque.Y(), buoyancyTorque.Z()));          
+#endif    
   }
 
 }
