@@ -97,7 +97,7 @@
           <!--
           <metacentric_width>0.0</metacentric_width>
           <metacentric_length>0.0</metacentric_length>
-          <water_level_plane_area>0.0</water_level_plane_area>
+          <submerged_height>0.0</submerged_height>
           -->
         </hydrodynamic_model>
 
