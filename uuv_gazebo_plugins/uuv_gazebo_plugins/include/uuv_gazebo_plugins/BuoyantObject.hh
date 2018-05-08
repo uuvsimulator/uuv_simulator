@@ -157,6 +157,9 @@ class BuoyantObject
   /// \brief Flag set to true if the information about the metacentric width and
   /// height is available
   protected: bool isSurfaceVessel;
+
+  /// \brief Flag set to true if the vessel has reached its submerged height
+  protected: bool isSurfaceVesselFloating;
 };
 }
 

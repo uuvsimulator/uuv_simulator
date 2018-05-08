@@ -48,7 +48,11 @@ catkin_package(
                ${GAZEBO_INCLUDE_DIRS}
                ${GAZEBO_MSG_INCLUDE_DIRS}
                ${EIGEN3_INCLUDE_DIRS}
-  LIBRARIES underwater_object_plugin thruster_plugin fin_plugin
+  LIBRARIES 
+    underwater_object_plugin 
+    thruster_plugin 
+    fin_plugin
+    dynamics
   DEPENDS gazebo
 )
 
@@ -67,6 +71,7 @@ link_directories(${EIGEN3_LIBRARY_DIRS} ${GAZEBO_LIBRARY_DIRS})
 ###########
 
 add_library(dynamics
+    SHARED
     src/Dynamics.cc
 )
 list(APPEND UUV_GAZEBO_PLUGINS_LIST dynamics)

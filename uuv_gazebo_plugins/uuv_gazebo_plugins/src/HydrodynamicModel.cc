@@ -36,20 +36,18 @@ HydrodynamicModel::HydrodynamicModel(sdf::ElementPtr _sdf,
   // Reading the information for the metacentric width and length in the case
   // that the model is a surface vessel or floating object
   if (_sdf->HasElement("metacentric_width") &&
-      _sdf->HasElement("metacentric_length"))
+      _sdf->HasElement("metacentric_length") &&
+      _sdf->HasElement("submerged_height"))
   {
     this->metacentricWidth = _sdf->Get<double>("metacentric_width");
     this->metacentricLength = _sdf->Get<double>("metacentric_length");
+    this->submergedHeight = _sdf->Get<double>("submerged_height");
     this->isSurfaceVessel = true;
-    if (_sdf->HasElement("water_level_plane_area"))
-      this->waterLevelPlaneArea = _sdf->Get<double>("water_level_plane_area");
-    else
-      this->waterLevelPlaneArea = 0.0;
-
+    
     gzmsg << "Surface vessel parameters" << std::endl;
-    gzmsg << "metacentric_width=" << this->metacentricWidth << std::endl;
-    gzmsg << "metacentric_length=" << this->metacentricLength << std::endl;
-    gzmsg << "water_level_plane_area=" << this->waterLevelPlaneArea << std::endl;
+    gzmsg << "\tMetacentric width [m]=" << this->metacentricWidth << std::endl;
+    gzmsg << "\tMetacentric length [m]=" << this->metacentricLength << std::endl;
+    gzmsg << "\tSubmerged height [m]=" << this->submergedHeight << std::endl;
   }
   else
   {
