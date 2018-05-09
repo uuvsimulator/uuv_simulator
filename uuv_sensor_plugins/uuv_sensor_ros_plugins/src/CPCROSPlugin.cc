@@ -74,12 +74,12 @@ bool CPCROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   // Publish sensor state
   this->PublishState();
 
-  if (!this->EnableMeasurement(_info))
+  if (!this->EnableMeasurement(_info) || this->updatingCloud)
     return false;
 
   // Set particle concentration to zero if the point cloud message has not
   // been received for a long time
-  if (_info.simTime.Double() - this->lastUpdateTimestamp.toSec() > 1.0)
+  if (_info.simTime.Double() - this->lastUpdateTimestamp.toSec() > 5.0)
   {
     this->outputMsg.is_measuring = false;
     this->outputMsg.concentration = 0.0;

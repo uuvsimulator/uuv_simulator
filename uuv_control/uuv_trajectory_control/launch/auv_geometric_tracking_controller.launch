@@ -17,7 +17,8 @@
   <arg name="min_thrust" default="70"/>
   <arg name="max_thrust" default="200"/>
   <arg name="thruster_topic" default="thrusters/0/input"/>
-  <arg name="thrust_gain" default="1"/>
+  <arg name="thrust_p_gain" default="1"/>
+  <arg name="thrust_d_gain" default="1"/>
   <arg name="gain_roll" default="1"/>
   <arg name="gain_pitch" default="1"/>
   <arg name="gain_yaw" default="1"/>
@@ -32,6 +33,17 @@
   <arg name="look_ahead_delay" default="5.0"/>
   <arg name="desired_pitch_limit" default="0.26"/>
   <arg name="yaw_error_limit" default="1.0"/>
+
+  <!-- Thruster configuration -->
+  <arg name="thruster_topic_prefix" default="thrusters" />
+  <arg name="thruster_topic_suffix" default="input" />
+  <arg name="thruster_frame_base" default="thruster_" />  
+  <arg name="thruster_conversion_fcn" default="proportional" />
+  <!-- For proportional thruster model: gain * rotor_ang_vel * |rotor_ang_vel| -->
+  <arg name="thruster_gain" default="0.0"/>
+  <!-- For custom thruster model: interpolation of input to output -->
+  <arg name="thruster_input" default="0,1,2,3"/>
+  <arg name="thruster_output" default="0,1,2,3"/>
 
   <!-- This node just reads the trajectory and waypoint topics and publishes
        visualization markers for RViz -->
@@ -53,12 +65,14 @@
         <remap from="odom" to="pose_gt"/>
         <rosparam subst_value="true">
           max_forward_speed: $(arg max_forward_speed)
+          base_link: base_link
           is_underactuated: true
           inertial_frame_id: world
           min_thrust: $(arg min_thrust)
           max_thrust: $(arg max_thrust)
           thruster_topic: $(arg thruster_topic)
-          thrust_gain: $(arg thrust_gain)
+          thrust_p_gain: $(arg thrust_p_gain)
+          thrust_d_gain: $(arg thrust_d_gain)
           gain_roll: $(arg gain_roll)
           gain_pitch: $(arg gain_pitch)
           gain_yaw: $(arg gain_yaw)
@@ -74,8 +88,18 @@
           desired_pitch_limit: $(arg desired_pitch_limit)
           yaw_error_limit: $(arg yaw_error_limit)
           dubins:
-            radius: $(arg dubins_radius)
-            max_pitch: $(arg dubins_max_pitch)
+              radius: $(arg dubins_radius)
+              max_pitch: $(arg dubins_max_pitch)
+          thruster_config:
+              topic_prefix: $(arg thruster_topic_prefix)
+              topic_suffix: $(arg thruster_topic_suffix)
+              frame_base: $(arg thruster_frame_base)
+              max_thrust: $(arg max_thrust)
+              conversion_fcn: $(arg thruster_conversion_fcn)
+              conversion_fcn_params:
+                  gain: $(arg thruster_gain)
+                  input: [$(arg thruster_input)]
+                  output: [$(arg thruster_output)]
         </rosparam>
       </node>
 
@@ -87,6 +111,7 @@
         <remap from="odom" to="pose_gt_ned"/>
         <rosparam subst_value="true">
           max_forward_speed: $(arg max_forward_speed)
+          base_link: base_link_ned
           is_underactuated: true
           inertial_frame_id: world_ned
           min_thrust: $(arg min_thrust)
@@ -108,8 +133,18 @@
           desired_pitch_limit: $(arg desired_pitch_limit)
           yaw_error_limit: $(arg yaw_error_limit)
           dubins:
-            radius: $(arg dubins_radius)
-            max_pitch: $(arg dubins_max_pitch)
+              radius: $(arg dubins_radius)
+              max_pitch: $(arg dubins_max_pitch)
+          thruster_config:
+              topic_prefix: $(arg thruster_topic_prefix)
+              topic_suffix: $(arg thruster_topic_suffix)
+              frame_base: $(arg thruster_frame_base)
+              max_thrust: $(arg max_thrust)
+              conversion_fcn: $(arg thruster_conversion_fcn)
+              conversion_fcn_params:
+                  gain: $(arg thruster_gain)
+                  input: [$(arg thruster_input)]
+                  output: [$(arg thruster_output)]
         </rosparam>
       </node>
     </group>
