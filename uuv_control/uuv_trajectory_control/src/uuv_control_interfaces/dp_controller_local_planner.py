@@ -65,6 +65,8 @@ class DPControllerLocalPlanner(object):
         self._idle_radius = rospy.get_param('~idle_radius', 10.0) 
         assert self._idle_radius > 0
 
+        self._logger.info('Idle circle radius [m] = %.2f' % self._idle_radius)
+
         # Is underactuated?
         self._is_underactuated = rospy.get_param('~is_underactuated', False)   
 
@@ -815,7 +817,7 @@ class DPControllerLocalPlanner(object):
                 [np.cos(pose.rot[2]), -np.sin(pose.rot[2]), 0],
                 [np.sin(pose.rot[2]), np.cos(pose.rot[2]), 0],
                 [0, 0, 1]])
-            self._idle_circle_center = (pose.pos + 5 * self._max_forward_speed / self._look_ahead_delay * frame[:, 0].flatten()) + radius * frame[:, 1].flatten()
+            self._idle_circle_center = (pose.pos + 0.8 * self._max_forward_speed * frame[:, 0].flatten()) + radius * frame[:, 1].flatten()
             self._idle_z = pose.pos[2]
 
         phi = lambda u: 2 * np.pi * u + pose.rot[2] - np.pi / 2
@@ -903,7 +905,7 @@ class DPControllerLocalPlanner(object):
                 if self._station_keeping_center is None:
                     self._station_keeping_center = self._this_ref_pnt
 
-                wp_set = self.get_idle_circle_path(20)      
+                wp_set = self.get_idle_circle_path(20, self._idle_radius)      
                 wp_set = self._apply_workspace_constraints(wp_set)
                 if wp_set.is_empty:
                     raise rospy.ROSException('Waypoints violate workspace constraints, are you using world or world_ned as reference?')
