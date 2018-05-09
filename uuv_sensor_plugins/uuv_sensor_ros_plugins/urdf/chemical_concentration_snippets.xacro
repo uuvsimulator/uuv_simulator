@@ -25,6 +25,10 @@
       parent_link="${parent_link}"
       input_topic="/plume/particles"
       output_topic="particle_concentration"
+      water_salinity_value="35.0"
+      plume_salinity_value="10.0"
+      salinity_output_topic="salinity"
+      salinity_unit="ppt"
       update_rate="10"
       gamma="0.001"
       radius="3.0">
@@ -62,6 +66,10 @@
       parent_link="${parent_link}"
       input_topic="/plume/particles"
       output_topic="particle_concentration"
+      water_salinity_value="35.0"
+      plume_salinity_value="10.0"
+      salinity_output_topic="salinity"
+      salinity_unit="ppt"
       update_rate="10"
       gamma="0.001"
       radius="3.0">
@@ -71,7 +79,8 @@
 
   <xacro:macro name="chemical_concentration_sensor_macro"
     params="namespace parent_link *origin suffix input_topic output_topic
-            gamma radius update_rate reference_frame">
+            gamma radius update_rate reference_frame water_salinity_value plume_salinity_value
+            salinity_output_topic salinity_unit">
     <!-- Sensor link -->
    <link name="${namespace}/cc_sensor_link">
      <inertial>
@@ -91,7 +100,7 @@
 
    <gazebo>
      <plugin filename="libuuv_gazebo_ros_cpc_plugin.so"
-       name="chemical_concentration{suffix}_sensor">
+       name="particle_concentration{suffix}_sensor">
        <robot_namespace>${namespace}</robot_namespace>
        <link_name>${namespace}/cc_sensor_link</link_name>
        <plume_topic>${input_topic}</plume_topic>
@@ -102,6 +111,10 @@
        <enable_gazebo_messages>false</enable_gazebo_messages>
        <enable_local_ned_frame>false</enable_local_ned_frame>
        <static_reference_frame>${reference_frame}</static_reference_frame>
+       <water_salinity_value>${water_salinity_value}</water_salinity_value>
+       <plume_salinity_value>${plume_salinity_value}</plume_salinity_value>
+       <salinity_output_topic>${salinity_output_topic}</salinity_output_topic>
+       <salinity_unit>${salinity_unit}</salinity_unit>
      </plugin>
    </gazebo>
   </xacro:macro>
