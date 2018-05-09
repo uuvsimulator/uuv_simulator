@@ -20,12 +20,12 @@ from uuv_control_msgs.srv import *
 from std_msgs.msg import String, Time
 
 
-if __name__ == '__main__':
-    print 'Send a waypoint file, namespace=', rospy.get_namespace()
+if __name__ == '__main__':    
     rospy.init_node('send_waypoint_file')
+    rospy.loginfo('Send a waypoint file, namespace=%s', rospy.get_namespace())
 
     if rospy.is_shutdown():
-        print 'ROS master not running!'
+        rospy.logerr('ROS master not running!')
         sys.exit(-1)
 
     if rospy.has_param('~filename'):
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     if rospy.has_param('~start_time'):
         start_time = rospy.get_param('~start_time')
         if start_time < 0.0:
-            print 'Negative start time, setting it to 0.0'
+            rospy.logerr('Negative start time, setting it to 0.0')
             start_time = 0.0
             start_now = True
         else:
@@ -53,14 +53,14 @@ if __name__ == '__main__':
     try:
         rospy.wait_for_service('init_waypoints_from_file', timeout=30)
     except rospy.ROSException:
-        rospy.ROSException('Service not available! Closing node...')
+        raise rospy.ROSException('Service not available! Closing node...')
 
     try:
         init_wp = rospy.ServiceProxy(
             'init_waypoints_from_file',
             InitWaypointsFromFile)
     except rospy.ServiceException, e:
-        rospy.ROSException('Service call failed, error=' + e)
+        raise rospy.ROSException('Service call failed, error=' + e)
 
     success = init_wp(Time(rospy.Time(start_time)),
                       start_now,
@@ -68,6 +68,6 @@ if __name__ == '__main__':
                       String(interpolator))
 
     if success:
-        print 'Waypoints file successfully received, file=', filename
+        rospy.loginfo('Waypoints file successfully received, filename=%s', filename)
     else:
-        print 'Failed'
+        rospy.loginfo('Failed to send waypoints')
