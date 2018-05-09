@@ -34,7 +34,7 @@
       imu_topic="imu"
       mass_imu_sensor="0.015"
       gyroscope_noise_density="0.0003394"
-      gyroscopoe_random_walk="0.000038785"
+      gyroscope_random_walk="0.000038785"
       gyroscope_bias_correlation_time="1000.0"
       gyroscope_turn_on_bias_sigma="0.0087"
       accelerometer_noise_density="0.004"
@@ -78,7 +78,7 @@
       imu_topic="imu"
       mass_imu_sensor="0.015"
       gyroscope_noise_density="0.0003394"
-      gyroscopoe_random_walk="0.000038785"
+      gyroscope_random_walk="0.000038785"
       gyroscope_bias_correlation_time="1000.0"
       gyroscope_turn_on_bias_sigma="0.0087"
       accelerometer_noise_density="0.004"
@@ -103,7 +103,7 @@
       imu_topic="imu"
       mass_imu_sensor="0.015"
       gyroscope_noise_density="0.0003394"
-      gyroscopoe_random_walk="0.000038785"
+      gyroscope_random_walk="0.000038785"
       gyroscope_bias_correlation_time="1000.0"
       gyroscope_turn_on_bias_sigma="0.0087"
       accelerometer_noise_density="0.004"
@@ -122,7 +122,7 @@
   <!-- Macro to add an IMU. -->
   <xacro:macro name="imu_plugin_macro"
     params="namespace imu_suffix parent_link imu_topic
-      mass_imu_sensor gyroscope_noise_density gyroscopoe_random_walk
+      mass_imu_sensor gyroscope_noise_density gyroscope_random_walk
       gyroscope_bias_correlation_time gyroscope_turn_on_bias_sigma
       accelerometer_noise_density accelerometer_random_walk
       accelerometer_bias_correlation_time accelerometer_turn_on_bias_sigma
@@ -132,7 +132,7 @@
       *inertia *origin">
     <!-- IMU link -->
     <link name="${namespace}/imu${imu_suffix}_link">
-      <inertial>
+      <inertial>                
         <xacro:insert_block name="inertia" />
         <mass value="${mass_imu_sensor}" />  <!-- [kg] -->
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -157,7 +157,7 @@
         <sensor_topic>${imu_topic}</sensor_topic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
 
         <gyroscope_noise_density>${gyroscope_noise_density}</gyroscope_noise_density> <!-- Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)] -->
-        <gyroscope_random_walk>${gyroscopoe_random_walk}</gyroscope_random_walk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
+        <gyroscope_random_walk>${gyroscope_random_walk}</gyroscope_random_walk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
         <gyroscope_bias_correlation_time>${gyroscope_bias_correlation_time}</gyroscope_bias_correlation_time> <!-- Gyroscope bias correlation time constant [s] -->
         <gyroscope_turn_on_bias_sigma>${gyroscope_turn_on_bias_sigma}</gyroscope_turn_on_bias_sigma> <!-- Gyroscope turn on bias standard deviation [rad/s] -->
 

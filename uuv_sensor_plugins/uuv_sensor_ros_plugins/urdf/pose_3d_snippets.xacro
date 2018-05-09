@@ -22,7 +22,7 @@
     <link name="${namespace}/pose_sensor_link_${suffix}">
       <inertial>
         <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
-        <mass value="0.01" />  <!-- [kg] -->
+        <mass value="0.001" />  <!-- [kg] -->
         <origin xyz="0 0 0" rpy="0 0 0" />
       </inertial>
     </link>
