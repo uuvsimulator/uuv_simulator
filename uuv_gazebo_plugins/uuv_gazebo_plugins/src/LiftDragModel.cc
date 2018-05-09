@@ -98,6 +98,9 @@ LiftDrag* LiftDragQuadratic::create(sdf::ElementPtr _sdf)
               << std::endl;
     return NULL;
   }
+  
+  gzmsg << "Lift constant= " << _sdf->Get<double>("lift_constant") << std::endl;
+  gzmsg << "Drag constant= " << _sdf->Get<double>("drag_constant") << std::endl;
 
   return new LiftDragQuadratic(_sdf->Get<double>("lift_constant"),
                                _sdf->Get<double>("drag_constant"));
@@ -127,12 +130,6 @@ ignition::math::Vector3d LiftDragQuadratic::compute(
 
   double drag = angle * du2 * this->dragConstant;
   double lift = du2 * this->liftConstant;
-
-  //  std::cout << "vel: " << _velL << std::endl;
-  //  std::cout << " u: " << u
-  //            << " angle: " << angle
-  //            << " drag: " << drag
-  //            << " lift: " << lift << std::endl;
 
   ignition::math::Vector3d liftDirectionL =
     -ignition::math::Vector3d::UnitZ.Cross(_velL).Normalize();
