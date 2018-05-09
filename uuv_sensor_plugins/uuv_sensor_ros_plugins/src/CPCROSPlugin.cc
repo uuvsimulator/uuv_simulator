@@ -41,9 +41,49 @@ void CPCROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   GZ_ASSERT(this->smoothingLength > 0,
     "Radius of the sensor must be greater than zero");
 
-  GetSDFParam<double>(_sdf, "noise_amplitude", this->noiseAmplitude, 0.0);
-    GZ_ASSERT(this->noiseAmplitude >= 0.0,
-      "Signal noise amplitude must be greater or equal to zero");
+  GetSDFParam<double>(_sdf, "noise_sigma", this->noiseSigma, 0.0);
+  GZ_ASSERT(this->noiseSigma >= 0.0,
+    "Signal noise sigma must be greater or equal to zero");
+
+  // Reading the name of the output salinity topic
+  std::string salinityTopic;
+  GetSDFParam<std::string>(_sdf, "salinity_output_topic", salinityTopic, "salinity");
+  GZ_ASSERT(!salinityTopic.empty(), "Salinity topic name is empty!");
+
+  // Reading the salinity unit to be used, options are
+  //  - PPT (parts per thousand)
+  //  - PPM (parts per million)
+  //  - PSU (practical salinity unit)
+  std::string salinityUnit;
+  GetSDFParam<std::string>(_sdf, "salinity_unit", salinityUnit, "ppt");
+
+  GZ_ASSERT(salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PPT) == 0 ||
+            salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PPM) == 0 ||
+            salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PSU) == 0,
+            "Invalid salinity unit, it can be ppt, ppm or psu");
+
+  this->salinityMsg.unit = salinityUnit;
+
+  if (_sdf->HasElement("water_salinity_value"))
+  {
+    GetSDFParam<double>(_sdf, "water_salinity_value", this->waterSalinityValue, 0.0);
+    GZ_ASSERT(this->waterSalinityValue > 0, "Water salinity reference must be a positive value");
+  }
+  else
+  {
+    if (salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PPT) == 0)
+      this->waterSalinityValue = 35.0;
+    else if (salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PPM) == 0)
+      this->waterSalinityValue = 35000.0;
+    else
+      this->waterSalinityValue = 35.0;
+  }
+
+  GetSDFParam<double>(_sdf, "plume_salinity_value", this->plumeSalinityValue, 0.0);
+  GZ_ASSERT(this->plumeSalinityValue >= 0.0,
+    "Plume salinity value must be greater or equal to zero");
+  GZ_ASSERT(this->plumeSalinityValue < this->waterSalinityValue, 
+    "Plume salinity value must be lower than the water salinity value");
 
   this->particlesSub = this->rosNode->subscribe<sensor_msgs::PointCloud>(
     inputTopic, 1,
@@ -56,16 +96,22 @@ void CPCROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   // Set the is_measuring flag initially to false
   this->outputMsg.is_measuring = false;
 
+  this->salinityMsg.variance = this->noiseSigma * this->noiseSigma;
+
   this->rosSensorOutputPub = this->rosNode->advertise<
     uuv_sensor_plugins_ros_msgs::ChemicalParticleConcentration>(
       this->sensorOutputTopic, 1);
+
+  this->salinityPub = this->rosNode->advertise<
+    uuv_sensor_plugins_ros_msgs::Salinity>(salinityTopic, 1);
 
   this->lastUpdateTimestamp = ros::Time::now();
 
   gzmsg << "CPCROSPlugin[" << this->link->GetName()
     << "] initialized!" << std::endl
     << "\t- Input topic= " << inputTopic << std::endl
-    << "\t- Output topic= " << this->sensorOutputTopic << std::endl;
+    << "\t- Output topic= " << this->sensorOutputTopic << std::endl
+    << "\t- Salinity output topic= " << salinityTopic << std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -82,15 +128,25 @@ bool CPCROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   if (_info.simTime.Double() - this->lastUpdateTimestamp.toSec() > 5.0)
   {
     this->outputMsg.is_measuring = false;
-    this->outputMsg.concentration = 0.0;
+    this->outputMsg.concentration = 0.0;    
   }
 
   this->outputMsg.header.frame_id = this->referenceFrameID;
   this->outputMsg.concentration += this->GetGaussianNoise(
-    this->noiseAmplitude);
+    this->noiseSigma);
   this->outputMsg.header.stamp.sec = _info.simTime.sec;
   this->outputMsg.header.stamp.nsec = _info.simTime.nsec;
   this->rosSensorOutputPub.publish(this->outputMsg);
+
+  this->salinityMsg.header.frame_id = this->referenceFrameID;
+  this->salinityMsg.header.stamp.sec = _info.simTime.sec;
+  this->salinityMsg.header.stamp.nsec = _info.simTime.nsec;
+
+  this->salinityMsg.salinity = 
+    this->waterSalinityValue * (1 - std::min(1.0, this->outputMsg.concentration)) + 
+    std::min(1.0, this->outputMsg.concentration) * this->plumeSalinityValue;
+
+  this->salinityPub.publish(this->salinityMsg);
 
   // Read the current simulation time
 #if GAZEBO_MAJOR_VERSION >= 8
