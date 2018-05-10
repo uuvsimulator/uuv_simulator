@@ -10,6 +10,7 @@ add_message_files(
   PositionWithCovariance.msg
   PositionWithCovarianceStamped.msg
   ChemicalParticleConcentration.msg
+  Salinity.msg
 )
 
 add_service_files(

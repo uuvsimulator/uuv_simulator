@@ -20,6 +20,7 @@
 #include <ros/ros.h>
 #include <uuv_sensor_ros_plugins/ROSBaseModelPlugin.hh>
 #include <uuv_sensor_plugins_ros_msgs/ChemicalParticleConcentration.h>
+#include <uuv_sensor_plugins_ros_msgs/Salinity.h>
 #include <sensor_msgs/PointCloud.h>
 #include <uuv_sensor_ros_plugins/ROSBaseModelPlugin.hh>
 
@@ -46,6 +47,9 @@ namespace gazebo
     /// \brief Input topic for the plume particle point cloud
     protected: ros::Subscriber particlesSub;
 
+    /// \brief Output topic for salinity measurements based on the particle concentration
+    protected: ros::Publisher salinityPub;
+
     /// \brief Flag to ensure the cloud and measurement update don't coincide
     protected: bool updatingCloud;
 
@@ -53,7 +57,7 @@ namespace gazebo
     protected: double gamma;
 
     /// \brief Noise amplitude
-    protected: double noiseAmplitude;
+    protected: double noiseSigma;
 
     // \brief Radius of the kernel to identify particles that will be taken into
     // account in the concentration computation
@@ -65,6 +69,13 @@ namespace gazebo
     /// \brief Output measurement topic
     protected: uuv_sensor_plugins_ros_msgs::ChemicalParticleConcentration
       outputMsg;
+
+    /// \brief Output salinity measurement message
+    protected: uuv_sensor_plugins_ros_msgs::Salinity salinityMsg;
+
+    protected: double waterSalinityValue;
+
+    protected: double plumeSalinityValue;
   };
 }
 
