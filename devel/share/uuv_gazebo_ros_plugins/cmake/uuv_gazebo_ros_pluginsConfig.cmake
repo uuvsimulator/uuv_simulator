@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_ros_plugins/share/uuv_gazebo_ros_plugins/cmake/uuv_gazebo_ros_pluginsConfig.cmake

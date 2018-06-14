@@ -1,0 +1,217 @@
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_WaypointSet[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_WaypointSet
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_InitHelicalTrajectory[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_InitHelicalTrajectory
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_TrajectoryPoint[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_TrajectoryPoint
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_SwitchToAutomatic[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_SwitchToAutomatic
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_GetSMControllerParams[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_GetSMControllerParams
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_SetMBSMControllerParams[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_SetMBSMControllerParams
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_SwitchToManual[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_SwitchToManual
+[35m[1mScanning dependencies of target std_msgs_generate_messages_cpp[0m
+[  0%] Built target std_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_ResetController[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_ResetController
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_cpp[0m
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_IsRunningTrajectory[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_IsRunningTrajectory
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_GoTo[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_GoTo
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_GetWaypoints[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_GetWaypoints
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_ClearWaypoints[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_ClearWaypoints
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_StartTrajectory[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_StartTrajectory
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_InitWaypointSet[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_InitWaypointSet
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_InitCircularTrajectory[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_InitCircularTrajectory
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_SetPIDParams[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_SetPIDParams
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_AddWaypoint[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_AddWaypoint
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_GoToIncremental[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_GoToIncremental
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_Trajectory[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_Trajectory
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_InitWaypointsFromFile[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_InitWaypointsFromFile
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_Hold[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_Hold
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_GetMBSMControllerParams[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_GetMBSMControllerParams
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_InitRectTrajectory[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_InitRectTrajectory
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_Waypoint[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_Waypoint
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_SetSMControllerParams[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_SetSMControllerParams
+[35m[1mScanning dependencies of target _uuv_control_msgs_generate_messages_check_deps_GetPIDParams[0m
+[  0%] Built target _uuv_control_msgs_generate_messages_check_deps_GetPIDParams
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_nodejs[0m
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target std_msgs_generate_messages_nodejs[0m
+[  0%] Built target std_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target std_msgs_generate_messages_py[0m
+[  0%] Built target std_msgs_generate_messages_py
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_py[0m
+[  0%] Built target geometry_msgs_generate_messages_py
+[35m[1mScanning dependencies of target std_msgs_generate_messages_lisp[0m
+[  0%] Built target std_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_lisp[0m
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target std_msgs_generate_messages_eus[0m
+[  0%] Built target std_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_eus[0m
+[  0%] Built target geometry_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target uuv_control_msgs_generate_messages_cpp[0m
+[  1%] [34m[1mGenerating C++ code from uuv_control_msgs/Waypoint.msg[0m
+[  2%] [34m[1mGenerating C++ code from uuv_control_msgs/TrajectoryPoint.msg[0m
+[  3%] [34m[1mGenerating C++ code from uuv_control_msgs/Trajectory.msg[0m
+[  3%] [34m[1mGenerating C++ code from uuv_control_msgs/WaypointSet.msg[0m
+[  4%] [34m[1mGenerating C++ code from uuv_control_msgs/InitWaypointSet.srv[0m
+[  5%] [34m[1mGenerating C++ code from uuv_control_msgs/SetMBSMControllerParams.srv[0m
+[  6%] [34m[1mGenerating C++ code from uuv_control_msgs/InitCircularTrajectory.srv[0m
+[  6%] [34m[1mGenerating C++ code from uuv_control_msgs/GetSMControllerParams.srv[0m
+[  7%] [34m[1mGenerating C++ code from uuv_control_msgs/InitRectTrajectory.srv[0m
+[  8%] [34m[1mGenerating C++ code from uuv_control_msgs/GetWaypoints.srv[0m
+[  8%] [34m[1mGenerating C++ code from uuv_control_msgs/ClearWaypoints.srv[0m
+[  9%] [34m[1mGenerating C++ code from uuv_control_msgs/InitWaypointsFromFile.srv[0m
+[ 10%] [34m[1mGenerating C++ code from uuv_control_msgs/GetMBSMControllerParams.srv[0m
+[ 11%] [34m[1mGenerating C++ code from uuv_control_msgs/AddWaypoint.srv[0m
+[ 11%] [34m[1mGenerating C++ code from uuv_control_msgs/ResetController.srv[0m
+[ 12%] [34m[1mGenerating C++ code from uuv_control_msgs/GoToIncremental.srv[0m
+[ 13%] [34m[1mGenerating C++ code from uuv_control_msgs/InitHelicalTrajectory.srv[0m
+[ 14%] [34m[1mGenerating C++ code from uuv_control_msgs/GoTo.srv[0m
+[ 14%] [34m[1mGenerating C++ code from uuv_control_msgs/IsRunningTrajectory.srv[0m
+[ 15%] [34m[1mGenerating C++ code from uuv_control_msgs/SwitchToManual.srv[0m
+[ 16%] [34m[1mGenerating C++ code from uuv_control_msgs/Hold.srv[0m
+[ 16%] [34m[1mGenerating C++ code from uuv_control_msgs/StartTrajectory.srv[0m
+[ 17%] [34m[1mGenerating C++ code from uuv_control_msgs/SetSMControllerParams.srv[0m
+[ 18%] [34m[1mGenerating C++ code from uuv_control_msgs/SetPIDParams.srv[0m
+[ 19%] [34m[1mGenerating C++ code from uuv_control_msgs/SwitchToAutomatic.srv[0m
+[ 19%] [34m[1mGenerating C++ code from uuv_control_msgs/GetPIDParams.srv[0m
+[ 19%] Built target uuv_control_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target uuv_control_msgs_generate_messages_nodejs[0m
+[ 20%] [34m[1mGenerating Javascript code from uuv_control_msgs/Waypoint.msg[0m
+[ 21%] [34m[1mGenerating Javascript code from uuv_control_msgs/TrajectoryPoint.msg[0m
+[ 21%] [34m[1mGenerating Javascript code from uuv_control_msgs/Trajectory.msg[0m
+[ 22%] [34m[1mGenerating Javascript code from uuv_control_msgs/WaypointSet.msg[0m
+[ 23%] [34m[1mGenerating Javascript code from uuv_control_msgs/InitWaypointSet.srv[0m
+[ 23%] [34m[1mGenerating Javascript code from uuv_control_msgs/SetMBSMControllerParams.srv[0m
+[ 24%] [34m[1mGenerating Javascript code from uuv_control_msgs/InitCircularTrajectory.srv[0m
+[ 25%] [34m[1mGenerating Javascript code from uuv_control_msgs/GetSMControllerParams.srv[0m
+[ 26%] [34m[1mGenerating Javascript code from uuv_control_msgs/InitRectTrajectory.srv[0m
+[ 26%] [34m[1mGenerating Javascript code from uuv_control_msgs/GetWaypoints.srv[0m
+[ 27%] [34m[1mGenerating Javascript code from uuv_control_msgs/ClearWaypoints.srv[0m
+[ 28%] [34m[1mGenerating Javascript code from uuv_control_msgs/InitWaypointsFromFile.srv[0m
+[ 29%] [34m[1mGenerating Javascript code from uuv_control_msgs/GetMBSMControllerParams.srv[0m
+[ 29%] [34m[1mGenerating Javascript code from uuv_control_msgs/AddWaypoint.srv[0m
+[ 30%] [34m[1mGenerating Javascript code from uuv_control_msgs/ResetController.srv[0m
+[ 31%] [34m[1mGenerating Javascript code from uuv_control_msgs/GoToIncremental.srv[0m
+[ 31%] [34m[1mGenerating Javascript code from uuv_control_msgs/InitHelicalTrajectory.srv[0m
+[ 32%] [34m[1mGenerating Javascript code from uuv_control_msgs/GoTo.srv[0m
+[ 33%] [34m[1mGenerating Javascript code from uuv_control_msgs/IsRunningTrajectory.srv[0m
+[ 34%] [34m[1mGenerating Javascript code from uuv_control_msgs/SwitchToManual.srv[0m
+[ 34%] [34m[1mGenerating Javascript code from uuv_control_msgs/Hold.srv[0m
+[ 35%] [34m[1mGenerating Javascript code from uuv_control_msgs/StartTrajectory.srv[0m
+[ 36%] [34m[1mGenerating Javascript code from uuv_control_msgs/SetSMControllerParams.srv[0m
+[ 37%] [34m[1mGenerating Javascript code from uuv_control_msgs/SetPIDParams.srv[0m
+[ 37%] [34m[1mGenerating Javascript code from uuv_control_msgs/SwitchToAutomatic.srv[0m
+[ 38%] [34m[1mGenerating Javascript code from uuv_control_msgs/GetPIDParams.srv[0m
+[ 38%] Built target uuv_control_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target uuv_control_msgs_generate_messages_py[0m
+[ 39%] [34m[1mGenerating Python from MSG uuv_control_msgs/Waypoint[0m
+[ 40%] [34m[1mGenerating Python from MSG uuv_control_msgs/TrajectoryPoint[0m
+[ 40%] [34m[1mGenerating Python from MSG uuv_control_msgs/Trajectory[0m
+[ 41%] [34m[1mGenerating Python from MSG uuv_control_msgs/WaypointSet[0m
+[ 42%] [34m[1mGenerating Python code from SRV uuv_control_msgs/InitWaypointSet[0m
+[ 42%] [34m[1mGenerating Python code from SRV uuv_control_msgs/SetMBSMControllerParams[0m
+[ 43%] [34m[1mGenerating Python code from SRV uuv_control_msgs/InitCircularTrajectory[0m
+[ 44%] [34m[1mGenerating Python code from SRV uuv_control_msgs/GetSMControllerParams[0m
+[ 45%] [34m[1mGenerating Python code from SRV uuv_control_msgs/InitRectTrajectory[0m
+[ 45%] [34m[1mGenerating Python code from SRV uuv_control_msgs/GetWaypoints[0m
+[ 46%] [34m[1mGenerating Python code from SRV uuv_control_msgs/ClearWaypoints[0m
+[ 47%] [34m[1mGenerating Python code from SRV uuv_control_msgs/InitWaypointsFromFile[0m
+[ 48%] [34m[1mGenerating Python code from SRV uuv_control_msgs/GetMBSMControllerParams[0m
+[ 48%] [34m[1mGenerating Python code from SRV uuv_control_msgs/AddWaypoint[0m
+[ 50%] [34m[1mGenerating Python code from SRV uuv_control_msgs/ResetController[0m
+[ 51%] [34m[1mGenerating Python code from SRV uuv_control_msgs/GoToIncremental[0m
+[ 51%] [34m[1mGenerating Python code from SRV uuv_control_msgs/InitHelicalTrajectory[0m
+[ 52%] [34m[1mGenerating Python code from SRV uuv_control_msgs/GoTo[0m
+[ 53%] [34m[1mGenerating Python code from SRV uuv_control_msgs/IsRunningTrajectory[0m
+[ 54%] [34m[1mGenerating Python code from SRV uuv_control_msgs/SwitchToManual[0m
+[ 54%] [34m[1mGenerating Python code from SRV uuv_control_msgs/Hold[0m
+[ 55%] [34m[1mGenerating Python code from SRV uuv_control_msgs/StartTrajectory[0m
+[ 56%] [34m[1mGenerating Python code from SRV uuv_control_msgs/SetSMControllerParams[0m
+[ 57%] [34m[1mGenerating Python code from SRV uuv_control_msgs/SetPIDParams[0m
+[ 57%] [34m[1mGenerating Python code from SRV uuv_control_msgs/SwitchToAutomatic[0m
+[ 58%] [34m[1mGenerating Python code from SRV uuv_control_msgs/GetPIDParams[0m
+[ 59%] [34m[1mGenerating Python msg __init__.py for uuv_control_msgs[0m
+[ 60%] [34m[1mGenerating Python srv __init__.py for uuv_control_msgs[0m
+[ 60%] Built target uuv_control_msgs_generate_messages_py
+[35m[1mScanning dependencies of target uuv_control_msgs_generate_messages_lisp[0m
+[ 61%] [34m[1mGenerating Lisp code from uuv_control_msgs/Waypoint.msg[0m
+[ 62%] [34m[1mGenerating Lisp code from uuv_control_msgs/TrajectoryPoint.msg[0m
+[ 62%] [34m[1mGenerating Lisp code from uuv_control_msgs/Trajectory.msg[0m
+[ 63%] [34m[1mGenerating Lisp code from uuv_control_msgs/WaypointSet.msg[0m
+[ 64%] [34m[1mGenerating Lisp code from uuv_control_msgs/InitWaypointSet.srv[0m
+[ 64%] [34m[1mGenerating Lisp code from uuv_control_msgs/SetMBSMControllerParams.srv[0m
+[ 65%] [34m[1mGenerating Lisp code from uuv_control_msgs/InitCircularTrajectory.srv[0m
+[ 66%] [34m[1mGenerating Lisp code from uuv_control_msgs/GetSMControllerParams.srv[0m
+[ 67%] [34m[1mGenerating Lisp code from uuv_control_msgs/InitRectTrajectory.srv[0m
+[ 67%] [34m[1mGenerating Lisp code from uuv_control_msgs/GetWaypoints.srv[0m
+[ 68%] [34m[1mGenerating Lisp code from uuv_control_msgs/ClearWaypoints.srv[0m
+[ 69%] [34m[1mGenerating Lisp code from uuv_control_msgs/InitWaypointsFromFile.srv[0m
+[ 70%] [34m[1mGenerating Lisp code from uuv_control_msgs/GetMBSMControllerParams.srv[0m
+[ 70%] [34m[1mGenerating Lisp code from uuv_control_msgs/AddWaypoint.srv[0m
+[ 71%] [34m[1mGenerating Lisp code from uuv_control_msgs/ResetController.srv[0m
+[ 72%] [34m[1mGenerating Lisp code from uuv_control_msgs/GoToIncremental.srv[0m
+[ 73%] [34m[1mGenerating Lisp code from uuv_control_msgs/InitHelicalTrajectory.srv[0m
+[ 73%] [34m[1mGenerating Lisp code from uuv_control_msgs/GoTo.srv[0m
+[ 74%] [34m[1mGenerating Lisp code from uuv_control_msgs/IsRunningTrajectory.srv[0m
+[ 75%] [34m[1mGenerating Lisp code from uuv_control_msgs/SwitchToManual.srv[0m
+[ 75%] [34m[1mGenerating Lisp code from uuv_control_msgs/Hold.srv[0m
+[ 76%] [34m[1mGenerating Lisp code from uuv_control_msgs/StartTrajectory.srv[0m
+[ 77%] [34m[1mGenerating Lisp code from uuv_control_msgs/SetSMControllerParams.srv[0m
+[ 78%] [34m[1mGenerating Lisp code from uuv_control_msgs/SetPIDParams.srv[0m
+[ 78%] [34m[1mGenerating Lisp code from uuv_control_msgs/SwitchToAutomatic.srv[0m
+[ 79%] [34m[1mGenerating Lisp code from uuv_control_msgs/GetPIDParams.srv[0m
+[ 79%] Built target uuv_control_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target uuv_control_msgs_generate_messages_eus[0m
+[ 80%] [34m[1mGenerating EusLisp code from uuv_control_msgs/Waypoint.msg[0m
+[ 81%] [34m[1mGenerating EusLisp code from uuv_control_msgs/TrajectoryPoint.msg[0m
+[ 82%] [34m[1mGenerating EusLisp code from uuv_control_msgs/Trajectory.msg[0m
+[ 82%] [34m[1mGenerating EusLisp code from uuv_control_msgs/WaypointSet.msg[0m
+[ 83%] [34m[1mGenerating EusLisp code from uuv_control_msgs/InitWaypointSet.srv[0m
+[ 84%] [34m[1mGenerating EusLisp code from uuv_control_msgs/SetMBSMControllerParams.srv[0m
+[ 85%] [34m[1mGenerating EusLisp code from uuv_control_msgs/InitCircularTrajectory.srv[0m
+[ 85%] [34m[1mGenerating EusLisp code from uuv_control_msgs/GetSMControllerParams.srv[0m
+[ 86%] [34m[1mGenerating EusLisp code from uuv_control_msgs/InitRectTrajectory.srv[0m
+[ 87%] [34m[1mGenerating EusLisp code from uuv_control_msgs/GetWaypoints.srv[0m
+[ 87%] [34m[1mGenerating EusLisp code from uuv_control_msgs/ClearWaypoints.srv[0m
+[ 88%] [34m[1mGenerating EusLisp code from uuv_control_msgs/InitWaypointsFromFile.srv[0m
+[ 89%] [34m[1mGenerating EusLisp code from uuv_control_msgs/GetMBSMControllerParams.srv[0m
+[ 90%] [34m[1mGenerating EusLisp code from uuv_control_msgs/AddWaypoint.srv[0m
+[ 90%] [34m[1mGenerating EusLisp code from uuv_control_msgs/ResetController.srv[0m
+[ 91%] [34m[1mGenerating EusLisp code from uuv_control_msgs/GoToIncremental.srv[0m
+[ 92%] [34m[1mGenerating EusLisp code from uuv_control_msgs/InitHelicalTrajectory.srv[0m
+[ 93%] [34m[1mGenerating EusLisp code from uuv_control_msgs/GoTo.srv[0m
+[ 93%] [34m[1mGenerating EusLisp code from uuv_control_msgs/IsRunningTrajectory.srv[0m
+[ 94%] [34m[1mGenerating EusLisp code from uuv_control_msgs/SwitchToManual.srv[0m
+[ 95%] [34m[1mGenerating EusLisp code from uuv_control_msgs/Hold.srv[0m
+[ 95%] [34m[1mGenerating EusLisp code from uuv_control_msgs/StartTrajectory.srv[0m
+[ 96%] [34m[1mGenerating EusLisp code from uuv_control_msgs/SetSMControllerParams.srv[0m
+[ 97%] [34m[1mGenerating EusLisp code from uuv_control_msgs/SetPIDParams.srv[0m
+[ 98%] [34m[1mGenerating EusLisp code from uuv_control_msgs/SwitchToAutomatic.srv[0m
+[ 98%] [34m[1mGenerating EusLisp code from uuv_control_msgs/GetPIDParams.srv[0m
+[100%] [34m[1mGenerating EusLisp manifest code for uuv_control_msgs[0m
+[100%] Built target uuv_control_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target uuv_control_msgs_generate_messages[0m
+[100%] Built target uuv_control_msgs_generate_messages

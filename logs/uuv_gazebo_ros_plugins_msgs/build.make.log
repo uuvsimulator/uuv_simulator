@@ -1,0 +1,26 @@
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_SetFloat
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_SetUseGlobalCurrentVel
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_SetThrusterEfficiency
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_GetFloat
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_GetThrusterEfficiency
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_GetModelProperties
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_FloatStamped
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_SetThrusterState
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target geometry_msgs_generate_messages_eus
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_GetThrusterState
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target _uuv_gazebo_ros_plugins_msgs_generate_messages_check_deps_UnderwaterObjectModel
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[ 22%] Built target uuv_gazebo_ros_plugins_msgs_generate_messages_py
+[ 41%] Built target uuv_gazebo_ros_plugins_msgs_generate_messages_lisp
+[ 62%] Built target uuv_gazebo_ros_plugins_msgs_generate_messages_eus
+[ 81%] Built target uuv_gazebo_ros_plugins_msgs_generate_messages_cpp
+[100%] Built target uuv_gazebo_ros_plugins_msgs_generate_messages_nodejs
+[100%] Built target uuv_gazebo_ros_plugins_msgs_generate_messages

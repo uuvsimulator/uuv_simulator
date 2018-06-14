@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_world_ros_plugins_msgs/lib/pkgconfig/uuv_world_ros_plugins_msgs.pc

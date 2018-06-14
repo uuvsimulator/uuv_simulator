@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_trajectory_control/lib/python2.7/dist-packages/uuv_waypoints/__init__.py

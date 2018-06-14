@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_control/share/uuv_manipulators_control/cmake/uuv_manipulators_controlConfig.cmake

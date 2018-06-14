@@ -1,0 +1,10 @@
+(cl:defpackage uuv_sensor_plugins_ros_msgs-srv
+  (:use )
+  (:export
+   "CHANGESENSORSTATE"
+   "<CHANGESENSORSTATE-REQUEST>"
+   "CHANGESENSORSTATE-REQUEST"
+   "<CHANGESENSORSTATE-RESPONSE>"
+   "CHANGESENSORSTATE-RESPONSE"
+  ))
+

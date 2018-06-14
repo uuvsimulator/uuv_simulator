@@ -1,0 +1,34 @@
+[35m[1mScanning dependencies of target underwater_object_plugin[0m
+[  5%] [32mBuilding CXX object CMakeFiles/underwater_object_plugin.dir/src/HydrodynamicModel.cc.o[0m
+[ 10%] [32mBuilding CXX object CMakeFiles/underwater_object_plugin.dir/src/BuoyantObject.cc.o[0m
+[ 15%] [32mBuilding CXX object CMakeFiles/underwater_object_plugin.dir/src/UnderwaterObjectPlugin.cc.o[0m
+[35m[1mScanning dependencies of target dynamics[0m
+[ 20%] [32mBuilding CXX object CMakeFiles/dynamics.dir/src/Dynamics.cc.o[0m
+[ 25%] [34m[1mRunning C++ protocol buffer compiler on /home/amishsqrrob/uuv_simulator/src/uuv_gazebo_plugins/uuv_gazebo_plugins/msgs/Accel.proto[0m
+[ 30%] [34m[1mRunning C++ protocol buffer compiler on /home/amishsqrrob/uuv_simulator/src/uuv_gazebo_plugins/uuv_gazebo_plugins/msgs/Double.proto[0m
+[35m[1mScanning dependencies of target uuv_gazebo_plugins_msgs[0m
+[ 35%] [32mBuilding CXX object CMakeFiles/uuv_gazebo_plugins_msgs.dir/Double.pb.cc.o[0m
+[ 40%] [32m[1mLinking CXX shared library /home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libunderwater_object_plugin.so[0m
+[ 45%] [32mBuilding CXX object CMakeFiles/uuv_gazebo_plugins_msgs.dir/Accel.pb.cc.o[0m
+[ 45%] Built target underwater_object_plugin
+[35m[1mScanning dependencies of target _catkin_empty_exported_target[0m
+[ 45%] Built target _catkin_empty_exported_target
+[35m[1mScanning dependencies of target umbilical_plugin[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/umbilical_plugin.dir/src/UmbilicalModel.cc.o[0m
+[ 55%] [32m[1mLinking CXX shared library libuuv_gazebo_plugins_msgs.so[0m
+[ 55%] Built target uuv_gazebo_plugins_msgs
+[ 60%] [32mBuilding CXX object CMakeFiles/umbilical_plugin.dir/src/UmbilicalPlugin.cc.o[0m
+[ 65%] [32m[1mLinking CXX shared library /home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libdynamics.so[0m
+[ 65%] Built target dynamics
+[35m[1mScanning dependencies of target fin_plugin[0m
+[ 70%] [32mBuilding CXX object CMakeFiles/fin_plugin.dir/src/LiftDragModel.cc.o[0m
+[35m[1mScanning dependencies of target thruster_plugin[0m
+[ 75%] [32mBuilding CXX object CMakeFiles/fin_plugin.dir/src/FinPlugin.cc.o[0m
+[ 80%] [32mBuilding CXX object CMakeFiles/thruster_plugin.dir/src/ThrusterConversionFcn.cc.o[0m
+[ 85%] [32m[1mLinking CXX shared library /home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libumbilical_plugin.so[0m
+[ 85%] Built target umbilical_plugin
+[ 90%] [32mBuilding CXX object CMakeFiles/thruster_plugin.dir/src/ThrusterPlugin.cc.o[0m
+[ 95%] [32m[1mLinking CXX shared library /home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libfin_plugin.so[0m
+[ 95%] Built target fin_plugin
+[100%] [32m[1mLinking CXX shared library /home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libthruster_plugin.so[0m
+[100%] Built target thruster_plugin

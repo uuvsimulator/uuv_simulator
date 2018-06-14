@@ -1,0 +1,8 @@
+prefix=/home/amishsqrrob/uuv_simulator/install
+
+Name: oberon4_description
+Description: Description of oberon4_description
+Version: 0.5.0
+Cflags: 
+Libs: -L/home/amishsqrrob/uuv_simulator/install/lib 
+Requires: 

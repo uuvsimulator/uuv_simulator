@@ -1,0 +1,55 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/amishsqrrob/uuv_simulator/build/uuv_assistants/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_503b9/fast"
+/usr/bin/make -f CMakeFiles/cmTC_503b9.dir/build.make CMakeFiles/cmTC_503b9.dir/build
+make[1]: Entering directory '/home/amishsqrrob/uuv_simulator/build/uuv_assistants/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_503b9.dir/CheckSymbolExists.c.o
+/usr/bin/cc     -o CMakeFiles/cmTC_503b9.dir/CheckSymbolExists.c.o   -c /home/amishsqrrob/uuv_simulator/build/uuv_assistants/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_503b9
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_503b9.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTC_503b9.dir/CheckSymbolExists.c.o  -o cmTC_503b9 -rdynamic 
+CMakeFiles/cmTC_503b9.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_503b9.dir/build.make:97: recipe for target 'cmTC_503b9' failed
+make[1]: *** [cmTC_503b9] Error 1
+make[1]: Leaving directory '/home/amishsqrrob/uuv_simulator/build/uuv_assistants/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_503b9/fast' failed
+make: *** [cmTC_503b9/fast] Error 2
+
+File /home/amishsqrrob/uuv_simulator/build/uuv_assistants/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/amishsqrrob/uuv_simulator/build/uuv_assistants/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_af0b4/fast"
+/usr/bin/make -f CMakeFiles/cmTC_af0b4.dir/build.make CMakeFiles/cmTC_af0b4.dir/build
+make[1]: Entering directory '/home/amishsqrrob/uuv_simulator/build/uuv_assistants/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_af0b4.dir/CheckFunctionExists.c.o
+/usr/bin/cc    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_af0b4.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
+Linking C executable cmTC_af0b4
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_af0b4.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_af0b4.dir/CheckFunctionExists.c.o  -o cmTC_af0b4 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_af0b4.dir/build.make:97: recipe for target 'cmTC_af0b4' failed
+make[1]: *** [cmTC_af0b4] Error 1
+make[1]: Leaving directory '/home/amishsqrrob/uuv_simulator/build/uuv_assistants/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_af0b4/fast' failed
+make: *** [cmTC_af0b4/fast] Error 2
+
+

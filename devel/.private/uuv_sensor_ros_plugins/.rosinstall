@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/amishsqrrob/uuv_simulator/devel/.private/uuv_sensor_ros_plugins/setup.sh

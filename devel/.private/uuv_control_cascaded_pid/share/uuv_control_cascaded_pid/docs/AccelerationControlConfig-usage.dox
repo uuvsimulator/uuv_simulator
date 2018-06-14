@@ -1,0 +1,20 @@
+\subsubsection usage Usage
+\verbatim
+<node name="uuv_control_cascaded_pid" pkg="uuv_control" type="uuv_control_cascaded_pid">
+  <param name="tf_prefix" type="str" value="dummy_uuv/" />
+  <param name="base_frame_name" type="str" value="base_link" />
+  <param name="thruster_frame_base" type="str" value="thruster_" />
+  <param name="max_thrust" type="double" value="1500.0" />
+  <param name="thrust_gain" type="double" value="0.00031" />
+  <param name="total_mass" type="double" value="3500.0" />
+  <param name="ixx" type="double" value="1970.0" />
+  <param name="ixy" type="double" value="0.0" />
+  <param name="ixz" type="double" value="0.0" />
+  <param name="iyy" type="double" value="3215.0" />
+  <param name="iyz" type="double" value="0.0" />
+  <param name="izz" type="double" value="3037.0" />
+  <param name="thruster_topic_prefix" type="str" value="thrusters/" />
+  <param name="thruster_topic_suffix" type="str" value="/input" />
+</node>
+\endverbatim
+

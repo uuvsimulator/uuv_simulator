@@ -1,0 +1,74 @@
+[35m[1mScanning dependencies of target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_ChangeSensorState[0m
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_ChangeSensorState
+[35m[1mScanning dependencies of target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_DVL[0m
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_DVL
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_py[0m
+[  0%] Built target geometry_msgs_generate_messages_py
+[35m[1mScanning dependencies of target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_PositionWithCovariance[0m
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_PositionWithCovariance
+[35m[1mScanning dependencies of target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_ChemicalParticleConcentration[0m
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_ChemicalParticleConcentration
+[35m[1mScanning dependencies of target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_Salinity[0m
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_Salinity
+[35m[1mScanning dependencies of target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_DVLBeam[0m
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_DVLBeam
+[35m[1mScanning dependencies of target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_PositionWithCovarianceStamped[0m
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_PositionWithCovarianceStamped
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_nodejs[0m
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_lisp[0m
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_eus[0m
+[  0%] Built target geometry_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_cpp[0m
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target uuv_sensor_plugins_ros_msgs_generate_messages_py[0m
+[  2%] [34m[1mGenerating Python from MSG uuv_sensor_plugins_ros_msgs/Salinity[0m
+[  5%] [34m[1mGenerating Python from MSG uuv_sensor_plugins_ros_msgs/DVLBeam[0m
+[  7%] [34m[1mGenerating Python from MSG uuv_sensor_plugins_ros_msgs/ChemicalParticleConcentration[0m
+[ 10%] [34m[1mGenerating Python from MSG uuv_sensor_plugins_ros_msgs/PositionWithCovarianceStamped[0m
+[ 13%] [34m[1mGenerating Python from MSG uuv_sensor_plugins_ros_msgs/PositionWithCovariance[0m
+[ 15%] [34m[1mGenerating Python from MSG uuv_sensor_plugins_ros_msgs/DVL[0m
+[ 18%] [34m[1mGenerating Python code from SRV uuv_sensor_plugins_ros_msgs/ChangeSensorState[0m
+[ 21%] [34m[1mGenerating Python msg __init__.py for uuv_sensor_plugins_ros_msgs[0m
+[ 23%] [34m[1mGenerating Python srv __init__.py for uuv_sensor_plugins_ros_msgs[0m
+[ 23%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_py
+[35m[1mScanning dependencies of target uuv_sensor_plugins_ros_msgs_generate_messages_nodejs[0m
+[ 26%] [34m[1mGenerating Javascript code from uuv_sensor_plugins_ros_msgs/Salinity.msg[0m
+[ 28%] [34m[1mGenerating Javascript code from uuv_sensor_plugins_ros_msgs/DVLBeam.msg[0m
+[ 31%] [34m[1mGenerating Javascript code from uuv_sensor_plugins_ros_msgs/ChemicalParticleConcentration.msg[0m
+[ 34%] [34m[1mGenerating Javascript code from uuv_sensor_plugins_ros_msgs/PositionWithCovarianceStamped.msg[0m
+[ 36%] [34m[1mGenerating Javascript code from uuv_sensor_plugins_ros_msgs/PositionWithCovariance.msg[0m
+[ 39%] [34m[1mGenerating Javascript code from uuv_sensor_plugins_ros_msgs/DVL.msg[0m
+[ 42%] [34m[1mGenerating Javascript code from uuv_sensor_plugins_ros_msgs/ChangeSensorState.srv[0m
+[ 42%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target uuv_sensor_plugins_ros_msgs_generate_messages_lisp[0m
+[ 44%] [34m[1mGenerating Lisp code from uuv_sensor_plugins_ros_msgs/Salinity.msg[0m
+[ 47%] [34m[1mGenerating Lisp code from uuv_sensor_plugins_ros_msgs/DVLBeam.msg[0m
+[ 50%] [34m[1mGenerating Lisp code from uuv_sensor_plugins_ros_msgs/ChemicalParticleConcentration.msg[0m
+[ 52%] [34m[1mGenerating Lisp code from uuv_sensor_plugins_ros_msgs/PositionWithCovarianceStamped.msg[0m
+[ 55%] [34m[1mGenerating Lisp code from uuv_sensor_plugins_ros_msgs/PositionWithCovariance.msg[0m
+[ 57%] [34m[1mGenerating Lisp code from uuv_sensor_plugins_ros_msgs/DVL.msg[0m
+[ 60%] [34m[1mGenerating Lisp code from uuv_sensor_plugins_ros_msgs/ChangeSensorState.srv[0m
+[ 60%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target uuv_sensor_plugins_ros_msgs_generate_messages_eus[0m
+[ 63%] [34m[1mGenerating EusLisp code from uuv_sensor_plugins_ros_msgs/Salinity.msg[0m
+[ 65%] [34m[1mGenerating EusLisp code from uuv_sensor_plugins_ros_msgs/DVLBeam.msg[0m
+[ 68%] [34m[1mGenerating EusLisp code from uuv_sensor_plugins_ros_msgs/ChemicalParticleConcentration.msg[0m
+[ 71%] [34m[1mGenerating EusLisp code from uuv_sensor_plugins_ros_msgs/PositionWithCovarianceStamped.msg[0m
+[ 73%] [34m[1mGenerating EusLisp code from uuv_sensor_plugins_ros_msgs/PositionWithCovariance.msg[0m
+[ 76%] [34m[1mGenerating EusLisp code from uuv_sensor_plugins_ros_msgs/DVL.msg[0m
+[ 78%] [34m[1mGenerating EusLisp code from uuv_sensor_plugins_ros_msgs/ChangeSensorState.srv[0m
+[ 81%] [34m[1mGenerating EusLisp manifest code for uuv_sensor_plugins_ros_msgs[0m
+[ 81%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target uuv_sensor_plugins_ros_msgs_generate_messages_cpp[0m
+[ 84%] [34m[1mGenerating C++ code from uuv_sensor_plugins_ros_msgs/Salinity.msg[0m
+[ 86%] [34m[1mGenerating C++ code from uuv_sensor_plugins_ros_msgs/DVLBeam.msg[0m
+[ 89%] [34m[1mGenerating C++ code from uuv_sensor_plugins_ros_msgs/ChemicalParticleConcentration.msg[0m
+[ 92%] [34m[1mGenerating C++ code from uuv_sensor_plugins_ros_msgs/PositionWithCovarianceStamped.msg[0m
+[ 94%] [34m[1mGenerating C++ code from uuv_sensor_plugins_ros_msgs/PositionWithCovariance.msg[0m
+[ 97%] [34m[1mGenerating C++ code from uuv_sensor_plugins_ros_msgs/DVL.msg[0m
+[100%] [34m[1mGenerating C++ code from uuv_sensor_plugins_ros_msgs/ChangeSensorState.srv[0m
+[100%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target uuv_sensor_plugins_ros_msgs_generate_messages[0m
+[100%] Built target uuv_sensor_plugins_ros_msgs_generate_messages

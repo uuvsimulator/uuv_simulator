@@ -1,0 +1,8 @@
+prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_control_cascaded_pid
+
+Name: uuv_control_cascaded_pid
+Description: Description of uuv_control_cascaded_pid
+Version: 0.5.0
+Cflags: -I/home/amishsqrrob/uuv_simulator/devel/.private/uuv_control_cascaded_pid/include
+Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_control_cascaded_pid/lib 
+Requires: 

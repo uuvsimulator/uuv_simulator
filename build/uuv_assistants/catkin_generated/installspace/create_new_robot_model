@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+# Copyright (c) 2016 The UUV Simulator Authors.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import roslib
+import os
+import rospy
+import argparse
+import sys
+import shutil
+from rospkg import RosPack
+
+roslib.load_manifest('uuv_assistants')
+
+ROSPACK_INST = RosPack()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Create new catkin package for a UUV robot description")
+    parser.add_argument('--robot_name', type=str)
+
+    args = parser.parse_args(rospy.myargv()[1:])
+
+    if args.robot_name is None:
+        print('No robot name given!')
+        sys.exit(-1)
+
+    catkin_pkg = args.robot_name + '_description'
+
+    print('Create new catkin package for a UUV robot description')
+    print('\tRobot name = ' + args.robot_name)
+    print('\tCatkin package name = ' + catkin_pkg)
+
+
+    if catkin_pkg is not None:
+        if os.path.exists(catkin_pkg):
+            print('Catkin package already exists!')
+            sys.exit(1)
+        print('Creating the catkin package...')
+        os.system('catkin_create_pkg ' + catkin_pkg)
+        if not os.path.isdir(catkin_pkg):
+            print('Catkin package could not be created')
+            sys.exit(-1)
+        print('Done!')
+
+    template_path = os.path.join(ROSPACK_INST.get_path('uuv_assistants'), 'templates', 'robot_model')
+
+    for d in os.listdir(template_path):
+        new_folder = os.path.join(catkin_pkg, d)
+        os.makedirs(new_folder)
+        print('Creating folder=' + new_folder)
+
+        for f in os.listdir(os.path.join(template_path, d)):
+            print('Creating file:')
+            filename = os.path.join(catkin_pkg, d, f.replace('.template', ''))
+            print('\t' + filename)
+
+            output_file = open(filename, 'w')
+            with open(os.path.join(os.path.join(template_path, d), f), 'r') as d_file:
+                for line in d_file:
+                    if '$ROBOT_NAME' in line:
+                        line = line.replace('$ROBOT_NAME', args.robot_name)
+                    if '$CATKIN_PACKAGE' in line:
+                        line = line.replace('$CATKIN_PACKAGE', catkin_pkg)
+                    output_file.write(line)
+
+    print('Robot description package <%s> create successfully' % catkin_pkg)

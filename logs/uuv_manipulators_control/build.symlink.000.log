@@ -1,0 +1,4 @@
+Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_manipulators_control/cmake/uuv_manipulators_controlConfig-version.cmake
+Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_manipulators_control/cmake/uuv_manipulators_controlConfig.cmake
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_manipulators_control.pc
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/uuv_manipulators_control/__init__.py

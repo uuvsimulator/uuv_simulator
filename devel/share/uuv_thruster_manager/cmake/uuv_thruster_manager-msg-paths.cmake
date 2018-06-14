@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_thruster_manager/share/uuv_thruster_manager/cmake/uuv_thruster_manager-msg-paths.cmake

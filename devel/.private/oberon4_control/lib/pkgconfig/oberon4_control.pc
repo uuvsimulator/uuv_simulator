@@ -1,0 +1,8 @@
+prefix=/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_control
+
+Name: oberon4_control
+Description: Description of oberon4_control
+Version: 0.5.0
+Cflags: 
+Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_control/lib 
+Requires: 

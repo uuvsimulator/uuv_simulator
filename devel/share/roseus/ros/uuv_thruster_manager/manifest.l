@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_thruster_manager/share/roseus/ros/uuv_thruster_manager/manifest.l

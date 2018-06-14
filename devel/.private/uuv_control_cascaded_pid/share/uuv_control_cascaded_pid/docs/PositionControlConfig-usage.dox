@@ -1,0 +1,14 @@
+\subsubsection usage Usage
+\verbatim
+<node name="uuv_control_cascaded_pid" pkg="uuv_control" type="uuv_control_cascaded_pid">
+  <param name="pos_p" type="double" value="1.0" />
+  <param name="pos_i" type="double" value="0.0" />
+  <param name="pos_d" type="double" value="0.0" />
+  <param name="pos_sat" type="double" value="10.0" />
+  <param name="rot_p" type="double" value="1.0" />
+  <param name="rot_i" type="double" value="0.0" />
+  <param name="rot_d" type="double" value="0.0" />
+  <param name="rot_sat" type="double" value="3.0" />
+</node>
+\endverbatim
+

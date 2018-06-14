@@ -1,0 +1,8 @@
+prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_control
+
+Name: uuv_manipulators_control
+Description: Description of uuv_manipulators_control
+Version: 0.5.0
+Cflags: 
+Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_control/lib 
+Requires: uuv_manipulators_kinematics

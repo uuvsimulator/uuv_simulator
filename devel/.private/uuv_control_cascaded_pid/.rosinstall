@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/amishsqrrob/uuv_simulator/devel/.private/uuv_control_cascaded_pid/setup.sh

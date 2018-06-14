@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_msgs/lib/python2.7/dist-packages/uuv_manipulators_msgs/msg/_EndPointState.py

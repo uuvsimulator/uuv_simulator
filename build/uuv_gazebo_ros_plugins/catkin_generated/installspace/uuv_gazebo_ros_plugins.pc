@@ -1,0 +1,8 @@
+prefix=/home/amishsqrrob/uuv_simulator/install
+
+Name: uuv_gazebo_ros_plugins
+Description: Description of uuv_gazebo_ros_plugins
+Version: 0.5.0
+Cflags: -I/home/amishsqrrob/uuv_simulator/install/include -I/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_ros_plugins_msgs/include -I/home/amishsqrrob/uuv_simulator/src/uuv_gazebo_plugins/uuv_gazebo_plugins/include -I/opt/ros/kinetic/include -I/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp -I/home/amishsqrrob/uuv_simulator/build/uuv_gazebo_plugins -I/home/amishsqrrob/uuv_simulator/build/uuv_gazebo_plugins/msgs -I/usr/include -I/usr/include/gazebo-8 -I/usr/include/bullet -I/usr/include/simbody -I/usr/include/sdformat-5.3 -I/usr/include/ignition/math3 -I/usr/include/OGRE -I/usr/include/OGRE/Terrain -I/usr/include/OGRE/Paging -I/usr/include/ignition/transport3 -I/usr/include/uuid -I/usr/include/ignition/msgs0 -I/usr/include/gazebo-8/gazebo/msgs -I/usr/include/eigen3
+Libs: -L/home/amishsqrrob/uuv_simulator/install/lib -lfin_ros_plugin -lthruster_ros_plugin -lunderwater_object_ros_plugin -ljoint_state_publisher -laccelerations_test_plugin
+Requires: uuv_gazebo_plugins sensor_msgs geometry_msgs std_msgs uuv_gazebo_ros_plugins_msgs

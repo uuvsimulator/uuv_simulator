@@ -1,0 +1,24 @@
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target _uuv_world_ros_plugins_msgs_generate_messages_check_deps_TransformFromSphericalCoord
+[  0%] Built target _uuv_world_ros_plugins_msgs_generate_messages_check_deps_SetCurrentDirection
+[  0%] Built target _uuv_world_ros_plugins_msgs_generate_messages_check_deps_SetCurrentModel
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[  0%] Built target _uuv_world_ros_plugins_msgs_generate_messages_check_deps_SetOriginSphericalCoord
+[  0%] Built target _uuv_world_ros_plugins_msgs_generate_messages_check_deps_SetCurrentVelocity
+[  0%] Built target _uuv_world_ros_plugins_msgs_generate_messages_check_deps_GetOriginSphericalCoord
+[  0%] Built target _uuv_world_ros_plugins_msgs_generate_messages_check_deps_GetCurrentModel
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target _uuv_world_ros_plugins_msgs_generate_messages_check_deps_TransformToSphericalCoord
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target geometry_msgs_generate_messages_eus
+[ 19%] Built target uuv_world_ros_plugins_msgs_generate_messages_cpp
+[ 40%] Built target uuv_world_ros_plugins_msgs_generate_messages_py
+[ 97%] Built target uuv_world_ros_plugins_msgs_generate_messages_lisp
+[ 97%] Built target uuv_world_ros_plugins_msgs_generate_messages_nodejs
+[100%] Built target uuv_world_ros_plugins_msgs_generate_messages_eus
+[100%] Built target uuv_world_ros_plugins_msgs_generate_messages

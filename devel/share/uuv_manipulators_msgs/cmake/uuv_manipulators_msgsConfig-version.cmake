@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_msgs/share/uuv_manipulators_msgs/cmake/uuv_manipulators_msgsConfig-version.cmake

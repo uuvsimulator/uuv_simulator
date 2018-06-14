@@ -1,0 +1,8 @@
+[33m[1mCMake Warning[0m at /opt/ros/kinetic/share/catkin/cmake/catkin_package.cmake:166 (message):
+  catkin_package() DEPENDS on 'gazebo' but neither 'gazebo_INCLUDE_DIRS' nor
+  'gazebo_LIBRARIES' is defined.
+[36mCall Stack (most recent call first):[0m
+  /opt/ros/kinetic/share/catkin/cmake/catkin_package.cmake:102 (_catkin_package)
+  CMakeLists.txt:16 (catkin_package)
+
+

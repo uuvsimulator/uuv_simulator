@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+# Copyright (c) 2016 The UUV Simulator Authors.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import roslib
+import os
+import rospy
+import argparse
+import sys
+import shutil
+from rospkg import RosPack
+
+roslib.load_manifest('uuv_assistants')
+
+ROSPACK_INST = RosPack()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Create new catkin package for a UUV robot description")
+    parser.add_argument('--robot_name', type=str)
+    parser.add_argument('--output_dir', type=str, default=None)
+
+    args = parser.parse_args(rospy.myargv()[1:])
+
+    if args.robot_name is None:
+        print('No robot name given!')
+        sys.exit(-1)
+
+    if args.output_dir is None:
+        output_dir = args.robot_name + '_control'
+        print('Creating catking package %s for the thruster manager configuration' % output_dir)
+        if os.path.exists(output_dir):
+            print('Catkin package already exists!')
+            sys.exit(-1)
+        print('Creating the catkin package...')
+        os.system('catkin_create_pkg ' + output_dir)
+        if not os.path.isdir(output_dir):
+            print('Catkin package could not be created')
+            sys.exit(-1)
+        print('Done!')
+    else:
+        output_dir = args.output_dir
+
+    print('Create new catkin package for a UUV control configuration')
+    print('\tRobot name = ' + args.robot_name)
+    print('\tOutput directory = ' + output_dir)
+
+    template_path = os.path.join(ROSPACK_INST.get_path('uuv_assistants'), 'templates', 'thruster_manager_config')
+
+    for d in os.listdir(template_path):
+        new_folder = os.path.join(output_dir, d)
+        if not os.path.isdir(new_folder):
+            os.makedirs(new_folder)
+            print('Creating folder=' + new_folder)
+
+        for f in os.listdir(os.path.join(template_path, d)):
+            print('Creating file:')
+            filename = os.path.join(output_dir, d, f.replace('.template', ''))
+            print('\t' + filename)
+
+            output_file = open(filename, 'w')
+            with open(os.path.join(os.path.join(template_path, d), f), 'r') as d_file:
+                for line in d_file:
+                    if '$ROBOT_NAME' in line:
+                        line = line.replace('$ROBOT_NAME', args.robot_name)
+                    if '$CATKIN_PACKAGE' in line:
+                        line = line.replace('$CATKIN_PACKAGE', output_dir)
+                    output_file.write(line)
+
+    print('Thruster manager configuration <%s> create successfully' % output_dir)

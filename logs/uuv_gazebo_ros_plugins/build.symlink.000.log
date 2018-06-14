@@ -1,0 +1,10 @@
+Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_gazebo_ros_plugins/cmake/uuv_gazebo_ros_pluginsConfig-version.cmake
+Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_gazebo_ros_plugins/cmake/uuv_gazebo_ros_pluginsConfig.cmake
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/liblinear_battery_ros_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libjoint_state_publisher.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libthruster_ros_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libcustom_battery_consumer_ros_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libaccelerations_test_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libfin_ros_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libunderwater_object_ros_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_gazebo_ros_plugins.pc

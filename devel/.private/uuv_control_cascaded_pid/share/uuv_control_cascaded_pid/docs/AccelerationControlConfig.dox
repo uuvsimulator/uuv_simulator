@@ -1,0 +1,19 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~tf_prefix" : \b [str] prefix for all tf frames min: , default: dummy_uuv/, max: 
+- \b "~base_frame_name" : \b [str] Name of base frame you want to control min: , default: base_link, max: 
+- \b "~thruster_frame_base" : \b [str] Base name (without id) of thruster tf frame min: , default: thruster_, max: 
+- \b "~max_thrust" : \b [double] Maximum thrust in [N] min: 0.0, default: 1500.0, max: 30000.0
+- \b "~thrust_gain" : \b [double] thruster gain min: 0.0, default: 0.00031, max: 1.0
+- \b "~total_mass" : \b [double] Total mass in [kg] min: 0.0, default: 3500.0, max: 5000.0
+- \b "~ixx" : \b [double] inertia tensor in [kg m^2] min: 0.0, default: 1970.0, max: 5000.0
+- \b "~ixy" : \b [double] inertia tensor in [kg m^2] min: 0.0, default: 0.0, max: 5000.0
+- \b "~ixz" : \b [double] inertia tensor in [kg m^2] min: 0.0, default: 0.0, max: 5000.0
+- \b "~iyy" : \b [double] inertia tensor in [kg m^2] min: 0.0, default: 3215.0, max: 5000.0
+- \b "~iyz" : \b [double] inertia tensor in [kg m^2] min: 0.0, default: 0.0, max: 5000.0
+- \b "~izz" : \b [double] inertia tensor in [kg m^2] min: 0.0, default: 3037.0, max: 5000.0
+- \b "~thruster_topic_prefix" : \b [str] Prefix of thruster topic (before id) min: , default: thrusters/, max: 
+- \b "~thruster_topic_suffix" : \b [str] Suffix of thruster topic (before id) min: , default: /input, max: 
+

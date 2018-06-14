@@ -1,0 +1,8 @@
+Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_gazebo_plugins/cmake/uuv_gazebo_pluginsConfig-version.cmake
+Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_gazebo_plugins/cmake/uuv_gazebo_pluginsConfig.cmake
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libfin_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libumbilical_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libdynamics.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libunderwater_object_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libthruster_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_gazebo_plugins.pc

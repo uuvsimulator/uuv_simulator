@@ -1,0 +1,13 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~pos_p" : \b [double] p component of pid for position min: 0.0, default: 1.0, max: 100.0
+- \b "~pos_i" : \b [double] i component of pid for position. min: 0.0, default: 0.0, max: 100.0
+- \b "~pos_d" : \b [double] d component of pid for position. min: 0.0, default: 0.0, max: 100.0
+- \b "~pos_sat" : \b [double] saturation of pid for position. min: 0.0, default: 10.0, max: 100.0
+- \b "~rot_p" : \b [double] p component of pid for orientation. min: 0.0, default: 1.0, max: 100.0
+- \b "~rot_i" : \b [double] i component of pid for orientation. min: 0.0, default: 0.0, max: 100.0
+- \b "~rot_d" : \b [double] d component of pid for orientation. min: 0.0, default: 0.0, max: 100.0
+- \b "~rot_sat" : \b [double] saturation of pid for orientation. min: 0.0, default: 3.0, max: 100.0
+

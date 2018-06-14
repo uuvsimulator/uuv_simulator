@@ -1,0 +1,15 @@
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target _uuv_thruster_manager_generate_messages_check_deps_SetThrusterManagerConfig
+[  0%] Built target _uuv_thruster_manager_generate_messages_check_deps_ThrusterManagerInfo
+[  0%] Built target _uuv_thruster_manager_generate_messages_check_deps_GetThrusterManagerConfig
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target _uuv_thruster_manager_generate_messages_check_deps_GetThrusterCurve
+[ 81%] Built target uuv_thruster_manager_generate_messages_py
+[ 81%] Built target uuv_thruster_manager_generate_messages_eus
+[ 81%] Built target uuv_thruster_manager_generate_messages_cpp
+[ 81%] Built target uuv_thruster_manager_generate_messages_nodejs
+[100%] Built target uuv_thruster_manager_generate_messages_lisp
+[100%] Built target uuv_thruster_manager_generate_messages

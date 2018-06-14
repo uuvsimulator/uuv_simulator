@@ -1,0 +1,5 @@
+uuv_world_plugins/uuv_world_plugins
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_world_plugins/share/uuv_world_plugins/cmake/uuv_world_pluginsConfig.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_world_plugins/cmake/uuv_world_pluginsConfig.cmake
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_world_plugins/share/uuv_world_plugins/cmake/uuv_world_pluginsConfig-version.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_world_plugins/cmake/uuv_world_pluginsConfig-version.cmake
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_world_plugins/lib/libuuv_underwater_current_plugin.so /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_underwater_current_plugin.so
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_world_plugins/lib/pkgconfig/uuv_world_plugins.pc /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_world_plugins.pc

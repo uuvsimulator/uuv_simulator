@@ -1,0 +1,17 @@
+[  0%] Built target _uuv_auv_control_allocator_generate_messages_check_deps_AUVCommand
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target geometry_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_py
+[ 14%] Built target uuv_auv_control_allocator_generate_messages_cpp
+[ 28%] Built target uuv_auv_control_allocator_generate_messages_nodejs
+[ 42%] Built target uuv_auv_control_allocator_generate_messages_lisp
+[ 71%] Built target uuv_auv_control_allocator_generate_messages_eus
+[100%] Built target uuv_auv_control_allocator_generate_messages_py
+[100%] Built target uuv_auv_control_allocator_generate_messages

@@ -1,0 +1,4 @@
+uuv_control/uuv_control_utils
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_control_utils/share/uuv_control_utils/cmake/uuv_control_utilsConfig-version.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_control_utils/cmake/uuv_control_utilsConfig-version.cmake
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_control_utils/share/uuv_control_utils/cmake/uuv_control_utilsConfig.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_control_utils/cmake/uuv_control_utilsConfig.cmake
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_control_utils/lib/pkgconfig/uuv_control_utils.pc /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_control_utils.pc

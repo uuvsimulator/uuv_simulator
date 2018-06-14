@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_description/lib/pkgconfig/oberon4_description.pc

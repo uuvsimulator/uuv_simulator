@@ -1,0 +1,18 @@
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_ChangeSensorState
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_PositionWithCovariance
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_DVL
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_ChemicalParticleConcentration
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_PositionWithCovarianceStamped
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[  0%] Built target geometry_msgs_generate_messages_eus
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_Salinity
+[  0%] Built target _uuv_sensor_plugins_ros_msgs_generate_messages_check_deps_DVLBeam
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[ 18%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_lisp
+[ 57%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_nodejs
+[ 60%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_py
+[ 81%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_eus
+[100%] Built target uuv_sensor_plugins_ros_msgs_generate_messages_cpp
+[100%] Built target uuv_sensor_plugins_ros_msgs_generate_messages

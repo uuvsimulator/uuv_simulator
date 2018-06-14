@@ -1,0 +1,15 @@
+\subsubsection usage Usage
+\verbatim
+<node name="uuv_control_cascaded_pid" pkg="uuv_control" type="uuv_control_cascaded_pid">
+  <param name="linear_p" type="double" value="1.0" />
+  <param name="linear_i" type="double" value="0.0" />
+  <param name="linear_d" type="double" value="0.0" />
+  <param name="linear_sat" type="double" value="10.0" />
+  <param name="angular_p" type="double" value="1.0" />
+  <param name="angular_i" type="double" value="0.0" />
+  <param name="angular_d" type="double" value="0.0" />
+  <param name="angular_sat" type="double" value="3.0" />
+  <param name="odom_vel_in_world" type="bool" value="True" />
+</node>
+\endverbatim
+

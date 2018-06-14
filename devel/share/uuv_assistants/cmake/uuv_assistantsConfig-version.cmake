@@ -1,0 +1,1 @@
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_assistants/share/uuv_assistants/cmake/uuv_assistantsConfig-version.cmake

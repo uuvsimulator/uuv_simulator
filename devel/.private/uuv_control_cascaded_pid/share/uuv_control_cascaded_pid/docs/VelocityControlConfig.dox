@@ -1,0 +1,14 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~linear_p" : \b [double] p component of pid for linear vel. min: 0.0, default: 1.0, max: 100.0
+- \b "~linear_i" : \b [double] i component of pid for linear vel. min: 0.0, default: 0.0, max: 100.0
+- \b "~linear_d" : \b [double] d component of pid for linear vel. min: 0.0, default: 0.0, max: 100.0
+- \b "~linear_sat" : \b [double] saturation of pid for linear vel. min: 0.0, default: 10.0, max: 100.0
+- \b "~angular_p" : \b [double] p component of pid for angular vel. min: 0.0, default: 1.0, max: 100.0
+- \b "~angular_i" : \b [double] i component of pid for angular vel. min: 0.0, default: 0.0, max: 100.0
+- \b "~angular_d" : \b [double] d component of pid for angular vel. min: 0.0, default: 0.0, max: 100.0
+- \b "~angular_sat" : \b [double] saturation of pid for angular vel. min: 0.0, default: 3.0, max: 100.0
+- \b "~odom_vel_in_world" : \b [bool] Is odometry velocity supplied in world frame? (gazebo) min: False, default: True, max: True
+

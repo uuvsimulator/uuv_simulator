@@ -1,0 +1,41 @@
+[35m[1mScanning dependencies of target _uuv_auv_control_allocator_generate_messages_check_deps_AUVCommand[0m
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_cpp[0m
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[  0%] Built target _uuv_auv_control_allocator_generate_messages_check_deps_AUVCommand
+[35m[1mScanning dependencies of target std_msgs_generate_messages_cpp[0m
+[35m[1mScanning dependencies of target std_msgs_generate_messages_nodejs[0m
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_nodejs[0m
+[35m[1mScanning dependencies of target std_msgs_generate_messages_eus[0m
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_eus[0m
+[  0%] Built target std_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target std_msgs_generate_messages_lisp[0m
+[  0%] Built target geometry_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_lisp[0m
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_py[0m
+[  0%] Built target geometry_msgs_generate_messages_py
+[35m[1mScanning dependencies of target std_msgs_generate_messages_py[0m
+[35m[1mScanning dependencies of target uuv_auv_control_allocator_generate_messages_cpp[0m
+[  0%] Built target std_msgs_generate_messages_py
+[35m[1mScanning dependencies of target uuv_auv_control_allocator_generate_messages_nodejs[0m
+[ 14%] [34m[1mGenerating C++ code from uuv_auv_control_allocator/AUVCommand.msg[0m
+[ 28%] [34m[1mGenerating Javascript code from uuv_auv_control_allocator/AUVCommand.msg[0m
+[ 28%] Built target uuv_auv_control_allocator_generate_messages_nodejs
+[35m[1mScanning dependencies of target uuv_auv_control_allocator_generate_messages_eus[0m
+[ 42%] [34m[1mGenerating EusLisp code from uuv_auv_control_allocator/AUVCommand.msg[0m
+[ 42%] Built target uuv_auv_control_allocator_generate_messages_cpp
+[35m[1mScanning dependencies of target uuv_auv_control_allocator_generate_messages_lisp[0m
+[ 57%] [34m[1mGenerating Lisp code from uuv_auv_control_allocator/AUVCommand.msg[0m
+[ 71%] [34m[1mGenerating EusLisp manifest code for uuv_auv_control_allocator[0m
+[ 71%] Built target uuv_auv_control_allocator_generate_messages_lisp
+[35m[1mScanning dependencies of target uuv_auv_control_allocator_generate_messages_py[0m
+[ 85%] [34m[1mGenerating Python from MSG uuv_auv_control_allocator/AUVCommand[0m
+[100%] [34m[1mGenerating Python msg __init__.py for uuv_auv_control_allocator[0m
+[100%] Built target uuv_auv_control_allocator_generate_messages_py
+[100%] Built target uuv_auv_control_allocator_generate_messages_eus
+[35m[1mScanning dependencies of target uuv_auv_control_allocator_generate_messages[0m
+[100%] Built target uuv_auv_control_allocator_generate_messages

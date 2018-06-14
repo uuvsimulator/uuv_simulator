@@ -1,0 +1,8 @@
+prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_world_plugins
+
+Name: uuv_world_plugins
+Description: Description of uuv_world_plugins
+Version: 0.5.0
+Cflags: -I/home/amishsqrrob/uuv_simulator/src/uuv_world_plugins/uuv_world_plugins/include -I/usr/include/OGRE -I/usr/include -I/usr/include/gazebo-8 -I/usr/include/bullet -I/usr/include/simbody -I/usr/include/sdformat-5.3 -I/usr/include/ignition/math3 -I/usr/include/OGRE/Terrain -I/usr/include/OGRE/Paging -I/usr/include/ignition/transport3 -I/usr/include/uuid -I/usr/include/ignition/msgs0
+Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_world_plugins/lib -luuv_underwater_current_plugin
+Requires: gazebo_msgs

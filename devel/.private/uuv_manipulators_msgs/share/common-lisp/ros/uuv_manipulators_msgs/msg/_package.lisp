@@ -1,0 +1,13 @@
+(cl:defpackage uuv_manipulators_msgs-msg
+  (:use )
+  (:export
+   "<ARMCONFIGCOMMAND>"
+   "ARMCONFIGCOMMAND"
+   "<ENDPOINTSTATE>"
+   "ENDPOINTSTATE"
+   "<ENDEFFECTORCOMMAND>"
+   "ENDEFFECTORCOMMAND"
+   "<ENDEFFECTORSTATE>"
+   "ENDEFFECTORSTATE"
+  ))
+

@@ -1,0 +1,4 @@
+uuv_assistants
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_assistants/share/uuv_assistants/cmake/uuv_assistantsConfig-version.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_assistants/cmake/uuv_assistantsConfig-version.cmake
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_assistants/share/uuv_assistants/cmake/uuv_assistantsConfig.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_assistants/cmake/uuv_assistantsConfig.cmake
+/home/amishsqrrob/uuv_simulator/devel/.private/uuv_assistants/lib/pkgconfig/uuv_assistants.pc /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_assistants.pc

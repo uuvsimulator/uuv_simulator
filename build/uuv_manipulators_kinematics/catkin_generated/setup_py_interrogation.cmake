@@ -1,0 +1,6 @@
+set(uuv_manipulators_kinematics_SETUP_PY_VERSION "0.5.0")
+set(uuv_manipulators_kinematics_SETUP_PY_SCRIPTS "")
+set(uuv_manipulators_kinematics_SETUP_PY_PACKAGES "kdl;urdf_parser_py;uuv_kinematics_utils;uuv_manipulator_interfaces;uuv_manipulator_nodes")
+set(uuv_manipulators_kinematics_SETUP_PY_PACKAGE_DIRS "src/kdl;src/urdf_parser_py;src/uuv_kinematics_utils;src/uuv_manipulator_interfaces;src/uuv_manipulator_nodes")
+set(uuv_manipulators_kinematics_SETUP_PY_MODULES "")
+set(uuv_manipulators_kinematics_SETUP_PY_MODULE_DIRS "")

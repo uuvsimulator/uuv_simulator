@@ -1,0 +1,14 @@
+Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_sensor_ros_plugins/cmake/uuv_sensor_ros_pluginsConfig-version.cmake
+Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_sensor_ros_plugins/cmake/uuv_sensor_ros_pluginsConfig.cmake
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_pose_gt_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_base_model_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_cpc_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_imu_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_camera_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_rpt_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_magnetometer_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_base_sensor_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_dvl_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_gps_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_gazebo_ros_subsea_pressure_plugin.so
+Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_sensor_ros_plugins.pc

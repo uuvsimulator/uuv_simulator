@@ -1,0 +1,6 @@
+set(uuv_thruster_manager_SETUP_PY_VERSION "0.5.0")
+set(uuv_thruster_manager_SETUP_PY_SCRIPTS "")
+set(uuv_thruster_manager_SETUP_PY_PACKAGES "uuv_thrusters")
+set(uuv_thruster_manager_SETUP_PY_PACKAGE_DIRS "src/uuv_thrusters")
+set(uuv_thruster_manager_SETUP_PY_MODULES "")
+set(uuv_thruster_manager_SETUP_PY_MODULE_DIRS "")

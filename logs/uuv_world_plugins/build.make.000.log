@@ -1,0 +1,5 @@
+[35m[1mScanning dependencies of target uuv_underwater_current_plugin[0m
+[ 33%] [32mBuilding CXX object CMakeFiles/uuv_underwater_current_plugin.dir/src/UnderwaterCurrentPlugin.cc.o[0m
+[ 66%] [32mBuilding CXX object CMakeFiles/uuv_underwater_current_plugin.dir/src/GaussMarkovProcess.cc.o[0m
+[100%] [32m[1mLinking CXX shared library /home/amishsqrrob/uuv_simulator/devel/.private/uuv_world_plugins/lib/libuuv_underwater_current_plugin.so[0m
+[100%] Built target uuv_underwater_current_plugin

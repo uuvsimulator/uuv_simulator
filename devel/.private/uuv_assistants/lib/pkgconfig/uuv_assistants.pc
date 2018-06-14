@@ -1,0 +1,8 @@
+prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_assistants
+
+Name: uuv_assistants
+Description: Description of uuv_assistants
+Version: 0.5.0
+Cflags: 
+Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_assistants/lib 
+Requires: 
