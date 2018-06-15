@@ -56,6 +56,10 @@ namespace gazebo
      const cv::Mat& _inputImage, const cv::Mat& _inputDepth,
      cv::Mat& _outputImage);
 
+    protected: virtual void SimulateUnderwaterBW(
+      const cv::Mat& _inputImage, const cv::Mat& _inputDepth,
+      cv::Mat& _outputImage);
+
     /// \brief Temporarily store pointer to previous depth image.
     protected: const float * lastDepth;
 

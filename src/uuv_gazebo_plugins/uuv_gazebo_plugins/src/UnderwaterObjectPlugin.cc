@@ -49,6 +49,7 @@ UnderwaterObjectPlugin::~UnderwaterObjectPlugin()
 void UnderwaterObjectPlugin::Load(physics::ModelPtr _model,
                                   sdf::ElementPtr _sdf)
 {
+  std::cout << "[Underwater Object Plgin] plugin initialized" << std::endl;
   GZ_ASSERT(_model != NULL, "Invalid model pointer");
   GZ_ASSERT(_sdf != NULL, "Invalid SDF element pointer");
 
