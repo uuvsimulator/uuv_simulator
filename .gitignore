@@ -12,7 +12,9 @@ logs/
 .idea
 .ropeproject
 .imdone
-.catkin_tools
+.catkin_tools/
+.cproject
+.project
 
 # Misc
 .clang_complete
