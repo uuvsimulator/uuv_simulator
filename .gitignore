@@ -2,7 +2,7 @@ build/
 devel/
 install/
 logs/
-.settings/
+.settings
 *~
 *.pyc
 *.swp
@@ -12,7 +12,7 @@ logs/
 .idea
 .ropeproject
 .imdone
-.catkin_tools/
+.catkin_tools
 .cproject
 .project
 
