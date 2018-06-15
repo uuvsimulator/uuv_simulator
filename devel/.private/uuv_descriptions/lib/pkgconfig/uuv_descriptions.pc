@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_descriptions
-
-Name: uuv_descriptions
-Description: Description of uuv_descriptions
-Version: 0.5.0
-Cflags: 
-Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_descriptions/lib 
-Requires: 

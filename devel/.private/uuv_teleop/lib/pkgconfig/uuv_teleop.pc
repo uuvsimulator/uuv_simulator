@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_teleop
-
-Name: uuv_teleop
-Description: Description of uuv_teleop
-Version: 0.5.0
-Cflags: 
-Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_teleop/lib 
-Requires: 

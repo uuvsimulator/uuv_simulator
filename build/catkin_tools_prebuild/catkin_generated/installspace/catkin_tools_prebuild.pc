@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/install
-
-Name: catkin_tools_prebuild
-Description: Description of catkin_tools_prebuild
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/amishsqrrob/uuv_simulator/install/lib 
-Requires: 

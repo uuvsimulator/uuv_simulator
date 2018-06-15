@@ -1,6 +1,0 @@
-devel_space: /home/amishsqrrob/uuv_simulator/devel
-install: false
-install_space: /home/amishsqrrob/uuv_simulator/install
-profile: default
-source_space: /home/amishsqrrob/uuv_simulator/src
-workspace: /home/amishsqrrob/uuv_simulator

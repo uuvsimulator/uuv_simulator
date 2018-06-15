@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC  -std=c++11  -shared -Wl,-soname,libdynamics.so -o /home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libdynamics.so CMakeFiles/dynamics.dir/src/Dynamics.cc.o  -L/usr/lib/x86_64-linux-gnu/gazebo-8/plugins 

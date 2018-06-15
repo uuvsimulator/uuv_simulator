@@ -1,1 +1,0 @@
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_descriptions/share/uuv_descriptions/cmake/uuv_descriptionsConfig.cmake

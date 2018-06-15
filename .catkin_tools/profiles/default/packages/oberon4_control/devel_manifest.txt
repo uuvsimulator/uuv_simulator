@@ -1,4 +1,0 @@
-uuv_manipulators/oberon4/oberon4_control
-/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_control/share/oberon4_control/cmake/oberon4_controlConfig-version.cmake /home/amishsqrrob/uuv_simulator/devel/share/oberon4_control/cmake/oberon4_controlConfig-version.cmake
-/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_control/share/oberon4_control/cmake/oberon4_controlConfig.cmake /home/amishsqrrob/uuv_simulator/devel/share/oberon4_control/cmake/oberon4_controlConfig.cmake
-/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_control/lib/pkgconfig/oberon4_control.pc /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/oberon4_control.pc

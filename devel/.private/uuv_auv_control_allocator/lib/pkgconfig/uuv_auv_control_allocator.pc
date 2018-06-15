@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_auv_control_allocator
-
-Name: uuv_auv_control_allocator
-Description: Description of uuv_auv_control_allocator
-Version: 0.5.0
-Cflags: -I/home/amishsqrrob/uuv_simulator/devel/.private/uuv_auv_control_allocator/include
-Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_auv_control_allocator/lib 
-Requires: message_runtime

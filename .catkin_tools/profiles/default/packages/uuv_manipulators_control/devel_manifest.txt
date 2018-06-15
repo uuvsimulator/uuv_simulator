@@ -1,5 +1,0 @@
-uuv_manipulators/uuv_manipulators_commons/uuv_manipulators_control
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_control/share/uuv_manipulators_control/cmake/uuv_manipulators_controlConfig-version.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_manipulators_control/cmake/uuv_manipulators_controlConfig-version.cmake
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_control/share/uuv_manipulators_control/cmake/uuv_manipulators_controlConfig.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_manipulators_control/cmake/uuv_manipulators_controlConfig.cmake
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_control/lib/pkgconfig/uuv_manipulators_control.pc /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_manipulators_control.pc
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_control/lib/python2.7/dist-packages/uuv_manipulators_control/__init__.py /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/uuv_manipulators_control/__init__.py

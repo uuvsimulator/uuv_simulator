@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_sensor_ros_plugins
-
-Name: uuv_sensor_ros_plugins
-Description: Description of uuv_sensor_ros_plugins
-Version: 0.0.0
-Cflags: -I/home/amishsqrrob/uuv_simulator/src/uuv_sensor_plugins/uuv_sensor_ros_plugins/include -I/home/amishsqrrob/uuv_simulator/build/uuv_sensor_ros_plugins -I/usr/include/gazebo-8/gazebo/msgs -I/usr/include/OGRE -I/usr/include -I/usr/include/OGRE/Paging -I/opt/ros/kinetic/include/opencv-3.3.1 -I/opt/ros/kinetic/include/opencv-3.3.1/opencv -I/usr/include/eigen3
-Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_sensor_ros_plugins/lib 
-Requires: uuv_gazebo_plugins sensor_msgs uuv_sensor_plugins_ros_msgs

@@ -1,1 +1,0 @@
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_msgs/share/roseus/ros/uuv_manipulators_msgs/msg/EndeffectorCommand.l

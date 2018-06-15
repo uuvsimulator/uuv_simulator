@@ -1,6 +1,0 @@
-Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_trajectory_control/cmake/uuv_trajectory_controlConfig-version.cmake
-Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_trajectory_control/cmake/uuv_trajectory_controlConfig.cmake
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_trajectory_control.pc
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/uuv_waypoints/__init__.py
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/uuv_trajectory_generator/__init__.py
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/uuv_control_interfaces/__init__.py

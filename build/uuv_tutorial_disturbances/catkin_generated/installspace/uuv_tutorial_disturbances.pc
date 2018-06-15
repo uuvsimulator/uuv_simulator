@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/install
-
-Name: uuv_tutorial_disturbances
-Description: Description of uuv_tutorial_disturbances
-Version: 0.5.0
-Cflags: 
-Libs: -L/home/amishsqrrob/uuv_simulator/install/lib 
-Requires: 

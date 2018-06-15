@@ -1,2 +1,0 @@
-set(uuv_thruster_manager_MESSAGE_FILES "")
-set(uuv_thruster_manager_SERVICE_FILES "/home/amishsqrrob/uuv_simulator/src/uuv_control/uuv_thruster_manager/srv/GetThrusterCurve.srv;/home/amishsqrrob/uuv_simulator/src/uuv_control/uuv_thruster_manager/srv/ThrusterManagerInfo.srv;/home/amishsqrrob/uuv_simulator/src/uuv_control/uuv_thruster_manager/srv/SetThrusterManagerConfig.srv;/home/amishsqrrob/uuv_simulator/src/uuv_control/uuv_thruster_manager/srv/GetThrusterManagerConfig.srv")

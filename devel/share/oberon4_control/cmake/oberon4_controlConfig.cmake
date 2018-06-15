@@ -1,1 +1,0 @@
-/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_control/share/oberon4_control/cmake/oberon4_controlConfig.cmake

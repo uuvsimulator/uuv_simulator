@@ -1,8 +1,0 @@
-Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_manipulators_kinematics/cmake/uuv_manipulators_kinematicsConfig-version.cmake
-Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_manipulators_kinematics/cmake/uuv_manipulators_kinematicsConfig.cmake
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_manipulators_kinematics.pc
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/uuv_manipulator_nodes/__init__.py
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/uuv_kinematics_utils/__init__.py
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/uuv_manipulator_interfaces/__init__.py
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/kdl/__init__.py
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/python2.7/dist-packages/urdf_parser_py/__init__.py

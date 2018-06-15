@@ -1,1 +1,0 @@
-/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_control/lib/pkgconfig/oberon4_control.pc

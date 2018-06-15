@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_description
-
-Name: uuv_manipulators_description
-Description: Description of uuv_manipulators_description
-Version: 0.5.0
-Cflags: 
-Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_description/lib 
-Requires: 

@@ -1,1 +1,0 @@
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_manipulators_control/lib/pkgconfig/uuv_manipulators_control.pc

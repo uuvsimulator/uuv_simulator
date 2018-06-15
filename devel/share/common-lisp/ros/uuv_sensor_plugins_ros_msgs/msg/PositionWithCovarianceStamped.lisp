@@ -1,1 +1,0 @@
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_sensor_plugins_ros_msgs/share/common-lisp/ros/uuv_sensor_plugins_ros_msgs/msg/PositionWithCovarianceStamped.lisp

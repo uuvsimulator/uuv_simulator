@@ -1,5 +1,0 @@
-Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_world_ros_plugins/cmake/uuv_world_ros_pluginsConfig-version.cmake
-Symlinking /home/amishsqrrob/uuv_simulator/devel/share/uuv_world_ros_plugins/cmake/uuv_world_ros_pluginsConfig.cmake
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_sc_ros_interface_plugin.so
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/libuuv_underwater_current_ros_plugin.so
-Symlinking /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_world_ros_plugins.pc

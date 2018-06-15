@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/install
-
-Name: uuv_control_msgs
-Description: Description of uuv_control_msgs
-Version: 0.5.0
-Cflags: -I/home/amishsqrrob/uuv_simulator/install/include
-Libs: -L/home/amishsqrrob/uuv_simulator/install/lib 
-Requires: geometry_msgs message_runtime

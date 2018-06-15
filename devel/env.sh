@@ -1,1 +1,0 @@
-/home/amishsqrrob/uuv_simulator/devel/.private/catkin_tools_prebuild/env.sh

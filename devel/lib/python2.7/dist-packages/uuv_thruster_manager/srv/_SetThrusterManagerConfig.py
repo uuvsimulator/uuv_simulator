@@ -1,1 +1,0 @@
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_thruster_manager/lib/python2.7/dist-packages/uuv_thruster_manager/srv/_SetThrusterManagerConfig.py

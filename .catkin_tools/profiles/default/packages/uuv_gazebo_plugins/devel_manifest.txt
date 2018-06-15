@@ -1,9 +1,0 @@
-uuv_gazebo_plugins/uuv_gazebo_plugins
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/share/uuv_gazebo_plugins/cmake/uuv_gazebo_pluginsConfig-version.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_gazebo_plugins/cmake/uuv_gazebo_pluginsConfig-version.cmake
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/share/uuv_gazebo_plugins/cmake/uuv_gazebo_pluginsConfig.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_gazebo_plugins/cmake/uuv_gazebo_pluginsConfig.cmake
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libfin_plugin.so /home/amishsqrrob/uuv_simulator/devel/lib/libfin_plugin.so
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libumbilical_plugin.so /home/amishsqrrob/uuv_simulator/devel/lib/libumbilical_plugin.so
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libdynamics.so /home/amishsqrrob/uuv_simulator/devel/lib/libdynamics.so
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libunderwater_object_plugin.so /home/amishsqrrob/uuv_simulator/devel/lib/libunderwater_object_plugin.so
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/libthruster_plugin.so /home/amishsqrrob/uuv_simulator/devel/lib/libthruster_plugin.so
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_gazebo_plugins/lib/pkgconfig/uuv_gazebo_plugins.pc /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_gazebo_plugins.pc

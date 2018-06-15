@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_description
-
-Name: oberon4_description
-Description: Description of oberon4_description
-Version: 0.5.0
-Cflags: 
-Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/oberon4_description/lib 
-Requires: 

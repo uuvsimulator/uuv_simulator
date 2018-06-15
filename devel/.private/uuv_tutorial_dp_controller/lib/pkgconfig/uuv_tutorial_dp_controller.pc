@@ -1,8 +1,0 @@
-prefix=/home/amishsqrrob/uuv_simulator/devel/.private/uuv_tutorial_dp_controller
-
-Name: uuv_tutorial_dp_controller
-Description: Description of uuv_tutorial_dp_controller
-Version: 0.5.0
-Cflags: 
-Libs: -L/home/amishsqrrob/uuv_simulator/devel/.private/uuv_tutorial_dp_controller/lib 
-Requires: 

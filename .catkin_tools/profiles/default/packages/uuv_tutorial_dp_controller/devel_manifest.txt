@@ -1,4 +1,0 @@
-uuv_tutorials/uuv_tutorial_dp_controller
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_tutorial_dp_controller/share/uuv_tutorial_dp_controller/cmake/uuv_tutorial_dp_controllerConfig-version.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_tutorial_dp_controller/cmake/uuv_tutorial_dp_controllerConfig-version.cmake
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_tutorial_dp_controller/share/uuv_tutorial_dp_controller/cmake/uuv_tutorial_dp_controllerConfig.cmake /home/amishsqrrob/uuv_simulator/devel/share/uuv_tutorial_dp_controller/cmake/uuv_tutorial_dp_controllerConfig.cmake
-/home/amishsqrrob/uuv_simulator/devel/.private/uuv_tutorial_dp_controller/lib/pkgconfig/uuv_tutorial_dp_controller.pc /home/amishsqrrob/uuv_simulator/devel/lib/pkgconfig/uuv_tutorial_dp_controller.pc
