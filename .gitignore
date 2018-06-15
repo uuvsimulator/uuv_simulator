@@ -1,3 +1,8 @@
+build/
+devel/
+install/
+logs/
+.settings/
 *~
 *.pyc
 *.swp
@@ -7,6 +12,7 @@
 .idea
 .ropeproject
 .imdone
+.catkin_tools
 
 # Misc
 .clang_complete
