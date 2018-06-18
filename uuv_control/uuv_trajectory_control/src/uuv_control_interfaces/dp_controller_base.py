@@ -80,30 +80,30 @@ class DPControllerBase(object):
         self._local_planner = LocalPlanner(
             full_dof=planner_full_dof,
             stamped_pose_only=self._use_stamped_poses_only,
-            thrusters_only=self.thrusters_only)        
+            thrusters_only=self.thrusters_only)
 
         self._control_saturation = 5000
         # TODO: Fix the saturation term and how it is applied
         if rospy.has_param('~saturation'):
             self._thrust_saturation = rospy.get_param('~saturation')
             if self._control_saturation <= 0:
-                raise rospy.ROSException('Invalid control saturation forces')        
+                raise rospy.ROSException('Invalid control saturation forces')
 
-        # Flag indicating either use of the AUV control allocator or 
+        # Flag indicating either use of the AUV control allocator or
         # direct command of fins and thruster
         self.use_auv_control_allocator = False
         if not self.thrusters_only:
             self.use_auv_control_allocator = rospy.get_param('~use_auv_control_allocator', False)
-        
+
         # Remap the following topics, if needed
-        # Publisher for thruster allocator                    
+        # Publisher for thruster allocator
         if self.thrusters_only:
             self._thrust_pub = rospy.Publisher(
                 'thruster_output', WrenchStamped, queue_size=1)
         else:
             self._thrust_pub = None
 
-        if not self.thrusters_only:            
+        if not self.thrusters_only:
             self._auv_command_pub = rospy.Publisher(
                 'auv_command_output', AUVCommand, queue_size=1)
         else:
@@ -155,6 +155,7 @@ class DPControllerBase(object):
         self._create_vehicle_model()
         # Flag to indicate that odometry topic is receiving data
         self._init_odom = False
+
         # Subscribe to odometry topic
         self._odom_topic_sub = rospy.Subscriber(
             'odom', numpy_msg(Odometry), self._odometry_callback)
@@ -361,7 +362,7 @@ class DPControllerBase(object):
             surge_speed = self._vehicle_model.vel[0]
             self.publish_auv_command(surge_speed, force)
             return
-        
+
         force_msg = WrenchStamped()
         force_msg.header.stamp = rospy.Time.now()
         force_msg.header.frame_id = '%s/%s' % (self._namespace, self._vehicle_model.body_frame_id)
@@ -399,7 +400,7 @@ class DPControllerBase(object):
         self._vehicle_model.update_odometry(msg)
 
         if not self._init_odom:
-            self._init_odom = True
+            self._init_odom = True        
 
         if len(self._odometry_callbacks):
             for func in self._odometry_callbacks:
