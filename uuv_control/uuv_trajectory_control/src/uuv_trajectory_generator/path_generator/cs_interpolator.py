@@ -72,10 +72,15 @@ class CSInterpolator(PathGenerator):
         if self._start_time is None:
             self._start_time = 0.0
 
-        # Set a simple spline to interpolate heading offset, if existent
-        heading = [self._waypoints.get_waypoint(k).heading_offset for k in range(self._waypoints.num_waypoints)]
-        self._heading_spline = splrep(self._s, heading, k=3, per=False)
-        self._interp_fcns['heading'] = lambda x: splev(x, self._heading_spline)
+        if self._waypoints.num_waypoints == 2:
+            head_offset_line = deepcopy(self._waypoints.get_waypoint(1).heading_offset)
+            self._interp_fcns['heading'] = lambda x: head_offset_line
+        else:
+            # Set a simple spline to interpolate heading offset, if existent
+            heading = [self._waypoints.get_waypoint(i).heading_offset for i in range(self._waypoints.num_waypoints)]
+            self._heading_spline = splrep(self._s, heading, k=3, per=False)
+            self._interp_fcns['heading'] = lambda x: splev(x, self._heading_spline)
+        return True
 
         return True
 
