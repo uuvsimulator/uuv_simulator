@@ -24,11 +24,13 @@
 #include <uuv_sensor_plugins_ros_msgs/ChangeSensorState.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <gazebo/sensors/Noise.hh>
-#include <string>
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
 #include <tf/tfMessage.h>
 #include <tf/tf.h>
+#include <chrono>
+#include <random>
+#include <string>
 
 
 namespace gazebo

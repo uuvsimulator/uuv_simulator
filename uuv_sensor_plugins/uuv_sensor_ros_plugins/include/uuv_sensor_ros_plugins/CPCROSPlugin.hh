@@ -56,6 +56,9 @@ namespace gazebo
     /// \brief Gamma velocity parameter for the smoothing function
     protected: double gamma;
 
+    /// \brief Sensor gain
+    protected: double gain;
+
     /// \brief Noise amplitude
     protected: double noiseSigma;
 
@@ -65,7 +68,7 @@ namespace gazebo
 
     /// \brief Last update from the point cloud callback
     protected: ros::Time lastUpdateTimestamp;
-    
+
     /// \brief Output measurement topic
     protected: uuv_sensor_plugins_ros_msgs::ChemicalParticleConcentration
       outputMsg;

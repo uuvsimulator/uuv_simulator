@@ -27,6 +27,10 @@ ROSBasePlugin::ROSBasePlugin()
   this->isOn.data = true;
   this->world = NULL;
   this->referenceLink = NULL;
+
+  // Set seed for the noise generator
+  // unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator;
 }
 
 /////////////////////////////////////////////////

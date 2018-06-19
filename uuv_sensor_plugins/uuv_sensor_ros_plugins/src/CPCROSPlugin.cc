@@ -37,6 +37,9 @@ void CPCROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   GetSDFParam<double>(_sdf, "gamma", this->gamma, 0.001);
   GZ_ASSERT(this->gamma > 0, "Gamma value must be greater than zero");
 
+  GetSDFParam<double>(_sdf, "gain", this->gain, 1.0);
+  GZ_ASSERT(this->gamma > 0, "Gain value must be greater than zero");
+
   GetSDFParam<double>(_sdf, "radius", this->smoothingLength, 3.0);
   GZ_ASSERT(this->smoothingLength > 0,
     "Radius of the sensor must be greater than zero");
@@ -82,7 +85,7 @@ void CPCROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   GetSDFParam<double>(_sdf, "plume_salinity_value", this->plumeSalinityValue, 0.0);
   GZ_ASSERT(this->plumeSalinityValue >= 0.0,
     "Plume salinity value must be greater or equal to zero");
-  GZ_ASSERT(this->plumeSalinityValue < this->waterSalinityValue, 
+  GZ_ASSERT(this->plumeSalinityValue < this->waterSalinityValue,
     "Plume salinity value must be lower than the water salinity value");
 
   this->particlesSub = this->rosNode->subscribe<sensor_msgs::PointCloud>(
@@ -128,7 +131,7 @@ bool CPCROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   if (_info.simTime.Double() - this->lastUpdateTimestamp.toSec() > 5.0)
   {
     this->outputMsg.is_measuring = false;
-    this->outputMsg.concentration = 0.0;    
+    this->outputMsg.concentration = 0.0;
   }
 
   this->outputMsg.header.frame_id = this->referenceFrameID;
@@ -142,8 +145,8 @@ bool CPCROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   this->salinityMsg.header.stamp.sec = _info.simTime.sec;
   this->salinityMsg.header.stamp.nsec = _info.simTime.nsec;
 
-  this->salinityMsg.salinity = 
-    this->waterSalinityValue * (1 - std::min(1.0, this->outputMsg.concentration)) + 
+  this->salinityMsg.salinity =
+    this->waterSalinityValue * (1 - std::min(1.0, this->outputMsg.concentration)) +
     std::min(1.0, this->outputMsg.concentration) * this->plumeSalinityValue;
 
   this->salinityPub.publish(this->salinityMsg);
@@ -233,7 +236,7 @@ void CPCROSPlugin::OnPlumeParticlesUpdate(
       totalParticleConc += particleConc;
     }
 
-    this->outputMsg.concentration = totalParticleConc;
+    this->outputMsg.concentration = this->gain * totalParticleConc;
     this->updatingCloud = false;
   }
 }
