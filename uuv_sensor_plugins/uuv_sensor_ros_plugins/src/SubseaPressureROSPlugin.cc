@@ -32,7 +32,6 @@ void SubseaPressureROSPlugin::Load(physics::ModelPtr _model,
   ROSBaseModelPlugin::Load(_model, _sdf);
 
   GetSDFParam<double>(_sdf, "saturation", this->saturation, 3000);
-  GetSDFParam<double>(_sdf, "noise_stddev", this->stdDev, 0.0);
   GetSDFParam<bool>(_sdf, "estimate_depth_on", this->estimateDepth, false);
   GetSDFParam<double>(_sdf, "standard_pressure", this->standardPressure,
     101.325);
@@ -75,7 +74,7 @@ bool SubseaPressureROSPlugin::OnUpdate(const common::UpdateInfo& _info)
     pressure += depth * this->kPaPerM;
   }
 
-  pressure += this->GetGaussianNoise(this->stdDev);
+  pressure += this->GetGaussianNoise(this->noiseAmp);
 
   double inferredDepth = 0.0;
   // Estimate depth, if enabled
@@ -90,7 +89,7 @@ bool SubseaPressureROSPlugin::OnUpdate(const common::UpdateInfo& _info)
     sensor_msgs::msgs::Pressure gazeboMsg;
 
     gazeboMsg.set_pressure(pressure);
-    gazeboMsg.set_stddev(this->stdDev);
+    gazeboMsg.set_stddev(this->noiseSigma);
 
     if (this->estimateDepth)
       gazeboMsg.set_depth(inferredDepth);
@@ -105,7 +104,7 @@ bool SubseaPressureROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   rosMsg.header.frame_id = this->link->GetName();
 
   rosMsg.fluid_pressure = pressure;
-  rosMsg.variance = this->stdDev * this->stdDev;
+  rosMsg.variance = this->noiseSigma * this->noiseSigma;
 
   this->rosSensorOutputPub.publish(rosMsg);
 

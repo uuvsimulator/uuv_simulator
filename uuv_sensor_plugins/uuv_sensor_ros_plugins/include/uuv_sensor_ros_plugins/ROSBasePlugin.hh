@@ -31,6 +31,7 @@
 #include <chrono>
 #include <random>
 #include <string>
+#include <map>
 
 
 namespace gazebo
@@ -48,6 +49,9 @@ namespace gazebo
 
     /// \brief Update callback from simulation.
     public: virtual bool OnUpdate(const common::UpdateInfo&) = 0;
+
+    /// \brief Add noise normal distribution to the list
+    public: bool AddNoiseModel(std::string _name, double _sigma);
 
     /// \brief Robot namespace
     protected: std::string robotNamespace;
@@ -67,6 +71,12 @@ namespace gazebo
     /// \brief Sensor update rate
     protected: double updateRate;
 
+    /// \brief Noise standard deviation
+    protected: double noiseSigma;
+
+    /// \brief Noise amplitude
+    protected: double noiseAmp;
+
     /// \brief Flag set to true if the Gazebo sensors messages are supposed
     /// to be published as well (it can avoid unnecessary overhead in case)
     /// the sensor messages needed are only ROS messages
@@ -75,8 +85,9 @@ namespace gazebo
     /// \brief Pseudo random number generator
     protected: std::default_random_engine rndGen;
 
-    /// \brief Normal distribution
-    protected: std::normal_distribution<double> normalDist;
+    /// \brief Normal distribution describing the noise models
+    protected: std::map<std::string, std::normal_distribution<double>>
+      noiseModels;
 
     /// \brief Flag to control the generation of output messages
     protected: std_msgs::Bool isOn;
@@ -128,8 +139,13 @@ namespace gazebo
     /// \brief Callback function for the static TF message
     protected: void GetTFMessage(const tf::tfMessage::ConstPtr &_msg);
 
-    /// \brief Returns noise value for a function with zero mean
-    protected: double GetGaussianNoise(double _sigma);
+    /// \brief Returns noise value for a function with zero mean from the
+    /// default Gaussian noise model
+    protected: double GetGaussianNoise(double _amp);
+
+    /// \brief Returns noise value for a function with zero mean from a
+    /// Gaussian noise model according to the model name
+    protected: double GetGaussianNoise(std::string _name, double _amp);
 
     /// \brief Enables generation of simulated measurement if the timeout
     /// since the last update has been reached

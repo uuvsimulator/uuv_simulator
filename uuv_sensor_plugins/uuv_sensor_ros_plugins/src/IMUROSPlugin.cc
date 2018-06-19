@@ -84,6 +84,7 @@ void IMUROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   // a continuous-time density (two-sided spectrum); not the true covariance
   // of the measurements.
   // Angular velocity measurement covariance.
+  this->AddNoiseModel("gyro_noise_density", this->imuParameters.gyroscopeNoiseDensity);
   double gyroVar = this->imuParameters.gyroscopeNoiseDensity *
     this->imuParameters.gyroscopeNoiseDensity;
   this->imuROSMessage.angular_velocity_covariance[0] = gyroVar;
@@ -91,6 +92,7 @@ void IMUROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   this->imuROSMessage.angular_velocity_covariance[8] = gyroVar;
 
   // Linear acceleration measurement covariance.
+  this->AddNoiseModel("acc_noise_density", this->imuParameters.accelerometerNoiseDensity);
   double accelVar = this->imuParameters.accelerometerNoiseDensity *
     this->imuParameters.accelerometerNoiseDensity;
   this->imuROSMessage.linear_acceleration_covariance[0] = accelVar;
@@ -98,6 +100,7 @@ void IMUROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   this->imuROSMessage.linear_acceleration_covariance[8] = accelVar;
 
   // Orientation estimate covariance
+  this->AddNoiseModel("orientation_noise_density", this->imuParameters.orientationNoise);
   double orientationVar = this->imuParameters.orientationNoise *
     this->imuParameters.orientationNoise;
   this->imuROSMessage.orientation_covariance[0] = orientationVar;
@@ -114,14 +117,19 @@ void IMUROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   double sigmaBonG = this->imuParameters.gyroscopeTurnOnBiasSigma;
   double sigmaBonA = this->imuParameters.accelerometerTurnOnBiasSigma;
 
+  this->AddNoiseModel("gyro_turn_on_bias", sigmaBonG);
+  this->AddNoiseModel("acc_turn_on_bias", sigmaBonA);
+
+  // FIXME Add the noise amplitude input for gyroscope
   this->gyroscopeTurnOnBias = ignition::math::Vector3d(
-    this->GetGaussianNoise(sigmaBonG),
-    this->GetGaussianNoise(sigmaBonG),
-    this->GetGaussianNoise(sigmaBonG));
+    this->GetGaussianNoise("gyro_turn_on_bias", this->noiseAmp),
+    this->GetGaussianNoise("gyro_turn_on_bias", this->noiseAmp),
+    this->GetGaussianNoise("gyro_turn_on_bias", this->noiseAmp));
+  // FIXME Add the noise amplitude input for accelerometer
   this->accelerometerTurnOnBias = ignition::math::Vector3d(
-    this->GetGaussianNoise(sigmaBonA),
-    this->GetGaussianNoise(sigmaBonA),
-    this->GetGaussianNoise(sigmaBonA));
+    this->GetGaussianNoise("acc_turn_on_bias", this->noiseAmp),
+    this->GetGaussianNoise("acc_turn_on_bias", this->noiseAmp),
+    this->GetGaussianNoise("acc_turn_on_bias", this->noiseAmp));
 
   // TODO(nikolicj) incorporate steady-state covariance of bias process
   this->gyroscopeBias = ignition::math::Vector3d::Zero;
@@ -330,17 +338,22 @@ void IMUROSPlugin::AddNoise(ignition::math::Vector3d& _linAcc,
   // Compute state-transition.
   double phiGD = exp(-1.0 / tauG * _dt);
 
+  // FIXME Add the noise amplitude input for BGD
+  this->AddNoiseModel("bgd", sigmaBGD);
+  // FIXME Add the noise amplitude input for GD
+  this->AddNoiseModel("gd", sigmaGD);
+
   // Simulate gyroscope noise processes and add them to the true angular rate.
   this->gyroscopeBias = phiGD * this->gyroscopeBias +
     ignition::math::Vector3d(
-      this->GetGaussianNoise(sigmaBGD),
-      this->GetGaussianNoise(sigmaBGD),
-      this->GetGaussianNoise(sigmaBGD));
+      this->GetGaussianNoise("bgd", this->noiseAmp),
+      this->GetGaussianNoise("bgd", this->noiseAmp),
+      this->GetGaussianNoise("bgd", this->noiseAmp));
   _angVel = _angVel + this->gyroscopeBias + this->gyroscopeTurnOnBias +
     ignition::math::Vector3d(
-      this->GetGaussianNoise(sigmaGD),
-      this->GetGaussianNoise(sigmaGD),
-      this->GetGaussianNoise(sigmaGD));
+      this->GetGaussianNoise("gd", this->noiseAmp),
+      this->GetGaussianNoise("gd", this->noiseAmp),
+      this->GetGaussianNoise("gd", this->noiseAmp));
 
   /// Accelerometer
   double tauA = this->imuParameters.accelerometerBiasCorrelationTime;
@@ -354,27 +367,33 @@ void IMUROSPlugin::AddNoise(ignition::math::Vector3d& _linAcc,
   // Compute state-transition.
   double phiAD = exp(-1.0 / tauA * _dt);
 
+  // FIXME Add the noise amplitude input for BAD
+  this->AddNoiseModel("bad", sigmaBAD);
+  // FIXME Add the noise amplitude input for BAD
+  this->AddNoiseModel("ad", sigmaAD);
+
   // Simulate accelerometer noise processes and add them to the true linear
   // acceleration.
   this->accelerometerBias = phiAD * this->accelerometerBias +
     ignition::math::Vector3d(
-      this->GetGaussianNoise(sigmaBAD),
-      this->GetGaussianNoise(sigmaBAD),
-      this->GetGaussianNoise(sigmaBAD));
+      this->GetGaussianNoise("bad", this->noiseAmp),
+      this->GetGaussianNoise("bad", this->noiseAmp),
+      this->GetGaussianNoise("bad", this->noiseAmp));
   _linAcc = _linAcc + this->accelerometerBias + this->accelerometerTurnOnBias +
     ignition::math::Vector3d(
-      this->GetGaussianNoise(sigmaAD),
-      this->GetGaussianNoise(sigmaAD),
-      this->GetGaussianNoise(sigmaAD));
+      this->GetGaussianNoise("ad", this->noiseAmp),
+      this->GetGaussianNoise("ad", this->noiseAmp),
+      this->GetGaussianNoise("ad", this->noiseAmp));
 
   /// Orientation
   // Construct error quaterion using small-angle approximation.
   double scale = 0.5 * this->imuParameters.orientationNoise;
+
   // Attention: w-xyz
   ignition::math::Quaterniond error(1.0,
-    this->GetGaussianNoise(scale),
-    this->GetGaussianNoise(scale),
-    this->GetGaussianNoise(scale));
+    this->GetGaussianNoise("orientation_noise_density", scale),
+    this->GetGaussianNoise("orientation_noise_density", scale),
+    this->GetGaussianNoise("orientation_noise_density", scale));
 
   error.Normalize();
   _orientation = _orientation * error;

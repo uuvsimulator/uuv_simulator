@@ -66,9 +66,6 @@ namespace gazebo
     /// \brief Pose offset
     protected: ignition::math::Pose3d offset;
 
-    /// \brief Gaussian noise sigma
-    protected: double gaussianNoiseSigma;
-
     protected: std::string nedFrameID;
 
     protected: ignition::math::Pose3d nedTransform;

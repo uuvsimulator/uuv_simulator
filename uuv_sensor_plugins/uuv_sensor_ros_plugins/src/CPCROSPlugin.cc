@@ -44,10 +44,6 @@ void CPCROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   GZ_ASSERT(this->smoothingLength > 0,
     "Radius of the sensor must be greater than zero");
 
-  GetSDFParam<double>(_sdf, "noise_sigma", this->noiseSigma, 0.0);
-  GZ_ASSERT(this->noiseSigma >= 0.0,
-    "Signal noise sigma must be greater or equal to zero");
-
   // Reading the name of the output salinity topic
   std::string salinityTopic;
   GetSDFParam<std::string>(_sdf, "salinity_output_topic", salinityTopic, "salinity");
@@ -136,7 +132,7 @@ bool CPCROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 
   this->outputMsg.header.frame_id = this->referenceFrameID;
   this->outputMsg.concentration += this->GetGaussianNoise(
-    this->noiseSigma);
+    this->noiseAmp);
   this->outputMsg.header.stamp.sec = _info.simTime.sec;
   this->outputMsg.header.stamp.nsec = _info.simTime.nsec;
   this->rosSensorOutputPub.publish(this->outputMsg);

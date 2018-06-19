@@ -29,8 +29,8 @@ ROSBasePlugin::ROSBasePlugin()
   this->referenceLink = NULL;
 
   // Set seed for the noise generator
-  // unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::default_random_engine generator;
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  this->rndGen = std::default_random_engine(seed);
 }
 
 /////////////////////////////////////////////////
@@ -131,8 +131,16 @@ bool ROSBasePlugin::InitBasePlugin(sdf::ElementPtr _sdf)
   this->pluginStatePub = this->rosNode->advertise<std_msgs::Bool>(
     this->sensorOutputTopic + "/state", 1);
 
-  // Initialize the normal distribution function
-  this->normalDist = std::normal_distribution<double>(0.0, 1.0);
+  GetSDFParam<double>(_sdf, "noise_sigma", this->noiseSigma, 0.0);
+  GZ_ASSERT(this->noiseSigma >= 0.0,
+    "Signal noise sigma must be greater or equal to zero");
+
+  GetSDFParam<double>(_sdf, "noise_amplitude", this->noiseAmp, 0.0);
+  GZ_ASSERT(this->noiseAmp >= 0.0,
+    "Signal noise amplitude must be greater or equal to zero");
+
+  // Add a default Gaussian noise model
+  this->AddNoiseModel("default", this->noiseSigma);
 }
 
 /////////////////////////////////////////////////
@@ -189,9 +197,28 @@ void ROSBasePlugin::PublishState()
 }
 
 /////////////////////////////////////////////////
-double ROSBasePlugin::GetGaussianNoise(double _sigma)
+double ROSBasePlugin::GetGaussianNoise(double _amp)
 {
-  return _sigma * this->normalDist(this->rndGen);
+  return _amp * this->noiseModels["default"](this->rndGen);
+}
+
+/////////////////////////////////////////////////
+double ROSBasePlugin::GetGaussianNoise(std::string _name, double _amp)
+{
+  GZ_ASSERT(this->noiseModels.count(_name),
+    "Gaussian noise model does not exist");
+  return _amp * this->noiseModels[_name](this->rndGen);
+}
+
+/////////////////////////////////////////////////
+bool ROSBasePlugin::AddNoiseModel(std::string _name, double _sigma)
+{
+  // Check if noise model name already exists
+  if (this->noiseModels.count(_name))
+    return false;
+
+  this->noiseModels[_name] = std::normal_distribution<double>(0.0, _sigma);
+  return true;
 }
 
 /////////////////////////////////////////////////

@@ -59,9 +59,6 @@ namespace gazebo
     /// \brief Sensor gain
     protected: double gain;
 
-    /// \brief Noise amplitude
-    protected: double noiseSigma;
-
     // \brief Radius of the kernel to identify particles that will be taken into
     // account in the concentration computation
     protected: double smoothingLength;

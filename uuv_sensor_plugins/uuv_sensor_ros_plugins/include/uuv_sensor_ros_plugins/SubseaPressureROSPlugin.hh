@@ -41,9 +41,6 @@ namespace gazebo
     /// \brief Sensor saturation (max. value for output pressure in Pa)
     protected: double saturation;
 
-    /// \brief Noise standard deviation
-    protected: double stdDev;
-
     /// \brief If flag is set to true, estimate depth according to pressure
     /// measurement
     protected: bool estimateDepth;

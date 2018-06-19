@@ -30,12 +30,16 @@
       namespace="${namespace}"
       suffix=""
       parent_link="${parent_link}"
+      noise_amplitude="0.0"
+      noise_sigma="0.0"
       topic="rpt">
       <xacro:insert_block name="origin" />
     </xacro:rpt_plugin_macro>
   </xacro:macro>
 
-  <xacro:macro name="rpt_plugin_macro" params="namespace suffix parent_link topic *origin">
+  <xacro:macro name="rpt_plugin_macro"
+    params="namespace suffix parent_link topic noise_sigma noise_amplitude
+    *origin">
     <link name="${namespace}/rpt${suffix}_link">
       <inertial>
         <mass value="0.001" />  <!-- [kg] -->
@@ -65,7 +69,8 @@
         <static_reference_frame>ssbl</static_reference_frame> <!-- name of the refernce frame of all position measurements -->
         <sensor_topic>${topic}</sensor_topic> <!-- name of the sensor output topic and prefix of service name -->
         <update_rate>0.5</update_rate> <!-- Update period [s] -->
-        <noise_std_dev>1.0</noise_std_dev> <!-- std dev of position estimates in x, y, z [m] -->
+        <noise_sigma>${noise_sigma}</noise_sigma> <!-- std dev of position estimates in x, y, z [m] -->
+        <noise_amplitude>${noise_amplitude}</noise_amplitude>
         <enable_gazebo_messages>false</enable_gazebo_messages>
       </plugin>
     </gazebo>

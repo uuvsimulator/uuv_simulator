@@ -30,8 +30,6 @@ void RPTROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
   ROSBaseModelPlugin::Load(_model, _sdf);
 
-  GetSDFParam<double>(_sdf, "noise_std_dev", this->noiseSigma, 0.1);
-
   double variance = this->noiseSigma * this->noiseSigma;
   for (int i = 0; i < 9; i++)
     this->rosMessage.pos.covariance[i] = 0;
@@ -85,9 +83,9 @@ bool RPTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   this->position = this->referenceFrame.Rot().RotateVectorReverse(
     this->position);
 
-  this->position.X() += this->GetGaussianNoise(this->noiseSigma);
-  this->position.Y() += this->GetGaussianNoise(this->noiseSigma);
-  this->position.Z() += this->GetGaussianNoise(this->noiseSigma);
+  this->position.X() += this->GetGaussianNoise(this->noiseAmp);
+  this->position.Y() += this->GetGaussianNoise(this->noiseAmp);
+  this->position.Z() += this->GetGaussianNoise(this->noiseAmp);
 
   this->rosMessage.header.stamp = ros::Time::now();
   this->rosMessage.header.frame_id = this->referenceFrameID;
