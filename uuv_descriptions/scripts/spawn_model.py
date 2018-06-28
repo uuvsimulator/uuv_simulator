@@ -80,6 +80,7 @@ class SpawnModel():
     def __init__(self):
         self.initial_xyz             = [0,0,0]
         self.initial_rpy             = [0,0,0]
+        self.initial_geo             = [0,0,0]
         self.initial_q               = [0,0,0,1]
         self.file_name               = ""
         self.param_name              = ""
@@ -184,6 +185,15 @@ class SpawnModel():
           if sys.argv[i] == '-Y':
             if len(sys.argv) > i+1:
               self.initial_rpy[2] = float(sys.argv[i+1])
+          if sys.argv[i] == '-latitude':
+            if len(sys.argv) > i+1:
+              self.initial_geo[0] = float(sys.argv[i+1])
+          if sys.argv[i] == '-longitude':
+            if len(sys.argv) > i+1:
+              self.initial_geo[1] = float(sys.argv[i+1])
+          if sys.argv[i] == '-altitude':
+            if len(sys.argv) > i+1:
+              self.initial_geo[2] = float(sys.argv[i+1])
           if sys.argv[i] == '-package_to_model':
               self.package_to_model = True;
 
