@@ -14,6 +14,7 @@
 // limitations under the License.
 
 #include <uuv_sensor_ros_plugins/UnderwaterCameraROSPlugin.hh>
+#include <string>
 
 namespace gazebo
 {
@@ -73,6 +74,12 @@ void UnderwaterCameraROSPlugin::Load(sensors::SensorPtr _sensor,
   this->background[0] = (unsigned char)0;
   this->background[1] = (unsigned char)0;
   this->background[2] = (unsigned char)0;
+
+  if (_sdf->HasElement("stddev"))
+    stdDev_=_sdf->GetElement("stddev")->Get<double>();
+  else
+    stdDev_ = 1.00;
+  std::cout<<stdDev_;
 
   if (_sdf->HasElement("backgroundR"))
     this->background[0] = (unsigned char)_sdf->GetElement(
@@ -137,16 +144,25 @@ void UnderwaterCameraROSPlugin::OnNewImageFrame(const unsigned char *_image,
   unsigned int _width, unsigned int _height, unsigned int _depth,
   const std::string& _format)
 {
+
   // Only create cv::Mat wrappers around existing memory
   // (neither allocates nor copies any images).
-  const cv::Mat input(_height, _width, CV_8UC3,
-    const_cast<unsigned char*>(_image));
   const cv::Mat depth(_height, _width, CV_32FC1,
     const_cast<float*>(lastDepth));
-
-  cv::Mat output(_height, _width, CV_8UC3, lastImage);
-
-  this->SimulateUnderwater(input, depth, output);
+  if (!(_format.compare("L8")))
+  {
+    const cv::Mat input(_height, _width, CV_8UC1,
+      const_cast<unsigned char*>(_image));
+    cv::Mat output(_height, _width, CV_8UC1, lastImage);
+    this->SimulateUnderwaterBW(input, depth, output);
+  }
+  else
+  {
+    const cv::Mat input(_height, _width, CV_8UC3,
+      const_cast<unsigned char*>(_image));
+    cv::Mat output(_height, _width, CV_8UC3, lastImage);
+    this->SimulateUnderwater(input, depth, output);
+  }
 
   if (!this->initialized_ || this->height_ <= 0 || this->width_ <= 0)
     return;
@@ -201,7 +217,43 @@ void UnderwaterCameraROSPlugin::SimulateUnderwater(const cv::Mat& _inputImage,
         // Response Function).
         float e = std::exp(-r*attenuation[c]);
         out[c] = e*in[c] + (1.0f-e)*background[c];
+        boost::normal_distribution<> nd(out[c], stdDev_);
+        boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > nor(rng_, nd);
+        out[c]=nor();
       }
+    }
+  }
+}
+
+void UnderwaterCameraROSPlugin::SimulateUnderwaterBW(const cv::Mat& _inputImage,
+  const cv::Mat& _inputDepth, cv::Mat& _outputImage)
+{
+  const float * lutPtr = this->depth2rangeLUT;
+  for (unsigned int row = 0; row < this->height; row++)
+  {
+    const cv::Vec<uchar,1>* inrow = _inputImage.ptr<cv::Vec<uchar,1>>(row);
+    const float* depthrow = _inputDepth.ptr<float>(row);
+    cv::Vec<uchar,1>* outrow = _outputImage.ptr<cv::Vec<uchar,1>>(row);
+
+    for (int col = 0; col < this->width; col++)
+    {
+      // Convert depth to range using the depth2range LUT
+      float r = *(lutPtr++)*depthrow[col];
+      const cv::Vec<uchar,1>& in = inrow[col];
+      cv::Vec<uchar,1>& out = outrow[col];
+
+      if (r < 1e-3)
+        r = 1e10;
+
+        // Simplifying assumption: intensity ~ irradiance.
+        // This is not really the case but a good enough approximation
+        // for now (it would be better to use a proper Radiometric
+        // Response Function).
+        float e = std::exp(-r*attenuation[0]);
+        out[0] = e*in[0] + (1.0f-e)*(background[0]+background[1]+background[2])/3.000000;
+        boost::normal_distribution<> nd(out[0], stdDev_);
+        boost::variate_generator<boost::mt19937&, boost::normal_distribution<> > nor(rng_, nd);
+        out[0]=nor();
     }
   }
 }
