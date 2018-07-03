@@ -75,8 +75,8 @@ bool GPSROSPlugin::OnUpdateGPS()
   this->gpsMessage.header.stamp.nsec = currentTime.nsec;
 
   // Copy the output of Gazebo's GPS sensor into a NavSatFix message
-  this->gpsMessage.latitude = this->gazeboGPSSensor->Latitude().Degree();
-  this->gpsMessage.longitude = this->gazeboGPSSensor->Longitude().Degree();
+  this->gpsMessage.latitude = -this->gazeboGPSSensor->Latitude().Degree();
+  this->gpsMessage.longitude = -this->gazeboGPSSensor->Longitude().Degree();
   this->gpsMessage.altitude = this->gazeboGPSSensor->Altitude();
 
   this->rosSensorOutputPub.publish(this->gpsMessage);
