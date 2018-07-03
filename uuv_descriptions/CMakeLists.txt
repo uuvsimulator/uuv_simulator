@@ -16,7 +16,7 @@ catkin_package(
 )
 
 # Install python scripts
-catkin_install_python(PROGRAMS scripts/spawn_model.py
+catkin_install_python(PROGRAMS scripts/spawn_model
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch Media worlds models world_models
