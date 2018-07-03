@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>uuv_descriptions</name>
-  <version>0.5.0</version>
+  <version>0.5.1</version>
   <description>The uuv_descriptions package</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -22,7 +22,7 @@
   <run_depend>uuv_sensor_ros_plugins</run_depend>
   <run_depend>uuv_gazebo_ros_plugins</run_depend>
   <run_depend>robot_state_publisher</run_depend>
-  
+
   <export>
     <gazebo_ros gazebo_media_path="${prefix}"
                 gazebo_model_path="${prefix}/world_models"/>
