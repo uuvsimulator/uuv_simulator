@@ -40,7 +40,7 @@ void GPSROSPlugin::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
     this->sensorOutputTopic, 10);
 
   // Set the frame ID
-  this->gpsMessage.header.frame_id = this->robotNamespace;
+  this->gpsMessage.header.frame_id = this->robotNamespace + "/gps_link";
   // TODO: Get the position covariance from the GPS sensor
   this->gpsMessage.position_covariance_type =
     sensor_msgs::NavSatFix::COVARIANCE_TYPE_KNOWN;
