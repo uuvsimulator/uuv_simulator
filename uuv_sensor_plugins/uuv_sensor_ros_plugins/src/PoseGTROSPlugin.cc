@@ -51,9 +51,6 @@ void PoseGTROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
   ROSBaseModelPlugin::Load(_model, _sdf);
 
-  GetSDFParam<double>(_sdf, "gaussian_noise_sigma", this->gaussianNoiseSigma,
-    0.0);
-
   ignition::math::Vector3d vec;
   GetSDFParam<ignition::math::Vector3d>(_sdf, "position_offset",
     vec, ignition::math::Vector3d::Zero);
@@ -164,15 +161,15 @@ bool PoseGTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 
   // Add noise to the link's linear velocity
   linkLinVel += ignition::math::Vector3d(
-    this->GetGaussianNoise(this->gaussianNoiseSigma),
-    this->GetGaussianNoise(this->gaussianNoiseSigma),
-    this->GetGaussianNoise(this->gaussianNoiseSigma));
+    this->GetGaussianNoise(this->noiseAmp),
+    this->GetGaussianNoise(this->noiseAmp),
+    this->GetGaussianNoise(this->noiseAmp));
 
   // Add noise to the link's angular velocity
   linkAngVel += ignition::math::Vector3d(
-    this->GetGaussianNoise(this->gaussianNoiseSigma),
-    this->GetGaussianNoise(this->gaussianNoiseSigma),
-    this->GetGaussianNoise(this->gaussianNoiseSigma));
+    this->GetGaussianNoise(this->noiseAmp),
+    this->GetGaussianNoise(this->noiseAmp),
+    this->GetGaussianNoise(this->noiseAmp));
 
   // Publish the odometry message of the base_link wrt Gazebo's ENU
   // inertial reference frame
@@ -223,7 +220,7 @@ void PoseGTROSPlugin::PublishOdomMessage(common::Time _time,
   odomMsg.twist.twist.angular.z = _angVel.Z();
 
   // Fill in the covariance matrix
-  double gn2 = this->gaussianNoiseSigma * this->gaussianNoiseSigma;
+  double gn2 = this->noiseSigma * this->noiseSigma;
   odomMsg.pose.covariance[0] = gn2;
   odomMsg.pose.covariance[7] = gn2;
   odomMsg.pose.covariance[14] = gn2;
@@ -293,7 +290,7 @@ void PoseGTROSPlugin::PublishNEDOdomMessage(common::Time _time,
   odomMsg.twist.twist.angular.y = _angVel.Y();
   odomMsg.twist.twist.angular.z = _angVel.Z();
 
-  double gn2 = this->gaussianNoiseSigma * this->gaussianNoiseSigma;
+  double gn2 = this->noiseSigma * this->noiseSigma;
   odomMsg.pose.covariance[0] = gn2;
   odomMsg.pose.covariance[7] = gn2;
   odomMsg.pose.covariance[14] = gn2;

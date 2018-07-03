@@ -60,15 +60,24 @@ void MagnetometerROSPlugin::Load(physics::ModelPtr _model,
   this->magneticFieldWorld.Z() = this->parameters.intensity *
     -1 * sin(this->parameters.inclination);
 
-  this->turnOnBias.X() = this->GetGaussianNoise(this->parameters.turnOnBias);
-  this->turnOnBias.Y() = this->GetGaussianNoise(this->parameters.turnOnBias);
-  this->turnOnBias.Z() = this->GetGaussianNoise(this->parameters.turnOnBias);
+  this->AddNoiseModel("turn_on_bias", this->parameters.turnOnBias);
+
+  // FIXME Add different options for noise amplitude for each noise model
+  this->turnOnBias.X() = this->GetGaussianNoise("turn_on_bias",
+    this->noiseAmp);
+  this->turnOnBias.Y() = this->GetGaussianNoise("turn_on_bias",
+    this->noiseAmp);
+  this->turnOnBias.Z() = this->GetGaussianNoise("turn_on_bias",
+    this->noiseAmp);
 
   // Initialize ROS message
   if (this->enableLocalNEDFrame)
     this->rosMsg.header.frame_id = tfLocalNEDFrame.child_frame_id_;
   else
     this->rosMsg.header.frame_id = this->link->GetName();
+
+  this->AddNoiseModel("noise_xy", this->parameters.noiseXY);
+  this->AddNoiseModel("noise_z", this->parameters.noiseZ);
 
   this->rosMsg.magnetic_field_covariance[0] =
     this->parameters.noiseXY * this->parameters.noiseXY;
@@ -108,9 +117,9 @@ bool MagnetometerROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 #endif
 
   ignition::math::Vector3d noise(
-    this->GetGaussianNoise(this->parameters.noiseXY),
-    this->GetGaussianNoise(this->parameters.noiseXY),
-    this->GetGaussianNoise(this->parameters.noiseZ));
+    this->GetGaussianNoise("noise_xy", this->noiseAmp),
+    this->GetGaussianNoise("noise_xy", this->noiseAmp),
+    this->GetGaussianNoise("noise_z", this->noiseAmp));
 
   this->measMagneticField =
     pose.Rot().RotateVectorReverse(this->magneticFieldWorld) +

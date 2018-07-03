@@ -10,6 +10,15 @@
   <arg name="pitch" default="0"/>
   <arg name="yaw"   default="0"/>
 
+  <arg name="use_geodetic" default="false"/>
+  <arg name="latitude" default="0"/>
+  <arg name="longitude" default="0"/>
+  <arg name="depth" default="0"/>
+
+  <arg name="latitude_ref" default="0"/>
+  <arg name="longitude_ref" default="0"/>
+  <arg name="altitude_ref" default="0"/>
+
   <!-- Mode to open different robot configurations as set the in file
   nomenclature standard for the files in /robots
 
@@ -26,10 +35,17 @@
   <group ns="$(arg namespace)">
     <param name="robot_description"
            command="$(find xacro)/xacro.py '$(find $CATKIN_PACKAGE)/robots/$(arg mode).xacro' debug:=$(arg debug) namespace:=$(arg namespace)" />
-
+    
     <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
-    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-          args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model $(arg namespace) -param /$(arg namespace)/robot_description"/>
+    <group if="$(arg use_geodetic)">
+      <node name="urdf_spawner" pkg="uuv_descriptions" type="spawn_model" respawn="false" output="screen"
+            args="-urdf -latitude $(arg latitude) -longitude $(arg longitude) -depth $(arg depth) -latitude_ref $(arg latitude_ref) -longitude_ref $(arg longitude_ref) -altitude_ref $(arg altitude_ref) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model $(arg namespace) -param /$(arg namespace)/robot_description"/>
+    </group>
+
+    <group unless="$(arg use_geodetic)">
+      <node name="urdf_spawner" pkg="uuv_descriptions" type="spawn_model" respawn="false" output="screen"
+            args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model $(arg namespace) -param /$(arg namespace)/robot_description"/>
+    </group>
 
     <!-- A joint state publisher plugin already is started with the model, no need to use the default joint state publisher -->
 

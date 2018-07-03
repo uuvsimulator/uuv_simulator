@@ -30,7 +30,10 @@
       salinity_output_topic="salinity"
       salinity_unit="ppt"
       update_rate="10"
+      gain="1.0"
       gamma="0.001"
+      noise_sigma="0"
+      noise_amplitude="0"
       radius="3.0">
       <xacro:insert_block name="origin" />
     </xacro:chemical_concentration_sensor_macro>
@@ -72,6 +75,9 @@
       salinity_unit="ppt"
       update_rate="10"
       gamma="0.001"
+      gain="1.0"
+      noise_sigma="0"
+      noise_amplitude="0"
       radius="3.0">
       <xacro:insert_block name="origin" />
     </xacro:chemical_concentration_sensor_macro>
@@ -80,7 +86,7 @@
   <xacro:macro name="chemical_concentration_sensor_macro"
     params="namespace parent_link *origin suffix input_topic output_topic
             gamma radius update_rate reference_frame water_salinity_value plume_salinity_value
-            salinity_output_topic salinity_unit">
+            salinity_output_topic salinity_unit gain noise_sigma noise_amplitude">
     <!-- Sensor link -->
    <link name="${namespace}/cc_sensor_link">
      <inertial>
@@ -115,6 +121,9 @@
        <plume_salinity_value>${plume_salinity_value}</plume_salinity_value>
        <salinity_output_topic>${salinity_output_topic}</salinity_output_topic>
        <salinity_unit>${salinity_unit}</salinity_unit>
+       <gain>${gain}</gain>
+       <noise_sigma>${noise_sigma}</noise_sigma>
+       <noise_amplitude>${noise_amplitude}</noise_amplitude>
      </plugin>
    </gazebo>
   </xacro:macro>

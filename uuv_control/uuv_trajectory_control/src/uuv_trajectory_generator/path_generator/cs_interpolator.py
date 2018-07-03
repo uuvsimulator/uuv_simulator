@@ -55,7 +55,7 @@ class CSInterpolator(PathGenerator):
                 LineSegment(self._waypoints.get_waypoint(0).pos,
                             self._waypoints.get_waypoint(1).pos))
             self._segment_to_wp_map.append(1)
-        elif self._waypoints.num_waypoints > 2:           
+        elif self._waypoints.num_waypoints > 2:
             self._interp_fcns['pos'] = BezierCurve.generate_cubic_curve(
                 [self._waypoints.get_waypoint(i).pos for i in range(self._waypoints.num_waypoints)])
         else:
@@ -72,10 +72,15 @@ class CSInterpolator(PathGenerator):
         if self._start_time is None:
             self._start_time = 0.0
 
-        # Set a simple spline to interpolate heading offset, if existent
-        heading = [self._waypoints.get_waypoint(k).heading_offset for k in range(self._waypoints.num_waypoints)]
-        self._heading_spline = splrep(self._s, heading, k=3, per=False)
-        self._interp_fcns['heading'] = lambda x: splev(x, self._heading_spline)
+        if self._waypoints.num_waypoints == 2:
+            head_offset_line = deepcopy(self._waypoints.get_waypoint(1).heading_offset)
+            self._interp_fcns['heading'] = lambda x: head_offset_line
+        else:
+            # Set a simple spline to interpolate heading offset, if existent
+            heading = [self._waypoints.get_waypoint(i).heading_offset for i in range(self._waypoints.num_waypoints)]
+            self._heading_spline = splrep(self._s, heading, k=3, per=False)
+            self._interp_fcns['heading'] = lambda x: splev(x, self._heading_spline)
+        return True
 
         return True
 
@@ -126,25 +131,26 @@ class CSInterpolator(PathGenerator):
 
         if s == 0:
             self._last_rot = deepcopy(self._init_rot)
-            return self._init_rot
-        
-        last_s = max(0, s - self._s_step)
+            rotq = self._last_rot
+        else:
+            last_s = max(0, s - self._s_step)
 
-        this_pos = self.generate_pos(s)
-        last_pos = self.generate_pos(last_s)
-       
-        dx = this_pos[0] - last_pos[0]
-        dy = this_pos[1] - last_pos[1]
-        dz = this_pos[2] - last_pos[2]
-        
-        rotq = self._compute_rot_quat(dx, dy, dz)
+            this_pos = self.generate_pos(s)
+            last_pos = self.generate_pos(last_s)
 
+            dx = this_pos[0] - last_pos[0]
+            dy = this_pos[1] - last_pos[1]
+            dz = this_pos[2] - last_pos[2]
+
+            if np.isclose(dx, 0) and np.isclose(dy, 0):
+                rotq = self._last_rot
+            else:
+                rotq = self._compute_rot_quat(dx, dy, dz)
+                self._last_rot = rotq
         # Calculating the step for the heading offset
         q_step = quaternion_about_axis(
             self._interp_fcns['heading'](s),
             np.array([0, 0, 1]))
         # Adding the heading offset to the rotation quaternion
         rotq = quaternion_multiply(rotq, q_step)
-
-        self._last_rot = rotq
         return rotq

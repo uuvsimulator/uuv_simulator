@@ -39,9 +39,6 @@ namespace gazebo
     /// \brief Update sensor measurement
     protected: virtual bool OnUpdate(const common::UpdateInfo& _info);
 
-    /// \brief Standard deviation of measurement noise (in all dimensions).
-    protected: double noiseSigma;
-
     /// \brief Latest measured position.
     protected: ignition::math::Vector3d position;
 

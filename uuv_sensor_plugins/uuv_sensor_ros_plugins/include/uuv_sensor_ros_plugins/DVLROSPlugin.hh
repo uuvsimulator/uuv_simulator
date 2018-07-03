@@ -59,9 +59,6 @@ namespace gazebo
     /// \brief Updates the poses of each beam wrt the DVL frame
     protected: bool UpdateBeamTransforms();
 
-    /// \brief Gaussian noise standard deviation
-    protected: double gaussianNoiseSigma;
-
     protected: bool beamTransformsInitialized;
 
     /// \brief Measured altitude in meters

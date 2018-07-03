@@ -39,6 +39,7 @@
       mag_intensity="65.0"
       noise_xy="1.0"
       noise_z="1.4"
+      noise_amplitude="0"
       turn_on_bias="2.0">
       <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -48,7 +49,7 @@
   <!-- Macro to add a Magnetometer. -->
   <xacro:macro name="magnetometer_plugin_macro"
     params="namespace suffix parent_link topic mass update_rate
-      mag_intensity noise_xy noise_z turn_on_bias
+      mag_intensity noise_xy noise_z turn_on_bias noise_amplitude
       *inertia *origin">
     <!-- Sensor link -->
     <link name="${namespace}/magnetometer${suffix}_link">
@@ -88,6 +89,7 @@
         <noise_xy>${noise_xy}</noise_xy> <!-- Discrete-time std. dev. of output noise in xy-axis [muT] -->
         <noise_z>${noise_z}</noise_z> <!-- Discrete-time std. dev. of output noise in z-axis [muT] -->
         <turn_on_bias>${turn_on_bias}</turn_on_bias> <!-- Std. dev. of turn-on-bias [muT] -->
+        <noise_amplitude>${noise_amplitude}</noise_amplitude>
         <enable_gazebo_messages>false</enable_gazebo_messages>
         <enable_local_ned_frame>false</enable_local_ned_frame>
       </plugin>

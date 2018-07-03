@@ -32,9 +32,6 @@ void DVLROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
   ROSBaseModelPlugin::Load(_model, _sdf);
 
-  GetSDFParam<double>(_sdf, "gaussian_noise_sigma", this->gaussianNoiseSigma,
-    0.0);
-
   // Load the link names for all the beams
   std::string beamLinkName;
   GetSDFParam<std::string>(_sdf, "beam_link_name_0", beamLinkName, "");
@@ -118,7 +115,7 @@ void DVLROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     this->twistROSMsg.header.frame_id = this->link->GetName();
   }
 
-  double variance = this->gaussianNoiseSigma * this->gaussianNoiseSigma;
+  double variance = this->noiseSigma * this->noiseSigma;
 
   // Set covariance
   for (int i = 0; i < 9; i++)
@@ -151,7 +148,7 @@ bool DVLROSPlugin::OnUpdate(const common::UpdateInfo& _info)
 {
   // Publish sensor state
   this->PublishState();
-  
+
   if (!this->EnableMeasurement(_info))
     return false;
 
@@ -172,9 +169,9 @@ bool DVLROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   bodyVel = this->link->GetRelativeLinearVel().Ign();
 #endif
 
-  bodyVel.X() += this->GetGaussianNoise(this->gaussianNoiseSigma);
-  bodyVel.Y() += this->GetGaussianNoise(this->gaussianNoiseSigma);
-  bodyVel.Z() += this->GetGaussianNoise(this->gaussianNoiseSigma);
+  bodyVel.X() += this->GetGaussianNoise(this->noiseAmp);
+  bodyVel.Y() += this->GetGaussianNoise(this->noiseAmp);
+  bodyVel.Z() += this->GetGaussianNoise(this->noiseAmp);
 
   if (this->enableLocalNEDFrame)
     bodyVel = this->localNEDFrame.Rot().RotateVector(bodyVel);
@@ -182,7 +179,7 @@ bool DVLROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   if (this->gazeboMsgEnabled)
   {
     sensor_msgs::msgs::Dvl dvlGazeboMsg;
-    double variance = this->gaussianNoiseSigma * this->gaussianNoiseSigma;
+    double variance = this->noiseSigma * this->noiseSigma;
 
     for (int i = 0; i < 9; i++)
     {

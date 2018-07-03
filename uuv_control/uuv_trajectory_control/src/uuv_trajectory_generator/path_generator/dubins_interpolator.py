@@ -60,7 +60,7 @@ class DubinsInterpolator(PathGenerator):
         for i in range(1, self._waypoints.num_waypoints):
             heading_init = 0.0
             heading_final = 0.0
-            
+
             if i - 1 == 0:
                 heading_init = self._waypoints.get_waypoint(i - 1).heading_offset
             else:
@@ -68,7 +68,7 @@ class DubinsInterpolator(PathGenerator):
                     heading_init = self._waypoints.get_waypoint(i - 1).calculate_heading(self._waypoints.get_waypoint(i))
                 else:
                     heading_init = last_heading
-            
+
             if i == self._waypoints.num_waypoints - 1:
                 if not np.isclose(dist(self._waypoints.get_waypoint(i - 1).pos[0:2], self._waypoints.get_waypoint(i).pos[0:2]), 0):
                     heading_final = self._waypoints.get_waypoint(i - 1).calculate_heading(self._waypoints.get_waypoint(i))
@@ -76,7 +76,7 @@ class DubinsInterpolator(PathGenerator):
                     heading_final = last_heading
             else:
                 if not np.isclose(dist(self._waypoints.get_waypoint(i + 1).pos[0:2], self._waypoints.get_waypoint(i).pos[0:2]), 0):
-                    heading_final = self._waypoints.get_waypoint(i).calculate_heading(self._waypoints.get_waypoint(i + 1))            
+                    heading_final = self._waypoints.get_waypoint(i).calculate_heading(self._waypoints.get_waypoint(i + 1))
                 else:
                     heading_final = last_heading
 
@@ -84,8 +84,8 @@ class DubinsInterpolator(PathGenerator):
 
             path += self._generate_path(
                 self._waypoints.get_waypoint(i - 1), heading_init,
-                self._waypoints.get_waypoint(i), heading_final)        
-        
+                self._waypoints.get_waypoint(i), heading_final)
+
         inter_pnts = list()
         for i in range(len(path) - 1):
             if not np.isclose(np.sqrt(np.sum((path[i + 1] - path[i])**2)), 0):
@@ -93,7 +93,7 @@ class DubinsInterpolator(PathGenerator):
 
         if not np.isclose(np.sqrt(np.sum((path[-1] - path[-2])**2)), 0):
             inter_pnts += [path[-1]]
-                
+
         self._interp_fcns = BezierCurve.generate_cubic_curve(inter_pnts)
 
         # Reparametrizing the curves
@@ -122,7 +122,7 @@ class DubinsInterpolator(PathGenerator):
         assert r > 0
         # Get the 2D frame using the heading angle information
         frame = self._get_frame(heading)
-        # Compute the position of the center of right and left circles wrt 
+        # Compute the position of the center of right and left circles wrt
         # the waypoint given
         circles = dict(R=waypoint.pos[0:2] - r * frame[:, 1].flatten(),
                        L=waypoint.pos[0:2] + r * frame[:, 1].flatten())
@@ -139,16 +139,16 @@ class DubinsInterpolator(PathGenerator):
         return u
 
     def _get_tangent(self, u, delta, radius, heading):
-        return np.cross(np.array([0, 0, 1]), 
-                        np.array([delta * radius * np.cos(self._get_phi(u, delta, heading)), 
-                                  delta * radius * np.sin(self._get_phi(u, delta, heading)), 
-                                  0]))[0:2]            
+        return np.cross(np.array([0, 0, 1]),
+                        np.array([delta * radius * np.cos(self._get_phi(u, delta, heading)),
+                                  delta * radius * np.sin(self._get_phi(u, delta, heading)),
+                                  0]))[0:2]
 
     def _get_circle(self, u, center, radius, delta, heading):
-        return center + radius * np.array([np.cos(self._get_phi(u, delta, heading)), 
-                                           np.sin(self._get_phi(u, delta, heading))])    
+        return center + radius * np.array([np.cos(self._get_phi(u, delta, heading)),
+                                           np.sin(self._get_phi(u, delta, heading))])
 
-    def _get_2d_dubins_path(self, center_1, radius_1, heading_1, delta_1, center_2, radius_2, heading_2, delta_2):    
+    def _get_2d_dubins_path(self, center_1, radius_1, heading_1, delta_1, center_2, radius_2, heading_2, delta_2):
         output = list()
 
         phi_1 = lambda u: self._get_phi(u, delta_1, heading_1)
@@ -156,7 +156,7 @@ class DubinsInterpolator(PathGenerator):
 
         u1_func = lambda angle: self._compute_u(angle, delta_1, heading_1)
         u2_func = lambda angle: self._compute_u(angle, delta_2, heading_2)
-        
+
         tan_func_1 = lambda u: self._get_tangent(u, delta_1, radius_1, heading_1)
         tan_func_2 = lambda u: self._get_tangent(u, delta_2, radius_2, heading_2)
 
@@ -172,28 +172,28 @@ class DubinsInterpolator(PathGenerator):
         n_angle = np.arctan2(n[1], n[0])
         ## First tangent
         ### Compute the points on the circles belonging to the first tangent and the normal vector
-        u1 = u1_func(n_angle)                
+        u1 = u1_func(n_angle)
         u2 = u2_func(n_angle)
-        
+
         ### Compute the points on the circles belonging to the tangent
         c1 = circle_1(u1)
         c2 = circle_2(u2)
-        
+
         ### Compute the tangent vector on points c1 and c2 according to the direction of rotation
         ### provided by delta_1 and delta_2
         t1 = tan_func_1(u1)
         t1 /= np.linalg.norm(t1)
         t2 = tan_func_2(u2)
         t2 /= np.linalg.norm(t2)
-        
+
         tangent_1 = c2 - c1
-        tangent_1 /= np.linalg.norm(tangent_1)        
+        tangent_1 /= np.linalg.norm(tangent_1)
 
-        ### Find out if the tangents on the circles and the tangents connecting the two circles 
+        ### Find out if the tangents on the circles and the tangents connecting the two circles
         ### are equal
-        diff = np.linalg.norm(tangent_1 - t1) + np.linalg.norm(tangent_1 - t2)            
+        diff = np.linalg.norm(tangent_1 - t1) + np.linalg.norm(tangent_1 - t2)
 
-        if np.isclose(diff, 0):    
+        if np.isclose(diff, 0):
             # First tangent is the feasible path between the two circles
             dist = 0.0
             output = list()
@@ -205,7 +205,7 @@ class DubinsInterpolator(PathGenerator):
             output += [circle_1(u1)]
             # Compute the line segment between both circles
             dist += np.linalg.norm(circle_2(u2) - circle_1(u1))
-            # Compute the points for the path on circle 2            
+            # Compute the points for the path on circle 2
             if not np.isclose(u2, 1):
                 u = np.arange(u2, 1, (1 - u2) / 10.0)
                 output += [circle_2(ui) for ui in u]
@@ -219,29 +219,29 @@ class DubinsInterpolator(PathGenerator):
         ### Compute the angle of the normal vector
         n_angle = np.arctan2(-n[1], -n[0])
         ### Compute the points on the circles belonging to the first tangent and the normal vector
-        u1 = u1_func(n_angle)                
+        u1 = u1_func(n_angle)
         u2 = u2_func(n_angle)
-        
+
         ### Compute the points on the circles belonging to the tangent
         c1 = circle_1(u1)
         c2 = circle_2(u2)
-        
+
         ### Compute the tangent vector on points c1 and c2 according to the direction of rotation
         ### provided by delta_1 and delta_2
         t1 = tan_func_1(u1)
         t1 /= np.linalg.norm(t1)
         t2 = tan_func_2(u2)
         t2 /= np.linalg.norm(t2)
-        
+
         # Compute the vector from circle 1 to circle 2
         tangent_2 = c2 - c1
-        tangent_2 /= np.linalg.norm(tangent_2)        
+        tangent_2 /= np.linalg.norm(tangent_2)
 
-        ### Find out if the tangents on the circles and the tangents connecting the two circles 
+        ### Find out if the tangents on the circles and the tangents connecting the two circles
         ### are equal
-        diff = np.linalg.norm(tangent_2 - t1) + np.linalg.norm(tangent_2 - t2)    
-        
-        if np.isclose(diff, 0):    
+        diff = np.linalg.norm(tangent_2 - t1) + np.linalg.norm(tangent_2 - t2)
+
+        if np.isclose(diff, 0):
             # Second tangent is the feasible path between the two circles
             dist = 0.0
             output = list()
@@ -253,7 +253,7 @@ class DubinsInterpolator(PathGenerator):
             output += [circle_1(u1)]
             # Compute the line segment between both circles
             dist += np.linalg.norm(circle_2(u2) - circle_1(u1))
-            # Compute the points for the path on circle 2            
+            # Compute the points for the path on circle 2
             if not np.isclose(u2, 1):
                 u = np.arange(u2, 1, (1 - u2) / 10.0)
                 output += [circle_2(ui) for ui in u]
@@ -286,7 +286,7 @@ class DubinsInterpolator(PathGenerator):
             ## Compute the points on the circles belonging to the first tangent and the normal vector
             u1 = u1_func(np.arctan2(yt1 - center_1[1], xt1 - center_1[0]))
             u2 = u2_func(np.arctan2(yt3 - center_2[1], xt3 - center_2[0]))
-            
+
             ## Compute the points on the circles belonging to the tangent
             c1 = circle_1(u1)
             c2 = circle_2(u2)
@@ -301,11 +301,11 @@ class DubinsInterpolator(PathGenerator):
             tangent_3 = np.array([xt3 - xt1, yt3 - yt1])
             tangent_3 /= np.linalg.norm(tangent_3)
 
-            ### Find out if the tangents on the circles and the tangents connecting the two circles 
+            ### Find out if the tangents on the circles and the tangents connecting the two circles
             ### are equal
-            diff = np.linalg.norm(tangent_3 - t1) + np.linalg.norm(tangent_3 - t2)                
+            diff = np.linalg.norm(tangent_3 - t1) + np.linalg.norm(tangent_3 - t2)
 
-            if np.isclose(diff, 0):    
+            if np.isclose(diff, 0):
                 # Third tangent is the feasible path between the two circles
                 dist = 0.0
                 output = list()
@@ -317,7 +317,7 @@ class DubinsInterpolator(PathGenerator):
                 output += [circle_1(u1)]
                 # Compute the line segment between both circles
                 dist += np.linalg.norm(circle_2(u2) - circle_1(u1))
-                # Compute the points for the path on circle 2            
+                # Compute the points for the path on circle 2
                 if not np.isclose(u2, 1):
                     u = np.arange(u2, 1, (1 - u2) / 10.0)
                     output += [circle_2(ui) for ui in u]
@@ -331,7 +331,7 @@ class DubinsInterpolator(PathGenerator):
             ## Compute the points on the circles belonging to the first tangent and the normal vector
             u1 = u1_func(np.arctan2(yt2 - center_1[1], xt2 - center_1[0]))
             u2 = u2_func(np.arctan2(yt4 - center_2[1], xt4 - center_2[0]))
-            
+
             ## Compute the points on the circles belonging to the tangent
             c1 = circle_1(u1)
             c2 = circle_2(u2)
@@ -346,12 +346,12 @@ class DubinsInterpolator(PathGenerator):
             tangent_4 = np.array([xt4 - xt2, yt4 - yt2])
             tangent_4 /= np.linalg.norm(tangent_4)
 
-            ### Find out if the tangents on the circles and the tangents connecting the two circles 
+            ### Find out if the tangents on the circles and the tangents connecting the two circles
             ### are equal
-            diff = np.linalg.norm(tangent_4 - t1) + np.linalg.norm(tangent_4 - t2)    
-            
-            if np.isclose(diff, 0):    
-                # Fourth tangent is the feasible path between the two circles                
+            diff = np.linalg.norm(tangent_4 - t1) + np.linalg.norm(tangent_4 - t2)
+
+            if np.isclose(diff, 0):
+                # Fourth tangent is the feasible path between the two circles
                 dist = 0.0
                 output = list()
                 if not np.isclose(u1, 0):
@@ -362,7 +362,7 @@ class DubinsInterpolator(PathGenerator):
                 output += [circle_1(u1)]
                 # Compute the line segment between both circles
                 dist += np.linalg.norm(circle_2(u2) - circle_1(u1))
-                # Compute the points for the path on circle 2            
+                # Compute the points for the path on circle 2
                 if not np.isclose(u2, 1):
                     u = np.arange(u2, 1, (1 - u2) / 10.0)
                     output += [circle_2(ui) for ui in u]
@@ -399,7 +399,7 @@ class DubinsInterpolator(PathGenerator):
         marker.color.b = circle_color[2]
 
         for i in np.linspace(0, 1, 50):
-            c_pnt = self._get_circle(i, center[0:2], radius, delta, heading)            
+            c_pnt = self._get_circle(i, center[0:2], radius, delta, heading)
             marker.points.append(Point(c_pnt[0], c_pnt[1], center[2]))
 
         self._marker_id += 1
@@ -420,13 +420,13 @@ class DubinsInterpolator(PathGenerator):
         marker_pnt.color.g = 0.2
         marker_pnt.color.b = 0.0
 
-        c_pnt = self._get_circle(0, center[0:2], radius, delta, heading)   
+        c_pnt = self._get_circle(0, center[0:2], radius, delta, heading)
         marker_pnt.pose.position.x = c_pnt[0]
         marker_pnt.pose.position.y = c_pnt[1]
         marker_pnt.pose.position.z = center[2]
         return [marker, marker_pnt]
 
-    def _generate_path(self, wp_init, heading_init, wp_final, heading_final):     
+    def _generate_path(self, wp_init, heading_init, wp_final, heading_final):
         pnts = list()
 
         max_step_z = 2 * np.pi * self._radius * np.cos(self._max_pitch_angle)
@@ -434,19 +434,19 @@ class DubinsInterpolator(PathGenerator):
         frame_init = np.array([[np.cos(heading_init), -np.sin(heading_init), 0],
                                [np.sin(heading_init), np.cos(heading_init), 0],
                                [0, 0, 1]])
-    
+
         frame_final = np.array([[np.cos(heading_final), -np.sin(heading_final), 0],
                                 [np.sin(heading_final), np.cos(heading_final), 0],
                                 [0, 0, 1]])
 
         # Wrap the angle difference to find out whether both waypoints have
-        # the same target heading 
+        # the same target heading
         heading_diff = (heading_final - heading_init + np.pi) % (2.0 * np.pi) - np.pi
         dist_xy = np.sqrt(np.sum((wp_init.pos[0:2] - wp_final.pos[0:2])**2))
-        
+
         if np.isclose(heading_diff, 0) or np.isclose(dist_xy, 0):
             if abs(wp_init.z - wp_final.z) <= max_step_z and not np.isclose(dist_xy, 0):
-                pnts = [wp_init.pos, wp_final.pos]                                            
+                pnts = [wp_init.pos, wp_final.pos]
             else:
                 z = wp_final.z - wp_init.z
                 if z >= max_step_z:
@@ -454,7 +454,7 @@ class DubinsInterpolator(PathGenerator):
                 else:
                     delta_z = z
                 n = z / delta_z
-                
+
                 center = self._get_center('R', frame_final[:, 1].flatten(), wp_final)
                 center[2] = wp_init.z
 
@@ -464,17 +464,17 @@ class DubinsInterpolator(PathGenerator):
 
                 for i in np.linspace(0, 1, n * 10):
                     pnts.append(helix.interpolate(i))
-                
-            return pnts                                
+
+            return pnts
 
         center_init = None
-        center_final = None        
-        
+        center_final = None
+
         modes = ['RSR', 'RSL', 'LSR', 'LSL']
 
-        # Create visual markers for the left and right circle paths possible 
-        # for evaluation of the Dubins path                
-        c = self._get_center('R', frame_init[:,1].flatten(), wp_init)        
+        # Create visual markers for the left and right circle paths possible
+        # for evaluation of the Dubins path
+        c = self._get_center('R', frame_init[:,1].flatten(), wp_init)
         delta = -1
         self._markers_msg.markers += self._get_circle_marker(c, self._radius, heading_init, delta, wp_final.inertial_frame_id)
 
@@ -482,18 +482,18 @@ class DubinsInterpolator(PathGenerator):
         delta = 1
         self._markers_msg.markers += self._get_circle_marker(c, self._radius, heading_init, delta, wp_final.inertial_frame_id)
 
-        c = self._get_center('R', frame_final[:,1].flatten(), wp_final)        
+        c = self._get_center('R', frame_final[:,1].flatten(), wp_final)
         delta = -1
         self._markers_msg.markers += self._get_circle_marker(c, self._radius, heading_final, delta, wp_final.inertial_frame_id)
 
         c = self._get_center('L', frame_final[:,1].flatten(), wp_final)
         delta = 1
         self._markers_msg.markers += self._get_circle_marker(c, self._radius, heading_final, delta, wp_final.inertial_frame_id)
-        
+
         path = None
         min_dist = None
         mode = None
-        
+
         for c in modes:
             center_1 = self._get_center(c[0], frame_init[:,1].flatten(), wp_init)
             center_2 = self._get_center(c[-1], frame_final[:,1].flatten(), wp_final)
@@ -514,17 +514,17 @@ class DubinsInterpolator(PathGenerator):
                     if dist < min_dist:
                         min_dist = dist
                         path = output
-                        mode = c        
-            
+                        mode = c
+
         pnts = list()
 
         if np.isclose(abs(wp_init.z - wp_final.z), 0):
             for pnt in path:
                 pnts.append(np.array([pnt[0], pnt[1], wp_final.z]))
         elif abs(wp_init.z - wp_final.z) <= max_step_z and not np.isclose(abs(wp_init.z - wp_final.z), 0):
-            
-            d = [0.0] + [np.sqrt(np.sum((path[i] - path[i - 1])**2)) for i in range(1, len(path))]            
-            dz = float(wp_final.z - wp_init.z) * np.cumsum(d) / np.sum(d)            
+
+            d = [0.0] + [np.sqrt(np.sum((path[i] - path[i - 1])**2)) for i in range(1, len(path))]
+            dz = float(wp_final.z - wp_init.z) * np.cumsum(d) / np.sum(d)
             for i in range(len(path)):
                 pnts.append(np.array([path[i][0], path[i][1], wp_init.z + dz[i]]))
         else:
@@ -532,14 +532,14 @@ class DubinsInterpolator(PathGenerator):
             delta_z = z / (np.floor(abs(z) / max_step_z) + np.ceil(abs(z) % max_step_z))
             n = z / delta_z
 
-            d = [0.0] + [np.sqrt(np.sum((path[i] - path[i - 1])**2)) for i in range(1, len(path))]            
-            dz = delta_z * np.cumsum(d) / np.sum(d)   
+            d = [0.0] + [np.sqrt(np.sum((path[i] - path[i - 1])**2)) for i in range(1, len(path))]
+            dz = delta_z * np.cumsum(d) / np.sum(d)
 
             for i in range(len(path)):
                 pnts.append(np.array([path[i][0], path[i][1], wp_init.z + dz[i]]))
 
             center = self._get_center(mode[-1], frame_final[:, 1].flatten(), wp_final)
-            center[2] = wp_init.z + delta_z     
+            center[2] = wp_init.z + delta_z
 
             delta = -1 if mode[-1] == 'R' else 1
             helix = HelicalSegment(
@@ -547,7 +547,7 @@ class DubinsInterpolator(PathGenerator):
 
             for i in np.linspace(0, 1, (n - 1) * 10):
                 pnts.append(helix.interpolate(i))
-            
+
         return pnts
 
     def set_parameters(self, params):
@@ -565,7 +565,7 @@ class DubinsInterpolator(PathGenerator):
         if len(self._interp_fcns) == 0:
             return None
         s = np.arange(0, 1 + step, step)
-        
+
         pnts = list()
         for i in s:
             pnt = TrajectoryPoint()
@@ -579,7 +579,7 @@ class DubinsInterpolator(PathGenerator):
             return None
         idx = self.get_segment_idx(s)
         if idx == 0:
-            u_k = 0            
+            u_k = 0
             pos = self._interp_fcns[idx].interpolate(u_k)
         else:
             u_k = (s - self._s[idx - 1]) / (self._s[idx] - self._s[idx - 1])
@@ -603,20 +603,19 @@ class DubinsInterpolator(PathGenerator):
         if s == 0:
             self._last_rot = deepcopy(self._init_rot)
             return self._init_rot
-        
+
         last_s = max(0, s - self._s_step)
 
         this_pos = self.generate_pos(s)
         last_pos = self.generate_pos(last_s)
-       
+
         dx = this_pos[0] - last_pos[0]
         dy = this_pos[1] - last_pos[1]
         dz = this_pos[2] - last_pos[2]
-        
-        rotq = self._compute_rot_quat(dx, dy, dz)
 
-        self._last_rot = rotq
+        if np.isclose(dx, 0) and np.isclose(dy, 0):
+            rotq = self._last_rot
+        else:
+            rotq = self._compute_rot_quat(dx, dy, dz)
+            self._last_rot = rotq
         return rotq
-
-
-
