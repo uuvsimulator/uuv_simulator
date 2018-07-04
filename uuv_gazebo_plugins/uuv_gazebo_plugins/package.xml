@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_gazebo_plugins</name>
-  <version>0.5.2</version>
+  <version>0.5.3</version>
   <description>The uuv_gazebo_plugins package</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -13,15 +13,11 @@
   <author email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</author>
 
   <license>Apache-2.0</license>
-  
+
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>gazebo</build_depend>  
-  <build_depend>protobuf-dev</build_depend>
-  <build_depend>eigen</build_depend>
-
-  <run_depend>gazebo</run_depend>  
-  <run_depend>protobuf-dev</run_depend>
-  <run_depend>eigen</run_depend>
+  <depend>gazebo</depend>
+  <depend>protobuf-dev</depend>
+  <depend>eigen</depend>
 
 </package>

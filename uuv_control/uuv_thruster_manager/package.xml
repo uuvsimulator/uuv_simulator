@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_thruster_manager</name>
-  <version>0.5.2</version>
+  <version>0.5.3</version>
   <description>The thruster manager package</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -17,12 +17,12 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>message_generation</build_depend>
 
-  <run_depend>std_msgs</run_depend>
-  <run_depend>message_runtime</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>python-yaml</run_depend>
-  <run_depend>uuv_gazebo_ros_plugins_msgs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>python-yaml</exec_depend>
+  <exec_depend>uuv_gazebo_ros_plugins_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
 
 </package>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>oberon7_description</name>
-  <version>0.5.2</version>
+  <version>0.5.3</version>
   <description>Robot and parameter description for the mock-up model of the Schilling Robotics Orion 7P</description>
 
   <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
@@ -12,7 +12,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>gazebo_ros</run_depend>
+  <exec_depend>gazebo_ros</exec_depend>
 
   <export>
     <gazebo_ros gazebo_model_path="${prefix}/models"/>

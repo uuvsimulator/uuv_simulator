@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>oberon4_control</name>
-  <version>0.5.2</version>
+  <version>0.5.3</version>
   <description>The oberon4_control package</description>
 
   <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
@@ -12,12 +12,12 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>uuv_manipulators_kinematics</run_depend>
-  <run_depend>uuv_manipulators_control</run_depend>
-  <run_depend>controller_manager</run_depend>  
-  <run_depend>ros_controllers</run_depend>
-  <run_depend>ros_control</run_depend>
-  <run_depend>gazebo_ros_control</run_depend>
-  <run_depend>effort_controllers</run_depend>
+  <exec_depend>uuv_manipulators_kinematics</exec_depend>
+  <exec_depend>uuv_manipulators_control</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>ros_controllers</exec_depend>
+  <exec_depend>ros_control</exec_depend>
+  <exec_depend>gazebo_ros_control</exec_depend>
+  <exec_depend>effort_controllers</exec_depend>
 
 </package>

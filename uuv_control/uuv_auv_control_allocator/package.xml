@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package format="1">
+<package format="2">
   <name>uuv_auv_control_allocator</name>
-  <version>0.5.2</version>
+  <version>0.5.3</version>
   <description>Optimal allocation of forces and torques to thruster and fins of AUVs</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -16,5 +16,5 @@
   <build_depend>geometry_msgs</build_depend>
   <build_depend>message_generation</build_depend>
 
-  <run_depend>message_runtime</run_depend>
+  <exec_depend>message_runtime</exec_depend>
 </package>

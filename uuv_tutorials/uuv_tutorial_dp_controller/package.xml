@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_tutorial_dp_controller</name>
-  <version>0.5.2</version>
+  <version>0.5.3</version>
   <description>
     Tutorial that shows how to inherit the controller interface modules from the uuv_trajectory_control package to
     develop a custom controlller.
@@ -15,11 +15,11 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>uuv_trajectory_control</run_depend>
-  <run_depend>uuv_control_utils</run_depend>
-  <run_depend>uuv_descriptions</run_depend>
-  <run_depend>uuv_thruster_manager</run_depend>
-  <run_depend>uuv_gazebo</run_depend>
+  <exec_depend>uuv_trajectory_control</exec_depend>
+  <exec_depend>uuv_control_utils</exec_depend>
+  <exec_depend>uuv_descriptions</exec_depend>
+  <exec_depend>uuv_thruster_manager</exec_depend>
+  <exec_depend>uuv_gazebo</exec_depend>
 
   <export>
   </export>

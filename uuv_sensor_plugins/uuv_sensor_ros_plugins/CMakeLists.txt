@@ -7,7 +7,7 @@ list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 find_package(catkin REQUIRED
-  uuv_gazebo_plugins
+  uuv_gazebo_plugins  
   sensor_msgs
   geometry_msgs
   std_msgs
