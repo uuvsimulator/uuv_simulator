@@ -4,3 +4,5 @@ Changelog for package uuv_descriptions
 
 0.5.2 (2018-07-04)
 ------------------
+
+  
