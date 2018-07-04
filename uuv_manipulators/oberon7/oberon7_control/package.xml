@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>oberon7_control</name>
-  <version>0.5.1</version>
+  <version>0.5.2</version>
   <description>Package with configuration and launch files to control the Oberon 7 manipulator.</description>
 
   <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
