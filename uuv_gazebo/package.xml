@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_gazebo</name>
   <version>0.5.2</version>
   <description>The uuv_gazebo package</description>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_trajectory_control</name>
   <version>0.5.2</version>
   <description>The uuv_trajectory_control package</description>
@@ -12,18 +12,18 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>rospy</run_depend>
-  <run_depend>roslib</run_depend>
-  <run_depend>python-numpy</run_depend>
-  <run_depend>python-matplotlib</run_depend>
-  <run_depend>python-yaml</run_depend>
-  <run_depend>python-scipy</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>uuv_control_msgs</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>nav_msgs</run_depend>
-  <run_depend>visualization_msgs</run_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>roslib</exec_depend>
+  <exec_depend>python-numpy</exec_depend>
+  <exec_depend>python-matplotlib</exec_depend>
+  <exec_depend>python-yaml</exec_depend>
+  <exec_depend>python-scipy</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>uuv_control_msgs</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
 
   <test_depend>rosunit</test_depend>
   <test_depend>rostest</test_depend>

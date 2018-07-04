@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_tutorial_rov_model</name>
   <version>0.5.2</version>
   <description>Template package for the construction of a new thruster actuated UUV model.</description>

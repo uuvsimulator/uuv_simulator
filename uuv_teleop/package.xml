@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_teleop</name>
-  <version>0.5.2</version>
+  <version>0.5.1</version>
   <description>ROS nodes to generate command topics for vehicles and manipulators using a joystick input</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -16,14 +16,14 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>joy</run_depend>
-  <run_depend>joy_teleop</run_depend>
-  <run_depend>python-numpy</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>uuv_gazebo_ros_plugins_msgs</run_depend>
-  <run_depend>uuv_thruster_manager</run_depend>
+  <exec_depend>joy</exec_depend>
+  <exec_depend>joy_teleop</exec_depend>
+  <exec_depend>python-numpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>uuv_gazebo_ros_plugins_msgs</exec_depend>
+  <exec_depend>uuv_thruster_manager</exec_depend>
 </package>

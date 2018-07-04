@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_manipulators_description</name>
   <version>0.5.2</version>
   <description>Common macros to build the robot description of manipulators.</description>

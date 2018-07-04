@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_gazebo_ros_plugins</name>
   <version>0.5.2</version>
   <description>The uuv_gazebo_ros_plugins package</description>
@@ -13,28 +13,16 @@
   <author email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</author>
 
   <license>Apache-2.0</license>
-
-  <build_depend>gazebo</build_depend>
-  <build_depend>uuv_gazebo_plugins</build_depend>
-  <build_depend>uuv_gazebo_ros_plugins_msgs</build_depend>
-  <build_depend>sensor_msgs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>visualization_msgs</build_depend>
-  <build_depend>tf2_ros</build_depend>
-  <build_depend>tf2</build_depend>
-
-  <run_depend>gazebo</run_depend>
-  <run_depend>uuv_gazebo_plugins</run_depend>
-  <run_depend>uuv_gazebo_ros_plugins_msgs</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>roscpp</run_depend>
-  <run_depend>visualization_msgs</run_depend>
-  <run_depend>tf2_ros</run_depend>
-  <run_depend>tf2</run_depend>
+  <depend>gazebo</depend>
+  <depend>uuv_gazebo_plugins</depend>
+  <depend>uuv_gazebo_ros_plugins_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>visualization_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2</depend>
 
   <buildtool_depend>catkin</buildtool_depend>
 </package>

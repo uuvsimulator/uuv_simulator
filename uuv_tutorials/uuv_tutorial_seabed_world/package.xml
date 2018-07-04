@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>uuv_tutorial_seabed_world</name>
   <version>0.5.2</version>
   <description>A simple tutorial on how to create a new Gazebo model with a seabed and how to configure it as a simulation scenario</description>
@@ -16,7 +16,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>gazebo_ros</run_depend>
+  <exec_depend>gazebo_ros</exec_depend>
 
   <export>
     <gazebo_ros gazebo_media_path="${prefix}"
