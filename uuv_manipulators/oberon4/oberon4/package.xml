@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>oberon4</name>
-  <version>0.5.1</version>
+  <version>0.5.2</version>
   <description>The oberon4 package</description>
 
   <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>

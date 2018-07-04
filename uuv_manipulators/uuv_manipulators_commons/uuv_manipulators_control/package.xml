@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>uuv_manipulators_control</name>
-  <version>0.5.1</version>
+  <version>0.5.2</version>
   <description>Cartesian and gripper controllers.</description>
 
   <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
