@@ -4,6 +4,15 @@ Changelog for package uuv_sensor_ros_plugins
 
 Forthcoming
 -----------
+* 0.5.3
+* UPDATE CHANGELOG files
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* FIX Version number in uuv_teleop
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* UPDATE Catkin packages format to 2
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhaes
+
 * FIX Version number in uuv_teleop
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * UPDATE Catkin packages format to 2

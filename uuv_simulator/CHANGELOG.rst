@@ -4,6 +4,10 @@ Changelog for package uuv_simulator
 
 Forthcoming
 -----------
+* 0.5.3
+* UPDATE CHANGELOG files
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhaes
 
 0.5.3 (2018-07-04)
 ------------------
