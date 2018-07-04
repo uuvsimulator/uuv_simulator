@@ -2,8 +2,8 @@
 Changelog for package uuv_auv_control_allocator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.4 (2018-07-04)
+------------------
 * UPDATE CHANGELOG files
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * 0.5.3
