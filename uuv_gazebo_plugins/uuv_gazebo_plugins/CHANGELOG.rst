@@ -14,8 +14,8 @@ Changelog for package uuv_gazebo_plugins
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
 
-Forthcoming
------------
+0.5.5 (2018-07-05)
+------------------
 * UPDATE Package description
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * FIX Setting nonlinear coefficients to the correct matrix

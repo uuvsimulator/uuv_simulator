@@ -14,8 +14,8 @@ Changelog for package uuv_gazebo_ros_plugins
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
 
-Forthcoming
------------
+0.5.5 (2018-07-05)
+------------------
 * ADD ROS tests for verification of default Fossen and sphere vehicle models
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * 0.5.4
