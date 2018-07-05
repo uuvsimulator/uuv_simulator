@@ -96,3 +96,19 @@ install(DIRECTORY include/${PROJECT_NAME}/
 install(DIRECTORY urdf
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest)
+  foreach(T
+      test/test_default_fossen_vehicle.launch
+      test/test_sphere_vehicle.launch
+      )
+     add_rostest(${T})
+  endforeach()
+
+  foreach(UNIT_TESTS
+    test/test_default_fossen_vehicle.py
+    test/test_sphere_vehicle.py
+    catkin_add_nosetests(${UNIT_TESTS}))
+  endforeach()
+endif()
