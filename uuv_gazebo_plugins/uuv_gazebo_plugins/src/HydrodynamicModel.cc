@@ -43,7 +43,7 @@ HydrodynamicModel::HydrodynamicModel(sdf::ElementPtr _sdf,
     this->metacentricLength = _sdf->Get<double>("metacentric_length");
     this->submergedHeight = _sdf->Get<double>("submerged_height");
     this->isSurfaceVessel = true;
-    
+
     gzmsg << "Surface vessel parameters" << std::endl;
     gzmsg << "\tMetacentric width [m]=" << this->metacentricWidth << std::endl;
     gzmsg << "\tMetacentric length [m]=" << this->metacentricLength << std::endl;
@@ -529,6 +529,10 @@ bool HMFossen::GetParam(std::string _tag, std::vector<double>& _output)
   }
   else
     return false;
+  gzmsg << "HydrodynamicModel::GetParam <" << _tag << ">=" << std::endl;
+  for (auto elem : _output)
+    std::cout << elem << " ";
+  std::cout << std::endl;
   return true;
 }
 
@@ -567,6 +571,9 @@ bool HMFossen::GetParam(std::string _tag, double& _output)
     _output = -1.0;
     return false;
   }
+
+  gzmsg << "HydrodynamicModel::GetParam <" << _tag << ">=" << _output <<
+    std::endl;
   return true;
 }
 
@@ -578,68 +585,39 @@ bool HMFossen::SetParam(std::string _tag, double _input)
     if (_input < 0)
       return false;
     this->scalingVolume = _input;
-    gzmsg << "Volume scaling factor set to " << this->scalingVolume <<
-      std::endl;
   }
   else if (!_tag.compare("scaling_added_mass"))
   {
     if (_input < 0)
       return false;
     this->scalingAddedMass = _input;
-    gzmsg << "Added-mass scaling factor set to " << this->scalingAddedMass <<
-      std::endl;
   }
   else if (!_tag.compare("scaling_damping"))
   {
     if (_input < 0)
       return false;
     this->scalingDamping = _input;
-    gzmsg << "Damping scaling factor set to " << this->scalingDamping <<
-      std::endl;
   }
   else if (!_tag.compare("fluid_density"))
   {
     if (_input < 0)
       return false;
     this->fluidDensity = _input;
-    gzmsg << "Fluid density set to " << this->fluidDensity <<
-      std::endl;
   }
   else if (!_tag.compare("offset_volume"))
-  {
     this->offsetVolume = _input;
-    gzmsg << "Volume offset set to " << this->offsetVolume << std::endl;
-  }
-  else if (_tag.compare("offset_added_mass"))
-  {
+  else if (!_tag.compare("offset_added_mass"))
     this->offsetAddedMass = _input;
-    gzmsg << "Added-mass identity offset set to " << this->offsetAddedMass <<
-      std::endl;
-  }
-  else if (_tag.compare("offset_linear_damping"))
-  {
+  else if (!_tag.compare("offset_linear_damping"))
     this->offsetLinearDamping = _input;
-    gzmsg << "Linear damping identity offset set to "
-      << this->offsetLinearDamping
-      << std::endl;
-  }
-  else if (_tag.compare("offset_lin_forward_speed_damping"))
-  {
+  else if (!_tag.compare("offset_lin_forward_speed_damping"))
     this->offsetLinForwardSpeedDamping = _input;
-    gzmsg << "Lin. forward speed damping identity offset set to "
-      << this->offsetLinForwardSpeedDamping
-      << std::endl;
-  }
-  else if (_tag.compare("offset_nonlin_damping"))
-  {
+  else if (!_tag.compare("offset_nonlin_damping"))
     this->offsetNonLinDamping = _input;
-    gzmsg << "Nonlinear damping identity offset set to "
-      << this->offsetNonLinDamping
-      << std::endl;
-  }
   else
     return false;
-
+  gzmsg << "HydrodynamicModel::SetParam <" << _tag << ">=" << _input <<
+    std::endl;
   return true;
 }
 
@@ -766,8 +744,8 @@ HMSphere::HMSphere(sdf::ElementPtr _sdf,
   {
     // Setting the added mass
     this->Ma(i, i) = -sphereMa;
-    // Setting the pressure drag
-    this->quadDampCoef[i] = Dq;
+    // Setting the pressure drag    
+    this->DNonLin(i, i) = Dq;
   }
 }
 

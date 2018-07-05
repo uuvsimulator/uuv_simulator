@@ -48,9 +48,9 @@ catkin_package(
                ${GAZEBO_INCLUDE_DIRS}
                ${GAZEBO_MSG_INCLUDE_DIRS}
                ${EIGEN3_INCLUDE_DIRS}
-  LIBRARIES 
-    underwater_object_plugin 
-    thruster_plugin 
+  LIBRARIES
+    underwater_object_plugin
+    thruster_plugin
     fin_plugin
     dynamics
   DEPENDS gazebo
@@ -148,6 +148,10 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
   FILES_MATCHING PATTERN "*.pb.*"
   PATTERN "*~" EXCLUDE
 )
+
+install(DIRECTORY test
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        PATTERN "*~" EXCLUDE)
 
 #############
 ## Testing ##

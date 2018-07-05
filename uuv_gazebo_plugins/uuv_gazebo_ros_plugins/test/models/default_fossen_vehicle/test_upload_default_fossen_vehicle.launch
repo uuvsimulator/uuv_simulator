@@ -1,0 +1,10 @@
+<launch>
+  <group ns="vehicle">
+      <param name="robot_description"
+        command="$(find xacro)/xacro --inorder '$(find uuv_gazebo_ros_plugins)/test/models/default_fossen_vehicle/model.xacro'"/>
+
+    <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+    <node name="urdf_spawner" pkg="uuv_descriptions" type="spawn_model" respawn="false" output="screen"
+          args="-urdf -x 0 -y 0 -z 0 -R 0 -P 0 -Y 0 -model vehicle -param /vehicle/robot_description"/>
+  </group>
+</launch>
