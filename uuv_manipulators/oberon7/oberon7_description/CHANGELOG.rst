@@ -14,8 +14,8 @@ Changelog for package oberon7_description
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
 
-Forthcoming
------------
+0.5.5 (2018-07-05)
+------------------
 * 0.5.4
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * RM Merge messages from the change log
