@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<robot name="rexrov" xmlns:xacro="http://www.ros.org/wiki/xacro" >
+  <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/thruster_snippets.xacro"/>
+  <xacro:property name="prop_mesh_file" value="file://$(find uuv_descriptions)/models/rexrov/mesh/prop.dae"/>
+
+  <link name="vehicle/base_link">
+    <inertial>
+      <mass value="10"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <gazebo>
+    <plugin name="uuv_plugin" filename="libunderwater_object_ros_plugin.so">
+      <fluid_density>1028.0</fluid_density>
+      <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+      <debug>0</debug>
+
+      <link name="vehicle/base_link">
+          <neutrally_buoyant>0</neutrally_buoyant>
+          <volume>0.009727626</volume>
+          <box>
+              <width>1.0</width>
+              <length>1.0</length>
+              <height>1.0</height>
+          </box>
+          <center_of_buoyancy>0 0 0</center_of_buoyancy>
+          <hydrodynamic_model>
+            <type>sphere</type>
+            <radius>0.1</radius>
+          </hydrodynamic_model>
+      </link>
+    </plugin>
+  </gazebo>
+
+  <!-- Adding thrusters -->
+  <xacro:generic_thruster_macro
+    namespace="vehicle"
+    thruster_id="0"
+    mesh_filename="${prop_mesh_file}">
+    <origin xyz="-0.5 0 0" rpy="0 0 0"/>
+    <dynamics>
+      <type>FirstOrder</type>
+      <timeConstant>0.01</timeConstant>
+    </dynamics>
+
+    <xacro:thruster_cf_basic_macro
+      rotor_constant="0.001"/>
+  </xacro:generic_thruster_macro>
+
+  <xacro:generic_thruster_macro
+    namespace="vehicle"
+    thruster_id="1"
+    mesh_filename="${prop_mesh_file}">
+    <origin xyz="0.5 0 0" rpy="0 0 0"/>
+    <dynamics>
+      <type>FirstOrder</type>
+      <timeConstant>0.01</timeConstant>
+    </dynamics>
+
+    <xacro:thruster_cf_dead_zone_macro
+      rotor_constant_l="0.001"
+      rotor_constant_r="0.001"
+      delta_l="-0.01"
+      delta_r="0.01"/>
+  </xacro:generic_thruster_macro>
+
+  <xacro:generic_thruster_macro
+    namespace="vehicle"
+    thruster_id="2"
+    mesh_filename="${prop_mesh_file}">
+    <origin xyz="0 0.5 0" rpy="0 0 0"/>
+    <dynamics>
+      <type>FirstOrder</type>
+      <timeConstant>0.01</timeConstant>
+    </dynamics>
+
+    <xacro:thruster_cf_linear_interp_macro
+      input_values="-0.1 0 0.1"
+      output_values="-0.01 0 0.01"/>
+  </xacro:generic_thruster_macro>
+</robot>
