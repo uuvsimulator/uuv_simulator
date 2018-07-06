@@ -2,6 +2,12 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* ADD Service handlers to retrieve parameters from the internal models
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhaes
+
 0.5.6 (2018-07-06)
 ------------------
 

@@ -2,6 +2,8 @@
 Changelog for package uuv_assistants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
 
 0.5.6 (2018-07-06)
 ------------------

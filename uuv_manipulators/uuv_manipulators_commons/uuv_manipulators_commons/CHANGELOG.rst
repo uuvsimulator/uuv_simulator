@@ -2,6 +2,9 @@
 Changelog for package uuv_manipulators_commons
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.6 (2018-07-06)
 ------------------
 

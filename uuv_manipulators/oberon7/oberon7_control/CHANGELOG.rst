@@ -2,6 +2,12 @@
 Changelog for package oberon7_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* FIX Order of CHANGELOG file
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhaes
+
 0.5.6 (2018-07-06)
 ------------------
 
