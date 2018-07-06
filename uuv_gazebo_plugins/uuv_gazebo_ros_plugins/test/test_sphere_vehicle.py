@@ -15,15 +15,13 @@
 # limitations under the License.
 from __future__ import print_function
 import rospy
-import rostest
 import unittest
-import os
 import numpy as np
 from geometry_msgs.msg import Vector3, Inertia
 from uuv_gazebo_ros_plugins_msgs.msg import UnderwaterObjectModel
 from uuv_gazebo_ros_plugins_msgs.srv import *
 
-PKG = 'uuv_simulation_wrapper'
+PKG = 'uuv_gazebo_ros_plugins'
 NAME = 'test_sphere_vehicle'
 
 import roslib; roslib.load_manifest(PKG)
