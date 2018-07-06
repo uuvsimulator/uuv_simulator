@@ -136,22 +136,16 @@ void BuoyantObject::GetBuoyancyForce(const ignition::math::Pose3d &_pose,
     GZ_ASSERT(this->waterLevelPlaneArea > 0.0,
       "Water level plane area must be greater than zero");
 
-    if (z - height / 2.0 >= -this->submergedHeight && !this->isSurfaceVesselFloating)
-    {
+    if (z > height / 2.0) {
       // Vessel is completely out of the water
       buoyancyForce = ignition::math::Vector3d(0, 0, 0);
-      buoyancyTorque = ignition::math::Vector3d(0, 0, 0);      
+      buoyancyTorque = ignition::math::Vector3d(0, 0, 0);
       return;
-    }
-    else if (z - height / 2.0 < -this->submergedHeight && !this->isSurfaceVesselFloating)
-    {
+    } else if (z < -height / 2.0) {
       curSubmergedHeight = this->boundingBox.ZLength();
-    }      
-    else
-    { 
-      curSubmergedHeight = this->submergedHeight;
-      this->isSurfaceVesselFloating = true;
-    }
+    } else {
+      curSubmergedHeight = height / 2.0 - z;
+    }//else
                   
     volume = curSubmergedHeight * this->waterLevelPlaneArea;
     buoyancyForce = ignition::math::Vector3d(0, 0, volume * this->fluidDensity * this->g);
