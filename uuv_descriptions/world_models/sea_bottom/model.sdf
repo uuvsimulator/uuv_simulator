@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="sea_bottom">
+    <static>true</static>
+    <link name="sea_bottom">
+      <collision name="collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>2000 2000 .1</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <cast_shadows>false</cast_shadows>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>2000 2000 .1</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/sand.material</uri>
+            <name>UUVSimulator/SandAndStones</name>
+          </script>
+          <emissive>
+            0.2 0.2 0.2 1.0
+          </emissive>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

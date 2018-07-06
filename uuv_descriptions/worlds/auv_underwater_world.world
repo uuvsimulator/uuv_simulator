@@ -14,17 +14,17 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<sdf version="1.5">
-  <world name="empty_underwater">
+<sdf version="1.4">
+  <world name="default">
     <physics name="default_physics" default="true" type="ode">
-      <max_step_size>0.002</max_step_size>
+      <max_step_size>0.01</max_step_size>
       <real_time_factor>1</real_time_factor>
-      <real_time_update_rate>500</real_time_update_rate>
+      <real_time_update_rate>100</real_time_update_rate>
       <ode>
         <solver>
           <type>quick</type>
           <iters>50</iters>
-          <sor>0.5</sor>
+          <sor>1.2</sor>
         </solver>
       </ode>
     </physics>
@@ -36,29 +36,42 @@
         </clouds>
       </sky>
       <shadows>1</shadows>
-      <fog>
-        <color>0.1 0.2 0.3 1.0</color>
-        <type>linear</type>
-        <density>0.001</density>
-        <start>10</start>
-        <end>200</end>
-      </fog>
     </scene>
 
-    <!-- Origin placed somewhere in the middle of the North Sea  -->
+    <!--
+      Origin close to the Trondheim Biological Station, in Trondheim, Norway
+    -->
     <spherical_coordinates>
-      <latitude_deg>56.71897669633431</latitude_deg>
-      <longitude_deg>3.515625</longitude_deg>
+      <latitude_deg>63.435952</latitude_deg>
+      <longitude_deg>10.357983</longitude_deg>
     </spherical_coordinates>
 
     <!-- Global light source -->
-    <include>
-      <uri>model://sun</uri>
-    </include>
+    <light type="directional" name="sun1">
+      <pose>50 0 150 0 0 0</pose>
+      <diffuse>1 1 1 1</diffuse>
+      <specular>.1 .1 .1 1</specular>
+      <direction>0.3 0.3 -1</direction>
+      <cast_shadows>false</cast_shadows>
+    </light>
+
+    <!-- Global light source -->
+    <light type="directional" name="sun_diffuse">
+      <pose>-50 0 -150 0 0 0</pose>
+      <diffuse>0.6 0.6 0.6 1</diffuse>
+      <specular>0 0 0 1</specular>
+      <direction>-0.3 -0.3 -1</direction>
+      <cast_shadows>false</cast_shadows>
+    </light>
 
     <!-- Bounding box with sea surface -->
     <include>
-      <uri>model://ocean_box</uri>
+      <uri>model://sea_bottom</uri>
+      <pose>0 0 -80 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://sea_surface</uri>
       <pose>0 0 0 0 0 0</pose>
     </include>
 
@@ -94,5 +107,12 @@
 
     <plugin name="sc_interface" filename="libuuv_sc_ros_interface_plugin.so"/>
 
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>34.6042 32.2383 -20.6633 0 0.528384 1.41245</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
   </world>
 </sdf>
