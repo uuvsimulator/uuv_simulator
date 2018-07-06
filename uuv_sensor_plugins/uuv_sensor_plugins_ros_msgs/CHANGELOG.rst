@@ -2,6 +2,9 @@
 Changelog for package uuv_sensor_plugins_ros_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.5 (2018-07-05)
 ------------------
 * RM Merge messages from the change log

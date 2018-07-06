@@ -2,6 +2,10 @@
 Changelog for package uuv_control_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
+
 0.5.5 (2018-07-05)
 ------------------
 * RM Merge messages from the change log

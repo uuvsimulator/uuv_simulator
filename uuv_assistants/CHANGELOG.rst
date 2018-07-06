@@ -2,6 +2,10 @@
 Changelog for package uuv_assistants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+
+Forthcoming
+-----------
+
 0.5.5 (2018-07-05)
 ------------------
 * 0.5.4
@@ -29,7 +33,6 @@ Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * UPDATE Catkin packages format to 2
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
-
 
 0.5.3 (2018-07-04)
 ------------------

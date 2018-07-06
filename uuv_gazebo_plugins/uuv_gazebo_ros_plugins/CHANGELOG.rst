@@ -2,6 +2,9 @@
 Changelog for package uuv_gazebo_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.5 (2018-07-05)
 ------------------
 * ADD ROS tests for verification of default Fossen and sphere vehicle models

@@ -2,6 +2,9 @@
 Changelog for package oberon4
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.5 (2018-07-05)
 ------------------
 * RM Merge messages from the change log
@@ -10,6 +13,7 @@ Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 
 0.5.4 (2018-07-04)
 ------------------
+
 
 0.5.3 (2018-07-04)
 ------------------

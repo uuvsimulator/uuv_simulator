@@ -2,6 +2,14 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Replaced GPS frame id with the link used in URDF
+  Signed-off-by: Guy Stoppi <gstoppi@clearpathrobotics.com>
+* Flipped GPS latitude,longitude so they increase when going north/east respectively
+  Signed-off-by: Guy Stoppi <gstoppi@clearpathrobotics.com>
+* Contributors: Guy Stoppi, Musa Morena Marcusso Manhaes, Musa Morena Marcusso Manhães
+
 0.5.5 (2018-07-05)
 ------------------
 * RM Merge messages from the change log

@@ -2,6 +2,9 @@
 Changelog for package uuv_manipulators_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.5 (2018-07-05)
 ------------------
 * RM Merge messages from the change log
@@ -15,7 +18,6 @@ Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * UPDATE Catkin packages format to 2
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
-
 
 0.5.3 (2018-07-04)
 ------------------
