@@ -2,6 +2,9 @@
 Changelog for package oberon7_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.6 (2018-07-06)
+------------------
+
 0.5.5 (2018-07-05)
 ------------------
 * RM Merge messages from the change log
@@ -15,34 +18,6 @@ Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * UPDATE Catkin packages format to 2
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
-
-0.5.6 (2018-07-06)
-------------------
-* Merge pull request `#259 <https://github.com/uuvsimulator/uuv_simulator/issues/259>`_ from uuvsimulator/hotfix/sphere_model_nonlinear_coeffs
-  Hotfix/sphere model nonlinear coeffs
-* FIX CHANGELOG log sequence
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
-* 0.5.5
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
-* UPDATE CHANGELOG files
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
-* Merge pull request `#258 <https://github.com/uuvsimulator/uuv_simulator/issues/258>`_ from uuvsimulator/hotfix/rm_merge_logs_changelog
-  Hotfix/rm merge logs changelog
-* 0.5.4
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
-* RM Merge messages from the change log
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
-* Merge pull request `#257 <https://github.com/uuvsimulator/uuv_simulator/issues/257>`_ from uuvsimulator/hotfix/package_format
-  Hotfix/package format
-* UPDATE CHANGELOG files
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
-* 0.5.3
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
-* UPDATE CHANGELOG files
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
-* UPDATE Catkin packages format to 2
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
-* Contributors: Musa Morena Marcusso Manhaes, Musa Morena Marcusso Manhães
 
 0.5.3 (2018-07-04)
 ------------------
