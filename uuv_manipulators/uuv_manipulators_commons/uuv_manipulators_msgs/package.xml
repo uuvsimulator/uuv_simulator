@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_manipulators_msgs</name>
-  <version>0.5.6</version>
+  <version>0.5.7</version>
   <description>Definitions of messages and services for the manipulator control package.</description>
 
   <maintainer email="mam0box@todo.todo">mam0box</maintainer>

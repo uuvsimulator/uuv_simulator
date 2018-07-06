@@ -21,7 +21,7 @@ from geometry_msgs.msg import Vector3, Inertia
 from uuv_gazebo_ros_plugins_msgs.msg import UnderwaterObjectModel
 from uuv_gazebo_ros_plugins_msgs.srv import *
 
-PKG = 'uuv_simulation_wrapper'
+PKG = 'uuv_gazebo_ros_plugins'
 NAME = 'test_default_fossen_vehicle'
 
 import roslib; roslib.load_manifest(PKG)

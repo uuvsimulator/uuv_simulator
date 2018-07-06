@@ -98,7 +98,7 @@ LiftDrag* LiftDragQuadratic::create(sdf::ElementPtr _sdf)
               << std::endl;
     return NULL;
   }
-  
+
   gzmsg << "Lift constant= " << _sdf->Get<double>("lift_constant") << std::endl;
   gzmsg << "Drag constant= " << _sdf->Get<double>("drag_constant") << std::endl;
 
@@ -136,6 +136,31 @@ ignition::math::Vector3d LiftDragQuadratic::compute(
   ignition::math::Vector3d dragDirectionL = -_velL;
 
   return lift*liftDirectionL + drag*dragDirectionL.Normalize();
+}
+
+/////////////////////////////////////////////////
+bool LiftDragQuadratic::GetParam(std::string _tag, double& _output)
+{
+  _output = 0.0;
+  if (!_tag.compare("drag_constant"))
+    _output = this->dragConstant;
+  else if (!_tag.compare("lift_constant"))
+    _output = this->liftConstant;
+  else
+    return false;
+
+  gzmsg << "LiftDragQuadratic::GetParam <" << _tag << ">=" << _output <<
+    std::endl;
+  return true;
+}
+
+/////////////////////////////////////////////////
+std::map<std::string, double> LiftDragQuadratic::GetListParams()
+{
+  std::map<std::string, double> params;
+  params["drag_constant"] = this->dragConstant;
+  params["lift_constant"] = this->liftConstant;
+  return params;
 }
 
 /////////////////////////////////////////////////
@@ -240,4 +265,48 @@ ignition::math::Vector3d LiftDragTwoLines::compute(const ignition::math::Vector3
 
   return lift*liftDirectionL + drag*dragDirectionL.Normalize();
 }
+
+/////////////////////////////////////////////////
+bool LiftDragTwoLines::GetParam(std::string _tag, double& _output)
+{
+  _output = 0.0;
+  if (!_tag.compare("area"))
+    _output = this->area;
+  else if (!_tag.compare("fluid_density"))
+    _output = this->fluidDensity;
+  else if (!_tag.compare("a0"))
+    _output = this->a0;
+  else if (!_tag.compare("alpha_stall"))
+    _output = this->alphaStall;
+  else if (!_tag.compare("cla"))
+    _output = this->cla;
+  else if (!_tag.compare("cla_stall"))
+    _output = this->claStall;
+  else if (!_tag.compare("cda"))
+    _output = this->cda;
+  else if (!_tag.compare("cda_stall"))
+    _output = this->cdaStall;
+  else
+    return false;
+
+  gzmsg << "LiftDragQuadratic::GetParam <" << _tag << ">=" << _output <<
+    std::endl;
+  return true;
+}
+
+/////////////////////////////////////////////////
+std::map<std::string, double> LiftDragTwoLines::GetListParams()
+{
+  std::map<std::string, double> params;
+  params["area"] = this->area;
+  params["fluid_density"] = this->fluidDensity;
+  params["a0"] = this->a0;
+  params["alpha_stall"] = this->alphaStall;
+  params["cla"] = this->cla;
+  params["cla_stall"] = this->claStall;
+  params["cda"] = this->cda;
+  params["cda_stall"] = this->cdaStall;
+  return params;
+}
+
 }

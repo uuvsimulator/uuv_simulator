@@ -18,6 +18,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <uuv_gazebo_plugins/ThrusterPlugin.hh>
 
@@ -33,6 +34,7 @@
 #include <uuv_gazebo_ros_plugins_msgs/GetThrusterState.h>
 #include <uuv_gazebo_ros_plugins_msgs/SetThrusterEfficiency.h>
 #include <uuv_gazebo_ros_plugins_msgs/GetThrusterEfficiency.h>
+#include <uuv_gazebo_ros_plugins_msgs/GetThrusterConversionFcn.h>
 
 namespace uuv_simulator_ros
 {
@@ -95,6 +97,11 @@ namespace uuv_simulator_ros
     public: bool GetThrusterState(
       uuv_gazebo_ros_plugins_msgs::GetThrusterState::Request& _req,
       uuv_gazebo_ros_plugins_msgs::GetThrusterState::Response& _res);
+
+    /// \brief Get thruster conversion function parameters
+    public: bool GetThrusterConversionFcn(
+      uuv_gazebo_ros_plugins_msgs::GetThrusterConversionFcn::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetThrusterConversionFcn::Response& _res);
 
     /// \brief Map of thruster services
     private: std::map<std::string, ros::ServiceServer> services;

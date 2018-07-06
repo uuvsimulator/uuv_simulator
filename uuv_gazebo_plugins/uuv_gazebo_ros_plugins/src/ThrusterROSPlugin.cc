@@ -140,6 +140,11 @@ void ThrusterROSPlugin::Load(gazebo::physics::ModelPtr _parent,
       this->topicPrefix + "get_thruster_state",
       &ThrusterROSPlugin::GetThrusterState, this);
 
+  this->services["get_thruster_conversion_fcn"] =
+    this->rosNode->advertiseService(
+      this->topicPrefix + "get_thruster_conversion_fcn",
+      &ThrusterROSPlugin::GetThrusterConversionFcn, this);
+
   this->subThrustReference = this->rosNode->subscribe<
     uuv_gazebo_ros_plugins_msgs::FloatStamped
     >(this->commandSubscriber->GetTopic(), 10,
@@ -290,6 +295,57 @@ bool ThrusterROSPlugin::GetThrusterState(
   uuv_gazebo_ros_plugins_msgs::GetThrusterState::Response& _res)
 {
   _res.is_on = this->isOn;
+  return true;
+}
+
+/////////////////////////////////////////////////
+bool ThrusterROSPlugin::GetThrusterConversionFcn(
+  uuv_gazebo_ros_plugins_msgs::GetThrusterConversionFcn::Request& _req,
+  uuv_gazebo_ros_plugins_msgs::GetThrusterConversionFcn::Response& _res)
+{
+  _res.fcn.function_name = this->conversionFunction->GetType();
+
+  double param;
+
+  if (!_res.fcn.function_name.compare("Basic"))
+  {
+    gzmsg << "ThrusterROSPlugin::GetThrusterConversionFcn::Basic" << std::endl;
+    _res.fcn.tags.push_back("rotor_constant");
+    this->conversionFunction->GetParam("rotor_constant", param);
+    _res.fcn.data.push_back(param);
+  }
+  else if (!_res.fcn.function_name.compare("Bessa"))
+  {
+    gzmsg << "ThrusterROSPlugin::GetThrusterConversionFcn::Bessa" << std::endl;
+    _res.fcn.tags.push_back("rotor_constant_l");
+    this->conversionFunction->GetParam("rotor_constant_l", param);
+    _res.fcn.data.push_back(param);
+
+    _res.fcn.tags.push_back("rotor_constant_r");
+    this->conversionFunction->GetParam("rotor_constant_r", param);
+    _res.fcn.data.push_back(param);
+
+    _res.fcn.tags.push_back("delta_l");
+    this->conversionFunction->GetParam("delta_l", param);
+    _res.fcn.data.push_back(param);
+
+    _res.fcn.tags.push_back("delta_r");
+    this->conversionFunction->GetParam("delta_r", param);
+    _res.fcn.data.push_back(param);
+  }
+  else if (!_res.fcn.function_name.compare("LinearInterp"))
+  {
+    gzmsg << "ThrusterROSPlugin::GetThrusterConversionFcn::LinearInterp" << std::endl;
+    std::map<double, double> table = this->conversionFunction->GetTable();
+
+    for (auto& item : table)
+    {
+      gzmsg << item.first << " " << item.second << std::endl;
+      _res.fcn.lookup_table_input.push_back(item.first);
+      _res.fcn.lookup_table_output.push_back(item.second);
+    }
+  }
+
   return true;
 }
 

@@ -75,7 +75,7 @@ ConversionFunction* ConversionFunctionBasic::create(sdf::ElementPtr _sdf)
 {
   if (!_sdf->HasElement("rotorConstant"))
   {
-    std::cerr << "ConversionFunctionBasic: expected element rotorConstant"
+    std::cerr << "ConversionFunctionBasic::Expected element rotorConstant"
                  << std::endl;
     return NULL;
   }
@@ -90,9 +90,26 @@ double ConversionFunctionBasic::convert(double _cmd)
 }
 
 /////////////////////////////////////////////////
+bool ConversionFunctionBasic::GetParam(std::string _tag, double& _output)
+{
+  _output = 0.0;
+  if (!_tag.compare("rotor_constant"))
+    _output = this->rotorConstant;
+  else
+    return false;
+
+  gzmsg << "ConversionFunctionBasic::GetParam <" << _tag << ">=" << _output <<
+    std::endl;
+  return true;
+}
+
+/////////////////////////////////////////////////
 ConversionFunctionBasic::ConversionFunctionBasic(double _rotorConstant)
   : rotorConstant(_rotorConstant)
 {
+  gzmsg << "ConversionFunctionBasic::Create conversion function"
+    << std::endl
+    << "\t- rotorConstant: " << this->rotorConstant << std::endl;
 }
 
 
@@ -113,21 +130,21 @@ ConversionFunction* ConversionFunctionBessa::create(sdf::ElementPtr _sdf)
 
   if (!_sdf->HasElement("rotorConstantR"))
   {
-    std::cerr << "ConversionFunctionBasic: expected element rotorConstantR"
+    std::cerr << "ConversionFunctionBasic::Expected element rotorConstantR"
                  << std::endl;
     return NULL;
   }
 
   if (!_sdf->HasElement("deltaL"))
   {
-    std::cerr << "ConversionFunctionBasic: expected element deltaL"
+    std::cerr << "ConversionFunctionBasic::Expected element deltaL"
                  << std::endl;
     return NULL;
   }
 
   if (!_sdf->HasElement("deltaR"))
   {
-    std::cerr << "ConversionFunctionBasic: expected element deltaR"
+    std::cerr << "ConversionFunctionBasic::Expected element deltaR"
                  << std::endl;
     return NULL;
   }
@@ -175,8 +192,33 @@ ConversionFunctionBessa::ConversionFunctionBessa(double _rotorConstantL,
             "ConversionFunctionBessa: deltaL should be <= 0");
   GZ_ASSERT(deltaR >= 0.0,
             "ConversionFunctionBessa: deltaR should be >= 0");
+
+  gzmsg << "ConversionFunctionBessa:" << std::endl
+    << "\t- rotorConstantL: " << this->rotorConstantL << std::endl
+    << "\t- rotorConstantR: " << this->rotorConstantR << std::endl
+    << "\t- deltaL: " << this->deltaL << std::endl
+    << "\t- deltaR: " << this->deltaR << std::endl;
 }
 
+/////////////////////////////////////////////////
+bool ConversionFunctionBessa::GetParam(std::string _tag, double& _output)
+{
+  _output = 0.0;
+  if (!_tag.compare("rotor_constant_l"))
+    _output = this->rotorConstantL;
+  else if (!_tag.compare("rotor_constant_r"))
+    _output = this->rotorConstantR;
+  else if (!_tag.compare("delta_l"))
+    _output = this->deltaL;
+  else if (!_tag.compare("delta_r"))
+    _output = this->deltaR;
+  else
+    return false;
+
+  gzmsg << "ConversionFunctionBessa::GetParam <" << _tag << ">=" << _output <<
+    std::endl;
+  return true;
+}
 
 /////////////////////////////////////////////////
 const std::string ConversionFunctionLinearInterp::IDENTIFIER = "LinearInterp";
@@ -188,14 +230,14 @@ ConversionFunction* ConversionFunctionLinearInterp::create(sdf::ElementPtr _sdf)
 {
   if (!_sdf->HasElement("inputValues"))
   {
-    std::cerr << "ConversionFunctionLinearInterp: expected element inputValues"
+    std::cerr << "ConversionFunctionLinearInterp::Expected element inputValues"
                  << std::endl;
     return NULL;
   }
 
   if (!_sdf->HasElement("outputValues"))
   {
-    std::cerr << "ConversionFunctionLinearInterp: expected element outputValues"
+    std::cerr << "ConversionFunctionLinearInterp::Expected element outputValues"
                  << std::endl;
     return NULL;
   }
@@ -205,16 +247,16 @@ ConversionFunction* ConversionFunctionLinearInterp::create(sdf::ElementPtr _sdf)
 
   if (in.size() < 1)
   {
-    std::cerr << "ConversionFunctionLinearInterp: "
-              << "need at least one input/output pair"
+    std::cerr << "ConversionFunctionLinearInterp::"
+              << "Need at least one input/output pair"
               << std::endl;
     return NULL;
   }
 
   if (in.size() != out.size())
   {
-    std::cerr << "ConversionFunctionLinearInterp: "
-              << "number of input and output values should be the same"
+    std::cerr << "ConversionFunctionLinearInterp::"
+              << "Number of input and output values should be the same"
               << std::endl;
     return NULL;
   }
@@ -225,7 +267,7 @@ ConversionFunction* ConversionFunctionLinearInterp::create(sdf::ElementPtr _sdf)
 /////////////////////////////////////////////////
 double ConversionFunctionLinearInterp::convert(double _cmd)
 {
-  GZ_ASSERT(!lookupTable.empty(), "lookup table is empty");
+  GZ_ASSERT(!lookupTable.empty(), "Lookup table is empty");
 
   // "first element whose key is NOT considered to go before _cmd"
   auto iter = lookupTable.lower_bound(_cmd);
@@ -265,5 +307,28 @@ ConversionFunctionLinearInterp::ConversionFunctionLinearInterp(
   {
     lookupTable[_input[i]] = _output[i];
   }
+  gzmsg << "ConversionFunctionLinearInterp::Create conversion function"
+    << std::endl;
+  gzmsg << "\t- Input values:" << std::endl;
+  for (auto& i : lookupTable)
+    std::cout << i.first << " ";
+  std::cout << std::endl;
+  gzmsg << "\t- Output values:" << std::endl;
+  for (auto& i : lookupTable)
+    std::cout << i.second << " ";
+  std::cout << std::endl;
 }
+
+/////////////////////////////////////////////////
+bool ConversionFunctionLinearInterp::GetParam(std::string _tag, double& _output)
+{
+  return false;
+}
+
+/////////////////////////////////////////////////
+std::map<double, double> ConversionFunctionLinearInterp::GetTable()
+{
+  return this->lookupTable;
+}
+
 }

@@ -22,7 +22,9 @@
 #include <gazebo/common/Plugin.hh>
 #include <ros/ros.h>
 #include <uuv_gazebo_ros_plugins_msgs/FloatStamped.h>
+#include <uuv_gazebo_ros_plugins_msgs/GetListParam.h>
 #include <geometry_msgs/WrenchStamped.h>
+#include <map>
 
 namespace uuv_simulator_ros
 {
@@ -43,6 +45,11 @@ namespace uuv_simulator_ros
     /// \brief Set new set point.
     public: void SetReference(
         const uuv_gazebo_ros_plugins_msgs::FloatStamped::ConstPtr &_msg);
+
+    /// \brief Return the list of paramaters of the lift and drag model
+    public: bool GetLiftDragParams(
+      uuv_gazebo_ros_plugins_msgs::GetListParam::Request& _req,
+      uuv_gazebo_ros_plugins_msgs::GetListParam::Response& _res);  
 
     /// \brief Return the ROS publish period.
     public: gazebo::common::Time GetRosPublishPeriod();
@@ -73,6 +80,9 @@ namespace uuv_simulator_ros
 
     /// \brief Period after which we should publish a message via ROS.
     private: gazebo::common::Time rosPublishPeriod;
+
+    /// \brief Map of services
+    private: std::map<std::string, ros::ServiceServer> services;
 
     /// \brief Last time we published a message via ROS.
     private: gazebo::common::Time lastRosPublishTime;

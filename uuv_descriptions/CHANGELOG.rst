@@ -2,6 +2,9 @@
 Changelog for package uuv_descriptions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.7 (2018-07-06)
+------------------
+
 0.5.6 (2018-07-06)
 ------------------
 * ADD Gazebo world with physics engine configured for AUV models

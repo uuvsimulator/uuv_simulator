@@ -7,6 +7,7 @@ add_message_files(
   FILES
   FloatStamped.msg
   UnderwaterObjectModel.msg
+  ThrusterConversionFcn.msg
 )
 
 add_service_files(
@@ -19,6 +20,8 @@ add_service_files(
   GetModelProperties.srv
   SetFloat.srv
   GetFloat.srv
+  GetListParam.srv
+  GetThrusterConversionFcn.srv
 )
 
 generate_messages(

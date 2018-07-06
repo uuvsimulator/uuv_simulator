@@ -39,6 +39,14 @@ class ConversionFunction
   /// \brief Return (derived) type of conversion function.
   public: virtual std::string GetType() = 0;
 
+  /// \brief Return paramater in vector form for the given tag
+  public: virtual bool GetParam(std::string _tag,
+    double& _output) = 0;
+
+  /// \brief Return input and output vectors of the lookup table
+  public: virtual std::map<double, double> GetTable()
+    { return std::map<double, double>(); };
+
   /// \brief Convert thruster state (e.g. angular velocity) to thrust force.
   public: virtual double convert(double _cmd) = 0;
 };
@@ -89,6 +97,9 @@ class ConversionFunctionBasic : public ConversionFunction
   /// \brief Return (derived) type of conversion function.
   public: virtual std::string GetType() { return IDENTIFIER; }
 
+  /// \brief Return paramater in scalar form for the given tag
+  public: virtual bool GetParam(std::string _tag, double& _output);
+
   /// \brief Convert thruster state (e.g. angular velocity) to thrust force.
   public: virtual double convert(double _cmd);
 
@@ -114,6 +125,9 @@ class ConversionFunctionBessa : public ConversionFunction
 
   /// \brief Return (derived) type of conversion function.
   public: virtual std::string GetType() { return IDENTIFIER; }
+
+  /// \brief Return paramater in scalar form for the given tag
+  public: virtual bool GetParam(std::string _tag, double& _output);
 
   /// \brief Convert thruster state (e.g. angular velocity) to thrust force.
   public: virtual double convert(double _cmd);
@@ -150,6 +164,12 @@ class ConversionFunctionLinearInterp: public ConversionFunction
 
   /// \brief Return (derived) type of conversion function.
   public: virtual std::string GetType() { return IDENTIFIER; }
+
+  /// \brief Return paramater in scalar form for the given tag
+  public: virtual bool GetParam(std::string _tag, double& _output);
+
+  /// \brief Return input and output vectors of the lookup table
+  public: virtual std::map<double, double> GetTable();
 
   /// \brief Convert thruster state (e.g. angular velocity) to thrust force.
   public: virtual double convert(double _cmd);
