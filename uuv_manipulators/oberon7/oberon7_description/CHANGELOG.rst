@@ -16,8 +16,8 @@ Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
 
-Forthcoming
------------
+0.5.6 (2018-07-06)
+------------------
 * Merge pull request `#259 <https://github.com/uuvsimulator/uuv_simulator/issues/259>`_ from uuvsimulator/hotfix/sphere_model_nonlinear_coeffs
   Hotfix/sphere model nonlinear coeffs
 * FIX CHANGELOG log sequence
