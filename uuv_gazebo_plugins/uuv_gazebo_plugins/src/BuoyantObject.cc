@@ -192,10 +192,10 @@ void BuoyantObject::ApplyBuoyancyForce()
   else
   {
 #if GAZEBO_MAJOR_VERSION >= 8
-    this->link->AddRelativeForce(buoyancyForce);
+    this->link->AddForce(buoyancyForce);
     this->link->AddRelativeTorque(buoyancyTorque);
 #else
-    this->link->AddRelativeForce(
+    this->link->AddForce(
       math::Vector3(buoyancyForce.X(), buoyancyForce.Y(), buoyancyForce.Z()));
     this->link->AddRelativeTorque(
       math::Vector3(buoyancyTorque.X(), buoyancyTorque.Y(), buoyancyTorque.Z()));          
