@@ -48,6 +48,13 @@ class LiftDrag
   public: virtual ignition::math::Vector3d compute(
     const ignition::math::Vector3d &_velL) = 0;
 
+  /// \brief Return paramater in vector form for the given tag
+  public: virtual bool GetParam(std::string _tag,
+    double& _output) = 0;
+
+  /// \brief Return list of all parameters
+  public: virtual std::map<std::string, double> GetListParams() = 0;
+
   /// \brief Time of last state update.
   protected: double prevTime;
 
@@ -104,6 +111,12 @@ class LiftDragQuadratic : public LiftDrag
   /// \brief Register this model with the factory.
   private: REGISTER_LIFTDRAG(LiftDragQuadratic);
 
+  /// \brief Return paramater in scalar form for the given tag
+  public: virtual bool GetParam(std::string _tag, double& _output);
+
+  /// \brief Return list of all parameters
+  public: virtual std::map<std::string, double> GetListParams();
+
   /// \brief Unique identifier for this dynamical model
   private: static const std::string IDENTIFIER;
 
@@ -138,6 +151,12 @@ class LiftDragTwoLines: public LiftDrag
 
   /// \brief Unique identifier for this dynamical model.
   private: static const std::string IDENTIFIER;
+
+  /// \brief Return paramater in scalar form for the given tag
+  public: virtual bool GetParam(std::string _tag, double& _output);
+
+  /// \brief Return list of all parameters
+  public: virtual std::map<std::string, double> GetListParams();
 
   /// \brief Airfoil area.
   protected: double area;
