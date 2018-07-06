@@ -2,6 +2,12 @@
 Changelog for package uuv_descriptions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.6 (2018-07-06)
+------------------
+* ADD Gazebo world with physics engine configured for AUV models
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhaes, Musa Morena Marcusso Manhães
+
 0.5.5 (2018-07-05)
 ------------------
 * ADD Author to the tree world model

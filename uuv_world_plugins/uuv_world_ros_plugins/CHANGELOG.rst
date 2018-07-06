@@ -2,6 +2,9 @@
 Changelog for package uuv_world_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.6 (2018-07-06)
+------------------
+
 0.5.5 (2018-07-05)
 ------------------
 * RM Merge messages from the change log

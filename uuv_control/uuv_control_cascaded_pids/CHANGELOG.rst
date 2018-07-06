@@ -2,6 +2,11 @@
 Changelog for package uuv_control_cascaded_pid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+
+0.5.6 (2018-07-06)
+------------------
+
+
 0.5.5 (2018-07-05)
 ------------------
 * 0.5.4
@@ -29,7 +34,6 @@ Changelog for package uuv_control_cascaded_pid
 * UPDATE Catkin packages format to 2
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
-
 
 0.5.3 (2018-07-04)
 ------------------

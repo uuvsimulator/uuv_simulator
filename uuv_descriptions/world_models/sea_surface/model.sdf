@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="sea_surface">
+    <static>true</static>
+    <link name="sea_bottom">
+      <visual name="ocean_surface">
+        <pose>0 0 0 0 0 0</pose>
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <mesh>
+            <uri>file://Media/models/sea_surface_1000m_x_1000m.dae</uri>
+            <scale>2 2 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/waves.material</uri>
+            <name>UUVSimulator/SimpleWaves</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name="ocean_below">
+        <pose>0 0 0 3.14 0 0</pose>
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <mesh>
+            <uri>file://Media/models/sea_surface_1000m_x_1000m.dae</uri>
+            <scale>2 2 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://Media/materials/scripts/water.material</uri>
+            <name>UUVSimulator/StaticWater</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

@@ -2,6 +2,9 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.6 (2018-07-06)
+------------------
+
 0.5.5 (2018-07-05)
 ------------------
 * UPDATE Package description
