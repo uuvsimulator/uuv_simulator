@@ -2,8 +2,8 @@
 Changelog for package uuv_gazebo_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.7 (2018-07-06)
+------------------
 * ADD Service handlers to get parameters from fin and thruster plugins
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * ADD Services and messages to retrieve parameters from UUV Gazebo plugins
