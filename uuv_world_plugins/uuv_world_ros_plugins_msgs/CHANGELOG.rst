@@ -2,6 +2,9 @@
 Changelog for package uuv_world_ros_plugins_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.7 (2018-07-06)
 ------------------
 
