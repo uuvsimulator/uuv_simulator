@@ -149,10 +149,6 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
   PATTERN "*~" EXCLUDE
 )
 
-install(DIRECTORY test
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-        PATTERN "*~" EXCLUDE)
-
 #############
 ## Testing ##
 #############
