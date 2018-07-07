@@ -2,6 +2,16 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.8 (2018-07-07)
+------------------
+* RM Installation of test folder
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Changed submergedHeight calculation to be more precise
+  Signed-off-by: Guy Stoppi <gstoppi@clearpathrobotics.com>
+* Applied buoyancy force in the world frame to surface vessels
+  Signed-off-by: Guy Stoppi <gstoppi@clearpathrobotics.com>
+* Contributors: Guy Stoppi, Musa Morena Marcusso Manhaes, Musa Morena Marcusso Manhães
+
 0.5.7 (2018-07-06)
 ------------------
 * ADD Service handlers to retrieve parameters from the internal models

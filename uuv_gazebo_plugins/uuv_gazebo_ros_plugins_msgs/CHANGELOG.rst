@@ -2,6 +2,9 @@
 Changelog for package uuv_gazebo_ros_plugins_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.8 (2018-07-07)
+------------------
+
 0.5.7 (2018-07-06)
 ------------------
 * ADD Services and messages to retrieve parameters from UUV Gazebo plugins

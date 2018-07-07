@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_manipulators_kinematics</name>
-  <version>0.5.7</version>
+  <version>0.5.8</version>
   <description>Implementation of interfaces to operate manipulators and grippers along with kinematics solver services.</description>
 
   <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
