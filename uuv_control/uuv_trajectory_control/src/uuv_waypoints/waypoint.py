@@ -161,10 +161,8 @@ class Waypoint(object):
         return np.sqrt((self._x - pos[0])**2 +
                        (self._y - pos[1])**2 +
                        (self._z - pos[2])**2)
-        
-    def calculate_heading(self, target):        
+
+    def calculate_heading(self, target):
         dy = target.y - self.y
         dx = target.x - self.x
         return np.arctan2(dy, dx)
-    
-    
