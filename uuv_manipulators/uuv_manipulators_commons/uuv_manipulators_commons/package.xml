@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_manipulators_commons</name>
-  <version>0.5.8</version>
+  <version>0.5.9</version>
   <description>Common nodes and configurations for underwater manipulators.</description>
 
   <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
