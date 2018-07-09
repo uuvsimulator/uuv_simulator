@@ -180,15 +180,16 @@ class WaypointSet(object):
 
     def export_to_file(self, path, filename):
         try:
-            wp_data = list()
+            output = dict(inertial_frame_id=self._inertial_frame_id,
+                          waypoints=list())
             for wp in self._waypoints:
                 wp_elem = dict(point=[float(wp.x), float(wp.y), float(wp.z)],
                                max_forward_speed=float(wp._max_forward_speed),
                                heading=float(wp._heading_offset if wp._heading_offset is not None else 0.0),
                                use_fixed_heading=bool(wp._use_fixed_heading))
-                wp_data.append(wp_elem)
+                output['waypoints'].append(wp_elem)
             with open(os.path.join(path, filename), 'w') as wp_file:
-                yaml.dump(wp_data, wp_file, default_flow_style=False)
+                yaml.dump(output, wp_file, default_flow_style=False)
             return True
         except Exception, e:
             print 'Error occured while exporting waypoint file'

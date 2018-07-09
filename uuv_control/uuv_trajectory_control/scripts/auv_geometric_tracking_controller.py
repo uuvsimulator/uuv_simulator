@@ -16,6 +16,7 @@
 import math
 import numpy as np
 import rospy
+from copy import deepcopy
 
 import geometry_msgs.msg as geometry_msgs
 import uuv_control_msgs.msg as uuv_control_msgs
@@ -34,9 +35,9 @@ from tf.transformations import quaternion_matrix
 class AUVGeometricTrackingController:
     def __init__(self):
         self.namespace = rospy.get_namespace().replace('/', '')
-        rospy.loginfo('Initialize control for vehicle <%s>' % self.namespace)  
+        rospy.loginfo('Initialize control for vehicle <%s>' % self.namespace)
 
-        self.local_planner = DPControllerLocalPlanner(full_dof=True, thrusters_only=False, 
+        self.local_planner = DPControllerLocalPlanner(full_dof=True, thrusters_only=False,
             stamped_pose_only=False)
 
         self.base_link = rospy.get_param('~base_link', 'base_link')
@@ -88,7 +89,7 @@ class AUVGeometricTrackingController:
 
         # Reading the saturation for yaw error
         self.yaw_error_limit = rospy.get_param('~yaw_error_limit', 1.0)
-        assert self.yaw_error_limit > 0 
+        assert self.yaw_error_limit > 0
 
         # Reading the number of fins
         self.n_fins = rospy.get_param('~n_fins', 0)
@@ -98,7 +99,7 @@ class AUVGeometricTrackingController:
         self.map_roll = rospy.get_param('~map_roll', [0, 0, 0, 0])
         assert isinstance(self.map_roll, list)
         assert len(self.map_roll) == self.n_fins
-        
+
         # Reading the mapping for the pitch commands
         self.map_pitch = rospy.get_param('~map_pitch', [0, 0, 0, 0])
         assert isinstance(self.map_pitch, list)
@@ -110,19 +111,20 @@ class AUVGeometricTrackingController:
         assert len(self.map_yaw) == self.n_fins
 
         # Retrieve the thruster configuration parameters
-        self.thruster_config = rospy.get_param('~thruster_config')        
+        self.thruster_config = rospy.get_param('~thruster_config')
 
         # Check if all necessary thruster model parameter are available
-        thruster_params = ['conversion_fcn_params', 'conversion_fcn', 
+        thruster_params = ['conversion_fcn_params', 'conversion_fcn',
             'topic_prefix', 'topic_suffix', 'frame_base', 'max_thrust']
-        for p in thruster_params: 
+        for p in thruster_params:
             if p not in self.thruster_config:
                 raise rospy.ROSException(
-                    'Parameter <%s> for thruster conversion function is missing' % p)
+                    'Parameter <%s> for thruster conversion function is '
+                    'missing' % p)
 
         # Setting up the thruster topic name
-        self.thruster_topic = '/%s/%s/%d/%s' %  (self.namespace, 
-            self.thruster_config['topic_prefix'], 0, 
+        self.thruster_topic = '/%s/%s/%d/%s' %  (self.namespace,
+            self.thruster_config['topic_prefix'], 0,
             self.thruster_config['topic_suffix'])
 
         base = '%s/%s' % (self.namespace, self.base_link)
@@ -147,13 +149,13 @@ class AUVGeometricTrackingController:
 
         # Read transformation from thruster
         self.thruster = Thruster.create_thruster(
-            self.thruster_config['conversion_fcn'], 0, 
-            self.thruster_topic, pos, quat, 
+            self.thruster_config['conversion_fcn'], 0,
+            self.thruster_topic, pos, quat,
             **self.thruster_config['conversion_fcn_params'])
 
         rospy.loginfo('Thruster configuration=\n' + str(self.thruster_config))
         rospy.loginfo('Thruster input topic=' + self.thruster_topic)
-        
+
         self.max_fin_angle = rospy.get_param('~max_fin_angle', 0.0)
         assert self.max_fin_angle > 0
 
@@ -162,7 +164,7 @@ class AUVGeometricTrackingController:
         self.fin_topic_suffix = rospy.get_param('~fin_topic_suffix', 'input')
 
         self.rpy_to_fins = np.vstack((self.map_roll, self.map_pitch, self.map_yaw)).T
-        
+
         self.pub_cmd = list()
 
         for i in range(self.n_fins):
@@ -219,7 +221,7 @@ class AUVGeometricTrackingController:
         ref_msg.pose.orientation = geometry_msgs.Quaternion(*des.q)
         ref_msg.velocity.linear = geometry_msgs.Vector3(*des.vel[0:3])
         ref_msg.velocity.angular = geometry_msgs.Vector3(*des.vel[3::])
-                
+
         self.reference_pub.publish(ref_msg)
 
         p = self.vector_to_np(msg.pose.pose.position)
@@ -251,7 +253,7 @@ class AUVGeometricTrackingController:
 
         yaw_des = math.atan2(e_p[1], e_p[0])
         yaw_err = self.unwrap_angle(yaw_des - rpy[2])
-        
+
         # Limit yaw effort
         yaw_err = min(self.yaw_error_limit, max(-self.yaw_error_limit, yaw_err))
 
@@ -266,23 +268,31 @@ class AUVGeometricTrackingController:
 
         # Limit thrust
         thrust = min(self.max_thrust, self.p_gain_thrust * np.linalg.norm(abs_pos_error) + self.d_gain_thrust * abs_vel_error)
-        thrust = max(self.min_thrust, thrust)        
+        thrust = max(self.min_thrust, thrust)
 
         rpy = np.array([roll_control, pitch_control, yaw_control])
 
+        # In case the world_ned reference frame is used, the convert it back
+        # to the ENU convention to generate the reference fin angles
+        rtf = deepcopy(self.rpy_to_fins)
+        if self.local_planner.inertial_frame_id == 'world_ned':
+            rtf[:, 1] *= -1
+            rtf[:, 2] *= -1
         # Transform orientation command into fin angle set points
-        fins = self.rpy_to_fins.dot(rpy)
+        fins = rtf.dot(rpy)
 
         # Check for saturation
         max_angle = max(np.abs(fins))
         if max_angle >= self.max_fin_angle:
             fins = fins * max_angle / self.max_fin_angle
 
-        thrust_force = self.thruster.tam_column * thrust                                
-        self.thruster.publish_command(thrust_force[0])   
+        thrust_force = self.thruster.tam_column * thrust
+        self.thruster.publish_command(thrust_force[0])
 
         cmd = FloatStamped()
         for i in range(self.n_fins):
+            cmd.header.stamp = rospy.Time.now()
+            cmd.header.frame_id = '%s/fin%d' % (self.namespace, i)
             cmd.data = min(fins[i], self.max_fin_angle)
             cmd.data = max(cmd.data, -self.max_fin_angle)
             self.pub_cmd[i].publish(cmd)

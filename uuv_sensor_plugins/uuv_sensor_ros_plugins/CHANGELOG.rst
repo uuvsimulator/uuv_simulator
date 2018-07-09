@@ -2,6 +2,9 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.9 (2018-07-09)
+------------------
+
 0.5.8 (2018-07-07)
 ------------------
 * Replaced GPS frame id with the link used in URDF
