@@ -72,6 +72,7 @@ class DPControllerLocalPlanner(object):
 
         self.inertial_frame_id = 'world'
         self.transform_ned_to_enu = None
+        self.q_ned_to_enu = None
         if rospy.has_param('~inertial_frame_id'):
             self.inertial_frame_id = rospy.get_param('~inertial_frame_id')
             assert len(self.inertial_frame_id) > 0
@@ -95,11 +96,13 @@ class DPControllerLocalPlanner(object):
                                rospy.get_namespace())
 
         if tf_trans_ned_to_enu is not None:
-            self.transform_ned_to_enu = quaternion_matrix(
-                (tf_trans_ned_to_enu.transform.rotation.x,
+            self.q_ned_to_enu = np.array(
+                [tf_trans_ned_to_enu.transform.rotation.x,
                  tf_trans_ned_to_enu.transform.rotation.y,
                  tf_trans_ned_to_enu.transform.rotation.z,
-                 tf_trans_ned_to_enu.transform.rotation.w))[0:3, 0:3]
+                 tf_trans_ned_to_enu.transform.rotation.w])
+            self.transform_ned_to_enu = quaternion_matrix(
+                self.q_ned_to_enu)[0:3, 0:3]
 
             self._logger.info('Transform world_ned (NED) to world (ENU)=\n' +
                               str(self.transform_ned_to_enu))
