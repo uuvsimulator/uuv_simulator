@@ -2,8 +2,8 @@
 Changelog for package uuv_trajectory_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.9 (2018-07-09)
+------------------
 * FIX Transform fin angle conversion matrix for inertial frame_id=world_ned
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * FIX Export waypoint set to file with frame_id information
