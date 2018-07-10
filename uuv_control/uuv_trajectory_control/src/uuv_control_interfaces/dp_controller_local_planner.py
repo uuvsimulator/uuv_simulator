@@ -658,7 +658,7 @@ class DPControllerLocalPlanner(object):
         t = rospy.Time(request.start_time.data.secs, request.start_time.data.nsecs)
         if t.to_sec() < rospy.get_time() and not request.start_now:
             self._logger.error('The trajectory starts in the past, correct the starting time!')
-            return InitHelicalTrajectoryResponse(False)
+            return InitWaypointsFromFileResponse(False)
         else:
             self._logger.info('Start waypoint trajectory now!')
         self._lock.acquire()
