@@ -2,6 +2,9 @@
 Changelog for package oberon4_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.9 (2018-07-09)
 ------------------
 
