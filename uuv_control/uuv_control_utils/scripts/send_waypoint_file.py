@@ -16,11 +16,11 @@
 
 import rospy
 import sys
-from uuv_control_msgs.srv import *
+from uuv_control_msgs.srv import InitWaypointsFromFile
 from std_msgs.msg import String, Time
 
 
-if __name__ == '__main__':    
+if __name__ == '__main__':
     rospy.init_node('send_waypoint_file')
     rospy.loginfo('Send a waypoint file, namespace=%s', rospy.get_namespace())
 
@@ -47,7 +47,6 @@ if __name__ == '__main__':
     else:
         start_now = True
 
-    
     interpolator = rospy.get_param('~interpolator', 'lipb')
 
     try:
@@ -59,8 +58,8 @@ if __name__ == '__main__':
         init_wp = rospy.ServiceProxy(
             'init_waypoints_from_file',
             InitWaypointsFromFile)
-    except rospy.ServiceException, e:
-        raise rospy.ROSException('Service call failed, error=' + e)
+    except rospy.ServiceException as e:
+        raise rospy.ROSException('Service call failed, error=%s', str(e))
 
     success = init_wp(Time(rospy.Time(start_time)),
                       start_now,
@@ -68,6 +67,7 @@ if __name__ == '__main__':
                       String(interpolator))
 
     if success:
-        rospy.loginfo('Waypoints file successfully received, filename=%s', filename)
+        rospy.loginfo('Waypoints file successfully received, '
+                      'filename=%s', filename)
     else:
         rospy.loginfo('Failed to send waypoints')

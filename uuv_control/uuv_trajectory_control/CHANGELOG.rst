@@ -2,6 +2,14 @@
 Changelog for package uuv_trajectory_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.10 (2018-07-10)
+-------------------
+* CHANGE Set casadi package as optional
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* FIX Return object for handler of init_waypoint_from_file handler
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.5.9 (2018-07-09)
 ------------------
 * FIX Transform fin angle conversion matrix for inertial frame_id=world_ned

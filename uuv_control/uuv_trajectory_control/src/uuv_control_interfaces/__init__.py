@@ -12,9 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 from .vehicle import Vehicle
-from .sym_vehicle import SymVehicle
 from .dp_controller_base import DPControllerBase
 from .dp_pid_controller_base import DPPIDControllerBase
 from .dp_controller_local_planner import DPControllerLocalPlanner
+
+try:
+    import casadi
+    from .sym_vehicle import SymVehicle
+except Exception as ex:
+    print('Casadi is not installed, ignoring SymVehicle')
+    print(str(ex))
