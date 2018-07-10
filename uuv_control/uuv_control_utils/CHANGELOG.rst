@@ -2,8 +2,8 @@
 Changelog for package uuv_control_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.10 (2018-07-10)
+-------------------
 * FIX Indentation
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhães
