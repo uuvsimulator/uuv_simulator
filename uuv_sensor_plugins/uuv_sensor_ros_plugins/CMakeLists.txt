@@ -7,7 +7,7 @@ list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 find_package(catkin REQUIRED
-  uuv_gazebo_plugins  
+  uuv_gazebo_plugins
   sensor_msgs
   geometry_msgs
   std_msgs
@@ -222,6 +222,6 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
 )
 
 # Install mesh files
-install(DIRECTORY meshes
+install(DIRECTORY meshes urdf
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
