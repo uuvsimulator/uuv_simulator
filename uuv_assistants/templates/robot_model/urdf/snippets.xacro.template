@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-------------------------------------------------------------------------->
+  <!--                                                                      -->
   <!-- MACRO FOR THRUSTER UNITS  -->
-  <!-------------------------------------------------------------------------->
+  <!--                                                                      -->
 
   <!-- Provide the propeller mesh in a separate file with the rotation axis
   over propeller's frame X-axis in DAE (Collada) or STL format.
@@ -86,13 +86,10 @@
         <propeller_efficiency>1</propeller_efficiency>
 
         <!--
-        ----------------------------------------------------
-        ----------------------------------------------------
         Choose one of the propeller dynamics models below for your implementation
         This will describe the dynamic model for the state variable of your thruster unit,
         which can be, e.g., the angular velocity of the propeller.
-        ----------------------------------------------------
-        ---------------------------------------------------->
+        -->
 
         <!-- 1) Simple zero-order model -->
         <dynamics>
@@ -135,12 +132,9 @@
         </dynamics>
 
         <!--
-        ----------------------------------------------------
-        ----------------------------------------------------
         Choose one of the model for the steady-state curve describing the
         relationship between the state variable and the output thrust force
-        ----------------------------------------------------
-        ---------------------------------------------------->
+        -->
 
         <!-- 1) Basic curve
         Input: x
@@ -189,9 +183,9 @@
   </xacro:macro>
 
 
-  <!-------------------------------------------------------------------------->
+  <!--                                                                      -->
   <!-- MACRO FOR FIN/RUDDER UNITS  -->
-  <!-------------------------------------------------------------------------->
+  <!--                                                                      -->
 
   <!--
     This macro can be used to add fins to the body of the vehicle, the fins
@@ -235,12 +229,8 @@
         <plugin name="${namespace}_fin${fin_id}_model" filename="libfin_ros_plugin.so">
 
           <!--
-            ----------------------------------------------------
-            ----------------------------------------------------
             First order dynamics model for the fin joint dynamics,
             replace an appropriate time constant
-            ----------------------------------------------------
-            ----------------------------------------------------
           -->
           <dynamics>
             <type>FirstOrder</type>
@@ -248,12 +238,8 @@
           </dynamics>
 
           <!--
-            ----------------------------------------------------
-            ----------------------------------------------------
             Definition of the lift and drag model, choose ONE of the models
             below according to the model you want to use.
-            ----------------------------------------------------
-            ----------------------------------------------------
           -->
 
           <!--
@@ -286,11 +272,7 @@
           </liftdrag>
 
           <!--
-            ----------------------------------------------------
-            ----------------------------------------------------
             Further parameters necessary for the lift and drag plugin
-            ----------------------------------------------------
-            ----------------------------------------------------
           -->
 
           <!-- Current velocity topic -->

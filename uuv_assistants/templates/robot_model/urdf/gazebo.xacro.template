@@ -34,16 +34,13 @@
         <center_of_buoyancy>${$ROBOT_NAME_cob}</center_of_buoyancy>
 
         <!--
-        ----------------------------------------------------
-        ----------------------------------------------------
         Choose one of the hydrodynamic models below, all are based on
         Fossen's equation of motion for underwater vehicles
 
         Reference:
         [1] Fossen, Thor I. Handbook of marine craft hydrodynamics and motion
             control. John Wiley & Sons, 2011.
-        ----------------------------------------------------
-        ---------------------------------------------------->
+        -->
 
         <!-- 1) Fossen's equation of motion -->
         <hydrodynamic_model>
@@ -94,6 +91,7 @@
               [2] Fossen, Thor I. Handbook of marine craft hydrodynamics and motion
                   control. John Wiley & Sons, 2011.
           -->
+          
           <!--
           <metacentric_width>0.0</metacentric_width>
           <metacentric_length>0.0</metacentric_length>
