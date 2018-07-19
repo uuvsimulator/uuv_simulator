@@ -25,6 +25,7 @@
   <depend>std_msgs</depend>
   <depend>tf</depend>
   <depend>urdfdom_py</depend>
+  <depend>kdl_parser_py</depend>
 
   <test_depend>rosunit</test_depend>
   <test_depend>rostest</test_depend>

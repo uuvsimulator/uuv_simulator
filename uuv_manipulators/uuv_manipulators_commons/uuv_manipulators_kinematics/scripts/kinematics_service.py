@@ -17,7 +17,7 @@
 import PyKDL
 import rospy
 import numpy as np
-from kdl.kdl_parser import kdl_tree_from_urdf_model
+from kdl_parser_py.urdf import treeFromUrdfModel
 from urdf_parser_py.urdf import URDF
 from uuv_manipulator_interfaces import ArmInterface
 from uuv_manipulators_msgs.msg import EndPointState
@@ -125,7 +125,7 @@ class KinematicsService(object):
                 out.joints.position.append(result_ik[i])
             out.isValid = True
         return out
-        
+
     def publish_man_index(self):
         # Retrieve current jacobian matrix
         w_msg = Float64()
