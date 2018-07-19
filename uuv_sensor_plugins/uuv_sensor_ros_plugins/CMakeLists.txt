@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 project(uuv_sensor_ros_plugins)
 
 add_definitions(-std=c++11)
-list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
@@ -25,6 +24,7 @@ find_package(OpenCV REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 set(UUV_SENSOR_ROS_PLUGINS_LIST "")
 
 # Add Gazebo custom protobuf messages
