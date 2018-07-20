@@ -224,15 +224,22 @@ class PathGenerator(object):
         raise NotImplementedError()
 
     def set_parameters(self, params):
-        raise NotImplementedError()    
+        raise NotImplementedError()
 
     def _compute_rot_quat(self, dx, dy, dz):
         heading = np.arctan2(dy, dx)
         rotq = quaternion_about_axis(heading, [0, 0, 1])
-        
+
         if self._is_full_dof:
             rote = quaternion_about_axis(
                 -1 * np.arctan2(dz, np.sqrt(dx**2 + dy**2)),
                 [0, 1, 0])
             rotq = quaternion_multiply(rotq, rote)
+
+        # Certify that the next quaternion remains in the same half hemisphere
+        this_max_idx = np.argmax(np.abs(rotq[0:3]))
+        last_max_idx = np.argmax(np.abs(self._last_rot[0:3]))
+        if (np.sign(rotq[this_max_idx]) != np.sign(self._last_rot[last_max_idx])) and \
+            abs(rotq[this_max_idx]) > 0.9:
+            rotq *= -1
         return rotq

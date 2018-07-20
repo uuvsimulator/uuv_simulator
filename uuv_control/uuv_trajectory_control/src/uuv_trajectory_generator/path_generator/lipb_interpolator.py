@@ -180,9 +180,10 @@ class LIPBInterpolator(PathGenerator):
             dz = this_pos[2] - last_pos[2]
 
             if np.isclose(dx, 0) and np.isclose(dy, 0):
-                rotq = self._last_rot
+                rotq = deepcopy(self._last_rot)
             else:
                 rotq = self._compute_rot_quat(dx, dy, dz)
+                self._last_rot = deepcopy(rotq)
 
             # Calculating the step for the heading offset
             q_step = quaternion_about_axis(
@@ -190,5 +191,4 @@ class LIPBInterpolator(PathGenerator):
                 np.array([0, 0, 1]))
             # Adding the heading offset to the rotation quaternion
             rotq = quaternion_multiply(rotq, q_step)
-        self._last_rot = rotq
         return rotq
