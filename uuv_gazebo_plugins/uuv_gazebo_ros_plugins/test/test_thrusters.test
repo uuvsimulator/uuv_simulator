@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
   <!-- To avoid conflicts with gzserver instances running from other tests -->
   <env name="GAZEBO_MASTER_URI" value="http://localhost:3002"/>
@@ -7,5 +8,5 @@
 
   <include file="$(find uuv_gazebo_ros_plugins)/test/models/thrusters/test_upload_thrusters.launch"/>
 
-  <test test-name="test_thrusters" required="true" pkg="uuv_gazebo_ros_plugins" type="test_thrusters.py" />
+  <test test-name="test_thrusters" pkg="uuv_gazebo_ros_plugins" type="test_thrusters.py" />
 </launch>
