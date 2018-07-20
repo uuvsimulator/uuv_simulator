@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- To avoid conflicts with gzserver instances running from other tests -->
+  <env name="GAZEBO_MASTER_URI" value="http://localhost:3001"/>
+  <include file="$(find uuv_descriptions)/launch/empty_underwater_world.launch">
+    <arg name="gui" value="false"/>
+  </include>
+
+  <include file="$(find uuv_gazebo_ros_plugins)/test/models/sphere_vehicle/test_upload_sphere_vehicle.launch"/>
+
+  <test test-name="test_sphere_vehicle" pkg="uuv_gazebo_ros_plugins" type="test_sphere_vehicle.py" />
+</launch>

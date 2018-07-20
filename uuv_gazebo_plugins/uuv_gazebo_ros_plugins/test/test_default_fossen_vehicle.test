@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- To avoid conflicts with gzserver instances running from other tests -->
+  <env name="GAZEBO_MASTER_URI" value="http://localhost:3000"/>
+  <include file="$(find uuv_descriptions)/launch/empty_underwater_world.launch">
+    <arg name="gui" value="false"/>
+  </include>
+
+  <include file="$(find uuv_gazebo_ros_plugins)/test/models/default_fossen_vehicle/test_upload_default_fossen_vehicle.launch"/>
+
+  <test test-name="test_default_fossen_vehicle" pkg="uuv_gazebo_ros_plugins" type="test_default_fossen_vehicle.py" />
+</launch>
