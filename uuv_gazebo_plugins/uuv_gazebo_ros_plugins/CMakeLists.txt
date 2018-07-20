@@ -100,17 +100,10 @@ install(DIRECTORY urdf
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest)
   foreach(T
-      test/test_default_fossen_vehicle.launch
-      test/test_sphere_vehicle.launch
-      test/test_thrusters.launch
+      test/test_default_fossen_vehicle.test
+      test/test_sphere_vehicle.test
+      test/test_thrusters.test
       )
      add_rostest(${T})
-  endforeach()
-
-  foreach(UNIT_TESTS
-    test/test_default_fossen_vehicle.py
-    test/test_sphere_vehicle.py
-    test/test_thrusters.py
-    catkin_add_nosetests(${UNIT_TESTS}))
   endforeach()
 endif()
