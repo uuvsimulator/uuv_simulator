@@ -2,6 +2,14 @@
 Changelog for package uuv_trajectory_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.11 (2018-07-21)
+-------------------
+* ADD Test quaternions dot product for shortest path
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* MV Quaternion sign test to path_generator.py
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhaes
+
 0.5.10 (2018-07-10)
 -------------------
 * CHANGE Set casadi package as optional

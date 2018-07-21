@@ -126,18 +126,21 @@ class LinearInterpolator(PathGenerator):
         if s == 0:
             self._last_rot = deepcopy(self._init_rot)
             return self._init_rot
-        
+
         last_s = max(0, s - self._s_step)
 
         this_pos = self.generate_pos(s)
         last_pos = self.generate_pos(last_s)
-       
+
         dx = this_pos[0] - last_pos[0]
         dy = this_pos[1] - last_pos[1]
         dz = this_pos[2] - last_pos[2]
-        
-        rotq = self._compute_rot_quat(dx, dy, dz)
 
+        if np.isclose(dx, 0) and np.isclose(dy, 0):
+            rotq = self._last_rot
+        else:
+            rotq = self._compute_rot_quat(dx, dy, dz)
+            self._last_rot = rotq
         # Calculating the step for the heading offset
         q_step = quaternion_about_axis(
             self._interp_fcns['heading'](s),
