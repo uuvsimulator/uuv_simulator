@@ -237,9 +237,8 @@ class PathGenerator(object):
             rotq = quaternion_multiply(rotq, rote)
 
         # Certify that the next quaternion remains in the same half hemisphere
-        this_max_idx = np.argmax(np.abs(rotq[0:3]))
-        last_max_idx = np.argmax(np.abs(self._last_rot[0:3]))
-        if (np.sign(rotq[this_max_idx]) != np.sign(self._last_rot[last_max_idx])) and \
-            abs(rotq[this_max_idx]) > 0.9:
+        d_prod = np.dot(self._last_rot, rotq)
+        if d_prod < 0:
             rotq *= -1
+        
         return rotq
