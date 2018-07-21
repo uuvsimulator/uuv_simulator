@@ -2,6 +2,12 @@
 Changelog for package uuv_assistants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* FIX Add suffix to the default_camera and review some comments
+  Signed-off-by: Bruno Schettini <brschettini@gmail.com>
+* Contributors: Bruno Schettini
+
 0.5.10 (2018-07-10)
 -------------------
 

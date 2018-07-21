@@ -2,6 +2,9 @@
 Changelog for package uuv_manipulators_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.10 (2018-07-10)
 -------------------
 

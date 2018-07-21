@@ -2,6 +2,14 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* FIX CMAKE_CXX_FLAGS in uuv_sensor_ros_plugins
+  Signed-off-by: Gabriel Arjones <arjones@arjones.com>
+* Install URDF folder
+  Signed-off-by: Will Baker <wbaker@houstonmechatronics.com>
+* Contributors: Gabriel Arjones, Will Baker
+
 0.5.10 (2018-07-10)
 -------------------
 

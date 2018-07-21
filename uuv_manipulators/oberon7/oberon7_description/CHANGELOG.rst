@@ -2,6 +2,9 @@
 Changelog for package oberon7_description
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.10 (2018-07-10)
 -------------------
 
