@@ -17,7 +17,7 @@
 # DEP PACKAGES
 apt -qq install --no-install-recommends --allow-unauthenticated -y \
   build-essential python-catkin-tools python-pip dvi2ps dvipng binutils \
-  mesa-utils module-init-tools x-window-system
+  mesa-utils module-init-tools x-window-system ros-$ROS_DISTRO-python-orocos-kdl
 
 # SETUP OTHER DEPENDENCIES FOR UUV SIMULATOR
 mkdir -p $CATKIN_WORKSPACE/src
