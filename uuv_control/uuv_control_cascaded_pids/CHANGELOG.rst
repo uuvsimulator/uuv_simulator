@@ -2,6 +2,9 @@
 Changelog for package uuv_control_cascaded_pid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.11 (2018-07-21)
 -------------------
 

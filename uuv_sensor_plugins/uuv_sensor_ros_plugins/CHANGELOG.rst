@@ -2,6 +2,9 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.11 (2018-07-21)
 -------------------
 * FIX CMAKE_CXX_FLAGS in uuv_sensor_ros_plugins
