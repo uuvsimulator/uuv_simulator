@@ -2,8 +2,8 @@
 Changelog for package uuv_manipulators_kinematics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.12 (2018-07-23)
+-------------------
 * RM Forward/inverse kinematics tests for now
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * CHANGE Launch tests from test_kinematic_interfaces.test
