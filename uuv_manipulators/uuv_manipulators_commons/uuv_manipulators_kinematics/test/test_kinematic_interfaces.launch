@@ -1,6 +1,0 @@
-<launch>
-    <include file="$(find uuv_manipulators_kinematics)/test/test_start_simulation.launch"/>
-    <group ns="/rexrov/oberon">
-        <test test-name="test_arm_interface" pkg="uuv_manipulators_kinematics" type="test_arm_interface.py"/>
-    </group>
-</launch>
