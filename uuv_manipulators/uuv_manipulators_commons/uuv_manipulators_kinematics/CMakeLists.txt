@@ -3,7 +3,7 @@ project(uuv_manipulators_kinematics)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-find_package(catkin REQUIRED COMPONENTS 
+find_package(catkin REQUIRED COMPONENTS
   gazebo_ros
   control_toolbox
   rospy
@@ -28,17 +28,9 @@ catkin_install_python(PROGRAMS scripts/kinematics_service.py
 
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
-  find_package(rosunit REQUIRED)
-
-  foreach(UNIT_TESTS
-    test/test_arm_interface.py
-    test/test_jacobian.py
-    catkin_add_nosetests(${UNIT_TESTS}))
-  endforeach()
 
   foreach(TEST_LAUNCHERS
-    test/test_kinematic_interfaces.launch
-    test/test_start_simulation.launch
-    add_rostest(${TEST_LAUNCHERS}))
+    test/test_kinematic_interfaces.test)
+    add_rostest(${TEST_LAUNCHERS})
   endforeach()
 endif()
