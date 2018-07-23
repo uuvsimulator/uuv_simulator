@@ -121,7 +121,7 @@ void BuoyantObject::GetBuoyancyForce(const ignition::math::Pose3d &_pose,
   {
     // Implementation of the linear (small angle) theory for boxed-shaped
     // vessels. Further details can be seen at
-    // T. I. Fossen, “Handbook of Marine Craft Hydrodynamics and Motion Control,” Apr. 2011.
+    // T. I. Fossen, "Handbook of Marine Craft Hydrodynamics and Motion Control," Apr. 2011.
     // Page 65
     if (this->waterLevelPlaneArea <= 0)
     {
@@ -131,7 +131,7 @@ void BuoyantObject::GetBuoyancyForce(const ignition::math::Pose3d &_pose,
         this->waterLevelPlaneArea << std::endl;
     }
 
-    this->waterLevelPlaneArea = mass / (this->fluidDensity * this->submergedHeight);    
+    this->waterLevelPlaneArea = mass / (this->fluidDensity * this->submergedHeight);
     double curSubmergedHeight;
     GZ_ASSERT(this->waterLevelPlaneArea > 0.0,
       "Water level plane area must be greater than zero");
@@ -146,7 +146,7 @@ void BuoyantObject::GetBuoyancyForce(const ignition::math::Pose3d &_pose,
     } else {
       curSubmergedHeight = height / 2.0 - z;
     }//else
-                  
+
     volume = curSubmergedHeight * this->waterLevelPlaneArea;
     buoyancyForce = ignition::math::Vector3d(0, 0, volume * this->fluidDensity * this->g);
     buoyancyTorque = ignition::math::Vector3d(
@@ -198,8 +198,8 @@ void BuoyantObject::ApplyBuoyancyForce()
     this->link->AddForce(
       math::Vector3(buoyancyForce.X(), buoyancyForce.Y(), buoyancyForce.Z()));
     this->link->AddRelativeTorque(
-      math::Vector3(buoyancyTorque.X(), buoyancyTorque.Y(), buoyancyTorque.Z()));          
-#endif    
+      math::Vector3(buoyancyTorque.X(), buoyancyTorque.Y(), buoyancyTorque.Z()));
+#endif
   }
 
 }
