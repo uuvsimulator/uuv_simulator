@@ -2,6 +2,9 @@
 Changelog for package uuv_trajectory_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.12 (2018-07-23)
+-------------------
+
 0.5.11 (2018-07-21)
 -------------------
 * ADD Test quaternions dot product for shortest path

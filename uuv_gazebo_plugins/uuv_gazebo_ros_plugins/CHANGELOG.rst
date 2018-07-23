@@ -2,6 +2,9 @@
 Changelog for package uuv_gazebo_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.12 (2018-07-23)
+-------------------
+
 0.5.11 (2018-07-21)
 -------------------
 * ADD ROS tests to CMakeLists
