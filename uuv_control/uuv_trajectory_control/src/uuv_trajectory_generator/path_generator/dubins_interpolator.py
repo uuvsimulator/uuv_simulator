@@ -613,9 +613,6 @@ class DubinsInterpolator(PathGenerator):
         dy = this_pos[1] - last_pos[1]
         dz = this_pos[2] - last_pos[2]
 
-        if np.isclose(dx, 0) and np.isclose(dy, 0):
-            rotq = self._last_rot
-        else:
-            rotq = self._compute_rot_quat(dx, dy, dz)
-            self._last_rot = rotq
+        rotq = self._compute_rot_quat(dx, dy, dz)
+        self._last_rot = rotq
         return rotq

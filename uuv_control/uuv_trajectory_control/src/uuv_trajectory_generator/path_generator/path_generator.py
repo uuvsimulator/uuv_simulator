@@ -158,7 +158,7 @@ class PathGenerator(object):
             wps = self._segment_to_wp_map[idx::]
             return np.unique(wps)
         except:
-            print 'Invalid index'
+            rospy.logerr('Invalid index')
             return None
 
     def is_full_dof(self):
@@ -193,10 +193,12 @@ class PathGenerator(object):
             self._waypoints = deepcopy(waypoints)
 
         if self._waypoints is None:
-            print 'Waypoint list has not been initialized'
+            rospy.logerr('Waypoint list has not been initialized')
             return False
 
         self._init_rot = init_rot
+        rospy.loginfo('PathGenerator::Setting initial rotation as=%s',
+                      str(init_rot))
         return True
 
     def interpolate(self, tag, s):
@@ -227,8 +229,11 @@ class PathGenerator(object):
         raise NotImplementedError()
 
     def _compute_rot_quat(self, dx, dy, dz):
-        heading = np.arctan2(dy, dx)
-        rotq = quaternion_about_axis(heading, [0, 0, 1])
+        if np.isclose(dx, 0) and np.isclose(dy, 0):
+            rotq = self._last_rot
+        else:
+            heading = np.arctan2(dy, dx)
+            rotq = quaternion_about_axis(heading, [0, 0, 1])
 
         if self._is_full_dof:
             rote = quaternion_about_axis(
@@ -240,5 +245,5 @@ class PathGenerator(object):
         d_prod = np.dot(self._last_rot, rotq)
         if d_prod < 0:
             rotq *= -1
-        
+
         return rotq

@@ -47,6 +47,8 @@ if __name__ == '__main__':
     else:
         start_now = True
 
+    rospy.loginfo('Start time=%.2f s' % start_time)
+
     interpolator = rospy.get_param('~interpolator', 'lipb')
 
     try:
@@ -61,7 +63,7 @@ if __name__ == '__main__':
     except rospy.ServiceException as e:
         raise rospy.ROSException('Service call failed, error=%s', str(e))
 
-    success = init_wp(Time(rospy.Time(start_time)),
+    success = init_wp(Time(rospy.Time.from_sec(start_time)),
                       start_now,
                       String(filename),
                       String(interpolator))

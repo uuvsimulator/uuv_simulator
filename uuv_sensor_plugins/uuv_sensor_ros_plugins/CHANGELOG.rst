@@ -2,6 +2,12 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.5.13 (2018-07-24)
+-------------------
+* ADD UUV Gazebo ROS libraries to be exported
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.5.12 (2018-07-23)
 -------------------
 

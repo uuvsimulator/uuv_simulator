@@ -29,7 +29,7 @@ class ROV_SFController(DPControllerBase):
     [1] O.-E. Fjellstad and T. I. Fossen, Singularity-free tracking of unmanned
         underwater vehicles in 6 DOF, Proceedings of 1994 33rd IEEE Conference
         on Decision and Control
-    [2] G. Antonelli, "Underwater Robots," Springer Tracts in Advanced Robotics, 
+    [2] G. Antonelli, "Underwater Robots," Springer Tracts in Advanced Robotics,
         2003
     """
 
@@ -50,7 +50,7 @@ class ROV_SFController(DPControllerBase):
                 raise rospy.ROSException('Kd coefficients: 6 coefficients '
                                          'needed')
 
-        self._logger.info('Kd=' + str(self._Kd))
+        self._logger.info('Kd=\n' + str(self._Kd))
 
         # Build delta matrix
         self._delta = np.zeros(shape=(6, 6))
@@ -73,9 +73,9 @@ class ROV_SFController(DPControllerBase):
             self._delta[3:6, 3:6] = np.diag(c)
         else:
             raise rospy.ROSException(
-                'c: either a scalar or a 3 element vector must be provided')               
+                'c: either a scalar or a 3 element vector must be provided')
 
-        self._logger.info('delta=' + str(self._delta))
+        self._logger.info('delta=\n' + str(self._delta))
 
         self._prev_t = None
         self._prev_vel_r = np.zeros(6)
@@ -91,9 +91,8 @@ class ROV_SFController(DPControllerBase):
 
         # Compute the generalized pose error vector using the quaternion
         # orientation error
-        # error = np.hstack((self._errors['pos'], self.error_orientation_quat))
-        error = self.error_pose_euler
-        
+        error = np.hstack((self._errors['pos'], self.error_orientation_quat))
+
         # Compute the virtual velocity signal
         vel_r = self._reference['vel'] + np.dot(self._delta, error)
 
