@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_tutorials</name>
-  <version>0.5.12</version>
+  <version>0.5.13</version>
   <description>Meta package for all templates and tutorials.</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
