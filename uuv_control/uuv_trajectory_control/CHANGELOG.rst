@@ -2,8 +2,8 @@
 Changelog for package uuv_trajectory_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.13 (2018-07-24)
+-------------------
 * FIX Set orientation error from quaternion vector
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * FIX If start_time is set before interpolation begins, ignore current time
