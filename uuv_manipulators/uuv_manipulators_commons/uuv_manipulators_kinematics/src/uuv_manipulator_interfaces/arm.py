@@ -18,8 +18,6 @@ import rospy
 
 import numpy as np
 import PyKDL
-from urdf_parser_py.urdf import URDF
-from kdl.kdl_parser import kdl_tree_from_urdf_model
 from uuv_manipulators_msgs.msg import EndPointState
 from uuv_kinematics_utils import EndEffectorState
 from uuv_manipulator_interfaces.kin_chain import KinChainInterface

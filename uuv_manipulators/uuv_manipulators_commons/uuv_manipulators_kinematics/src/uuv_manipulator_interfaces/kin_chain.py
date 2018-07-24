@@ -18,7 +18,7 @@ from copy import deepcopy
 import numpy as np
 import PyKDL
 from urdf_parser_py.urdf import URDF
-from kdl.kdl_parser import kdl_tree_from_urdf_model
+from kdl_parser_py.urdf import treeFromUrdfModel
 
 
 class KinChainInterface(object):
@@ -61,7 +61,7 @@ class KinChainInterface(object):
             key=self._namespace + 'robot_description')
 
         # KDL tree of the whole structure
-        self._kdl_tree = kdl_tree_from_urdf_model(self._robot_description)
+        self._kdl_tree = treeFromUrdfModel(self._robot_description)
 
         # Base link
         self._base_link = base
