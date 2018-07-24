@@ -65,6 +65,18 @@ catkin_package(
     ${OpenCV_INCLUDE_DIRS}
     ${EIGEN3_INCLUDE_DIR}
   DEPENDS Eigen3 gazebo
+  LIBRARIES
+    uuv_gazebo_ros_base_model_plugin
+    uuv_gazebo_ros_base_sensor_plugin
+    uuv_gazebo_ros_gps_plugin
+    uuv_gazebo_ros_pose_gt_plugin
+    uuv_gazebo_ros_subsea_pressure_plugin
+    uuv_gazebo_ros_dvl_plugin
+    uuv_gazebo_ros_magnetometer_plugin
+    uuv_gazebo_ros_cpc_plugin
+    uuv_gazebo_ros_imu_plugin
+    uuv_gazebo_ros_rpt_plugin
+    uuv_gazebo_ros_camera_plugin
   CATKIN_DEPENDS
     uuv_gazebo_plugins
     sensor_msgs
