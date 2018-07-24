@@ -672,10 +672,9 @@ class DPControllerLocalPlanner(object):
         wp_set = self._transform_waypoint_set(wp_set)
         wp_set = self._apply_workspace_constraints(wp_set)
 
-        if self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
-            t = (t.to_sec() if not request.start_now else rospy.get_time())
+        if self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):            
             self._station_keeping_center = None
-            self._traj_interpolator.set_start_time(t)
+            self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             self._update_trajectory_info()
             self.set_station_keeping(False)
             self.set_automatic_mode(True)
@@ -689,7 +688,7 @@ class DPControllerLocalPlanner(object):
             self._logger.info('Filename = ' + request.filename.data)
             self._logger.info('Interpolator = ' + request.interpolator.data)
             self._logger.info('# waypoints = %d' % self._traj_interpolator.get_waypoints().num_waypoints)
-            self._logger.info('Starting time = %.2f' % t)
+            self._logger.info('Starting time = %.2f' % (t.to_sec() if not request.start_now else rospy.get_time()))
             self._logger.info('Inertial frame ID = ' + self.inertial_frame_id)
             self._logger.info('============================')
             self._lock.release()
