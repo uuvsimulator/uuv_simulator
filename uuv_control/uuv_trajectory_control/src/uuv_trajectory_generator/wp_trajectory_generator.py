@@ -327,15 +327,15 @@ class WPTrajectoryGenerator(object):
         # Generate position and rotation quaternion for the current path
         # generator method
         pnt = self.interpolator.generate_pnt(
-            cur_s, 
-            cur_s * (self.interpolator.max_time - self.interpolator.start_time) + self.interpolator.start_time, 
+            cur_s,
+            cur_s * (self.interpolator.max_time - self.interpolator.start_time) + self.interpolator.start_time,
             pos,
             rot)
-            
+
         if self.get_interpolation_method() is not 'los':
             if self._use_finite_diff:
                 # Set linear velocity
-                pnt.vel = self._generate_vel(cur_s)            
+                pnt.vel = self._generate_vel(cur_s)
                 # Compute linear and angular accelerations
                 last_vel = self._generate_vel(last_s)
                 pnt.acc = (pnt.vel - last_vel) / self._t_step
@@ -406,8 +406,9 @@ class WPTrajectoryGenerator(object):
             tic = time.time()
             if not self.interpolator.init_interpolator():
                 self._logger.error('Error initializing the waypoint interpolator')
-                return None            
-            self.set_start_time(t + (time.time() - tic))
+                return None
+            if self.interpolator.start_time is None:
+                self.set_start_time(t + (time.time() - tic))
             self.interpolator.s_step = self._t_step / (self.interpolator.max_time - self.interpolator.start_time)
             self.update_dt(t)
             # Generate first point
