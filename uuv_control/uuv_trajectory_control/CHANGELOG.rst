@@ -2,6 +2,9 @@
 Changelog for package uuv_trajectory_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.5.13 (2018-07-24)
 -------------------
 * FIX Set orientation error from quaternion vector
