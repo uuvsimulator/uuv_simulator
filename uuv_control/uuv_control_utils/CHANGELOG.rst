@@ -2,6 +2,9 @@
 Changelog for package uuv_control_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.0 (2018-07-31)
+------------------
+
 0.5.13 (2018-07-24)
 -------------------
 * FIX Convert ros::Time from seconds
