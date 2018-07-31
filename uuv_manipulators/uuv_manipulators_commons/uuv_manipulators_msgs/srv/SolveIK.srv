@@ -1,5 +1,0 @@
-geometry_msgs/Pose pose
-sensor_msgs/JointState seed_angles
----
-sensor_msgs/JointState joints
-bool isValid
