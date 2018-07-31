@@ -99,6 +99,8 @@ install(DIRECTORY urdf
 
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest)
+  find_package(xacro)
+  find_package(rosunit)
   foreach(T
       test/test_default_fossen_vehicle.test
       test/test_sphere_vehicle.test

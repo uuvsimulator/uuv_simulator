@@ -29,5 +29,7 @@
 
   <test_depend>rosunit</test_depend>
   <test_depend>rostest</test_depend>
+  <test_depend>xacro</test_depend>
+  
   <buildtool_depend>catkin</buildtool_depend>
 </package>
