@@ -111,10 +111,10 @@
 
         <!-- Yoerger's nonlinear dynamic model
         For information on the model description:
-        [1] D. R. Yoerger, J. G. Cooke, and J.-J. E. Slotine, “The influence of
+        [1] D. R. Yoerger, J. G. Cooke, and J.-J. E. Slotine, "The influence of
             thruster dynamics on underwater vehicle behavior and their incorporation
-            into control system design,” IEEE Journal of Oceanic Engineering, vol. 15,
-            no. 3, pp. 167–178, Jul. 1990.
+            into control system design," IEEE Journal of Oceanic Engineering, vol. 15,
+            no. 3, pp. 167-178, Jul. 1990.
         -->
         <dynamics>
           <type>Yoerger</type>
