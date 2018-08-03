@@ -2,6 +2,12 @@
 Changelog for package uuv_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.1 (2018-08-03)
+------------------
+* FIX List of dependencies with the new transfer
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhaes
+
 0.6.0 (2018-07-31)
 ------------------
 
