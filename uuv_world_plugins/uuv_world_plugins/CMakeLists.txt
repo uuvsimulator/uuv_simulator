@@ -20,7 +20,7 @@ catkin_package(
                ${Boost_INCLUDE_DIRS}
 	LIBRARIES uuv_underwater_current_plugin
 	CATKIN_DEPENDS gazebo_msgs
-	DEPENDS gazebo
+	DEPENDS GAZEBO
 )
 
 include_directories(include

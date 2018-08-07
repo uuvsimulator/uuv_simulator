@@ -53,7 +53,7 @@ catkin_package(
     thruster_plugin
     fin_plugin
     dynamics
-  DEPENDS gazebo
+  DEPENDS GAZEBO
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/include
