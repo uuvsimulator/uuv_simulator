@@ -199,7 +199,10 @@ void ThrusterROSPlugin::RosPublishStates()
     geometry_msgs::WrenchStamped thrustWrenchMsg;
     thrustWrenchMsg.header.stamp = ros::Time().now();
     thrustWrenchMsg.header.frame_id = this->thrusterLink->GetName();
-    thrustWrenchMsg.wrench.force.x = this->thrustForce;
+    ignition::math::Vector3d thrustVector = this->thrustForce * this->thrusterAxis;
+    thrustWrenchMsg.wrench.force.x = thrustVector.X();
+    thrustWrenchMsg.wrench.force.y = thrustVector.Y();
+    thrustWrenchMsg.wrench.force.z = thrustVector.Z();
     this->pubThrustWrench.publish(thrustWrenchMsg);
 
     // Publish the thruster current state (ON or OFF)
