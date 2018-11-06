@@ -48,6 +48,8 @@ class ThrusterManager:
         # available
         self._ready = False
 
+        # Acquiring TAM file location
+        self.tam_file = rospy.get_param('~tam_file')
         # Acquiring the namespace of the vehicle
         self.namespace = rospy.get_namespace()
         if self.namespace[-1] != '/':
@@ -169,7 +171,7 @@ class ThrusterManager:
 
         # If an output directory was provided, store matrix for further use
         if self.output_dir is not None:
-            with open(join(self.output_dir, 'TAM.yaml'), 'w') as yaml_file:
+            with open(self.tam_file, 'w') as yaml_file:
                 yaml_file.write(
                     yaml.safe_dump(
                         dict(tam=self.configuration_matrix.tolist())))
@@ -284,11 +286,11 @@ class ThrusterManager:
 
         # If an output directory was provided, store matrix for further use
         if self.output_dir is not None and not recalculate:
-            with open(join(self.output_dir, 'TAM.yaml'), 'w') as yaml_file:
+            with open(self.tam_file, 'w') as yaml_file:
                 yaml_file.write(
                     yaml.safe_dump(
                         dict(tam=self.configuration_matrix.tolist())))
-            print 'TAM saved in <%s>' % join(self.output_dir, 'TAM.yaml')
+            print 'TAM saved in <%s>' % self.tam_file
         elif recalculate:
             print 'Recalculate flag on, matrix will not be stored in TAM.yaml'
         else:

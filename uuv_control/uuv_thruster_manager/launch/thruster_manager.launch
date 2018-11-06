@@ -28,6 +28,9 @@
         <rosparam param="output_dir" subst_value="true">
           $(arg output_dir)
         </rosparam>
+        <rosparam param="tam_file" subst_value="true">
+          $(arg tam_file)
+        </rosparam>
       </node>
     </group>
 
