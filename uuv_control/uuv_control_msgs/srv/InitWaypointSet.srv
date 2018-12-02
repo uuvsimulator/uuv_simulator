@@ -18,5 +18,6 @@ bool start_now
 uuv_control_msgs/Waypoint[] waypoints
 float64 max_forward_speed
 float64 heading_offset
+std_msgs/String interpolator
 ---
 bool success
