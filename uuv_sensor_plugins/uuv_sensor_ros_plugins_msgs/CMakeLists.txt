@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(uuv_sensor_plugins_ros_msgs)
+project(uuv_sensor_ros_plugins_msgs)
 
-find_package(catkin REQUIRED geometry_msgs message_generation)
+find_package(catkin REQUIRED COMPONENTS
+    geometry_msgs
+    message_generation)
 
 add_message_files(
   FILES
