@@ -99,7 +99,7 @@
 
     <!-- Set up hydrodynamic plugin -->
     <gazebo>
-      <plugin name="${namespace}_uuv_plugin" filename="libunderwater_object_ros_plugin.so">
+      <plugin name="${namespace}_uuv_plugin" filename="libuuv_underwater_object_ros_plugin.so">
         <!-- Fluid density to be used in the computation of buoyancy forces
         for all links specified below -->
         <fluid_density>${rho}</fluid_density>
