@@ -16,7 +16,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <exec_depend>python-rospy</exec_depend>
+  <exec_depend>rospy</exec_depend>
   <exec_depend>rostopic</exec_depend>
   <exec_depend>rosgraph</exec_depend>
   <exec_depend>nav_msgs</exec_depend>

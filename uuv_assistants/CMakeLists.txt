@@ -1,15 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_assistants)
 
-find_package(catkin REQUIRED COMPONENTS
-        rospy
-        rostopic
-        rosgraph
-        nav_msgs
-        geometry_msgs
-        gazebo_msgs
-        visualization_msgs
-        tf)
+find_package(catkin REQUIRED)
 
 catkin_package()
 
