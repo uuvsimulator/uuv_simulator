@@ -3,7 +3,7 @@
 
   <xacro:macro name="acceleration_test_macro" params="link_name">
     <gazebo>
-      <plugin name="${link_name}_test_plugin" filename="libaccelerations_test_plugin.so">
+      <plugin name="${link_name}_test_plugin" filename="libuuv_accelerations_test_plugin.so">
         <link_name>${link_name}</link_name>
       </plugin>
     </gazebo>
@@ -12,7 +12,7 @@
   <!-- Default joint state publisher -->
   <xacro:macro name="default_joint_state_publisher" params="namespace update_rate">
     <gazebo>
-      <plugin name="joint_state_publisher" filename="libjoint_state_publisher.so">
+      <plugin name="uuv_joint_state_publisher" filename="libuuv_joint_state_publisher.so">
         <robotNamespace>${namespace}</robotNamespace>
         <updateRate>${update_rate}</updateRate>
       </plugin>

@@ -112,7 +112,7 @@
     </link>
 
     <gazebo>
-      <plugin name="${namespace}_${thruster_id}_thruster_model" filename="libthruster_ros_plugin.so">
+      <plugin name="${namespace}_${thruster_id}_thruster_model" filename="libuuv_thruster_ros_plugin.so">
         <linkName>${namespace}/thruster_${thruster_id}</linkName>
         <jointName>${namespace}/thruster_${thruster_id}_joint</jointName>
         <thrusterID>${thruster_id}</thrusterID>
