@@ -20,7 +20,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>tf</exec_depend>
-  <exec_depend>python-rospy</exec_depend>
+  <exec_depend>rospy</exec_depend>
   <exec_depend>python-yaml</exec_depend>
   <exec_depend>uuv_gazebo_ros_plugins_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>

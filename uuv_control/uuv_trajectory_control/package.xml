@@ -12,7 +12,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <exec_depend>python-rospy</exec_depend>
+  <exec_depend>rospy</exec_depend>
   <exec_depend>roslib</exec_depend>
   <exec_depend>python-numpy</exec_depend>
   <exec_depend>python-matplotlib</exec_depend>
