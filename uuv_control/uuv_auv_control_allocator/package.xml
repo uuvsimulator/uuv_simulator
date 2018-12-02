@@ -12,8 +12,9 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>std_msgs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+
   <build_depend>message_generation</build_depend>
 
   <exec_depend>message_runtime</exec_depend>

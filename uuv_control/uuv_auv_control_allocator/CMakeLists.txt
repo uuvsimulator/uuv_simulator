@@ -19,7 +19,12 @@ generate_messages(
     geometry_msgs
 )
 
-catkin_package(CATKIN_DEPENDS message_runtime)
+catkin_package(
+    CATKIN_DEPENDS
+        message_runtime
+        geometry_msgs
+        std_msgs
+)
 
 catkin_install_python(PROGRAMS scripts/control_allocator
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
