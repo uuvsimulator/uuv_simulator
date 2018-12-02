@@ -81,7 +81,7 @@
 
     <!-- optional: plugin to test compare Gazebo's returned accelerations
     <gazebo>
-      <plugin name="${namespace}_test_plugin" filename="libaccelerations_test_plugin.so">
+      <plugin name="${namespace}_test_plugin" filename="libuuv_accelerations_test_plugin.so">
         <link_name>${namespace}/base_link</link_name>
       </plugin>
     </gazebo> -->
