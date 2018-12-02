@@ -79,7 +79,7 @@ void DVLROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     *this->rosNode.get(), this->beamTopics[3], 1));
 
   for (int i = 0; i < 4; i++)
-    this->dvlBeamMsgs.push_back(uuv_sensor_plugins_ros_msgs::DVLBeam());
+    this->dvlBeamMsgs.push_back(uuv_sensor_ros_plugins_msgs::DVLBeam());
 
   // Synchronize the beam topics
   this->syncBeamMessages.reset(new message_filters::TimeSynchronizer<
@@ -94,7 +94,7 @@ void DVLROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   // Initialize the default DVL output
   this->rosSensorOutputPub =
-    this->rosNode->advertise<uuv_sensor_plugins_ros_msgs::DVL>(
+    this->rosNode->advertise<uuv_sensor_ros_plugins_msgs::DVL>(
       this->sensorOutputTopic, 1);
 
   this->twistPub =

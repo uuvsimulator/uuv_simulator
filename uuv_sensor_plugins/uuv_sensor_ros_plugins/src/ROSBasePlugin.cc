@@ -174,8 +174,8 @@ void ROSBasePlugin::GetTFMessage(const tf::tfMessage::ConstPtr &_msg)
 
 /////////////////////////////////////////////////
 bool ROSBasePlugin::ChangeSensorState(
-    uuv_sensor_plugins_ros_msgs::ChangeSensorState::Request& _req,
-    uuv_sensor_plugins_ros_msgs::ChangeSensorState::Response& _res)
+    uuv_sensor_ros_plugins_msgs::ChangeSensorState::Request& _req,
+    uuv_sensor_ros_plugins_msgs::ChangeSensorState::Response& _res)
 {
   this->isOn.data = _req.on;
   _res.success = true;
