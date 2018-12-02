@@ -23,4 +23,6 @@
   <depend>protobuf-dev</depend>
   <depend>eigen</depend>
 
+  <test_depend>rosunit</test_depend>
+
 </package>
