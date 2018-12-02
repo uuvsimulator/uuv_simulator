@@ -21,7 +21,7 @@
 #include <uuv_sensor_ros_plugins/Common.hh>
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
-#include <uuv_sensor_plugins_ros_msgs/ChangeSensorState.h>
+#include <uuv_sensor_ros_plugins_msgs/ChangeSensorState.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <gazebo/sensors/Noise.hh>
 #include <boost/shared_ptr.hpp>
@@ -133,8 +133,8 @@ namespace gazebo
 
     /// \brief Change sensor state (ON/OFF)
     protected: bool ChangeSensorState(
-        uuv_sensor_plugins_ros_msgs::ChangeSensorState::Request& _req,
-        uuv_sensor_plugins_ros_msgs::ChangeSensorState::Response& _res);
+        uuv_sensor_ros_plugins_msgs::ChangeSensorState::Request& _req,
+        uuv_sensor_ros_plugins_msgs::ChangeSensorState::Response& _res);
 
     /// \brief Callback function for the static TF message
     protected: void GetTFMessage(const tf::tfMessage::ConstPtr &_msg);
