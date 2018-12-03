@@ -2,6 +2,9 @@
 Changelog for package uuv_world_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.1 (2018-08-03)
 ------------------
 

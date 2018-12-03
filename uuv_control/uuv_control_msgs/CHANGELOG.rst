@@ -2,6 +2,9 @@
 Changelog for package uuv_control_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.1 (2018-08-03)
 ------------------
 
