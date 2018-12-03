@@ -2,8 +2,8 @@
 Changelog for package uuv_control_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.2 (2018-12-03)
+------------------
 * FIX rospy dependency
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * FIX rospy dependencies
