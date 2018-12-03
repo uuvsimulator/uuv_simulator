@@ -2,6 +2,16 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.2 (2018-12-03)
+------------------
+* ADD rosunit to test dependency
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* FIX Compilation configuration
+  * Move add_livrary for Gazebo Protobuf messages after catkin_package (fix catkin lint output)
+  * Add `uuv\_` prefix to all plugins generated
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.6.1 (2018-08-03)
 ------------------
 

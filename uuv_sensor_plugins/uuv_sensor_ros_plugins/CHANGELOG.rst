@@ -2,6 +2,19 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.2 (2018-12-03)
+------------------
+* CHANGE Name of the ROS sensor messages package
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* CHANGE Name of the ROS sensor message package
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* CHANGE Compilation configuration
+  * Add COMPONENTS option to find_package(catkin) (fix catkin lint error)
+  * Change name of `uuv_sensor_plugins_ros_msgs`  to `uuv_sensor_ros_plugins_msgs`
+  * Move add library command for Gazebo Protobuf messages
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.6.1 (2018-08-03)
 ------------------
 

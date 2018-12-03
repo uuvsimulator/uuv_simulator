@@ -56,9 +56,9 @@ void CPCROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   std::string salinityUnit;
   GetSDFParam<std::string>(_sdf, "salinity_unit", salinityUnit, "ppt");
 
-  GZ_ASSERT(salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PPT) == 0 ||
-            salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PPM) == 0 ||
-            salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PSU) == 0,
+  GZ_ASSERT(salinityUnit.compare(uuv_sensor_ros_plugins_msgs::Salinity::PPT) == 0 ||
+            salinityUnit.compare(uuv_sensor_ros_plugins_msgs::Salinity::PPM) == 0 ||
+            salinityUnit.compare(uuv_sensor_ros_plugins_msgs::Salinity::PSU) == 0,
             "Invalid salinity unit, it can be ppt, ppm or psu");
 
   this->salinityMsg.unit = salinityUnit;
@@ -70,9 +70,9 @@ void CPCROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   }
   else
   {
-    if (salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PPT) == 0)
+    if (salinityUnit.compare(uuv_sensor_ros_plugins_msgs::Salinity::PPT) == 0)
       this->waterSalinityValue = 35.0;
-    else if (salinityUnit.compare(uuv_sensor_plugins_ros_msgs::Salinity::PPM) == 0)
+    else if (salinityUnit.compare(uuv_sensor_ros_plugins_msgs::Salinity::PPM) == 0)
       this->waterSalinityValue = 35000.0;
     else
       this->waterSalinityValue = 35.0;
@@ -98,11 +98,11 @@ void CPCROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   this->salinityMsg.variance = this->noiseSigma * this->noiseSigma;
 
   this->rosSensorOutputPub = this->rosNode->advertise<
-    uuv_sensor_plugins_ros_msgs::ChemicalParticleConcentration>(
+    uuv_sensor_ros_plugins_msgs::ChemicalParticleConcentration>(
       this->sensorOutputTopic, 1);
 
   this->salinityPub = this->rosNode->advertise<
-    uuv_sensor_plugins_ros_msgs::Salinity>(salinityTopic, 1);
+    uuv_sensor_ros_plugins_msgs::Salinity>(salinityTopic, 1);
 
   this->lastUpdateTimestamp = ros::Time::now();
 

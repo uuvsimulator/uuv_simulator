@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_auv_control_allocator</name>
-  <version>0.6.1</version>
+  <version>0.6.2</version>
   <description>Optimal allocation of forces and torques to thruster and fins of AUVs</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -12,8 +12,9 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>std_msgs</build_depend>
-  <build_depend>geometry_msgs</build_depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+
   <build_depend>message_generation</build_depend>
 
   <exec_depend>message_runtime</exec_depend>

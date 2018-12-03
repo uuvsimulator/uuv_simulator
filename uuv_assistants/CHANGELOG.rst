@@ -2,6 +2,17 @@
 Changelog for package uuv_assistants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.2 (2018-12-03)
+------------------
+* CHANGE Name of plugins with uuv\_ prefix
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* FIX rospy dependency
+  Remove rospy from components list.
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* FIX rospy dependencies
+  Signed-off-by: Musa Morena Marcusso Manhães <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.6.1 (2018-08-03)
 ------------------
 

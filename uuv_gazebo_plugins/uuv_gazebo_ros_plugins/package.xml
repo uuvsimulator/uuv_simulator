@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_gazebo_ros_plugins</name>
-  <version>0.6.1</version>
+  <version>0.6.2</version>
   <description>
       UUV Simulator's extended ROS plugins for generation of the necessary
       ROS services and topics during the simulation.
@@ -30,6 +30,6 @@
   <test_depend>rosunit</test_depend>
   <test_depend>rostest</test_depend>
   <test_depend>xacro</test_depend>
-  
+
   <buildtool_depend>catkin</buildtool_depend>
 </package>

@@ -30,7 +30,7 @@
     <!-- The underwater object plugin is given as an input block parameter to
      allow the addition of external models of manipulator units -->
     <gazebo>
-      <plugin name="uuv_plugin" filename="libunderwater_object_ros_plugin.so">
+      <plugin name="uuv_plugin" filename="libuuv_underwater_object_ros_plugin.so">
         <fluid_density>1028.0</fluid_density>
         <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
         <debug>$(arg debug)</debug>

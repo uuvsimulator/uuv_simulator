@@ -1,6 +1,14 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package uuv_sensor_plugins_ros_msgs
+Changelog for package uuv_sensor_ros_plugins_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+0.6.2 (2018-12-03)
+------------------
+* CHANGE Sensor ROS plugins package name
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* CHANGE Name of ROS sensor plugins package
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
 
 0.6.1 (2018-08-03)
 ------------------

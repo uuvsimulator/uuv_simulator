@@ -2,6 +2,18 @@
 Changelog for package uuv_gazebo_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.2 (2018-12-03)
+------------------
+* ADD uuv\_ prefix to plugin names
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* FIX Circular dependency for uuv_descriptions
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* FIX Compilation configuration
+  * Add `uuv\_`prefix to all plugins
+  * Add missing REQUIRED option to test dependencies (fix catkin lint error)
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.6.1 (2018-08-03)
 ------------------
 * ADD xacro dependency for ROS tests

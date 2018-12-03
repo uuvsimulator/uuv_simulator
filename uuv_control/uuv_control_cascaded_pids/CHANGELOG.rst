@@ -2,6 +2,14 @@
 Changelog for package uuv_control_cascaded_pid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.2 (2018-12-03)
+------------------
+* FIX rospy dependency
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* FIX rospy dependencies
+  Signed-off-by: Musa Morena Marcusso Manhães <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.6.1 (2018-08-03)
 ------------------
 

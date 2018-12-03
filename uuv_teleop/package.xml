@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_teleop</name>
-  <version>0.6.1</version>
+  <version>0.6.2</version>
   <description>ROS nodes to generate command topics for vehicles and manipulators using a joystick input</description>
 
   <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>

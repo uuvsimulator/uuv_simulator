@@ -40,7 +40,7 @@ void RPTROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   // Initialize the default RPT output
   this->rosSensorOutputPub =
     this->rosNode->advertise<
-      uuv_sensor_plugins_ros_msgs::PositionWithCovarianceStamped>(
+      uuv_sensor_ros_plugins_msgs::PositionWithCovarianceStamped>(
         this->sensorOutputTopic, 1);
 
   if (this->gazeboMsgEnabled)

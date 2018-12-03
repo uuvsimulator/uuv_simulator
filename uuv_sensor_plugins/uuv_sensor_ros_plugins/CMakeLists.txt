@@ -3,9 +3,9 @@ project(uuv_sensor_ros_plugins)
 
 add_definitions(-std=c++11)
 
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+# set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
-find_package(catkin REQUIRED
+find_package(catkin REQUIRED COMPONENTS
   uuv_gazebo_plugins
   sensor_msgs
   geometry_msgs
@@ -13,10 +13,11 @@ find_package(catkin REQUIRED
   roscpp
   tf
   gazebo_plugins
-  uuv_sensor_plugins_ros_msgs
+  uuv_sensor_ros_plugins_msgs
   message_filters
   tf2_ros
   tf2)
+
 find_package(Eigen3 REQUIRED)
 find_package(gazebo REQUIRED)
 find_package(OGRE REQUIRED)
@@ -49,12 +50,6 @@ message(STATUS "GAZEBO_MSG_INCLUDE_DIRS = " ${GAZEBO_MSG_INCLUDE_DIRS})
 file(GLOB msgs msgs/*.proto)
 
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${msgs})
-add_library(uuv_sensor_gazebo_msgs SHARED ${PROTO_SRCS})
-target_link_libraries(uuv_sensor_gazebo_msgs ${PROTOBUF_LIBRARY} ${GAZEBO_LIBRARIES})
-
-list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_sensor_gazebo_msgs)
-
-file(COPY ${CMAKE_CURRENT_BINARY_DIR}/ DESTINATION ${CATKIN_DEVEL_PREFIX}/include/${PACKAGE_NAME} FILES_MATCHING PATTERN "*.pb.*")
 
 catkin_package(
   INCLUDE_DIRS include
@@ -80,7 +75,7 @@ catkin_package(
   CATKIN_DEPENDS
     uuv_gazebo_plugins
     sensor_msgs
-    uuv_sensor_plugins_ros_msgs
+    uuv_sensor_ros_plugins_msgs
 )
 
 ###########
@@ -105,6 +100,13 @@ include_directories(
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
 )
+
+add_library(uuv_sensor_gazebo_msgs SHARED ${PROTO_SRCS})
+target_link_libraries(uuv_sensor_gazebo_msgs ${PROTOBUF_LIBRARY} ${GAZEBO_LIBRARIES})
+
+list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_sensor_gazebo_msgs)
+
+file(COPY ${CMAKE_CURRENT_BINARY_DIR}/ DESTINATION ${CATKIN_DEVEL_PREFIX}/include/${PACKAGE_NAME} FILES_MATCHING PATTERN "*.pb.*")
 
 ###############################################################################
 

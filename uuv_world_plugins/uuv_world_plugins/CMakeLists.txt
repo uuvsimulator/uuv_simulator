@@ -10,12 +10,8 @@ find_package(catkin REQUIRED COMPONENTS gazebo_msgs)
 find_package(gazebo REQUIRED)
 find_package(Boost REQUIRED)
 
-include(FindPkgConfig)
-pkg_check_modules(OGRE OGRE)
-
 catkin_package(
 	INCLUDE_DIRS include
-               ${OGRE_INCLUDE_DIRS}
                ${GAZEBO_INCLUDE_DIRS}
                ${Boost_INCLUDE_DIRS}
 	LIBRARIES uuv_underwater_current_plugin
@@ -23,16 +19,17 @@ catkin_package(
 	DEPENDS gazebo
 )
 
-include_directories(include
-                    ${catkin_INCLUDE_DIRS}
-                    ${GAZEBO_INCLUDE_DIRS}
-										${Boost_INCLUDE_DIRS}
-                    ${OGRE_INCLUDE_DIRS}
-                    ${OGRE_INCLUDE_DIRS}/Paging # workaround for: "/usr/include/OGRE/Terrain/OgreTerrainPaging.h:33:35: fatal error: OgrePagedWorldSection.h: No such file or directory"
-                  )
-link_directories(${GAZEBO_LIBRARY_DIRS}
-                 ${OGRE_LIBRARY_DIRS}
-                 ${CMAKE_CURRENT_BINARY_DIR}/msgs)
+include_directories(
+	include
+    ${catkin_INCLUDE_DIRS}
+    ${GAZEBO_INCLUDE_DIRS}
+	${Boost_INCLUDE_DIRS}
+)
+
+link_directories(
+	${GAZEBO_LIBRARY_DIRS}
+	${CMAKE_CURRENT_BINARY_DIR}/msgs
+)
 
 ###########
 ## Build ##

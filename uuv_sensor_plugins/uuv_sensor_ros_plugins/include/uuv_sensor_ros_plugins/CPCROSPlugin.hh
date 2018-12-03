@@ -19,8 +19,8 @@
 #include <gazebo/gazebo.hh>
 #include <ros/ros.h>
 #include <uuv_sensor_ros_plugins/ROSBaseModelPlugin.hh>
-#include <uuv_sensor_plugins_ros_msgs/ChemicalParticleConcentration.h>
-#include <uuv_sensor_plugins_ros_msgs/Salinity.h>
+#include <uuv_sensor_ros_plugins_msgs/ChemicalParticleConcentration.h>
+#include <uuv_sensor_ros_plugins_msgs/Salinity.h>
 #include <sensor_msgs/PointCloud.h>
 #include <uuv_sensor_ros_plugins/ROSBaseModelPlugin.hh>
 
@@ -67,11 +67,11 @@ namespace gazebo
     protected: ros::Time lastUpdateTimestamp;
 
     /// \brief Output measurement topic
-    protected: uuv_sensor_plugins_ros_msgs::ChemicalParticleConcentration
+    protected: uuv_sensor_ros_plugins_msgs::ChemicalParticleConcentration
       outputMsg;
 
     /// \brief Output salinity measurement message
-    protected: uuv_sensor_plugins_ros_msgs::Salinity salinityMsg;
+    protected: uuv_sensor_ros_plugins_msgs::Salinity salinityMsg;
 
     protected: double waterSalinityValue;
 
