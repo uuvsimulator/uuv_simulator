@@ -1,0 +1,5 @@
+<launch>
+      <test test-name="test_urdf_files" 
+            pkg="uuv_sensor_ros_plugins" 
+            type="test_urdf_files.py" />
+</launch>
