@@ -56,9 +56,9 @@ void CPCROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   std::string salinityUnit;
   GetSDFParam<std::string>(_sdf, "salinity_unit", salinityUnit, "ppt");
 
-  GZ_ASSERT(salinityUnit.compare(uuv_sensor_ros_plugins_msgs::Salinity::PPT) == 0 ||
-            salinityUnit.compare(uuv_sensor_ros_plugins_msgs::Salinity::PPM) == 0 ||
-            salinityUnit.compare(uuv_sensor_ros_plugins_msgs::Salinity::PSU) == 0,
+  GZ_ASSERT(salinityUnit.compare("ppt") == 0 ||
+            salinityUnit.compare("ppm") == 0 ||
+            salinityUnit.compare("psu") == 0,
             "Invalid salinity unit, it can be ppt, ppm or psu");
 
   this->salinityMsg.unit = salinityUnit;
