@@ -1,0 +1,5 @@
+<launch>
+      <test test-name="test_urdf_files" 
+            pkg="uuv_descriptions" 
+            type="test_urdf_files.py" />
+</launch>

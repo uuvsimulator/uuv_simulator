@@ -1,0 +1,60 @@
+<launch>
+  <arg name="debug" default="0"/>
+
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-20"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="0.0"/>
+
+  <arg name="namespace" default="rexrov"/>
+  <arg name="use_ned_frame" default="false"/>
+
+  <group ns="$(arg namespace)">
+    <group if="$(arg use_ned_frame)">
+      <param name="robot_description"
+        command="$(find xacro)/xacro '$(find uuv_descriptions)/robots/rexrov_oberon7.xacro' --inorder
+          debug:=$(arg debug)
+          namespace:=$(arg namespace)
+          inertial_reference_frame:=world_ned" />
+    </group>
+
+    <group unless="$(arg use_ned_frame)">
+      <param name="robot_description"
+        command="$(find xacro)/xacro '$(find uuv_descriptions)/robots/rexrov_oberon7.xacro' --inorder
+          debug:=$(arg debug)
+          namespace:=$(arg namespace)
+          inertial_reference_frame:=world" />
+    </group>
+    <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+    <node name="urdf_spawner" pkg="uuv_descriptions" type="spawn_model" respawn="false" output="screen"
+          args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model $(arg namespace) -param /$(arg namespace)/robot_description"/>
+
+    <!-- A joint state publisher plugin already is started with the model, no need to use the default joint state publisher -->
+
+    <!-- Robot state publisher subscribes to the custom joint state publisher -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen">
+      <param name="robot_description" value="/$(arg namespace)/robot_description" />
+    </node>
+  </group>
+
+  <rosparam param="$(arg namespace)/arms/n_arms">
+    1
+  </rosparam>
+
+  <rosparam param="$(arg namespace)/arms/names">
+    [oberon7,]
+  </rosparam>
+
+  <group ns="$(arg namespace)/arms/oberon7">
+    <rosparam file="$(find oberon7_description)/params/robot_config.yaml" command="load"/>
+  </group>
+
+  <include file="$(find uuv_assistants)/launch/message_to_tf.launch">
+    <arg name="namespace" value="$(arg namespace)"/>
+    <arg name="world_frame" value="world"/>
+    <arg name="child_frame_id" value="/$(arg namespace)/base_link"/>
+  </include>
+
+</launch>

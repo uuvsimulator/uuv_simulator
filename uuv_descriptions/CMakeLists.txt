@@ -19,6 +19,17 @@ catkin_package(
 catkin_install_python(PROGRAMS scripts/spawn_model
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-install(DIRECTORY launch Media worlds models world_models
+install(DIRECTORY launch meshes robots urdf
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  find_package(xacro REQUIRED)
+  find_package(rosunit REQUIRED)
+  foreach(T
+      test/test_urdf_files.test
+      )
+     add_rostest(${T})
+  endforeach()
+endif()
