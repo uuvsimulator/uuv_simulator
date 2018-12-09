@@ -239,12 +239,12 @@ Changelog for package uuv_descriptions
 * Adapting world files to the new model of 3D constant currents.
   Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
 * rexrov_base: replace collision mesh with primitives
-  Signed-off-by: Sebastian Scherer <Sebastian.Scherer2@de.bosch.com>
+  Signed-off-by: Sebastian Scherer <sebastian.scherer2@de.bosch.com>
 * Added AccelerationsTestPlugin to show problem with
   Gazebo's angular accelerations. (Reported angular
   acceleration differs significantly from the one
   obtained by numerical differentiation).
-  Signed-off-by: Sebastian Scherer <Sebastian.Scherer2@de.bosch.com>
+  Signed-off-by: Sebastian Scherer <sebastian.scherer2@de.bosch.com>
 * New RexROV configuration with two arms (Oberon and Oberon 4) with demo launch files.
   Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
 * Adding robot descriptions for the RexROV + Oberon 4 arm and demo launch files.
