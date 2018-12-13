@@ -2,8 +2,8 @@
 Changelog for package uuv_world_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.3 (2018-12-13)
+------------------
 * CHANGE Use lowercase strings for e-mail
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhães

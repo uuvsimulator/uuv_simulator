@@ -2,8 +2,8 @@
 Changelog for package uuv_tutorial_dp_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.3 (2018-12-13)
+------------------
 * CHANGE Use lowercase strings for e-mail
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * FIX Path to world files to uuv_gazebo_worlds package

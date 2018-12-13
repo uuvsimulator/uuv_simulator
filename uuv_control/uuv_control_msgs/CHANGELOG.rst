@@ -2,8 +2,8 @@
 Changelog for package uuv_control_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.3 (2018-12-13)
+------------------
 * CHANGE Use lowercase strings for e-mail
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Fixed the InitWaypointSet method with dp_controller_planner.py. Added interpolator to InitWaypointSet.srv

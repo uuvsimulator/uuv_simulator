@@ -2,8 +2,8 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.3 (2018-12-13)
+------------------
 * FIX Access to joint axis and pose for Gazebo 9 API
   Signed-off-by: Musa Morena Marcusso Manhães <Musa.Marcusso@de.bosch.com>
 * CHANGE Use lowercase strings for e-mail
