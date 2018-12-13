@@ -2,6 +2,14 @@
 Changelog for package uuv_assistants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* CHANGE Use lowercase strings for e-mail
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Removed Unicode characters U+201C and U+2013
+  Signed-off-by: Henrique Baqueiro <hbaqueiro@gmail.com>
+* Contributors: Henrique Baqueiro, Musa Morena Marcusso Manhães
+
 0.6.2 (2018-12-03)
 ------------------
 * CHANGE Name of plugins with uuv\_ prefix

@@ -2,6 +2,23 @@
 Changelog for package uuv_gazebo_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* CHANGE Use lowercase strings for e-mail
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* ADD Box inertia macro to thruster test URDF file
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* CHANGE Start empty test world for all tests
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* ADD Empty world file for uuv_gazebo_ros_plugins tests
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Add uuv_descriptions test depend to uuv_gazebo_ros_plugins
+  Signed-off-by: Will Baker <willcbaker@gmail.com>
+* Correct-ize wrench vector from ThrusterROSPlugin
+  Signed-off-by: Will Baker <wbaker@houstonmechatronics.com>
+* Contributors: Musa Morena Marcusso Manhães, Will Baker
+
 0.6.2 (2018-12-03)
 ------------------
 * ADD uuv\_ prefix to plugin names

@@ -2,6 +2,14 @@
 Changelog for package uuv_control_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* CHANGE Use lowercase strings for e-mail
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Fixed the InitWaypointSet method with dp_controller_planner.py. Added interpolator to InitWaypointSet.srv
+  Signed-off-by: Jackson Shields <jacksonhshields@gmail.com>
+* Contributors: Musa Morena Marcusso Manhães, jshields
+
 0.6.2 (2018-12-03)
 ------------------
 
@@ -48,6 +56,7 @@ Changelog for package uuv_control_msgs
 * UPDATE Catkin packages format to 2
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
+
 
 0.5.3 (2018-07-04)
 ------------------
