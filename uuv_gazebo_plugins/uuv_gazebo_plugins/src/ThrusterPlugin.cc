@@ -181,6 +181,27 @@ void ThrusterPlugin::Load(physics::ModelPtr _model,
   this->updateConnection = event::Events::ConnectWorldUpdateBegin(
         boost::bind(&ThrusterPlugin::Update,
                     this, _1));
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->thrusterAxis = this->joint->WorldPose().Rot().RotateVectorReverse(this->joint->GlobalAxis(0));
+#else
+  this->thrusterAxis = this->joint->GetWorldPose().rot.Ign().RotateVectorReverse(this->joint->GetGlobalAxis(0).Ign());
+#endif
+
+  // this axis can contain non-zero x,y,z elements due to
+  // numerical precision errors, so instead use it to
+  // select the appropriate joint axis.
+  if (this->thrusterAxis.X() == this->thrusterAxis.Max())
+  {
+    this->thrusterAxis = ignition::math::Vector3d::UnitX;
+  }
+  else if (this->thrusterAxis.Y() == this->thrusterAxis.Max())
+  {
+    this->thrusterAxis = ignition::math::Vector3d::UnitY;
+  }
+  else
+  {
+    this->thrusterAxis = ignition::math::Vector3d::UnitZ;
+  }
 }
 
 /////////////////////////////////////////////////
@@ -231,7 +252,7 @@ void ThrusterPlugin::Update(const common::UpdateInfo &_info)
   this->thrustForce = std::min(this->thrustForce, this->thrustMax);
 
   this->thrustForceStamp = _info.simTime;
-  ignition::math::Vector3d force(this->thrustForce, 0, 0);
+  ignition::math::Vector3d force(this->thrustForce*this->thrusterAxis);
 
   this->thrusterLink->AddRelativeForce(force);
 
