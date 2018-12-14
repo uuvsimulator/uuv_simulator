@@ -19,7 +19,7 @@
   <arg name="axis_z" default="1"/>
   <arg name="launch_rviz" default="1"/>
 
-  <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
+  <include file="$(find uuv_descriptions)/launch/upload_rexrov.launch">
     <arg name="mode" value="default"/>
     <arg name="namespace" value="$(arg namespace)"/>
     <arg name="x" value="$(arg x)"/>

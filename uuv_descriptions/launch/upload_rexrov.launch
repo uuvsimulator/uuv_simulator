@@ -1,0 +1,27 @@
+<launch>
+  <arg name="debug" default="0"/>
+
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-20"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="0.0"/>
+
+  <arg name="mode" default="default"/>
+  <arg name="namespace" default="rexrov"/>
+  <arg name="use_ned_frame" default="false"/>
+
+  <include file="$(find uuv_descriptions)/launch/upload_rexrov_$(arg mode).launch">
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
+    <arg name="roll" value="$(arg roll)"/>
+    <arg name="pitch" value="$(arg pitch)"/>
+    <arg name="yaw" value="$(arg yaw)"/>
+    <arg name="use_ned_frame" value="$(arg use_ned_frame)"/>
+    <arg name="namespace" value="$(arg namespace)"/>
+  </include>
+
+</launch>

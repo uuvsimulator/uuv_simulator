@@ -2,6 +2,12 @@
 Changelog for package uuv_tutorials
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.3 (2018-12-13)
+------------------
+* CHANGE Use lowercase strings for e-mail
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.6.2 (2018-12-03)
 ------------------
 
@@ -38,7 +44,7 @@ Changelog for package uuv_tutorials
 0.5.5 (2018-07-05)
 ------------------
 * RM Merge messages from the change log
-Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
 
 0.5.4 (2018-07-04)
@@ -47,13 +53,13 @@ Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 0.5.3 (2018-07-04)
 ------------------
 * ADD CHANGELOG files
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+  Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
 
 0.5.1 (2018-07-03)
 ------------------
 * CHANGE Bump version to 0.5.2
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+  Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * ADD execution dependencies to metapackages
   Signed-off-by: Gabriel Arjones <arjones@arjones.com>
 * ADD format 2 to metapackage's manifests
@@ -62,9 +68,9 @@ Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
   Signed-off-by: Gabriel Arjones <arjones@arjones.com>
 * CHANGE Version
 * CHANGE Package versions
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+  Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * FIX Typos and package version
-  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+  Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * ADD Tutorial metapackage.
-  Signed-off-by: Musa Morena Marcusso Manhães <Musa.Marcusso@de.bosch.com>
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
 * Contributors: Gabriel Arjones, Musa Morena Marcusso Manhaes, Musa Morena Marcusso Manhães

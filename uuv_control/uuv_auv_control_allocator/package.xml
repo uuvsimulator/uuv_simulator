@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_auv_control_allocator</name>
-  <version>0.6.2</version>
+  <version>0.6.3</version>
   <description>Optimal allocation of forces and torques to thruster and fins of AUVs</description>
 
-  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
 
   <license>Apache-2.0</license>
 
-  <author email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</author>
+  <author email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 

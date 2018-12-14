@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--
+      The RexROV meshes and hydrodynamic parameters are based on the parameters and dimensions
+      from the SF 30k.
+
+      References:
+        [1] Dukan, Fredrik. "ROV Motion Control Systems." PhD Thesis, NTNU, 2014.
+        [2] Berg, Viktor. Development and Commissioning of a DP system for ROV SF 30k. MS
+            thesis. Institutt for marin teknikk, 2012.
+  -->
+  <!-- includes -->
+  <xacro:include filename="$(find uuv_descriptions)/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro"/>  
+
+  <!-- Parameters -->
+  <xacro:property name="namespace" value="rexrov"/>
+  <xacro:property name="visual_mesh_file" value="file://$(find uuv_descriptions)/meshes/RexROV_no_props.dae"/>
+  <xacro:property name="prop_mesh_file" value="file://$(find uuv_descriptions)/meshes/prop.dae"/>
+
+  <!-- Mass, see p.28 in Berg2012 -->
+  <xacro:property name="mass" value="1862.87"/>
+
+  <xacro:macro name="rexrov_base" params="namespace *gazebo inertial_reference_frame">
+    <!-- base_link according to ROS conventions: x forward, z up -->
+    <link name="${namespace}/base_link">
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="525.39" ixy="1.44" ixz="33.41" iyy="794.20" iyz="2.6" izz="691.23"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="${visual_mesh_file}" scale="1 1 1"/>
+        </geometry>
+      </visual>
+      <!-- bottom plate -->
+      <collision>
+        <origin xyz="0 0 -0.75" rpy="0 0 0"/>
+        <geometry>
+          <box size="2.56 1.50 0.10"/>
+        </geometry>
+      </collision>
+      <!-- top plate -->
+      <collision>
+        <origin xyz="0 0 0.60" rpy="0 0 0"/>
+        <geometry><box size="2.56 1.50 0.40"/></geometry>
+      </collision>
+      <!-- left / right sides -->
+      <collision>
+        <origin xyz="-0.20 0.70 -0.15" rpy="0 0 0"/>
+        <geometry><box size="2.20 0.10 1.10"/></geometry>
+      </collision>
+      <collision>
+        <origin xyz="-0.20 -0.70 -0.15" rpy="0 0 0"/>
+        <geometry><box size="2.20 0.10 1.10"/></geometry>
+      </collision>
+
+    </link>
+
+    <!-- Set up hydrodynamic plugin given as input parameter -->
+    <xacro:insert_block name="gazebo"/>
+
+    <!-- optional: plugin to test compare Gazebo's returned accelerations
+    <gazebo>
+      <plugin name="${namespace}_test_plugin" filename="libuuv_accelerations_test_plugin.so">
+        <link_name>${namespace}/base_link</link_name>
+      </plugin>
+    </gazebo> -->
+
+    <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_actuators.xacro"/>
+    <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_sensors.xacro"/>
+
+  </xacro:macro>
+</robot>

@@ -239,3 +239,15 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
 install(DIRECTORY meshes urdf
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
+
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  find_package(xacro REQUIRED)
+  find_package(rosunit REQUIRED)
+  foreach(T
+      test/test_urdf_files.test
+      )
+     add_rostest(${T})
+  endforeach()
+endif()

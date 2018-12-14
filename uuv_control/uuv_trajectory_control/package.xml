@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_trajectory_control</name>
-  <version>0.6.2</version>
+  <version>0.6.3</version>
   <description>The uuv_trajectory_control package</description>
 
-  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
-  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
-  <maintainer email="Sebastian.Scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+  <maintainer email="luizricardo.douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+  <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="sebastian.scherer2@de.bosch.com">Sebastian Scherer</maintainer>
 
   <license>Apache-2.0</license>
 
