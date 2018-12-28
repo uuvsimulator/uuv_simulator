@@ -3,10 +3,10 @@
     <arg name="record" default="false"/>
 
     <!-- Start the a underwater world simulation scenario -->    
-    <include file="$(find uuv_descriptions)/launch/ocean_waves.launch"/>
+    <include file="$(find uuv_gazebo_worlds)/launch/ocean_waves.launch"/>
 
     <!-- Add the RexROV vehicle to the simulation (namespace: rexrov) -->
-    <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov.launch">
+    <include file="$(find uuv_descriptions)/launch/upload_rexrov.launch">
         <arg name="x" default="20"/>
         <arg name="y" default="0"/>
         <arg name="z" default="-20"/>

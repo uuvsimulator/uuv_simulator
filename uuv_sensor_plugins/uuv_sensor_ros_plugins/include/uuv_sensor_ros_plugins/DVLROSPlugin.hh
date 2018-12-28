@@ -24,8 +24,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/Range.h>
 #include <uuv_sensor_ros_plugins/ROSBaseModelPlugin.hh>
-#include <uuv_sensor_plugins_ros_msgs/DVL.h>
-#include <uuv_sensor_plugins_ros_msgs/DVLBeam.h>
+#include <uuv_sensor_ros_plugins_msgs/DVL.h>
+#include <uuv_sensor_ros_plugins_msgs/DVLBeam.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
 #include <tf/transform_listener.h>
@@ -65,9 +65,9 @@ namespace gazebo
     protected: double altitude;
 
     /// \brief ROS DVL message
-    protected: uuv_sensor_plugins_ros_msgs::DVL dvlROSMsg;
+    protected: uuv_sensor_ros_plugins_msgs::DVL dvlROSMsg;
 
-    protected: std::vector<uuv_sensor_plugins_ros_msgs::DVLBeam> dvlBeamMsgs;
+    protected: std::vector<uuv_sensor_ros_plugins_msgs::DVLBeam> dvlBeamMsgs;
 
     /// \brief ROS publisher for twist data.
     protected: ros::Publisher twistPub;

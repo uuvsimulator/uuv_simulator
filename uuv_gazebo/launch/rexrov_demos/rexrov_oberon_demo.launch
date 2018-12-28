@@ -47,7 +47,7 @@
   <arg name="gripper_open_button" default="1"/>
   <arg name="gripper_close_button" default="2"/>
 
-  <include file="$(find uuv_descriptions)/models/rexrov/launch/upload_rexrov_oberon7.launch">
+  <include file="$(find uuv_descriptions)/launch/upload_rexrov_oberon7.launch">
     <arg name="namespace" value="$(arg namespace)"/>
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>

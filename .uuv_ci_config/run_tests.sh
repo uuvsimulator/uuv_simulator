@@ -14,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cd $CATKIN_WORKSPACE
-source devel/setup.bash
-catkin run_tests
-catkin_test_results
+if [ "$ROS_DISTRO" != "kinetic" ]; then
+    cd $CATKIN_WORKSPACE
+    source devel/setup.bash
+    catkin run_tests
+    catkin_test_results
+fi

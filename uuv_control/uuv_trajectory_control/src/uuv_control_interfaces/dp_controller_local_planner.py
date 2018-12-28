@@ -20,6 +20,7 @@ from os.path import isfile
 from std_msgs.msg import Bool, Float64
 from geometry_msgs.msg import Twist
 from uuv_control_msgs.srv import *
+
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint, WaypointSet
 from visualization_msgs.msg import MarkerArray
 from geometry_msgs.msg import Point
@@ -490,17 +491,60 @@ class DPControllerLocalPlanner(object):
         return HoldResponse(True)
 
     def start_waypoint_list(self, request):
+        """
+        Service callback function to follow a set of waypoints
+        Args:
+            request (InitWaypointSet)
+        """
         if len(request.waypoints) == 0:
             self._logger.error('Waypoint list is empty')
-            return InitWaypointSet(False)
+            return InitWaypointSetResponse(False)
+        t = rospy.Time(request.start_time.data.secs, request.start_time.data.nsecs)
+        if t.to_sec() < rospy.get_time() and not request.start_now:
+            self._logger.error('The trajectory starts in the past, correct the starting time!')
+            return InitWaypointSetResponse(False)
+        else:
+            self._logger.info('Start waypoint trajectory now!')
         self._lock.acquire()
-        self.set_station_keeping(False)
-        self.set_automatic_mode(True)
-        self.set_trajectory_running(True)
-        self._smooth_approach_on = True
-        self._idle_circle_center = None
-        self._lock.release()
-        return InitWaypointSet(True)
+        # Create a waypoint set
+        wp_set = uuv_waypoints.WaypointSet(
+            inertial_frame_id=self.inertial_frame_id)
+        # Create a waypoint set message, to fill wp_set
+        waypointset_msg = WaypointSet()
+        waypointset_msg.header.stamp = rospy.get_time()
+        waypointset_msg.header.frame_id = self.inertial_frame_id
+        if request.start_now:
+            waypointset_msg.start_time = rospy.get_time()
+        else:
+            waypointset_msg.start_time = t.to_sec()
+        waypointset_msg.waypoints = request.waypoints
+        wp_set.from_message(waypointset_msg)
+        wp_set = self._transform_waypoint_set(wp_set)
+        wp_set = self._apply_workspace_constraints(wp_set)
+
+        if self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
+            self._station_keeping_center = None
+            self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
+            self._update_trajectory_info()
+            self.set_station_keeping(False)
+            self.set_automatic_mode(True)
+            self.set_trajectory_running(True)
+            self._idle_circle_center = None
+            self._smooth_approach_on = True
+            self._logger.info('============================')
+            self._logger.info('      WAYPOINT SET          ')
+            self._logger.info('============================')
+            self._logger.info('Interpolator = ' + request.interpolator.data)
+            self._logger.info('# waypoints = %d' % self._traj_interpolator.get_waypoints().num_waypoints)
+            self._logger.info('Starting time = %.2f' % (t.to_sec() if not request.start_now else rospy.get_time()))
+            self._logger.info('Inertial frame ID = ' + self.inertial_frame_id)
+            self._logger.info('============================')
+            self._lock.release()
+            return InitWaypointSetResponse(True)
+        else:
+            self._logger.error('Error occurred while parsing waypoints')
+            self._lock.release()
+            return InitWaypointSetResponse(False)
 
     def start_circle(self, request):
         if request.max_forward_speed <= 0 or request.radius <= 0 or \
@@ -511,7 +555,6 @@ class DPControllerLocalPlanner(object):
         if t.to_sec() < rospy.get_time() and not request.start_now:
             self._logger.error('The trajectory starts in the past, correct the starting time!')
             return InitCircularTrajectoryResponse(False)
-
         try:
             wp_set = uuv_waypoints.WaypointSet(
                 inertial_frame_id=self.inertial_frame_id)
@@ -672,7 +715,7 @@ class DPControllerLocalPlanner(object):
         wp_set = self._transform_waypoint_set(wp_set)
         wp_set = self._apply_workspace_constraints(wp_set)
 
-        if self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):            
+        if self._traj_interpolator.set_waypoints(wp_set, self.get_vehicle_rot()):
             self._station_keeping_center = None
             self._traj_interpolator.set_start_time((t.to_sec() if not request.start_now else rospy.get_time()))
             self._update_trajectory_info()

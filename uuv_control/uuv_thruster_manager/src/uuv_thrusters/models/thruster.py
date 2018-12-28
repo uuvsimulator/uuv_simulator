@@ -25,8 +25,9 @@ class Thruster(object):
     of a thruster model must use the factory method."""
 
     LABEL = ''
+    DEFAULT_AXIS=numpy.array([1, 0, 0, 0])
 
-    def __init__(self, index, topic, pos, orientation):
+    def __init__(self, index, topic, pos, orientation, axis=DEFAULT_AXIS):
         """Thruster class constructor.
 
         Parameters
@@ -51,7 +52,7 @@ class Thruster(object):
             self._orientation = orientation
             # compute contribution to configuration matrix of this thruster
             thrust_body = trans.quaternion_matrix(orientation).dot(
-                numpy.array([1, 0, 0, 0]).transpose())[0:3]
+                axis.transpose())[0:3]
             torque_body = numpy.cross(pos, thrust_body)
             self._force_dist = numpy.hstack((
                 thrust_body, torque_body)).transpose()
