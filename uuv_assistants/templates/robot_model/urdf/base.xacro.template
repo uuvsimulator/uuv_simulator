@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Loading some constants -->
-  <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find uuv_descriptions)/urdf/common.urdf.xacro"/>
   <!-- Loading file with sensor macros -->
   <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
   <!-- Loading the UUV simulator ROS plugin macros -->
