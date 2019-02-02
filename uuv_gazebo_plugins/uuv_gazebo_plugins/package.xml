@@ -19,7 +19,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>gazebo</depend>
   <depend>protobuf-dev</depend>
   <depend>eigen</depend>
 

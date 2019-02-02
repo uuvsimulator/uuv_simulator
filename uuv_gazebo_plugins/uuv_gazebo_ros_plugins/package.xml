@@ -16,7 +16,6 @@
   <author email="luizricardo.douat@de.bosch.com">Luiz Ricardo Douat</author>
 
   <license>Apache-2.0</license>
-  <depend>gazebo</depend>
   <depend>uuv_gazebo_plugins</depend>
   <depend>uuv_gazebo_ros_plugins_msgs</depend>
   <depend>sensor_msgs</depend>

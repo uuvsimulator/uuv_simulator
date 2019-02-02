@@ -2,11 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(uuv_control_cascaded_pid)
 
 find_package(catkin REQUIRED COMPONENTS
-  dynamic_reconfigure
-  geometry_msgs
-  rospy
-  tf
-  nav_msgs)
+  dynamic_reconfigure)
 
 catkin_python_setup()
 

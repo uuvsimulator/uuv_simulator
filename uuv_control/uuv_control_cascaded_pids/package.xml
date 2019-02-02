@@ -16,7 +16,8 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <exec_depend>dynamic_reconfigure</exec_depend>
+  <depend>dynamic_reconfigure</depend>
+
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>tf</exec_depend>
