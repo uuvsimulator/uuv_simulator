@@ -2,6 +2,9 @@
 Changelog for package uuv_tutorials
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.4 (2019-02-03)
+------------------
+
 0.6.3 (2018-12-13)
 ------------------
 * CHANGE Use lowercase strings for e-mail

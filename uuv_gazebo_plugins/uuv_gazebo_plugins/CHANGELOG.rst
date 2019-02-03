@@ -2,6 +2,12 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.4 (2019-02-03)
+------------------
+* FIX Dependency errors for ROS Buildfarm
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.6.3 (2018-12-13)
 ------------------
 * FIX Access to joint axis and pose for Gazebo 9 API

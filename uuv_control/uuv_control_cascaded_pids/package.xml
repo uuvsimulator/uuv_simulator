@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_control_cascaded_pid</name>
-  <version>0.6.3</version>
+  <version>0.6.4</version>
   <description>A cascade of PID controllers for acceleration, velocity, and position control.</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -16,7 +16,8 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <exec_depend>dynamic_reconfigure</exec_depend>
+  <depend>dynamic_reconfigure</depend>
+
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>tf</exec_depend>

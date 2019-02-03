@@ -2,6 +2,9 @@
 Changelog for package uuv_control_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.4 (2019-02-03)
+------------------
+
 0.6.3 (2018-12-13)
 ------------------
 * CHANGE Use lowercase strings for e-mail
@@ -56,7 +59,6 @@ Changelog for package uuv_control_msgs
 * UPDATE Catkin packages format to 2
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
-
 
 0.5.3 (2018-07-04)
 ------------------

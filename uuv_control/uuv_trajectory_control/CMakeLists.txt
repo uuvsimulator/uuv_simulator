@@ -4,15 +4,7 @@ project(uuv_trajectory_control)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  rospy
-  roslib
-  geometry_msgs
-  uuv_control_msgs
-  tf
-  std_msgs
-  nav_msgs
-  visualization_msgs)
+find_package(catkin REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
