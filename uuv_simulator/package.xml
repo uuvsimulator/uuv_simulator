@@ -34,7 +34,6 @@
   <exec_depend>uuv_sensor_ros_plugins_msgs</exec_depend>
   <exec_depend>uuv_sensor_ros_plugins</exec_depend>
   <exec_depend>uuv_teleop</exec_depend>
-  <exec_depend>uuv_tutorials</exec_depend>
   <exec_depend>uuv_world_plugins</exec_depend>
   <exec_depend>uuv_world_ros_plugins</exec_depend>
   <exec_depend>uuv_world_ros_plugins_msgs</exec_depend>
