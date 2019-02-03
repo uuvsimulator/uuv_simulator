@@ -2,8 +2,8 @@
 Changelog for package uuv_gazebo_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.4 (2019-02-03)
+------------------
 * FIX Dependency errors for ROS Buildfarm
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhães

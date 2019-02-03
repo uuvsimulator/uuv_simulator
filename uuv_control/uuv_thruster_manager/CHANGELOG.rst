@@ -2,8 +2,8 @@
 Changelog for package uuv_thruster_manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.4 (2019-02-03)
+------------------
 * FIX Dependency errors for ROS Buildfarm
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
   

@@ -2,8 +2,8 @@
 Changelog for package uuv_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.4 (2019-02-03)
+------------------
 * Add uuv_gazebo_worlds to metapackage
   Signed-off-by: Musa Morena Marcusso Manhães <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhães
