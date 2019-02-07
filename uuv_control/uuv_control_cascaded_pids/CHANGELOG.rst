@@ -2,6 +2,9 @@
 Changelog for package uuv_control_cascaded_pid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.4 (2019-02-03)
 ------------------
 * FIX Dependency errors for ROS Buildfarm

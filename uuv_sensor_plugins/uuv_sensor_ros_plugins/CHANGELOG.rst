@@ -2,6 +2,9 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.4 (2019-02-03)
 ------------------
 * FIX Dependency errors for ROS Buildfarm
