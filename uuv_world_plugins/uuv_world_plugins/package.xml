@@ -16,6 +16,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <depend>gazebo_dev</depend>
   <depend>gazebo_msgs</depend>
 
   <export>

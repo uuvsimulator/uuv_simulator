@@ -3,8 +3,8 @@ project(uuv_gazebo_plugins)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-find_package(catkin REQUIRED)
-find_package(gazebo REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+    gazebo_dev)
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(Eigen3 REQUIRED)
 find_package(Protobuf REQUIRED)
