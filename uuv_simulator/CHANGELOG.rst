@@ -2,6 +2,9 @@
 Changelog for package uuv_simulator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.6 (2019-02-12)
+------------------
+
 0.6.5 (2019-02-07)
 ------------------
 * RM Dependency to uuv_tutorials

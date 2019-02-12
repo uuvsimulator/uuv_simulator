@@ -6,6 +6,7 @@ add_definitions(-std=c++11)
 # set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 find_package(catkin REQUIRED COMPONENTS
+  gazebo_dev
   uuv_gazebo_plugins
   sensor_msgs
   geometry_msgs
@@ -19,7 +20,6 @@ find_package(catkin REQUIRED COMPONENTS
   tf2)
 
 find_package(Eigen3 REQUIRED)
-find_package(gazebo REQUIRED)
 find_package(OGRE REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Protobuf REQUIRED)
