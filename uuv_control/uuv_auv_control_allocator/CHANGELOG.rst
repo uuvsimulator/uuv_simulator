@@ -2,6 +2,9 @@
 Changelog for package uuv_auv_control_allocator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.5 (2019-02-07)
 ------------------
 
