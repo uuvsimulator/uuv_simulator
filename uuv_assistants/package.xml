@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_assistants</name>
-  <version>0.6.5</version>
+  <version>0.6.6</version>
   <description>Tools and utilities to monitor and analyze the simulation</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
