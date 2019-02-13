@@ -2,6 +2,9 @@
 Changelog for package uuv_tutorial_disturbances
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.6 (2019-02-12)
 ------------------
 
