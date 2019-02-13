@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_sensor_ros_plugins_msgs</name>
-  <version>0.6.6</version>
+  <version>0.6.7</version>
   <description>The uuv_sensor_ros_plugins_msgs package</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
