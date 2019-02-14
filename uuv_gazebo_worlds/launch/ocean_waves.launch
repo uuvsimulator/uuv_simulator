@@ -24,7 +24,7 @@
         <rosparam subst_value="true">
             meshes:
                 heightmap:
-                    mesh: package://uuv_descriptions/world_models/sand_heightmap/meshes/heightmap.dae
+                    mesh: package://uuv_gazebo_worlds/models/sand_heightmap/meshes/heightmap.dae
                     model: sand_heightmap
                 seafloor:
                     plane: [2000, 2000, 0.1]

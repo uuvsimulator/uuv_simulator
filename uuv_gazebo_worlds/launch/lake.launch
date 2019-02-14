@@ -23,7 +23,7 @@
         <rosparam subst_value="true">
             meshes:
                 lake:
-                    mesh: package://uuv_descriptions/world_models/lake/meshes/LakeBottom.dae
+                    mesh: package://uuv_gazebo_worlds/models/lake/meshes/LakeBottom.dae
                     model: lake
         </rosparam>
     </node>

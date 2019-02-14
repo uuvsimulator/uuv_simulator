@@ -2,6 +2,9 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.8 (2019-02-14)
+------------------
+
 0.6.7 (2019-02-13)
 ------------------
 * Fix copy Gazebo message files for ROS Buildfarm

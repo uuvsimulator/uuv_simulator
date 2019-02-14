@@ -1,7 +1,7 @@
 <launch>
   <arg name="joy_id" default="0"/>
 
-  <include file="$(find uuv_descriptions)/launch/rov_bop_panel.launch">
+  <include file="$(find uuv_gazebo_worlds)/launch/rov_bop_panel.launch">
       <arg name="x" value="2.5"/>
       <arg name="y" value="0"/>
       <arg name="z" value="-4"/>
