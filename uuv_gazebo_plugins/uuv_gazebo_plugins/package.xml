@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_gazebo_plugins</name>
-  <version>0.6.6</version>
+  <version>0.6.7</version>
   <description>
     UUV Simulator's Gazebo plugins for simulation of hydrodynamic and hydrostatic
     forces, and underwater actuators (e.g. thrusters and fins).

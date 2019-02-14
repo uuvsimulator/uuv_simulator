@@ -49,8 +49,6 @@ message(STATUS "GAZEBO_MSG_INCLUDE_DIRS = " ${GAZEBO_MSG_INCLUDE_DIRS})
 
 file(GLOB msgs msgs/*.proto)
 
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${msgs})
-
 catkin_package(
   INCLUDE_DIRS include
     ${CMAKE_CURRENT_BINARY_DIR} # for generated messages
@@ -58,7 +56,7 @@ catkin_package(
     ${OGRE_INCLUDE_DIRS}
     ${OGRE_Paging_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
-    ${EIGEN3_INCLUDE_DIR}
+    ${EIGEN3_INCLUDE_DIRS}
   DEPENDS Eigen3 gazebo
   LIBRARIES
     uuv_gazebo_ros_base_model_plugin
@@ -86,7 +84,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_BINARY_DIR} # for generated messages
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIR}
+  ${EIGEN3_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
   ${GAZEBO_MSG_INCLUDE_DIRS}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -94,19 +92,16 @@ include_directories(
   ${OGRE_Paging_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIR}
-  ${EIGEN3_INCLUDE_DIR}
 )
 
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
 )
 
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${msgs})
 add_library(uuv_sensor_gazebo_msgs SHARED ${PROTO_SRCS})
 target_link_libraries(uuv_sensor_gazebo_msgs ${PROTOBUF_LIBRARY} ${GAZEBO_LIBRARIES})
-
 list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_sensor_gazebo_msgs)
-
-file(COPY ${CMAKE_CURRENT_BINARY_DIR}/ DESTINATION ${CATKIN_DEVEL_PREFIX}/include/${PACKAGE_NAME} FILES_MATCHING PATTERN "*.pb.*")
 
 ###############################################################################
 

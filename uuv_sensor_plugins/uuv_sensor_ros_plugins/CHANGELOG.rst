@@ -2,6 +2,12 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.7 (2019-02-13)
+------------------
+* Fix copy Gazebo message files for ROS Buildfarm
+  Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhaes, Musa Morena Marcusso Manhães
+
 0.6.6 (2019-02-12)
 ------------------
 * Fix gazebo_dev dependency

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_tutorial_seabed_world</name>
-  <version>0.6.6</version>
+  <version>0.6.7</version>
   <description>A simple tutorial on how to create a new Gazebo model with a seabed and how to configure it as a simulation scenario</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
