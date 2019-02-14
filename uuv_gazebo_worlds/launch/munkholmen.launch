@@ -21,15 +21,15 @@
         <rosparam subst_value="true">
             meshes:
                 seabed:
-                    mesh: package://uuv_descriptions/world_models/munkholmen_seabed/meshes/seabed.dae
+                    mesh: package://uuv_gazebo_worlds/models/munkholmen_seabed/meshes/seabed.dae
                     pose:
                       position: [0, 0, 0]
                 island:
-                    mesh: package://uuv_descriptions/world_models/munkholmen/meshes/munkholmen.dae
+                    mesh: package://uuv_gazebo_worlds/models/munkholmen/meshes/munkholmen.dae
                     pose:
                       position: [-103.391, -121.403, 0]
                 herkules_ship_wreck:
-                    mesh: package://uuv_descriptions/world_models/herkules_ship_wreck/meshes/herkules.dae
+                    mesh: package://uuv_gazebo_worlds/models/herkules_ship_wreck/meshes/herkules.dae
                     pose:
                       position: [1052.025, 158.035, -50]
                       orientation: [0, 0, 5.24]

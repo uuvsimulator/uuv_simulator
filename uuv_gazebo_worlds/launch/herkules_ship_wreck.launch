@@ -21,12 +21,12 @@
         <rosparam subst_value="true">
             meshes:
                 herkules_seabed:
-                    mesh: package://uuv_descriptions/world_models/herkules_seabed/meshes/herkules_seabed.dae
+                    mesh: package://uuv_gazebo_worlds/models/herkules_seabed/meshes/herkules_seabed.dae
                     pose:
                       position: [0, 0, -60]
                     scale: [4, 4, 1]
                 herkules_ship_wreck:
-                    mesh: package://uuv_descriptions/world_models/herkules_ship_wreck/meshes/herkules.dae
+                    mesh: package://uuv_gazebo_worlds/models/herkules_ship_wreck/meshes/herkules.dae
                     pose:
                       position: [0, 0, -60]
                       orientation: [0, 0, 1.57]

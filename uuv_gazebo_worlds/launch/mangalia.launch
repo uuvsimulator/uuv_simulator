@@ -21,7 +21,7 @@
         <rosparam subst_value="true">
             meshes:
                 mangalia:
-                    mesh: package://uuv_descriptions/world_models/mangalia/meshes/MangaliaTerrain.dae
+                    mesh: package://uuv_gazebo_worlds/models/mangalia/meshes/MangaliaTerrain.dae
                     pose:
                       position: [-572.0074568380, 537.7086925743, -5]
                     scale: [1, 1, 2]

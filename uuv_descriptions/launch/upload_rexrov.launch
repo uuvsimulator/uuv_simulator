@@ -12,7 +12,7 @@
   <arg name="namespace" default="rexrov"/>
   <arg name="use_ned_frame" default="false"/>
 
-  <include file="$(find uuv_descriptions)/launch/upload_rexrov_$(arg mode).launch">
+  <include file="$(find uuv_gazebo_worlds)/launch/upload_rexrov_$(arg mode).launch">
     <arg name="debug" value="$(arg debug)"/>
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
