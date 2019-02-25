@@ -6,9 +6,8 @@ find_package(catkin REQUIRED COMPONENTS
   gazebo_msgs
   geometry_msgs
   uuv_world_plugins
-  uuv_world_ros_plugins_msgs)
-
-find_package(gazebo REQUIRED)
+  uuv_world_ros_plugins_msgs
+  gazebo_dev)
 
 catkin_package(
  INCLUDE_DIRS include
