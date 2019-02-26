@@ -2,8 +2,8 @@
 Changelog for package uuv_gazebo_worlds
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.9 (2019-02-26)
+------------------
 * Replace all gazebo dependencies for gazebo_dev
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Contributors: Musa Morena Marcusso Manhaes
