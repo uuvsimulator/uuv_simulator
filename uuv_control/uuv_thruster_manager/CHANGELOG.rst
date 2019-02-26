@@ -2,6 +2,9 @@
 Changelog for package uuv_thruster_manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.8 (2019-02-14)
 ------------------
 
