@@ -2,6 +2,9 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.9 (2019-02-26)
+------------------
+
 0.6.8 (2019-02-14)
 ------------------
 * Fix bug where thruster axis is determined incorrectly if it rotates about the negative axis

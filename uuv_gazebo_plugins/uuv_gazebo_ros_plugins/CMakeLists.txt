@@ -11,9 +11,9 @@ find_package(catkin REQUIRED COMPONENTS
   visualization_msgs
   tf2_ros
   tf2
+  gazebo_dev
 )
 
-find_package(gazebo REQUIRED)
 
 set(UUV_GAZEBO_ROS_PLUGINS_LIST "")
 
