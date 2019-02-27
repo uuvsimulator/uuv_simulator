@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_gazebo_ros_plugins_msgs)
 
-find_package(catkin REQUIRED COMPONENTS std_msgs geometry_msgs message_generation)
+find_package(catkin REQUIRED COMPONENTS
+  std_msgs
+  geometry_msgs
+  message_generation)
 
 add_message_files(
   FILES
@@ -31,8 +34,8 @@ generate_messages(
 )
 
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES uuv_gazebo_ros_plugins_msgs
-   CATKIN_DEPENDS std_msgs message_runtime
-#  DEPENDS system_lib
+   CATKIN_DEPENDS
+    std_msgs
+    geometry_msgs
+    message_runtime
 )

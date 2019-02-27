@@ -21,6 +21,7 @@
   <depend>uuv_world_plugins</depend>
   <depend>geometry_msgs</depend>
   <depend>uuv_world_ros_plugins_msgs</depend>
+  <depend>gazebo_dev</depend>
 
   <export>
   </export>

@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_world_plugins)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# Specify C++11 standard
+add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -13,22 +14,19 @@ find_package(Boost REQUIRED)
 
 catkin_package(
 	INCLUDE_DIRS include
-               ${GAZEBO_INCLUDE_DIRS}
-               ${Boost_INCLUDE_DIRS}
 	LIBRARIES uuv_underwater_current_plugin
-	CATKIN_DEPENDS gazebo_msgs
-	DEPENDS gazebo
+	CATKIN_DEPENDS
+		gazebo_msgs
+		gazebo_dev
 )
 
 include_directories(
 	include
-    ${catkin_INCLUDE_DIRS}
-    ${GAZEBO_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}
 )
 
 link_directories(
-	${GAZEBO_LIBRARY_DIRS}
 	${CMAKE_CURRENT_BINARY_DIR}/msgs
 )
 
