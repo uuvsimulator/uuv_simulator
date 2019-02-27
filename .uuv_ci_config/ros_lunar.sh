@@ -14,9 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Clone repositories that do not have a ros-lunar package
-mkdir -p $CATKIN_WORKSPACE/src
-git clone https://github.com/tu-darmstadt-ros-pkg/hector_localization $CATKIN_WORKSPACE/src/hector_localization
-git clone https://github.com/ros-teleop/teleop_tools $CATKIN_WORKSPACE/src/teleop_tools
-
 sh .uuv_ci_config/uuv_dependencies.sh
