@@ -40,7 +40,7 @@
   </group>
 
   <!-- Publish state and tf for in relation to the world frame -->
-  <include file="$(find uuv_gazebo_worlds)/launch/message_to_tf.launch">
+  <include file="$(find uuv_assistants)/launch/message_to_tf.launch">
     	<arg name="namespace" value="$(arg namespace)"/>
   </include>
 
