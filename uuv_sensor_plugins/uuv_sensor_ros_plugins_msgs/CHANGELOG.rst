@@ -2,6 +2,9 @@
 Changelog for package uuv_sensor_ros_plugins_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.9 (2019-02-26)
 ------------------
 

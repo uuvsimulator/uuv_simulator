@@ -2,6 +2,9 @@
 Changelog for package uuv_tutorial_seabed_world
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.9 (2019-02-26)
 ------------------
 * Replace all gazebo dependencies for gazebo_dev

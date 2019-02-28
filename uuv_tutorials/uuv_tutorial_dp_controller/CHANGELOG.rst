@@ -2,6 +2,9 @@
 Changelog for package uuv_tutorial_dp_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.9 (2019-02-26)
 ------------------
 
