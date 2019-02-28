@@ -154,14 +154,10 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(UNIT_ThrusterConversionFcn_TEST
     src/ThrusterConversionFcn_TEST.cc)
   target_link_libraries(UNIT_ThrusterConversionFcn_TEST
-    uuv_thruster_plugin
-    ${catkin_LIBRARIES}
-    ${Boost_LIBRARIES})
+    ${catkin_LIBRARIES})
 
   catkin_add_gtest(UNIT_ThrusterDynamics_TEST
     src/ThrusterDynamics_TEST.cc)
   target_link_libraries(UNIT_ThrusterDynamics_TEST
-    uuv_thruster_plugin 
-    ${catkin_LIBRARIES}
-    ${Boost_LIBRARIES})
+    ${catkin_LIBRARIES})
 endif()
