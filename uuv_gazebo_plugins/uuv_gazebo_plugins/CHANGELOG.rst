@@ -2,8 +2,8 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.10 (2019-02-28)
+-------------------
 * Fix dynamic linking for test build
   Signed-off-by: Musa Morena Marcusso Manhaes <Musa.Marcusso@de.bosch.com>
 * Replace boost::shared_ptr for std::shared_ptr

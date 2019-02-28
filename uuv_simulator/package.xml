@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_simulator</name>
-  <version>0.6.9</version>
+  <version>0.6.10</version>
   <description>uuv_simulator contains Gazebo plugins and ROS packages for modeling and simulating unmanned underwater vehicles</description>
 
   <author email="luizricardo.douat@de.bosch.com">Luiz Ricardo Douat</author>
