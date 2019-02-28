@@ -13,8 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <string>
+#include <memory>
 #include <gtest/gtest.h>
-
 #include <uuv_gazebo_plugins/ThrusterConversionFcn.hh>
 
 std::shared_ptr<gazebo::ConversionFunction> ConversionFromString(
