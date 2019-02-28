@@ -20,8 +20,10 @@
 #define __UUV_GAZEBO_PLUGINS_THRUSTER_PLUGIN_HH__
 
 #include <boost/scoped_ptr.hpp>
+
 #include <map>
 #include <string>
+#include <memory>
 
 #include <gazebo/gazebo.hh>
 #include <gazebo/transport/TransportTypes.hh>
@@ -40,7 +42,7 @@ typedef const boost::shared_ptr<const uuv_gazebo_plugins_msgs::msgs::Double>
 ConstDoublePtr;
 
 /// \brief Class for the thruster plugin
-class ThrusterPlugin : public gazebo::ModelPlugin
+class ThrusterPlugin : public ModelPlugin
 {
   /// \brief Constructor
   public: ThrusterPlugin();
@@ -49,7 +51,7 @@ class ThrusterPlugin : public gazebo::ModelPlugin
   public: virtual ~ThrusterPlugin();
 
   // Documentation inherited.
-  public: virtual void Load(gazebo::physics::ModelPtr _model,
+  public: virtual void Load(physics::ModelPtr _model,
                             sdf::ElementPtr _sdf);
 
   // Documentation inherited.
@@ -60,31 +62,31 @@ class ThrusterPlugin : public gazebo::ModelPlugin
 
   /// \brief Update the simulation state.
   /// \param[in] _info Information used in the update event.
-  public: void Update(const gazebo::common::UpdateInfo &_info);
+  public: void Update(const common::UpdateInfo &_info);
 
   /// \brief Callback for the input topic subscriber
   protected: void UpdateInput(ConstDoublePtr &_msg);
 
   /// \brief Thruster dynamic model
-  protected: boost::scoped_ptr<Dynamics> thrusterDynamics;
+  protected: std::shared_ptr<Dynamics> thrusterDynamics;
 
   /// \brief Thruster conversion function
-  protected: boost::scoped_ptr<ConversionFunction> conversionFunction;
+  protected: std::shared_ptr<ConversionFunction> conversionFunction;
 
   /// \brief Update event
-  protected: gazebo::event::ConnectionPtr updateConnection;
+  protected: event::ConnectionPtr updateConnection;
 
   /// \brief Pointer to the thruster link
-  protected: gazebo::physics::LinkPtr thrusterLink;
+  protected: physics::LinkPtr thrusterLink;
 
   /// \brief Gazebo node
-  protected: gazebo::transport::NodePtr node;
+  protected: transport::NodePtr node;
 
   /// \brief Subscriber to the reference signal topic.
-  protected: gazebo::transport::SubscriberPtr commandSubscriber;
+  protected: transport::SubscriberPtr commandSubscriber;
 
   /// \brief Publisher to the output thrust topic
-  protected: gazebo::transport::PublisherPtr thrustTopicPublisher;
+  protected: transport::PublisherPtr thrustTopicPublisher;
 
   /// \brief Input command, typically desired angular velocity of the
   ///        rotor.
@@ -94,10 +96,10 @@ class ThrusterPlugin : public gazebo::ModelPlugin
   protected: double thrustForce;
 
   /// \brief Time stamp of latest thrust force
-  protected: gazebo::common::Time thrustForceStamp;
+  protected: common::Time thrustForceStamp;
 
   /// \brief Optional: The rotor joint, used for visualization
-  protected: gazebo::physics::JointPtr joint;
+  protected: physics::JointPtr joint;
 
   /// \brief: Optional: Commands less than this value will be clamped.
   protected: double clampMin;

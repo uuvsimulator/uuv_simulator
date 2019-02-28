@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_descriptions</name>
-  <version>0.6.9</version>
+  <version>0.6.10</version>
   <description>The uuv_descriptions package</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -18,9 +18,13 @@
 
   <exec_depend>gazebo_ros</exec_depend>
   <exec_depend>gazebo_ros_control</exec_depend>
-  <exec_depend>message_to_tf</exec_depend>
   <exec_depend>uuv_sensor_ros_plugins</exec_depend>
   <exec_depend>uuv_gazebo_ros_plugins</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>uuv_assistants</exec_depend>
+
+  <test_depend>rosunit</test_depend>
+  <test_depend>rostest</test_depend>
+  <test_depend>xacro</test_depend>
 
 </package>

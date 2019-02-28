@@ -13,12 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <boost/shared_ptr.hpp>
 #include <gtest/gtest.h>
 
 #include <uuv_gazebo_plugins/Dynamics.hh>
 
-boost::shared_ptr<gazebo::Dynamics> DynamicsFromString(
+std::shared_ptr<gazebo::Dynamics> DynamicsFromString(
     const std::string& description)
 {
   std::stringstream stream;
@@ -36,7 +35,7 @@ boost::shared_ptr<gazebo::Dynamics> DynamicsFromString(
   sdf::ElementPtr dynSdf = sdfParsed.Root()->GetElement("model")
       ->GetElement("plugin")->GetElement("dynamics");
 
-  boost::shared_ptr<gazebo::Dynamics> dyn;
+  std::shared_ptr<gazebo::Dynamics> dyn;
   dyn.reset(gazebo::DynamicsFactory::GetInstance().
              CreateDynamics(dynSdf));
 
@@ -50,7 +49,7 @@ TEST(ThrusterDynamics, ZeroOrder)
         "  <type>ZeroOrder</type> \n"
         "</dynamics>";
 
-  boost::shared_ptr<gazebo::Dynamics> dyn;
+  std::shared_ptr<gazebo::Dynamics> dyn;
   dyn = DynamicsFromString(description);
 
   EXPECT_TRUE(dyn != NULL);
@@ -68,7 +67,7 @@ TEST(ThrusterDynamics, FirstOrder)
         "  <timeConstant>0.5</timeConstant>\n"
         "</dynamics>";
 
-  boost::shared_ptr<gazebo::Dynamics> dyn;
+  std::shared_ptr<gazebo::Dynamics> dyn;
   dyn = DynamicsFromString(description);
 
   EXPECT_TRUE(dyn != NULL);
@@ -86,7 +85,7 @@ TEST(ThrusterDynamics, Yoerger)
         "  <beta>0.5</beta>\n"
         "</dynamics>";
 
-  boost::shared_ptr<gazebo::Dynamics> dyn;
+  std::shared_ptr<gazebo::Dynamics> dyn;
   dyn = DynamicsFromString(description);
 
   EXPECT_TRUE(dyn != NULL);
@@ -107,7 +106,7 @@ TEST(ThrusterDynamics, Bessa)
         "  <Rm>0.5</Rm>\n"
         "</dynamics>";
 
-  boost::shared_ptr<gazebo::Dynamics> dyn;
+  std::shared_ptr<gazebo::Dynamics> dyn;
   dyn = DynamicsFromString(description);
 
   EXPECT_TRUE(dyn != NULL);

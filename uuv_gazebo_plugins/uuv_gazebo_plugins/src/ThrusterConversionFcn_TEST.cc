@@ -13,12 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <boost/shared_ptr.hpp>
+#include <string>
+#include <memory>
 #include <gtest/gtest.h>
-
 #include <uuv_gazebo_plugins/ThrusterConversionFcn.hh>
 
-boost::shared_ptr<gazebo::ConversionFunction> ConversionFromString(
+std::shared_ptr<gazebo::ConversionFunction> ConversionFromString(
     const std::string& description)
 {
   std::stringstream stream;
@@ -36,7 +36,7 @@ boost::shared_ptr<gazebo::ConversionFunction> ConversionFromString(
   sdf::ElementPtr conversion = sdfParsed.Root()->GetElement("model")
       ->GetElement("plugin")->GetElement("conversion");
 
-  boost::shared_ptr<gazebo::ConversionFunction> func;
+  std::shared_ptr<gazebo::ConversionFunction> func;
   func.reset(gazebo::ConversionFunctionFactory::GetInstance().
              CreateConversionFunction(conversion));
 
@@ -51,7 +51,7 @@ TEST(ThrusterConversionFcn, Basic)
         "  <rotorConstant>0.0049</rotorConstant> \n"
         "</conversion>";
 
-  boost::shared_ptr<gazebo::ConversionFunction> func;
+  std::shared_ptr<gazebo::ConversionFunction> func;
   func = ConversionFromString(description);
 
   EXPECT_TRUE(func != NULL);
@@ -80,7 +80,7 @@ TEST(ThrusterConversionFcn, Bessa)
          << "  <deltaR>" << dr << "</deltaR> \n"
          << "</conversion>";
 
-  boost::shared_ptr<gazebo::ConversionFunction> func;
+  std::shared_ptr<gazebo::ConversionFunction> func;
   func = ConversionFromString(stream.str());
 
   EXPECT_TRUE(func != NULL);
@@ -117,7 +117,7 @@ TEST(ThrusterConversionFcn, LinearInterp)
   stream  << "</outputValues> \n"
          << "</conversion>";
 
-  boost::shared_ptr<gazebo::ConversionFunction> func;
+  std::shared_ptr<gazebo::ConversionFunction> func;
   func = ConversionFromString(stream.str());
 
   EXPECT_TRUE(func != NULL);

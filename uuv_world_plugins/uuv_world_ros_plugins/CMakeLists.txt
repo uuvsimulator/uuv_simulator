@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_world_ros_plugins)
 
+# Specify C++11 standard
+add_definitions(-std=c++11)
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   gazebo_msgs
@@ -11,10 +14,16 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
  INCLUDE_DIRS include
- LIBRARIES uuv_underwater_current_ros_plugin
-           uuv_sc_ros_interface_plugin
+ LIBRARIES
+  uuv_underwater_current_ros_plugin
+  uuv_sc_ros_interface_plugin
  CATKIN_DEPENDS
-#  DEPENDS system_lib
+   roscpp
+   gazebo_msgs
+   geometry_msgs
+   uuv_world_plugins
+   uuv_world_ros_plugins_msgs
+   gazebo_dev
 )
 
 include_directories(
@@ -22,12 +31,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
 )
-
-link_directories(
-  ${GAZEBO_LIBRARY_DIRS}
-)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 add_library(uuv_underwater_current_ros_plugin src/UnderwaterCurrentROSPlugin.cc)
 target_link_libraries(uuv_underwater_current_ros_plugin ${catkin_LIBRARIES})

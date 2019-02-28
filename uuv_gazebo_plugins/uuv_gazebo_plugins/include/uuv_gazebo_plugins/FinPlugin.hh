@@ -35,7 +35,7 @@ namespace gazebo {
 typedef const boost::shared_ptr<const uuv_gazebo_plugins_msgs::msgs::Double>
 ConstDoublePtr;
 
-class FinPlugin : public gazebo::ModelPlugin
+class FinPlugin : public ModelPlugin
 {
     /// \brief Constructor
     public: FinPlugin();
@@ -44,7 +44,7 @@ class FinPlugin : public gazebo::ModelPlugin
     public: virtual ~FinPlugin();
 
     // Documentation inherited.
-    public: virtual void Load(gazebo::physics::ModelPtr _model,
+    public: virtual void Load(physics::ModelPtr _model,
                               sdf::ElementPtr _sdf);
 
     // Documentation inherited.
@@ -52,7 +52,7 @@ class FinPlugin : public gazebo::ModelPlugin
 
     /// \brief Update the simulation state.
     /// \param[in] _info Information used in the update event.
-    public: void OnUpdate(const gazebo::common::UpdateInfo &_info);
+    public: void OnUpdate(const common::UpdateInfo &_info);
 
     /// \brief Callback for the input topic subscriber
     protected: void UpdateInput(ConstDoublePtr &_msg);
@@ -61,28 +61,28 @@ class FinPlugin : public gazebo::ModelPlugin
     protected: void UpdateCurrentVelocity(ConstVector3dPtr &_msg);
 
     /// \brief Fin dynamic model
-    protected: boost::scoped_ptr<Dynamics> dynamics;
+    protected: std::shared_ptr<Dynamics> dynamics;
 
     /// \brief Lift&Drag model
-    protected: boost::scoped_ptr<LiftDrag> liftdrag;
+    protected: std::shared_ptr<LiftDrag> liftdrag;
 
     /// \brief Update event
-    protected: gazebo::event::ConnectionPtr updateConnection;
+    protected: event::ConnectionPtr updateConnection;
 
     /// \brief Gazebo node
-    protected: gazebo::transport::NodePtr node;
+    protected: transport::NodePtr node;
 
     /// \brief The fin joint
-    protected: gazebo::physics::JointPtr joint;
+    protected: physics::JointPtr joint;
 
     /// \brief The fin link
-    protected: gazebo::physics::LinkPtr link;
+    protected: physics::LinkPtr link;
 
     /// \brief Subscriber to the reference signal topic.
-    protected: gazebo::transport::SubscriberPtr commandSubscriber;
+    protected: transport::SubscriberPtr commandSubscriber;
 
     /// \brief Publisher to the output thrust topic
-    protected: gazebo::transport::PublisherPtr anglePublisher;
+    protected: transport::PublisherPtr anglePublisher;
 
     /// \brief Force component calculated from the lift and drag module
     protected: ignition::math::Vector3d finForce;
@@ -100,10 +100,10 @@ class FinPlugin : public gazebo::ModelPlugin
     protected: double angle;
 
     /// \brief Time stamp of latest thrust force
-    protected: gazebo::common::Time angleStamp;
+    protected: common::Time angleStamp;
 
     /// \brief Subcriber to current message
-    protected: gazebo::transport::SubscriberPtr currentSubscriber;
+    protected: transport::SubscriberPtr currentSubscriber;
 
     /// \brief Current velocity vector read from topic
     protected: ignition::math::Vector3d currentVelocity;

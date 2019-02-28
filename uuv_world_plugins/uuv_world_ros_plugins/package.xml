@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_world_ros_plugins</name>
-  <version>0.6.9</version>
+  <version>0.6.10</version>
   <description>The uuv_world_ros_plugins package</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
@@ -21,6 +21,7 @@
   <depend>uuv_world_plugins</depend>
   <depend>geometry_msgs</depend>
   <depend>uuv_world_ros_plugins_msgs</depend>
+  <depend>gazebo_dev</depend>
 
   <export>
   </export>

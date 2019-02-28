@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_gazebo_ros_plugins)
 
+# Specify C++11 standard
+add_definitions(-std=c++11)
+
 find_package(catkin REQUIRED COMPONENTS
   uuv_gazebo_plugins
   sensor_msgs
@@ -19,11 +22,8 @@ set(UUV_GAZEBO_ROS_PLUGINS_LIST "")
 
 catkin_package(
  INCLUDE_DIRS include
-  ${PROJECT_SOURCE_DIR}/include
-  ${catkin_INCLUDE_DIRS}
-  ${GAZEBO_INCLUDE_DIRS}
-  ${GAZEBO_MSG_INCLUDE_DIRS}
- LIBRARIES uuv_fin_ros_plugin
+ LIBRARIES
+  uuv_fin_ros_plugin
   uuv_thruster_ros_plugin
   uuv_underwater_object_ros_plugin
   uuv_joint_state_publisher
@@ -33,7 +33,7 @@ catkin_package(
   geometry_msgs
   std_msgs
   uuv_gazebo_ros_plugins_msgs
-#  DEPENDS system_lib
+  visualization_msgs
 )
 
 include_directories(
@@ -46,8 +46,6 @@ include_directories(
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
 )
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 add_library(uuv_fin_ros_plugin src/FinROSPlugin.cc)
 target_link_libraries(uuv_fin_ros_plugin ${catkin_LIBRARIES})

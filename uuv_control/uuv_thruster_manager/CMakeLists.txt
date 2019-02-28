@@ -22,7 +22,10 @@ generate_messages(
   std_msgs
 )
 
-catkin_package(CATKIN_DEPENDS message_runtime)
+catkin_package(
+  CATKIN_DEPENDS 
+    std_msgs 
+    message_runtime)
 
 catkin_install_python(PROGRAMS scripts/thruster_allocator.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

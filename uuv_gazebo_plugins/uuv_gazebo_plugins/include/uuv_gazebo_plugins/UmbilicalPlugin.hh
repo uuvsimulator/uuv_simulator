@@ -19,6 +19,7 @@
 #ifndef __UUV_GAZEBO_PLUGINS_UMBILICAL_PLUGIN_HH__
 #define __UUV_GAZEBO_PLUGINS_UMBILICAL_PLUGIN_HH__
 
+#include <memory>
 #include <string>
 
 #include <gazebo/gazebo.hh>
@@ -49,7 +50,7 @@ class UmbilicalSegment
     physics::JointPtr jointA;
     physics::JointPtr jointB;
 
-    boost::shared_ptr<UmbilicalSegment> prev, next;
+    std::shared_ptr<UmbilicalSegment> prev, next;
 
     static sdf::SDFPtr sdfSegment;
 };
@@ -92,7 +93,7 @@ class UmbilicalPlugin : public ModelPlugin
   protected: ignition::math::Vector3d flowVelocity;
 
   /// \brief Pointer to UmbilicalModel used in this plugin.
-  protected: boost::scoped_ptr<UmbilicalModel> umbilical;
+  protected: std::shared_ptr<UmbilicalModel> umbilical;
 };
 }
 

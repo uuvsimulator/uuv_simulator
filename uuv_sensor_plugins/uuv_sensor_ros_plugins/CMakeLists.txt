@@ -25,7 +25,6 @@ find_package(OpenCV REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 set(UUV_SENSOR_ROS_PLUGINS_LIST "")
 
 # Add Gazebo custom protobuf messages
@@ -51,13 +50,6 @@ file(GLOB msgs msgs/*.proto)
 
 catkin_package(
   INCLUDE_DIRS include
-    ${CMAKE_CURRENT_BINARY_DIR} # for generated messages
-    ${GAZEBO_MSG_INCLUDE_DIRS}
-    ${OGRE_INCLUDE_DIRS}
-    ${OGRE_Paging_INCLUDE_DIRS}
-    ${OpenCV_INCLUDE_DIRS}
-    ${EIGEN3_INCLUDE_DIRS}
-  DEPENDS Eigen3 gazebo
   LIBRARIES
     uuv_gazebo_ros_base_model_plugin
     uuv_gazebo_ros_base_sensor_plugin
@@ -71,9 +63,18 @@ catkin_package(
     uuv_gazebo_ros_rpt_plugin
     uuv_gazebo_ros_camera_plugin
   CATKIN_DEPENDS
+    gazebo_dev
     uuv_gazebo_plugins
     sensor_msgs
+    geometry_msgs
+    std_msgs
+    roscpp
+    tf
+    gazebo_plugins
     uuv_sensor_ros_plugins_msgs
+    message_filters
+    tf2_ros
+    tf2
 )
 
 ###########
