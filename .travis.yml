@@ -16,16 +16,18 @@ env:
     - CCACHE_DIR=$HOME/.ccache
     - CATKIN_LINT=true
     - CATKIN_LINT_ARGS="--ignore link_directory"
-    - PRERELEASE=true
 matrix:
   include:
-    - env: USE_DEB=true ROS_DISTRO=kinetic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
-    - env: USE_DEB=true ROS_DISTRO=kinetic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh && sh .uuv_ci_config/install_gazebo9.sh' ROSDEP_SKIP_KEYS="gazebo gazebo_msgs gazebo_plugins gazebo_ros gazebo_ros_control gazebo_ros_pkgs"
-    - env: USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
-    - env: USE_DEB=true ROS_DISTRO=melodic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
-  allow_failures:
-    - env: USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
-    - env: USE_DEB=true ROS_DISTRO=melodic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+    - env: PRERELEASE=true USE_DEB=true ROS_DISTRO=kinetic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+    - env: AFTER_SCRIPT='sh .uuv_ci_config/run_tests.sh' USE_DEB=true ROS_DISTRO=kinetic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+    - env: AFTER_SCRIPT='sh .uuv_ci_config/run_tests.sh' USE_DEB=true ROS_DISTRO=kinetic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh && sh .uuv_ci_config/install_gazebo9.sh' ROSDEP_SKIP_KEYS="gazebo gazebo_dev gazebo_msgs gazebo_plugins gazebo_ros gazebo_ros_control gazebo_ros_pkgs"
+    - env: PRERELEASE=true USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+    - env: AFTER_SCRIPT='sh .uuv_ci_config/run_tests.sh' USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+    - env: PRERELEASE=true USE_DEB=true ROS_DISTRO=melodic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+    - env: AFTER_SCRIPT='sh .uuv_ci_config/run_tests.sh' USE_DEB=true ROS_DISTRO=melodic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+#  allow_failures:
+#    - env: USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+#    - env: USE_DEB=true ROS_DISTRO=melodic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
 install:
   - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config
 script:
