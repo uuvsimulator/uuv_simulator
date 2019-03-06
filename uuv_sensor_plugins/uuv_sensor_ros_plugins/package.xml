@@ -28,6 +28,8 @@
   <depend>message_filters</depend>
   <depend>tf2_ros</depend>
   <depend>tf2</depend>
+  <depend>image_transport</depend>
+  <depend>laser_geometry</depend>
 
   <test_depend>rosunit</test_depend>
   <test_depend>rostest</test_depend>

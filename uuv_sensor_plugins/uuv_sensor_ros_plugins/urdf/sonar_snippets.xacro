@@ -163,4 +163,67 @@
     </sensor>
   </gazebo>
   </xacro:macro>
+
+  <xacro:macro name="forward_looking_sonar"
+    params="namespace suffix parent_link topic mass update_rate
+      samples fov width height *inertia *origin">
+    <!-- Sensor link -->
+    <link name="${namespace}/forward_sonar${suffix}_link">
+      <inertial>
+        <xacro:insert_block name="inertia" />
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/oe14-372.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+      <xacro:no_collision/>
+    </link>
+
+    <joint name="${namespace}_forward_sonar${suffix}_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/forward_sonar${suffix}_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+
+    <gazebo reference="${namespace}/forward_sonar${suffix}_link">
+      <sensor name="${namespace}/image_sonar" type="depth">
+        <camera>
+		  <horizontal_fov>${fov}</horizontal_fov>
+          <image>
+		    <width>${width}</width>
+		    <height>${height}</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>17</far>
+          </clip>
+          <save enabled="true">
+            <path>/tmp/camera</path>
+          </save>
+        </camera>
+	    <plugin filename="libimage_sonar_ros_plugin.so" name="forward_sonar${suffix}_controller">
+		  <topicName>${topic}</topicName>
+          <frameName>forward_sonar${suffix}_optical_frame</frameName>
+        </plugin>
+        <always_on>true</always_on>
+	    <update_rate>${update_rate}</update_rate>
+      </sensor>
+    </gazebo>
+
+	<joint name="${namespace}/forward_sonar${suffix}_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+      <parent link="${namespace}/forward_sonar${suffix}_link"/>
+      <child link="${namespace}/forward_sonar${suffix}_optical_frame"/>
+    </joint>
+
+	<link name="${namespace}/forward_sonar${suffix}_optical_frame"/>
+  </xacro:macro>
+
 </robot>
