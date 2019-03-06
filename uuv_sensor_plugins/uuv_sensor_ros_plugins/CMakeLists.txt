@@ -78,6 +78,8 @@ catkin_package(
     message_filters
     tf2_ros
     tf2
+    image_transport
+    laser_geometry
 )
 
 ###########
