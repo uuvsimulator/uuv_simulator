@@ -43,3 +43,7 @@ UUV Simulator is open-sourced under the Apache-2.0 license. See the
 
 For a list of other open source components included in UUV Simulator, see the
 file [3rd-party-licenses.txt](3rd-party-licenses.txt).
+
+## Releases
+
+[![ROS Kinetic](https://img.shields.io/badge/ROS%20Distro-kinetic-brightgreen.svg)](http://repositories.ros.org/status_page/ros_kinetic_default.html?q=uuv_simulator)
