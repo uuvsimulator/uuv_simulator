@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   gazebo_dev
   uuv_gazebo_plugins
   sensor_msgs
+  image_transport
   geometry_msgs
   std_msgs
   roscpp
@@ -17,7 +18,8 @@ find_package(catkin REQUIRED COMPONENTS
   uuv_sensor_ros_plugins_msgs
   message_filters
   tf2_ros
-  tf2)
+  tf2
+  laser_geometry)
 
 find_package(Eigen3 REQUIRED)
 find_package(OGRE REQUIRED)
@@ -62,6 +64,7 @@ catkin_package(
     uuv_gazebo_ros_imu_plugin
     uuv_gazebo_ros_rpt_plugin
     uuv_gazebo_ros_camera_plugin
+    image_sonar_ros_plugin
   CATKIN_DEPENDS
     gazebo_dev
     uuv_gazebo_plugins
@@ -75,6 +78,8 @@ catkin_package(
     message_filters
     tf2_ros
     tf2
+    image_transport
+    laser_geometry
 )
 
 ###########
@@ -208,6 +213,14 @@ add_library(uuv_gazebo_ros_camera_plugin src/UnderwaterCameraROSPlugin.cc)
 target_link_libraries(uuv_gazebo_ros_camera_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(uuv_gazebo_ros_camera_plugin ${catkin_EXPORTED_TARGETS})
 list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST uuv_gazebo_ros_camera_plugin)
+
+###############################################################################
+
+add_library(image_sonar_ros_plugin src/gazebo_ros_image_sonar.cpp)
+target_link_libraries(image_sonar_ros_plugin ${OGRE_LIBRARIES} ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+add_dependencies(image_sonar_ros_plugin ${catkin_EXPORTED_TARGETS})
+list(APPEND UUV_SENSOR_ROS_PLUGINS_LIST image_sonar_ros_plugin)
+
 
 #############
 ## Install ##
