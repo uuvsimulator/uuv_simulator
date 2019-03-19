@@ -284,7 +284,7 @@ class AUVGeometricTrackingController:
         # Check for saturation
         max_angle = max(np.abs(fins))
         if max_angle >= self.max_fin_angle:
-            fins = fins * max_angle / self.max_fin_angle
+            fins = fins * self.max_fin_angle / max_angle
 
         thrust_force = self.thruster.tam_column * thrust
         self.thruster.publish_command(thrust_force[0])
