@@ -2,6 +2,19 @@
 Changelog for package uuv_sensor_ros_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add new depends to catkin package
+  Signed-off-by: Will Baker <wbaker@houstonmechatronics.com>
+* Added fls implementation by Niels Bohr as explained in the following issue thread: https://github.com/uuvsimulator/uuv_simulator/issues/48, with the main code of the fls contained here: https://github.com/smarc-project/smarc_simulations/blob/master/smarc_gazebo_plugins/smarc_gazebo_ros_plugins/src/gazebo_ros_image_sonar.cpp. \n\n TODO: Modify FLS to be better representation (current FLS still abuses Depth cam), and integrate FLS into our project environment/requirement better
+  Add depends to pacakge.xml
+  # Conflicts:
+  #	uuv_descriptions/robots/rexrov_test.xacro
+  #	uuv_sensor_plugins/uuv_sensor_ros_plugins/CMakeLists.txt
+  #	uuv_sensor_plugins/uuv_sensor_ros_plugins/urdf/sonar_snippets.xacro
+  Signed-off-by: Will Baker <willcbaker@gmail.com>
+* Contributors: Will Baker
+
 0.6.10 (2019-02-28)
 -------------------
 * Fix errors from catkin_lint
