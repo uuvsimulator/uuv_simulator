@@ -2,6 +2,9 @@
 Changelog for package uuv_assistants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.11 (2019-03-21)
+-------------------
+
 0.6.10 (2019-02-28)
 -------------------
 * Fix package name to uuv_message_to_tf node

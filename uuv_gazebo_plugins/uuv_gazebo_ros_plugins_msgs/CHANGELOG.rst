@@ -2,6 +2,9 @@
 Changelog for package uuv_gazebo_ros_plugins_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.11 (2019-03-21)
+-------------------
+
 0.6.10 (2019-02-28)
 -------------------
 * Fix errors from catkin_lint

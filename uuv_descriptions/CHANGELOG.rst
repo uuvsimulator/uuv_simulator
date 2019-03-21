@@ -2,6 +2,9 @@
 Changelog for package uuv_descriptions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.11 (2019-03-21)
+-------------------
+
 0.6.10 (2019-02-28)
 -------------------
 * Fix dependency for message_to_tf node

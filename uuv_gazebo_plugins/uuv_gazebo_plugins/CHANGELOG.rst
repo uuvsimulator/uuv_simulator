@@ -2,6 +2,9 @@
 Changelog for package uuv_gazebo_plugins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.11 (2019-03-21)
+-------------------
+
 0.6.10 (2019-02-28)
 -------------------
 * Fix dynamic linking for test build
