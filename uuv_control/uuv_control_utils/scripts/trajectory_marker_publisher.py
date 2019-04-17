@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 import rospy
 import os
 import yaml
@@ -61,7 +61,7 @@ class TrajectoryMarkerPublisher:
         if rospy.has_param('~output_dir'):
             self._output_dir = rospy.get_param('~output_dir')
             if not os.path.isdir(self._output_dir):
-                print 'Invalid output directory, not saving the files, dir=', self._output_dir
+                print('Invalid output directory, not saving the files, dir=', self._output_dir)
                 self._output_dir = None
             else:
                 self._output_dir = os.path.join(self._output_dir, rospy.get_namespace().replace('/', ''))

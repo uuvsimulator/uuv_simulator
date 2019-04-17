@@ -107,7 +107,7 @@ class DisturbanceManager:
                     services.append('/%s/thrusters/%d/set_thrust_force_efficiency' % (vehicle_name, item['thruster_id']))
             for s in services:
                 rospy.wait_for_service(s, timeout=10)
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Some services are not available! message=' + str(e))
             self._logger.error('Closing node...')
             sys.exit(-1)
@@ -139,7 +139,7 @@ class DisturbanceManager:
                     self._service_cb['thrusters']['thrust_efficiency'][item['thruster_id']] = rospy.ServiceProxy(
                         '/%s/thrusters/%d/set_thrust_force_efficiency' % (vehicle_name, item['thruster_id']),
                         SetThrusterEfficiency)
-        except rospy.ServiceException, e:
+        except rospy.ServiceException as e:
             self._logger.info('Service call failed, error=%s' % str(e))
             sys.exit(-1)
 

@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 import numpy
 import rospy
 import tf
@@ -67,7 +67,7 @@ class ThrusterAllocatorNode(ThrusterManager):
                 # If a timeout is set, zero the outputs to the thrusters if
                 # there is no command signal for the length of timeout
                 if rospy.Time.now() - self.last_update > self.config['timeout']:
-                    print 'Turning thrusters off - inactive for too long'
+                    print('Turning thrusters off - inactive for too long')
                     if self.thrust is not None:
                         self.thrust.fill(0)
                         self.command_thrusters()
@@ -98,11 +98,11 @@ class ThrusterAllocatorNode(ThrusterManager):
         self.config['thruster_topic_prefix'] = request.thruster_topic_prefix
         self.config['thruster_topic_suffix'] = request.thruster_topic_suffix
         self.config['timeout'] = request.timeout
-        print 'New configuration:\n'
+        print('New configuration:\n')
         for key in self.config:
-            print key, '=', self.config[key]
+            print(key, '=', self.config[key])
         if not self.update_tam(recalculate=True):
-            print 'Configuration parameters are invalid, going back to old configuration...'
+            print('Configuration parameters are invalid, going back to old configuration...')
             self.config = old_config
             self.update_tam(recalculate=True)
         return SetThrusterManagerConfigResponse(True)
@@ -163,5 +163,5 @@ if __name__ == '__main__':
         node = ThrusterAllocatorNode()
         rospy.spin()
     except rospy.ROSInterruptException:
-        print 'ThrusterAllocatorNode::Exception'
-    print 'Leaving ThrusterAllocatorNode'
+        print('ThrusterAllocatorNode::Exception')
+    print('Leaving ThrusterAllocatorNode')
