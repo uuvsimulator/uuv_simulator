@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 import rospy
 from std_srvs.srv import Empty
 import time
@@ -32,7 +32,7 @@ if __name__ == '__main__':
         if timeout <= 0:
             raise rospy.ROSException('Unpause time must be a positive floating point value')
 
-    print 'Unpause simulation - Time = %2.f s' % timeout
+    print('Unpause simulation - Time = {} s'.format(timeout))
 
     start_time = time.time()
     while time.time() - start_time < timeout:
@@ -47,4 +47,4 @@ if __name__ == '__main__':
         sys.exit()
 
     unpause()
-    print 'Simulation unpaused...'
+    print('Simulation unpaused...')

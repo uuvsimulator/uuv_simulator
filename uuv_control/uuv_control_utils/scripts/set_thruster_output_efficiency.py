@@ -13,49 +13,49 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 import rospy
 from uuv_gazebo_ros_plugins_msgs.srv import SetThrusterEfficiency
 
 
 if __name__ == '__main__':
-    print 'Set the thruster output efficiency for vehicle, namespace=', rospy.get_namespace()
+    print('Set the thruster output efficiency for vehicle, namespace=', rospy.get_namespace())
     rospy.init_node('set_thrusters_states')
 
     if rospy.is_shutdown():
-        rospy.ROSException('ROS master not running!')
+        raise rospy.ROSException('ROS master not running!')
 
     starting_time = 0.0
     if rospy.has_param('~starting_time'):
         starting_time = rospy.get_param('~starting_time')
 
-    print 'Starting time= %fs' % starting_time
+    print('Starting time= {} s'.format(starting_time))
 
     duration = 0.0
     if rospy.has_param('~duration'):
         duration = rospy.get_param('~duration')
 
     if duration == 0.0:
-        rospy.ROSException('Duration not set, leaving node...')
+        raise rospy.ROSException('Duration not set, leaving node...')
 
-    print 'Duration [s]=', ('Inf.' if duration < 0 else duration)
+    print('Duration [s]=', ('Inf.' if duration < 0 else duration))
 
     if rospy.has_param('~efficiency'):
         efficiency = rospy.get_param('~efficiency')
         if efficiency < 0 or efficiency > 1:
-            rospy.ROSException('Invalid thruster output efficiency, leaving node...')
+            raise rospy.ROSException('Invalid thruster output efficiency, leaving node...')
     else:
-        rospy.ROSException('Thruster output efficiency not set, leaving node...')
+        raise rospy.ROSException('Thruster output efficiency not set, leaving node...')
 
     if rospy.has_param('~thruster_id'):
         thruster_id = rospy.get_param('~thruster_id')
     else:
-        rospy.ROSException('Thruster ID not given')
+        raise rospy.ROSException('Thruster ID not given')
 
     if thruster_id < 0:
-        rospy.ROSException('Invalid thruster ID')
+        raise rospy.ROSException('Invalid thruster ID')
 
-    print 'Setting thruster output efficiency #%d to %.2f' % (thruster_id, 100 * efficiency)
+    print('Setting thruster output efficiency #{} to {}'.format(thruster_id, 100 * efficiency))
 
     vehicle_name = rospy.get_namespace().replace('/', '')
 
@@ -64,12 +64,12 @@ if __name__ == '__main__':
     try:
         rospy.wait_for_service(srv_name, timeout=2)
     except rospy.ROSException:
-        rospy.ROSException('Service not available! Closing node...')
+        raise rospy.ROSException('Service not available! Closing node...')
 
     try:
         set_eff = rospy.ServiceProxy(srv_name, SetThrusterEfficiency)
-    except rospy.ServiceException, e:
-        rospy.ROSException('Service call failed, error=' + e)
+    except rospy.ServiceException as e:
+        raise rospy.ROSException('Service call failed, error=' + e)
 
     rate = rospy.Rate(100)
     while rospy.get_time() < starting_time:
@@ -78,8 +78,8 @@ if __name__ == '__main__':
     success = set_eff(efficiency)
 
     if success:
-        print 'Time=%.2f s' % rospy.get_time()
-        print 'Current thruster output efficiency #%d=%.2f' % (thruster_id, efficiency * 100)
+        print('Time={} s'.format(rospy.get_time()))
+        print('Current thruster output efficiency #{}={}'.format(thruster_id, efficiency * 100))
 
     if duration > 0:
         rate = rospy.Rate(100)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
         success = set_eff(1.0)
 
         if success:
-            print 'Time=%.2f s' % rospy.get_time()
-            print 'Returning to previous thruster output efficiency #%d=%.2f' % (thruster_id, efficiency * 100)
+            print('Time={} s'.format(rospy.get_time()))
+            print('Returning to previous thruster output efficiency #{}={}'.format(thruster_id, efficiency * 100))
 
-    print 'Leaving node...'
+    print('Leaving node...')

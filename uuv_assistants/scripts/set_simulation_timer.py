@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 import rospy
 
 
@@ -29,9 +29,9 @@ if __name__ == '__main__':
         if timeout <= 0:
             raise rospy.ROSException('Termination time must be a positive floating point value')
 
-    print 'Starting simulation timer - Timeout = %2.f s' % timeout
+    print('Starting simulation timer - Timeout = {} s'.format(timeout))
     rate = rospy.Rate(100)
     while rospy.get_time() < timeout:
         rate.sleep()
 
-    print 'Simulation timeout - Killing simulation...'
+    print('Simulation timeout - Killing simulation...')

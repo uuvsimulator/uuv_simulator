@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 import rospy
 import numpy as np
 from uuv_control_interfaces import DPControllerBase
@@ -52,7 +52,7 @@ class ROV_MB_SMController(DPControllerBase):
             else:
                 raise rospy.ROSException('lambda coefficients: 6 coefficients '
                                          'needed')
-        print 'lambda=', self._lambda
+        print('lambda=', self._lambda)
 
         if rospy.has_param('~rho_constant'):
             coefs = rospy.get_param('~rho_constant')
@@ -61,7 +61,7 @@ class ROV_MB_SMController(DPControllerBase):
             else:
                 raise rospy.ROSException('rho_constant coefficients: 6 coefficients '
                                          'needed')
-        print 'rho_constant=', self._rho_constant
+        print('rho_constant=', self._rho_constant)
 
         if rospy.has_param('~k'):
             coefs = rospy.get_param('~k')
@@ -70,7 +70,7 @@ class ROV_MB_SMController(DPControllerBase):
             else:
                 raise rospy.ROSException('k coefficients: 6 coefficients '
                                          'needed')
-        print 'k=', self._k
+        print('k=', self._k)
 
         if rospy.has_param('~c'):
             coefs = rospy.get_param('~c')
@@ -79,7 +79,7 @@ class ROV_MB_SMController(DPControllerBase):
             else:
                 raise rospy.ROSException('c coefficients: 6 coefficients '
                                          'needed')
-        print 'c=', self._c
+        print('c=', self._c)
 
         if rospy.has_param('~adapt_slope'):
             coefs = rospy.get_param('~adapt_slope')
@@ -88,7 +88,7 @@ class ROV_MB_SMController(DPControllerBase):
             else:
                 raise rospy.ROSException('adapt_slope coefficients: 6 coefficients '
                                          'needed')
-        print 'adapt_slope=', self._adapt_slope
+        print('adapt_slope=', self._adapt_slope)
 
         if rospy.has_param('~rho_0'):
             coefs = rospy.get_param('~rho_0')
@@ -97,7 +97,7 @@ class ROV_MB_SMController(DPControllerBase):
             else:
                 raise rospy.ROSException('rho_0 coefficients: 6 coefficients '
                                          'needed')
-        print 'rho_0=', self._rho_0
+        print('rho_0=', self._rho_0)
 
         if rospy.has_param('~drift_prevent'):
             scalar = rospy.get_param('~drift_prevent')
@@ -106,7 +106,7 @@ class ROV_MB_SMController(DPControllerBase):
             else:
                 raise rospy.ROSException('drift_prevent needs to be a scalar value')
 
-        print 'drift_prevent=', self._drift_prevent
+        print('drift_prevent=', self._drift_prevent)
 
         # Enable(1) / disable(0) integral term in the sliding surface
         if rospy.has_param('~enable_integral_term'):

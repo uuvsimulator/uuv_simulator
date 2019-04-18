@@ -13,18 +13,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import print_function
 import rospy
 import sys
 from numpy import pi
 from uuv_world_ros_plugins_msgs.srv import *
 
 if __name__ == '__main__':
-    print 'Starting current perturbation node'
+    print('Starting current perturbation node')
     rospy.init_node('set_gm_current_perturbation')
 
-    print 'Programming the generation of a current perturbation'
+    print('Programming the generation of a current perturbation')
     if rospy.is_shutdown():
-        print 'ROS master not running!'
+        print('ROS master not running!')
         sys.exit(-1)
 
     params = ['component', 'mean', 'min', 'max', 'noise', 'mu']
@@ -55,6 +56,6 @@ if __name__ == '__main__':
 
     if set_model(values['mean'], values['min'], values['max'], values['noise'],
                  values['mu']):
-        print 'Model for <%s> set successfully!'
+        print('Model for <{}> set successfully!'.format(values['component']))
     else:
-        print 'Error setting model!'
+        print('Error setting model!')

@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 import numpy
 import rospy
 
@@ -57,7 +57,7 @@ class AccelerationControllerNode:
           numpy.hstack((self.mass*numpy.identity(3), numpy.zeros((3, 3)))),
           numpy.hstack((numpy.zeros((3, 3)), self.inertial_tensor))))
 
-        print self.mass_inertial_matrix
+        print(self.mass_inertial_matrix)
         self.ready = True
 
     def force_callback(self, msg):
