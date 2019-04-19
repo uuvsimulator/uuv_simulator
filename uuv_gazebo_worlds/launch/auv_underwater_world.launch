@@ -1,3 +1,7 @@
+<!-- 
+Underwater environment with the ODE physics engine configured for vehicles using the 
+[fin plugin](https://github.com/uuvsimulator/uuv_simulator/blob/master/uuv_gazebo_plugins/uuv_gazebo_ros_plugins/src/FinROSPlugin.cc)
+-->
 <launch>
     <arg name="gui" default="true"/>
     <arg name="paused" default="false"/>
