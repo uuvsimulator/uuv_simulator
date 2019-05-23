@@ -2,6 +2,9 @@
 Changelog for package uuv_tutorial_seabed_world
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.11 (2019-03-21)
 -------------------
 

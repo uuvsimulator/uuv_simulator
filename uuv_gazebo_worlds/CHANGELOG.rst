@@ -2,6 +2,9 @@
 Changelog for package uuv_gazebo_worlds
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.6.11 (2019-03-21)
 -------------------
 * Fix path to sea surface in world model publisher
