@@ -5,6 +5,9 @@ Changelog for package uuv_gazebo_ros_plugins
 0.6.11 (2019-03-21)
 -------------------
 
+0.6.12 (2019-05-23)
+-------------------
+
 0.6.10 (2019-02-28)
 -------------------
 * Fix errors from catkin_lint

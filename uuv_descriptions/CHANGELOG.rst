@@ -2,6 +2,12 @@
 Changelog for package uuv_descriptions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.12 (2019-05-23)
+-------------------
+* uuv_descriptions: add xacro as a runtime dependency
+  If xacro is not installed then it is not possible to spawn ROVs using upload_rexrov.launch.
+* Contributors: Russ
+
 0.6.11 (2019-03-21)
 -------------------
 
