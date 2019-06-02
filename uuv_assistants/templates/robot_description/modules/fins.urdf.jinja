@@ -1,0 +1,134 @@
+{% import 'dynamics.urdf.jinja' as dynamics %}
+
+{# Lift and drag plugins #}
+
+{% macro two_lines(
+    area=0,
+    fluid_density=1025,
+    a0=0,
+    alpha_stall=0,
+    cla=0,
+    cla_stall=0,
+    cda=0,
+    cda_stall=0) %}
+    <!--
+        Definition of the lift and drag model, choose ONE of the models
+        below according to the model you want to use.
+        
+        References for the two line lift and drag model:
+            [1] https://en.wikipedia.org/wiki/Lift_coefficient
+            [2] http://gazebosim.org/tutorials?tut=aerodynamics&cat=plugins
+    -->
+    <liftdrag>
+        <type>TwoLines</type>
+        <area>{{ area }}</area>
+        <fluid_density>{{ fluid_density }}</fluid_density>
+        <a0>{{ a0 }}</a0>
+        <alpha_stall>{{ alpha_stall }}</alpha_stall>
+        <cla>{{ cla }}</cla><!-- ^= 0.244 when using deg -->
+        <cla_stall>{{ cla_stall }}</cla_stall>
+        <cda>{{ cda }}</cda>
+        <cda_stall>{{ cda_stall }}</cda_stall>
+    </liftdrag>
+{% endmacro %}
+
+{% macro quadratic(
+    lift_constant=0,
+    drag_constant=0) %}
+    <!--
+        Reference for the quadratic lift and drag model:
+            Engelhardtsen, Oystein. 3D AUV Collision Avoidance.
+            MS thesis. Institutt for teknisk kybernetikk, 2007.
+            https://brage.bibsys.no/xmlui/handle/11250/259834
+    -->
+    <liftdrag>
+        <type>Quadratic</type>
+        <lift_constant>{{ lift_constant }}</lift_constant>
+        <drag_constant>{{ drag_constant }}</drag_constant>
+    </liftdrag>
+{% endmacro %}
+
+{% macro fin(
+    namespace='',
+    parent='base_link', 
+    fin_id=0, 
+    origin_xyz='0 0 0', 
+    origin_rpy='0 0 0',
+    visual='',
+    dynamics='',
+    lift_and_drag='',
+    rotation_axis=[0, 0, 1],
+    fin_min_joint_limit=-1.57,
+    fin_max_joint_limit=1.57,
+    current_velocity_topic='/hydrodynamics/current_velocity',
+    as_xacro_macro=false) %}
+
+    {% if as_xacro_macro %}
+        {% set namespace = '${namespace}' %}
+        {% set fin_id = '${fin_id}' %}
+        {% set origin_xyz = '${fin_xyz}' %}
+        {% set origin_rpy = '${fin_rpy}' %}
+
+        <!-- Add thruster macro -->
+        
+        <xacro:macro 
+        name="fin_macro" 
+        params="
+            namespace
+            fin_id
+            fin_xyz
+            fin_rpy">
+    {% endif %}
+
+    {% if namespace == "" %}
+        {% set fin_name = 'fin' ~ fin_id %}
+    {% else %}
+        {% set fin_name = namespace ~ '/fin' ~ fin_id %}
+    {% endif %}
+
+    <joint name="{{ fin_name }}_joint" type="revolute">
+        <limit 
+            effort="0" 
+            lower="{{ fin_min_joint_limit }}" 
+            upper="{{ fin_max_joint_limit }}" 
+            velocity="0"/>
+        <origin xyz="{{ origin_xyz }}" rpy="{{ origin_rpy }}"/>
+        <axis xyz="{{ rotation_axis|join(' ') }}"/>
+        <parent link="{{ parent }}"/>
+        <child link="{{ fin_name }}"/>
+    </joint>
+
+    <link name="{{ fin_name }}">
+        {{ inertias.cuboid(0.001, 0.01, 0.01, 0.01) }}
+        
+        {{ visual }}
+    </link>
+
+    <gazebo>
+        <plugin 
+            name="{{ namespace }}_fin_{{ fin_id }}_model" 
+            filename="libuuv_fin_ros_plugin.so">
+
+          {{ dynamics }}
+
+          {{ lift_and_drag }}
+
+          <!-- Current velocity topic -->
+          <current_velocity_topic>{{ current_velocity_topic }}</current_velocity_topic>
+
+          <!-- Name of the correspodent fin link and joint  -->
+          <link_name>{{ fin_name }}</link_name>
+          <joint_name>{{ fin_name }}_joint</joint_name>
+
+          <!-- Output topic to publish the current angle of the fin joint -->
+          <output_topic>{{ namespace }}/fins/{{ fin_id }}/output</output_topic>
+          <input_topic>{{ namespace }}/fins/{{ fin_id }}/input</input_topic>
+          <wrench_topic>{{ namespace }}/fins/{{ fin_id }}/wrench_topic</wrench_topic>
+        </plugin>
+      </gazebo>
+
+    {% if as_xacro_macro %}
+        </xacro:macro>
+    {% endif %}
+
+{% endmacro %}

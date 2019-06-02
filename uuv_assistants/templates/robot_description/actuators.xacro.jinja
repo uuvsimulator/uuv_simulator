@@ -1,0 +1,41 @@
+{% if add_thruster|default(true, true) %}
+    <!-- Adding thruster units -->
+    {% for n in range(n_thrusters|default(1, true)) %}
+        {% if thrusters_xyz is not defined or thrusters_rpy is not defined %}
+            <xacro:thruster_macro 
+                robot_namespace="{{ robot_namespace|default('${namespace}', true) }}" 
+                thruster_id="{{ n }}"
+                origin_xyz="[0, 0, 0]" 
+                origin_rpy="[0, 0, 0]" />
+            </xacro:thruster_macro>
+        {% else %}
+            <xacro:thruster_macro 
+                robot_namespace="{{ robot_namespace|default('${namespace}', true) }}" 
+                thruster_id="{{ n }}"
+                origin_xyz="{{ thrusters_xyz[n] }}" 
+                origin_rpy="{{ thrusters_rpy[n] }}" />
+            </xacro:thruster_macro>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if add_fin|default(false, true) %}
+    <!-- Add fin units -->
+    {% for n in range(n_fins|default(1, true)) %}
+        {% if fins_xyz is not defined or fins_rpy is not defined %}
+            <xacro:fin_macro 
+                robot_namespace="{{ robot_namespace|default('${namespace}', true) }}" 
+                fin_id="{{ n }}"
+                origin_xyz="[0, 0, 0]" 
+                origin_rpy="[0, 0, 0]" />
+            </xacro:fin_macro>
+        {% else %}
+            <xacro:fin_macro 
+                robot_namespace="{{ robot_namespace|default('${namespace}', true) }}" 
+                fin_id="{{ n }}"
+                origin_xyz="{{ fins_xyz[n] }}" 
+                origin_rpy="{{ fins_rpy[n] }}" />
+            </xacro:fin_macro>
+        {% endif %}
+    {% endfor %}
+{% endif %}

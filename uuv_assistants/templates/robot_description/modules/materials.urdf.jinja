@@ -1,0 +1,25 @@
+{% macro color(name='color', r=0, g=0, b=0, a=1) %}
+    <material name="{{ color }}">
+        <color rgba="{{ r }} {{ g }} {{ b }} {{ a }}"/>
+    </material>
+{% endmacro %}
+
+{% set blue = color('blue', 0, 0, 1, 1) %}
+{% set red = color('red', 1, 0, 0, 1) %}
+{% set black = color('black', 0, 0, 0, 1) %}
+{% set white = color('white', 1, 1, 1, 1) %}
+{% set gray = color('gray', 0.58, 0.58, 0.58, 1) %}
+
+{% macro materials() %}
+
+    {{ blue }}
+    
+    {{ red }}
+
+    {{ black }}
+
+    {{ white }}
+
+    {{ gray }}
+
+{% endmacro %}

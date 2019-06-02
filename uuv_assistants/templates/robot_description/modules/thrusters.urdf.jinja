@@ -1,0 +1,258 @@
+{% import 'inertias.urdf.jinja' as inertias %}
+{% import 'dynamics.urdf.jinja' as dynamics %}
+
+
+{# Conversion functions #}
+
+{% macro thruster_cf_dead_zone_macro(
+    rotor_constant_l, rotor_constant_r, delta_l, delta_r) -%}
+    <!-- 
+        Dead-zone nonlinearity described in Bessa, 2006
+        Input: x
+        Output: thrust
+        Function:
+            thrust = rotorConstantL * (x * abs(x) - deltaL), if x * abs(x) <= deltaL
+            thrust = 0, if deltaL < x * abs(x) < deltaR
+            thrust = rotorConstantR * (x * abs(x) - deltaR), if x * abs(x) >= deltaL
+    -->
+
+    <conversion>
+      <type>Bessa</type>
+      <rotorConstantL>{{ rotor_constant_l }}</rotorConstantL>
+      <rotorConstantR>{{ rotor_constant_r }}</rotorConstantR>
+      <deltaL>{{ delta_l }}</deltaL>
+      <deltaR>{{ delta_r }}</deltaR>
+    </conversion>
+{%- endmacro %}
+
+{% macro thruster_cf_basic_macro(rotor_constant) -%}
+    <!--
+        Choose one of the model for the steady-state curve describing the
+        relationship between the state variable and the output thrust force
+        
+        Basic curve
+            Input: x
+            Output: thrust
+            Function: thrust = rotorConstant * x * abs(x)
+    -->
+    <conversion>
+      <type>Basic</type>
+      <rotorConstant>{{ rotor_constant }}</rotorConstant>
+    </conversion>
+{%- endmacro %}
+
+{% macro thruster_cf_linear_interp_macro(input_values, output_values) -%}
+    <!-- 
+        Linear interpolation
+            If you have access to the thruster's data sheet, for example,
+            you can enter samples of the curve's input and output values
+            and the thruster output will be found through linear interpolation
+            of the given samples.
+    -->
+    <conversion>
+      <type>LinearInterp</type>
+      <inputValues>{{ input_values|join(' ') }}</inputValues>
+      <outputValues>{{ output_values|join(' ') }}</outputValues>
+    </conversion>
+{%- endmacro %}
+
+{# Thruster visuals #}
+{% macro thruster_visual(
+    mesh_filename='',
+    mesh_scale=[1, 1, 1],
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0],
+    color='') %}
+
+    <visual>
+        <origin xyz="{{ origin_xyz|join(' ') }}" rpy="{{ origin_rpy|join(' ') }}"/>
+        <geometry>
+            <mesh 
+                filename="{{ mesh_filename }}" 
+                scale="{{ mesh_scale|join(' ') }}"/>
+        </geometry>
+        <material name="{{ color }}"/>        
+    </visual>
+    
+{% endmacro %}
+
+{# Thruster macros #}
+
+{% macro thruster(
+    namespace='',
+    parent='base_link', 
+    thruster_id=0, 
+    origin_xyz='0 0 0', 
+    origin_rpy='0 0 0',
+    visual='',
+    rotation_axis=[1, 0, 0],
+    dynamics='',
+    conversion='',
+    thruster_gain=1,
+    clamp_min=0,
+    clamp_max=1000000,
+    thrust_min=-100000,
+    thrust_max=100000,
+    thrust_efficiency=1,
+    propeller_efficiency=1,
+    as_xacro_macro=false) -%}
+
+    {% if as_xacro_macro %}
+        {% set namespace = '${namespace}' %}
+        {% set thruster_id = '${thruster_id}' %}
+        {% set origin_xyz = '${thruster_xyz}' %}
+        {% set origin_rpy = '${thruster_rpy}' %}
+
+        <!-- Add thruster macro -->
+
+        <xacro:macro 
+        name="thruster_macro" 
+        params="
+            namespace
+            thruster_id
+            thruster_xyz
+            thruster_rpy">
+    {% endif %}
+
+    {% if namespace == "" %}
+        {% set thruster_name = 'thruster_' ~ thruster_id %}
+    {% else %}
+        {% set thruster_name = namespace ~ '/thruster_' ~ thruster_id %}
+    {% endif %}
+
+    <link name="{{ thruster_name }}">
+        {{ inertias.cuboid(0.001, 0.01, 0.01, 0.01) }}
+        
+        {{ visual }}
+    </link>
+
+    <joint name="{{ thruster_name ~ '_joint' }}" type="continuous">
+        <origin xyz="{{ origin_xyz }}" rpy="{{ origin_rpy }}"/>
+        <axis xyz="{{ rotation_axis|join(' ') }}"/>
+        <parent link="{{ parent }}"/>
+        <child link="{{ thruster_name }}"/>
+    </joint>
+
+    <gazebo>
+        <!-- Thruster ROS plugin -->
+        <plugin 
+            name="{{ thruster_name ~ '_thruster_plugin' }}" 
+            filename="libuuv_thruster_ros_plugin.so">
+            <!-- Name of the thruster link -->
+            <linkName>{{ thruster_name }}</linkName>
+            <!-- Name of the joint between thruster and vehicle base link -->
+            <jointName>{{ thruster_name ~ "_joint" }}</jointName>
+            <!-- Make the thruster aware of its id -->
+            <thrusterID>{{ thruster_id }}</thrusterID>
+            <!-- Gain of the input command signal -->
+            <gain>{{ thruster_gain }}</gain>
+            <!-- Maximum allowed input value for the input signal for thruster unit -->
+            <clampMax>{{ clamp_max }}</clampMax>
+
+            <!-- Minimum allowed value for the input signal for thruster unit -->
+            <clampMin>{{ clamp_min }}</clampMin>
+
+            <!-- Minimum and maximum thrust force output allowed -->
+            <thrustMin>{{ thrust_min }}</thrustMin>
+            <thrustMax>{{ thrust_max }}</thrustMax>
+
+            <!--
+            Value from 0 to 1 to set the efficiency of the output thrust force
+            Default value is 1.0
+            -->
+            <thrust_efficiency>{{ thrust_efficiency }}</thrust_efficiency>
+
+            <!--
+            Value from 0 to 1 to set the efficiency of the propeller as a factor
+            to be multiplied to the current value of the state variable at each
+            iteration.
+            Default value is 1.0
+            -->
+            <propeller_efficiency>{{ propeller_efficiency }}</propeller_efficiency>
+            
+            {{ dynamics }}
+            
+            {{ conversion }}
+        </plugin>
+    </gazebo>
+
+    {% if as_xacro_macro %}
+        </xacro:macro>
+    {% endif %}
+
+{%- endmacro %}
+
+{% macro thruster_module_first_order_basic_fcn_macro(
+    namespace="",
+    thruster_id=0,
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0],
+    mesh_filename="",
+    mesh_scale=[1, 1, 1],
+    time_constant=0,
+    rotor_constant=0) %}
+
+    {{ thruster(
+        namespace=namespace,
+        thruster_id=thruster_id,
+        origin_xyz=origin_xyz,
+        origin_rpy=origin_rpy,
+        mesh_scale=mesh_scale,
+        mesh_filename=mesh_filename,
+        conversion=thruster_cf_basic_macro(rotor_constant),
+        dynamics=dynamics.first_order(time_constant)) }}
+{% endmacro %}
+
+{% macro thruster_first_order_dead_zone(
+    namespace="",
+    thruster_id=0,
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0],
+    mesh_filename="",
+    mesh_scale=[1, 1, 1],
+    time_constant=0,
+    rotor_constant_l=0, 
+    rotor_constant_r=0, 
+    delta_l=0, 
+    delta_r=0) %}
+
+    {{ thruster(
+        namespace=namespace,
+        thruster_id=thruster_id,
+        origin_xyz=origin_xyz,
+        origin_rpy=origin_rpy,
+        mesh_scale=mesh_scale,
+        mesh_filename=mesh_filename,
+        conversion=thruster_cf_dead_zone_macro(
+            rotor_constant_l, 
+            rotor_constant_r, 
+            delta_l, 
+            delta_r),
+        dynamics=dynamics.first_order(time_constant)) }}
+        
+{% endmacro %}
+
+{% macro thruster_first_order_linear_interp(
+    namespace="",
+    thruster_id=0,
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0],
+    mesh_filename="",
+    mesh_scale=[1, 1, 1],
+    time_constant=0,
+    input_values=[], 
+    output_values=[]) %}
+
+    {{ thruster(
+        namespace=namespace,
+        thruster_id=thruster_id,
+        origin_xyz=origin_xyz,
+        origin_rpy=origin_rpy,
+        mesh_scale=mesh_scale,
+        mesh_filename=mesh_filename,
+        conversion=thruster_cf_linear_interp_macro(
+            input_values, 
+            output_values),
+        dynamics=dynamics.first_order(time_constant)) }}
+
+{% endmacro %}

@@ -1,0 +1,66 @@
+{% import 'thrusters.urdf.jinja' as thrusters %}
+{% import 'materials.urdf.jinja' as materials %}
+{% import 'dynamics.urdf.jinja' as dynamics %}
+
+{% if add_thruster|default(true, true) %}
+
+    {% if conversion_function is not defined %}
+        {% set conversion_function = 'basic' %}
+    {% endif %}
+
+    {# Add conversion function snippet #}
+    {% if conversion_function == 'basic' %}
+        {% set cf = thrusters.thruster_cf_basic_macro(
+            rotor_constant=rotor_constant|default(0.002, true)) %}
+    {% elif conversion_function == 'linear_interp' %}
+        {% set cf = thrusters.thruster_cf_linear_interp_macro(
+            input_values=input_values|default([0, 0, 0], true),
+            output_values=output_values|default([0, 0, 0], true)) %}
+    {% elif conversion_function == 'dead_zone' %}
+        {% set cf = thrusters.thruster_cf_dead_zone_macro(
+            rotor_constant_l=rotor_constant_l|default(0, true), 
+            rotor_constant_r=rotor_constant_r|default(0, true), 
+            delta_l=delta_l|default(0, true), 
+            delta_r=delta_r|default(0, true)) %}
+    {% endif %}
+
+    {# Add rotor dynamic model snippet #}
+    {% if rotor_dynamic_model is not defined %}
+        {% set rotor_dynamic_model = 'first_order' %}
+    {% endif %}
+
+    {% if rotor_dynamic_model == 'first_order' %}
+        {% set dyn = dynamics.first_order(
+            time_constant=time_constant|default(0, true)) %}
+    {% elif rotor_dynamic_model == 'zero_order' %}
+        {% set dyn = dynamics.zero_order() %}
+    {% endif %}
+
+    {% set thruster_visual = thrusters.thruster_visual(
+        mesh_filename=mesh_filename|default('$(find uuv_assistants)/meshes/propeller_1.stl', true),
+        mesh_scale=mesh_scale|default([1, 1, 1], true),
+        origin_xyz=visual_origin_xyz|default([0, 0, 0], true),
+        origin_rpy=visual_origin_rpy|default([0, 0, 0], true),
+        color=visual_color|default('gray', true)) %}
+
+        {{ thrusters.thruster(
+            as_xacro_macro=true,
+            namespace=robot_namespace|default('${namespace}', true),
+            parent=parent|default('${namespace}/base_link', true),
+            rotation_axis=rotation_axis|default([1, 0, 0], true),
+            visual=thruster_visual,
+            dynamics=dyn,
+            conversion=cf,
+            thruster_gain=1,
+            clamp_min=thruster_clamp_min|default(0, true),
+            clamp_max=thruster_clamp_max|default(100000, true),
+            thrust_min=thrust_min|default(-100000, true),
+            thrust_max=thrust_max|default(100000, true),
+            thrust_efficiency=thrust_efficiency|default(1, true),
+            propeller_efficiency=propeller_efficiency|default(1, true)) }}
+
+{% endif %}
+
+{% if add_fin|default(false, true) %}
+
+{% endif %}

@@ -1,0 +1,54 @@
+{% macro inertial(
+    mass=0, 
+    origin_xyz=[0, 0, 0], 
+    origin_rpy=[0, 0, 0],
+    ixx=0,
+    iyy=0,
+    izz=0,
+    ixy=0,
+    ixz=0,
+    iyz=0) %}
+    <inertial>
+        <mass value="{{ mass }}"/>
+        <origin xyz="{{ origin_xyz|join(' ') }}" rpy="{{ origin_rpy|join(' ') }}"/>
+        <inertia 
+            ixx="{{ ixx }}"
+            iyy="{{ iyy }}"
+            izz="{{ izz }}"
+            ixy="{{ ixy }}"
+            ixz="{{ ixz }}"
+            iyz="{{ iyz }}"/>
+    </inertial>
+{% endmacro %}
+
+{% macro cylinder(mass, radius, length) -%}
+    {{ inertial(
+        mass=mass, 
+        ixx=1.0 / 12 * mass * (3 * radius**2 + length**2),
+        iyy=1.0 / 12 * mass * (3 * radius**2 + length**2),
+        izz=0.5 * mass * radius**2) }}
+{%- endmacro %}
+
+{% macro cuboid(mass, x_size, y_size, z_size) %}
+    {{ inertial(
+        mass=mass,
+        ixx=1.0 / 12 * mass * (y_size**2 + z_size**2),
+        iyy=1.0 / 12 * mass * (x_size**2 + z_size**2),
+        izz=1.0 / 12 * mass * (y_size**2 + x_size**2)) }}
+{% endmacro %}
+
+{% macro ellipsoid(mass, a, b, c) %}
+    {{ inertial(
+        mass=mass,
+        ixx=1.0 / 5 * mass * (b**2 + c**2),
+        iyy=1.0 / 5 * mass * (a**2 + c**2),
+        izz=1.0 / 5 * mass * (a**2 + b**2)) }}
+{% endmacro %}
+
+{% macro sphere(mass, radius) %}
+    {{ inertial(
+        mass=mass,
+        ixx=2.0 / 5 * mass * radius**2,
+        iyy=2.0 / 5 * mass * radius**2,
+        izz=2.0 / 5 * mass * radius**2) }}
+{% endmacro %}
