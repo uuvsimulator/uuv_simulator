@@ -1,0 +1,15 @@
+<launch>
+  <arg name="uuv_name" />
+  <arg name="output_topic" default="cmd_vel"/>
+  <!-- The type of message can also be geometry_msgs/Accel -->
+  <arg name="message_type" default="twist"/>
+
+  <group ns="$(arg uuv_name)">
+    <node pkg="uuv_teleop" type="vehicle_keyboard_teleop.py" name="keyboard_uuv_velocity_teleop" 	output="screen">
+      <remap from="output" to="/$(arg uuv_name)/$(arg output_topic)"/>
+      <rosparam subst_value="true">
+        type: $(arg message_type)
+      </rosparam>
+    </node>
+  </group>
+</launch>
