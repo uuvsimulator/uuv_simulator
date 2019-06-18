@@ -183,11 +183,11 @@
 {%- endmacro %}
 
 {% macro thruster_module_first_order_basic_fcn_macro(
-    namespace="",
+    namespace='',
     thruster_id=0,
     origin_xyz=[0, 0, 0],
     origin_rpy=[0, 0, 0],
-    mesh_filename="",
+    mesh_filename='',
     mesh_scale=[1, 1, 1],
     time_constant=0,
     rotor_constant=0) %}
@@ -204,11 +204,11 @@
 {% endmacro %}
 
 {% macro thruster_first_order_dead_zone(
-    namespace="",
+    namespace='',
     thruster_id=0,
     origin_xyz=[0, 0, 0],
     origin_rpy=[0, 0, 0],
-    mesh_filename="",
+    mesh_filename='',
     mesh_scale=[1, 1, 1],
     time_constant=0,
     rotor_constant_l=0, 
@@ -233,11 +233,11 @@
 {% endmacro %}
 
 {% macro thruster_first_order_linear_interp(
-    namespace="",
+    namespace='',
     thruster_id=0,
     origin_xyz=[0, 0, 0],
     origin_rpy=[0, 0, 0],
-    mesh_filename="",
+    mesh_filename='',
     mesh_scale=[1, 1, 1],
     time_constant=0,
     input_values=[], 
