@@ -1,66 +1,126 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
 {% import 'thrusters.urdf.jinja' as thrusters %}
+{% import 'fins.urdf.jinja' as fins %}
 {% import 'materials.urdf.jinja' as materials %}
 {% import 'dynamics.urdf.jinja' as dynamics %}
 
 {% if add_thruster|default(true, true) %}
 
-    {% if conversion_function is not defined %}
-        {% set conversion_function = 'basic' %}
+    {% if thruster_conversion_function is not defined %}
+        {% set thruster_conversion_function = 'basic' %}
     {% endif %}
 
     {# Add conversion function snippet #}
-    {% if conversion_function == 'basic' %}
-        {% set cf = thrusters.thruster_cf_basic_macro(
-            rotor_constant=rotor_constant|default(0.002, true)) %}
-    {% elif conversion_function == 'linear_interp' %}
-        {% set cf = thrusters.thruster_cf_linear_interp_macro(
-            input_values=input_values|default([0, 0, 0], true),
-            output_values=output_values|default([0, 0, 0], true)) %}
-    {% elif conversion_function == 'dead_zone' %}
-        {% set cf = thrusters.thruster_cf_dead_zone_macro(
-            rotor_constant_l=rotor_constant_l|default(0, true), 
-            rotor_constant_r=rotor_constant_r|default(0, true), 
-            delta_l=delta_l|default(0, true), 
-            delta_r=delta_r|default(0, true)) %}
+    {% if thruster_conversion_function == 'basic' %}
+        {% set thruster_cf = thrusters.thruster_cf_basic_macro(
+            rotor_constant=thruster_rotor_constant|default(0.002, true)) %}
+    {% elif thruster_conversion_function == 'linear_interp' %}
+        {% set thruster_cf = thrusters.thruster_cf_linear_interp_macro(
+            input_values=thruster_input_values|default([0, 0, 0], true),
+            output_values=thruster_output_values|default([0, 0, 0], true)) %}
+    {% elif thruster_conversion_function == 'dead_zone' %}
+        {% set thruster_cf = thrusters.thruster_cf_dead_zone_macro(
+            rotor_constant_l=thruster_rotor_constant_l|default(0, true), 
+            rotor_constant_r=thruster_rotor_constant_r|default(0, true), 
+            delta_l=thruster_delta_l|default(0, true), 
+            delta_r=thruster_delta_r|default(0, true)) %}
     {% endif %}
 
     {# Add rotor dynamic model snippet #}
-    {% if rotor_dynamic_model is not defined %}
-        {% set rotor_dynamic_model = 'first_order' %}
+    {% if thruster_rotor_dynamic_model is not defined %}
+        {% set thruster_rotor_dynamic_model = 'first_order' %}
     {% endif %}
 
-    {% if rotor_dynamic_model == 'first_order' %}
-        {% set dyn = dynamics.first_order(
-            time_constant=time_constant|default(0, true)) %}
-    {% elif rotor_dynamic_model == 'zero_order' %}
-        {% set dyn = dynamics.zero_order() %}
+    {% if thruster_rotor_dynamic_model == 'first_order' %}
+        {% set thruster_dyn = dynamics.first_order(
+            time_constant=thruster_time_constant|default(0, true)) %}
+    {% elif thruster_rotor_dynamic_model == 'zero_order' %}
+        {% set thruster_dyn = dynamics.zero_order() %}
+    {% elif thruster_rotor_dynamic_model == 'yoerger' %}
+        {% set thruster_dyn = dynamics.yoerger(
+            alpha=thruster_alpha|default(0, true),
+            beta=thruster_beta|default(0, true)) %}
+    {% elif thruster_rotor_dynamic_model == 'bessa' %}
+        {% set thruster_dyn = dynamics.bessa(
+            Jmsp=thruster_Jmsp|default(0, true),
+            Kv1=thruster_Kv1|default(0, true),
+            Kv2=thruster_Kv2|default(0, true),
+            Kt=thruster_Kt|default(0, true),
+            Rm=thruster_Rm|default(0, true)) %}
     {% endif %}
 
     {% set thruster_visual = thrusters.thruster_visual(
-        mesh_filename=mesh_filename|default('$(find uuv_assistants)/meshes/propeller_1.stl', true),
-        mesh_scale=mesh_scale|default([1, 1, 1], true),
-        origin_xyz=visual_origin_xyz|default([0, 0, 0], true),
-        origin_rpy=visual_origin_rpy|default([0, 0, 0], true),
-        color=visual_color|default('gray', true)) %}
+        mesh_filename=thruster_mesh_filename|default('$(find uuv_assistants)/meshes/propeller_1.stl', true),
+        mesh_scale=thruster_mesh_scale|default([1, 1, 1], true),
+        origin_xyz=thruster_visual_origin_xyz|default([0, 0, 0], true),
+        origin_rpy=thruster_visual_origin_rpy|default([0, 0, 0], true),
+        color=thruster_visual_color|default('gray', true)) %}
 
-        {{ thrusters.thruster(
-            as_xacro_macro=true,
-            namespace=robot_namespace|default('${namespace}', true),
-            parent=parent|default('${namespace}/base_link', true),
-            rotation_axis=rotation_axis|default([1, 0, 0], true),
-            visual=thruster_visual,
-            dynamics=dyn,
-            conversion=cf,
-            thruster_gain=1,
-            clamp_min=thruster_clamp_min|default(0, true),
-            clamp_max=thruster_clamp_max|default(100000, true),
-            thrust_min=thrust_min|default(-100000, true),
-            thrust_max=thrust_max|default(100000, true),
-            thrust_efficiency=thrust_efficiency|default(1, true),
-            propeller_efficiency=propeller_efficiency|default(1, true)) }}
+    {{ thrusters.thruster(
+        as_xacro_macro=true,
+        namespace=robot_namespace|default('${namespace}', true),
+        parent=parent|default('${namespace}/base_link', true),
+        rotation_axis=rotation_axis|default([1, 0, 0], true),
+        visual=thruster_visual,
+        dynamics=thruster_dyn,
+        conversion=thruster_cf,
+        thruster_gain=thruster_gain|default(1, true),
+        clamp_min=thruster_clamp_min|default(0, true),
+        clamp_max=thruster_clamp_max|default(100000, true),
+        thrust_min=thrust_min|default(-100000, true),
+        thrust_max=thrust_max|default(100000, true),
+        thrust_efficiency=thrust_efficiency|default(1, true),
+        propeller_efficiency=thruster_propeller_efficiency|default(1, true)) }}
 
 {% endif %}
 
 {% if add_fin|default(false, true) %}
+    {# Add the fin joint's dynamic model #}
+    {% if fin_rotor_dynamic_model == 'first_order' %}
+        {% set fin_dyn = dynamics.first_order(
+            time_constant=fin_time_constant|default(0, true)) %}
+    {% elif fin_rotor_dynamic_model == 'zero_order' %}
+        {% set fin_dyn = dynamics.zero_order() %}
+    {% endif %}
+
+    {# Add lift and drag model #}
+    {% if fin_lift_drag_model == 'two_lines' %}
+        {% set fin_ld = fins.two_lines(
+            area=fin_area|default(0, true),
+            fluid_density=fluid_density|default(1025, true),
+            a0=fin_a0|default(0, true),
+            alpha_stall=fin_alpha_stall|default(0, true),
+            cla=fin_cla|default(0, true),
+            cla_stall=fin_cla_stall|default(0, true),
+            cda=fin_cda|default(0, true),
+            cda_stall=fin_cda_stall|default(0, true)) %}
+    {% elif fin_lift_drag_model == 'quadratic' %}
+        {% set fin_ld = fins.quadratic(
+            lift_constant=fin_lift_constant|default(0, true),
+            drag_constant=fin_drag_constant|default(0, true)) %}
+    {% endif %}
+
+    {% set fin_visual = fins.fin_visual(
+        mesh_filename=fin_mesh_filename|default('$(find uuv_assistants)/meshes/fin.stl', true),
+        mesh_scale=fin_mesh_scale|default([1, 1, 1], true),
+        origin_xyz=fin_visual_origin_xyz|default([0, 0, 0], true),
+        origin_rpy=fin_visual_origin_rpy|default([0, 0, 0], true),
+        color=fin_visual_color|default('gray', true)) %}
+
+    {{ fins.fin(
+        namespace=robot_namespace|default('${namespace}', true),
+        parent=parent|default('${namespace}/base_link', true), 
+        visual=fin_visual,
+        dynamics=fin_dyn,
+        lift_and_drag=fin_ld,
+        rotation_axis=fin_rotation_axis|default([0, 0, 1], true),
+        fin_min_joint_limit=fin_min_joint_limit|default(-1.57, true),
+        fin_max_joint_limit=fin_max_joint_limit|default(1.57, true),
+        current_velocity_topic=current_velocity_topic|default('/hydrodynamics/current_velocity', true),
+        as_xacro_macro=true) }}
 
 {% endif %}
+
+</xacro:macro>
