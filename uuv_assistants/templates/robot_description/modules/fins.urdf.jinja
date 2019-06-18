@@ -132,3 +132,23 @@
     {% endif %}
 
 {% endmacro %}
+
+{# Fin visuals #}
+{% macro fin_visual(
+    mesh_filename='',
+    mesh_scale=[1, 1, 1],
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0],
+    color='') %}
+
+    <visual>
+        <origin xyz="{{ origin_xyz|join(' ') }}" rpy="{{ origin_rpy|join(' ') }}"/>
+        <geometry>
+            <mesh 
+                filename="{{ mesh_filename }}" 
+                scale="{{ mesh_scale|join(' ') }}"/>
+        </geometry>
+        <material name="{{ color }}"/>        
+    </visual>
+    
+{% endmacro %}
