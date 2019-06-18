@@ -1,0 +1,7 @@
+{% macro box(x, y, z) %}
+    <collision>
+        <geometry>
+            <box size="{{ x }} {{ y }} {{ z }}"/>
+        </geometry>
+    </collision>
+{% endmacro %}

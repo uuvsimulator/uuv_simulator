@@ -1,0 +1,319 @@
+
+{% import 'inertias.urdf.jinja' as inertias %}
+{% import 'collisions.urdf.jinja' as collisions %}
+{% import 'def.urdf.jinja' as defs %}
+
+{% macro gps() %}
+
+{% endmacro %}
+
+{% macro pose_3d() %}
+
+{% endmacro %}
+
+{% macro forward_multibeam_p300() %}
+
+{% endmacro %}
+
+{% macro dvl() %}
+
+{% endmacro %}
+
+{% macro rpt() %}
+
+{% endmacro %}
+
+{% macro pressure() %}
+
+{% endmacro %}
+
+{# IMU macros#}
+{% macro default_imu(
+    namespace='${namespace}',
+    parent_link='${namespace}/base_link',
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0]) %}
+
+    <xacro:default_imu 
+        namespace="{{ namespace }}" 
+        parent_link="{{ parent_link }}">
+        <origin 
+            xyz="{{ origin_xyz|join(' ') }}" 
+            rpy="{{ origin_rpy|join(' ') }}"/>
+    </xacro:default_imu>
+{% endmacro %}
+
+
+{# Camera macros #}
+
+{% macro regular_camera(
+    namespace='${namespace}',
+    parent_link='${namespace}/base_link'
+    suffix='',
+    mass=0.001,
+    visual_mesh_filename='file://$(find uuv_assistants)/meshes/oe14-372.dae',
+    visual_mesh_scale=[1, 1, 1],
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0],
+    update_rate=30,
+    hfov=1.5125,
+    width=768,
+    height=492,
+    format='R8G8B8',
+    clip_near=0.05,
+    clip_far=3000,
+    noise_mean=0.0,
+    noise_stddev=0.02,
+    attenuation=[0, 0, 0],
+    background=[0, 0, 0],
+    topic_prefix='camera',
+    point_cloud_cutoff=10.0
+) %}
+
+    {% if namespace == '' %}
+        {% set prefix = '' %}
+    {% else %}
+        {% set prefix = namespace ~ '/' %}
+    {% endif %}
+
+    <link name="{{ prefix ~ 'camera' ~ suffix ~ '_link' }}">
+        {{ inertias.cuboid(mass, 0.001, 0.001, 0.001) }}
+
+        <visual>
+            <geometry>
+                <mesh filename="{{ visual_mesh_filename }}" scale="{{ visual_mesh_scale|join(' ') }}"/>
+            </geometry>
+        </visual>
+
+        {{ collisions.box(0.001, 0.001, 0.001) }}
+        
+    </link>
+
+    <joint name="{{ prefix ~ 'camera' suffix ~ '_joint' }}" type="revolute">
+      <origin xyz="{{ origin_xyz|join(' ') }}" rpy="{{ origin_rpy|join(' ') }}"/>
+      <parent link="{{ parent_link }}" />
+      <child link="{{ prefix ~ 'camera' ~ suffix ~ '_link' }}" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <link name="{{ prefix ~ 'camera' ~ suffix ~ '_link_optical' }}">
+        {{ inertias.cuboid(mass, 0.001, 0.001, 0.001) }}
+
+        {{ collisions.box(0.001, 0.001, 0.001) }}
+    </link>
+
+    <joint name="{{ prefix ~ 'camera' ~ suffix ~ '_optical_joint' }}" type="revolute">
+      <origin xyz="0 0 0" rpy="{{ -0.5 * defs.pi }} 0 {{ -0.5 * defs.pi }}"/>
+      <parent link="{{ prefix ~ 'camera' ~ suffix ~ '_link' }}"/>
+      <child link="{{ prefix ~ 'camera' ~ suffix ~ '_link_optical' }}"/>
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo reference="{{ prefix ~ 'camera' ~ suffix ~ '_link' }}">
+      <sensor type="camera" name="{{ 'camera' ~ suffix }}">
+        <update_rate>{{ update_rate }}</update_rate>
+        <camera name="{{ 'camera' ~ suffix }}">
+          <horizontal_fov>{{ hfov }}</horizontal_fov>
+          <image>
+            <width>{{ width }}</width>
+            <height>{{ height }}</height>
+            <format>{{ format }}</format>
+          </image>
+          <clip>
+            <near>{{ clip_near }}</near>
+            <far>{{ clip_far }}</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>{{ noise_mean }}</mean>
+            <stddev>{{ noise_stddev }}</stddev>
+          </noise>
+        </camera>
+        <plugin name="{{ 'camera' ~ suffix ~ '_controller' }}" filename="libgazebo_ros_camera.so">
+          <updateRate>{{ update_rate }}</updateRate>
+          <cameraName>{{ prefix ~ 'camera' ~ suffix }}</cameraName>
+          <frameName>{{ 'camera' ~ suffix ~ '_link_optical' }}</frameName>
+
+          <attenuationR>{{ attenuation[0] }}</attenuationR>
+          <attenuationG>{{ attenuation[1] }}</attenuationG>
+          <attenuationB>{{ attenuation[2] }}</attenuationB>
+
+          <backgroundR>{{ background[0] }}</backgroundR>
+          <backgroundG>{{ background[1] }}</backgroundG>
+          <backgroundB>{{ background[2] }}</backgroundB>
+
+          <!-- required for ros depth cam -->
+          <imageTopicName>{{ topic_prefix }}_image</imageTopicName>
+          <pointCloudTopicName>{{ topic_prefix }}_cloud</pointCloudTopicName>
+          <depthImageTopicName>{{ topic_prefix }}_depth</depthImageTopicName>
+          <depthImageCameraInfoTopicName>{{ topic_prefix }}_depth_info</depthImageCameraInfoTopicName>
+          <pointCloudCutoff>{{ point_cloud_cutoff }}</pointCloudCutoff>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+{% endmacro %}
+
+{% macro underwater_camera(
+    namespace='${namespace}',
+    parent_link='${namespace}/base_link'
+    suffix='',
+    mass=0.001,
+    visual_mesh_filename='file://$(find uuv_assistants)/meshes/oe14-372.dae',
+    visual_mesh_scale=[1, 1, 1],
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0],
+    update_rate=30,
+    hfov=1.5125,
+    width=768,
+    height=492,
+    format='R8G8B8',
+    clip_near=0.05,
+    clip_far=3000,
+    noise_mean=0.0,
+    noise_stddev=0.02,
+    attenuation=[0.01, 0.01, 0.003],
+    background=[0, 0, 0],
+    topic_prefix='camera',
+    point_cloud_cutoff=10.0
+) %}
+
+    {% if namespace == '' %}
+        {% set prefix = '' %}
+    {% else %}
+        {% set prefix = namespace ~ '/' %}
+    {% endif %}
+
+    <link name="{{ prefix ~ 'camera' ~ suffix ~ '_link' }}">
+        {{ inertias.cuboid(mass, 0.001, 0.001, 0.001) }}
+
+        <visual>
+            <geometry>
+                <mesh filename="{{ visual_mesh_filename }}" scale="{{ visual_mesh_scale|join(' ') }}"/>
+            </geometry>
+        </visual>
+
+        {{ collisions.box(0.001, 0.001, 0.001) }}
+        
+    </link>
+
+    <joint name="{{ prefix ~ 'camera' suffix ~ '_joint' }}" type="revolute">
+      <origin xyz="{{ origin_xyz|join(' ') }}" rpy="{{ origin_rpy|join(' ') }}"/>
+      <parent link="{{ parent_link }}" />
+      <child link="{{ prefix ~ 'camera' ~ suffix ~ '_link' }}" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <link name="{{ prefix ~ 'camera' ~ suffix ~ '_link_optical' }}">
+        {{ inertias.cuboid(mass, 0.001, 0.001, 0.001) }}
+
+        {{ collisions.box(0.001, 0.001, 0.001) }}
+    </link>
+
+    <joint name="{{ prefix ~ 'camera' ~ suffix ~ '_optical_joint' }}" type="revolute">
+      <origin xyz="0 0 0" rpy="{{ -0.5 * defs.pi }} 0 {{ -0.5 * defs.pi }}"/>
+      <parent link="{{ prefix ~ 'camera' ~ suffix ~ '_link' }}"/>
+      <child link="{{ prefix ~ 'camera' ~ suffix ~ '_link_optical' }}"/>
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo reference="{{ prefix ~ 'camera' ~ suffix ~ '_link' }}">
+      <sensor type="camera" name="{{ 'camera' ~ suffix }}">
+        <update_rate>{{ update_rate }}</update_rate>
+        <camera name="{{ 'camera' ~ suffix }}">
+          <horizontal_fov>{{ hfov }}</horizontal_fov>
+          <image>
+            <width>{{ width }}</width>
+            <height>{{ height }}</height>
+            <format>{{ format }}</format>
+          </image>
+          <clip>
+            <near>{{ clip_near }}</near>
+            <far>{{ clip_far }}</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>{{ noise_mean }}</mean>
+            <stddev>{{ noise_stddev }}</stddev>
+          </noise>
+        </camera>
+        <plugin name="{{ 'camera' ~ suffix ~ '_controller' }}" filename="libgazebo_ros_camera.so">
+          <updateRate>{{ update_rate }}</updateRate>
+          <cameraName>{{ prefix ~ 'camera' ~ suffix }}</cameraName>
+          <frameName>{{ 'camera' ~ suffix ~ '_link_optical' }}</frameName>
+
+          <attenuationR>{{ attenuation[0] }}</attenuationR>
+          <attenuationG>{{ attenuation[1] }}</attenuationG>
+          <attenuationB>{{ attenuation[2] }}</attenuationB>
+
+          <backgroundR>{{ background[0] }}</backgroundR>
+          <backgroundG>{{ background[1] }}</backgroundG>
+          <backgroundB>{{ background[2] }}</backgroundB>
+
+          <!-- required for ros depth cam -->
+          <imageTopicName>{{ topic_prefix }}_image</imageTopicName>
+          <pointCloudTopicName>{{ topic_prefix }}_cloud</pointCloudTopicName>
+          <depthImageTopicName>{{ topic_prefix }}_depth</depthImageTopicName>
+          <depthImageCameraInfoTopicName>{{ topic_prefix }}_depth_info</depthImageCameraInfoTopicName>
+          <pointCloudCutoff>{{ point_cloud_cutoff }}</pointCloudCutoff>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+{% endmacro %}
+
+{% macro default_camera(
+    namespace='${namespace}',
+    parent_link='${namespace}/base_link',
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0],
+    suffix='',
+    visual_mesh_filename='file://$(find uuv_assistants)/meshes/oe14-372.dae',
+    visual_mesh_scale=[1, 1, 1]) %}
+    
+    {{ regular_camera(
+        namespace=namespace,
+        parent_link=parent_link,
+        origin_xyz=origin_xyz,
+        origin_rpy=origin_rpy,
+        suffix=suffix,
+        update_rate=30,
+        mass=0.001,
+        hfov=1.5125,
+        width=768,
+        height=492,
+        noise_stddev=0.02,
+        visual_mesh_filename=visual_mesh_filename,
+        visual_mesh_scale=visual_mesh_scale) }}
+
+{% endmacro %}
+
+{% macro wideangle_camera(
+    namespace='${namespace}',
+    parent_link='${namespace}/base_link',
+    origin_xyz=[0, 0, 0],
+    origin_rpy=[0, 0, 0],
+    suffix='',
+    visual_mesh_filename='file://$(find uuv_assistants)/meshes/oe14-372.dae',
+    visual_mesh_scale=[1, 1, 1]) %}
+
+    {{ regular_camera(
+        namespace=namespace,
+        parent_link=parent_link,
+        origin_xyz=origin_xyz,
+        origin_rpy=origin_rpy,
+        suffix=suffix,
+        update_rate=30,
+        mass=0.001,
+        hfov=1.8125,
+        width=768,
+        height=492,
+        noise_stddev=0.02,
+        visual_mesh_filename=visual_mesh_filename,
+        visual_mesh_scale=visual_mesh_scale) }}
+
+{% endmacro %}

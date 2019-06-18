@@ -1,0 +1,159 @@
+{% macro fossen(
+    namespace='',
+    cob=[0, 0, 0],
+    volume=0,
+    length=0,
+    width=0,
+    height=0,
+    link='base_link',
+    added_mass=[],
+    linear_damping=[],
+    linear_damping_forward_speed=[],
+    quadratic_damping=[],
+    is_neutrally_buoyant=false) %}
+
+    {% if namespace == '' %}
+        {% set namespace = '' %}
+    {% else %}
+        {% set namespace = namespace ~ '/' %}
+    {% endif %}
+
+    <link name="{{ namespace ~ link }}">
+        <!-- This flag will make the link neutrally buoyant -->
+        {% if is_neutrally_buoyant %}
+            <neutrally_buoyant>1</neutrally_buoyant>
+        {% else %}
+            <neutrally_buoyant>0</neutrally_buoyant>
+        {% endif %}
+
+        <!-- Link's volume -->
+        <volume>{{ volume }}</volume>
+
+        <!-- Link's bounding box, it is used to recalculate the immersed
+        volume when close to the surface.
+        This is a workaround the invalid bounding box given by Gazebo-->
+        <box>
+          <width>{{ width }}</width>
+          <length>{{ length }}</length>
+          <height>{{ height }}</height>
+        </box>
+
+        <!-- Center of buoyancy wrt the center of mass in the ENU frame convention-->
+        <center_of_buoyancy>{{ cob|join(' ') }}</center_of_buoyancy>
+
+        <hydrodynamic_model>
+            <type>fossen</type>
+
+            <!-- Added mass -->
+            <added_mass>
+                {% if added_mass is none %}
+                    {% for i in range(36) %}
+                        0 {{ ' ' }}
+                    {% endfor %}
+                {% else %}
+                    {% for i in added_mass %}
+                        {{ i ~ ' ' }}
+                    {% endfor %}
+                {% endif %}
+            </added_mass>
+
+            <!--
+                The linear damping coefficients can be provided as a diagonal (6 elements)
+                or a full matrix (36 coefficients), like the added-mass coefficients above
+            -->
+            <linear_damping>
+                {% if linear_damping is none %}
+                    {% for i in range(6) %}
+                        0 {{ ' ' }}
+                    {% endfor %}
+                {% else %}
+                    {% for i in linear_damping %}
+                        {{ i ~ ' ' }}
+                    {% endfor %}
+                {% endif %}
+            </linear_damping>
+            
+            <!--
+                The linear damping coefficients proportional to the forward speed
+                can be provided as a diagonal (6 elements) or a full matrix (36 coefficients),
+                like the added-mass coefficients above.
+                This matrix is mostly useful for slender bodies (e.g. AUVs with torpedo shape)
+            -->
+            <linear_damping_forward_speed>
+                {% if linear_damping_forward_speed is none %}
+                    {% for i in range(6) %}
+                        0 {{ ' ' }}
+                    {% endfor %}
+                {% else %}
+                    {% for i in linear_damping_forward_speed %}
+                        {{ i ~ ' ' }}
+                    {% endfor %}
+                {% endif %}
+            </linear_damping_forward_speed>
+            
+            <!--
+                The quadratic damping coefficients can be provided as a diagonal (6 elements)
+                or a full matrix (36 coefficients), like the added-mass coefficients above
+            -->
+            <quadratic_damping>
+                {% if quadratic_damping is none %}
+                    {% for i in range(6) %}
+                        0 {{ ' ' }}
+                    {% endfor %}
+                {% else %}
+                    {% for i in quadratic_damping %}
+                        {{ i ~ ' ' }}
+                    {% endfor %}
+                {% endif %}
+            </quadratic_damping>
+        </hydrodynamic_model>
+    </link>
+
+{% endmacro %}
+
+{% macro sphere(
+    namespace='',
+    cob=[0, 0, 0],
+    radius=0,
+    link='base_link',
+    is_neutrally_buoyant=false) %}
+
+    {% if namespace == '' %}
+        {% set namespace = '' %}
+    {% else %}
+        {% set namespace = namespace ~ '/' %}
+    {% endif %}
+
+    <link name="{{ namespace ~ link }}">
+        <!-- This flag will make the link neutrally buoyant -->
+        {% if is_neutrally_buoyant %}
+            <neutrally_buoyant>1</neutrally_buoyant>
+        {% else %}
+            <neutrally_buoyant>0</neutrally_buoyant>
+        {% endif %}
+
+        <!-- Link's volume -->
+        <volume>{{ 4.0 / 3.0 * radius**3 * 3.14159 }}</volume>
+
+        <!-- Link's bounding box, it is used to recalculate the immersed
+        volume when close to the surface.
+        This is a workaround the invalid bounding box given by Gazebo-->
+        <box>
+          <width>{{ 2 * radius }}</width>
+          <length>{{ 2 * radius }}</length>
+          <height>{{ 2 * radius }}</height>
+        </box>
+
+        <!-- Center of buoyancy wrt the center of mass in the ENU frame convention-->
+        <center_of_buoyancy>{{ cob|join(' ') }}</center_of_buoyancy>
+
+        <hydrodynamic_model>
+            <!-- 
+                This computes the added-mass and damping parameters 
+                for a sphere in the fluid with the given radius 
+            -->
+            <type>sphere</type>
+            <radius>{{ radius }}</radius>
+        </hydrodynamic_model>
+    </link>
+{% endmacro %}
