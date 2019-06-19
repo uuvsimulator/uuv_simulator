@@ -3,7 +3,8 @@
 *.swp
 
 # IDEs
-.vscode
+.vscode/c_cpp_properties.json
+.vscode/settings.json
 .idea
 .ropeproject
 .imdone
