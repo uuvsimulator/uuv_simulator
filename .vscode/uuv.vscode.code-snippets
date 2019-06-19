@@ -1,0 +1,169 @@
+{
+	"py_class_md_docstring": {
+		"prefix": "uuv.py.doc.class",
+		"scope": "python",
+		"description": "Python Class Docstring (Markdown)",
+		"body": [
+			"\"\"\"Class description",
+			"",
+			"> *Attributes*",
+			"",
+			"* `param` (*type:* `data_type`, *value:* `data`): Parameter description",
+			"",
+			"> *Input arguments*",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description",
+			"",
+			"\"\"\""
+		]
+	},
+
+	"py_func_md_docstring": {
+		"prefix": "uuv.py.doc.func",
+		"scope": "python",
+		"description": "Python Function Docstring (Markdown)",
+		"body": [
+			"\"\"\"Function description",
+			"",
+			"> *Input arguments*",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description",
+			"",
+			"> *Returns*",
+			"",
+			"Description of return values",
+			"\"\"\""
+		]
+	},
+
+	"py_module_md_docstring": {
+		"prefix": "uuv.py.doc.module",
+		"scope": "python",
+		"description": "Python Module Docstring (Markdown)",
+		"body": [
+			"\"\"\"Module description",
+			"\"\"\""
+		]
+	},
+
+	"py_param_md_docstring_snippet": {
+		"prefix": "uuv.py.doc.param",
+		"scope": "python",
+		"description": "Python Parameter Docstring Snippet (Markdown)",
+		"body": [
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description"
+		]
+	},
+
+	"py_property_md_docstring": {
+		"prefix": "uuv.py.doc.property",
+		"scope": "python",
+		"description": "Python Property Docstring (Markdown)",
+		"body": [
+			"\"\"\"`data_type`: Property description\"\"\""
+		]
+	},
+
+	"py_script_md_docstring": {
+		"prefix": "uuv.py.doc.script",
+		"scope": "python",
+		"description": "Python Script Docstring (Markdown)",
+		"body": [
+			"\"\"\"**Description**",
+			"",
+			"Script description, with some formulas",
+			"",
+			"$$",
+			"	\\dot{v_c}(t) + \\mu_c v_c(t) = w_c",
+			"$$",
+			"",
+			"**Input ROS parameters**",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `value`): Parameter description",
+			"",
+			"**Input parameters**",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `value`): Parameter description",
+			"",
+			"**Usage**",
+			"",
+			"Examples of usage",
+			"",
+			"```bash",
+			"rosrun pkg_name node_name --param value",
+			"```",
+			"",
+			"**Launch file snippet**",
+			"",
+			"```xml",
+			"<node name=\"name\" pkg=\"pkg_name\" type=\"name\" output=\"screen\">",
+			"	<rosparam subst_value=\"true\">",
+			"		param: value",
+			"	</rosparam>",
+			"</node>",
+			"```",
+			"**ROS services**",
+			"",
+			"> **`service_name`**",
+			"",
+			"*Service description file*",
+			"",
+			"[`service.file`](link_to_service_file)",
+			"",
+			"*Service call*",
+			"",
+			"```bash",
+			"rosservice call service_name",
+			"```",
+			"",
+			"Description of input parameters and return values",
+			"",
+			"\"\"\""
+		]
+	},
+
+	"py_uuv_license_header": {
+		"scope": "python",
+		"prefix": "uuv.py.license",
+		"description": "UUV Simulator License Header (Python)",
+		"body": [
+			"# Copyright (c) 2016-$CURRENT_YEAR The UUV Simulator Authors.",
+			"# All rights reserved.",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License."
+		]
+	},
+
+	"xml_uuv_license_header": {
+		"scope": "xml",
+		"prefix": "uuv.xml.license",
+		"description": "UUV Simulator License Header (XML)",
+		"body": [
+			"<!-- Copyright (c) 2016-$CURRENT_YEAR The UUV Simulator Authors.",
+			"	All rights reserved.",
+			"",
+			"	Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"	you may not use this file except in compliance with the License.",
+			"	You may obtain a copy of the License at",
+			"",
+			"	http://www.apache.org/licenses/LICENSE-2.0",
+			"",
+			"	Unless required by applicable law or agreed to in writing, software",
+			"	distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"	See the License for the specific language governing permissions and",
+			"	limitations under the License.",
+			"-->"
+		]
+	}	
+}
