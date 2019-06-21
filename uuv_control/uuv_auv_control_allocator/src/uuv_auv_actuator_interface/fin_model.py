@@ -15,7 +15,7 @@
 
 import rospy
 import numpy as np
-from tf.transformations import quaternion_matrix
+from tf_quaternion.transformations import quaternion_matrix
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 
 

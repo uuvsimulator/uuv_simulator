@@ -16,7 +16,7 @@
 
 import rospy
 import sys
-from tf.transformations import quaternion_from_euler
+from tf_quaternion.transformations import quaternion_from_euler
 from visualization_msgs.msg import Marker, MarkerArray
 from gazebo_msgs.srv import GetModelState
 

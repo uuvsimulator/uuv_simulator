@@ -21,7 +21,7 @@ import numpy as np
 from copy import deepcopy
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PolygonStamped, Point32
-from tf.transformations import euler_from_quaternion
+from tf_quaternion.transformations import euler_from_quaternion
 from gazebo_msgs.srv import GetWorldProperties, GetModelProperties
 
 

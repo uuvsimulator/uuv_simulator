@@ -27,7 +27,7 @@ from uuv_auv_control_allocator.msg import AUVCommand
 from std_msgs.msg import Time
 from nav_msgs.msg import Odometry
 from uuv_control_interfaces.vehicle import Vehicle
-from tf.transformations import euler_from_quaternion, \
+from tf_quaternion.transformations import euler_from_quaternion, \
     quaternion_multiply, quaternion_matrix, quaternion_conjugate, \
     quaternion_inverse
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint

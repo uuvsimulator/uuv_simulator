@@ -19,7 +19,7 @@ from nav_msgs.msg import Odometry
 from copy import deepcopy
 from rospy.numpy_msg import numpy_msg
 import tf2_ros
-from tf.transformations import quaternion_from_euler, euler_from_quaternion, \
+from tf_quaternion.transformations import quaternion_from_euler, euler_from_quaternion, \
     quaternion_matrix, rotation_matrix, is_same_transform
 
 try: 

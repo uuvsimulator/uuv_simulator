@@ -18,7 +18,7 @@ import rospy
 import numpy as np
 from uuv_control_interfaces import DPPIDControllerBase
 from geometry_msgs.msg import Wrench, Vector3
-from tf.transformations import quaternion_matrix
+from tf_quaternion.transformations import quaternion_matrix
 
 
 class ROV_NLPIDController(DPPIDControllerBase):

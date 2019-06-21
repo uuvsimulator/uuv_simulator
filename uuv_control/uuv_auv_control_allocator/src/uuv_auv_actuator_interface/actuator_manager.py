@@ -17,7 +17,7 @@ from fin_model import FinModel
 import rospy
 import numpy as np
 import tf2_ros
-from tf.transformations import quaternion_matrix
+from tf_quaternion.transformations import quaternion_matrix
 from uuv_thrusters.models import Thruster
 from uuv_auv_control_allocator.msg import AUVCommand
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped

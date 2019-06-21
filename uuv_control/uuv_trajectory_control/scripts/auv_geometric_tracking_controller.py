@@ -29,7 +29,7 @@ from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from uuv_control_msgs.msg import TrajectoryPoint
 from uuv_control_interfaces import DPControllerLocalPlanner
 import tf2_ros
-from tf.transformations import quaternion_matrix
+from tf_quaternion.transformations import quaternion_matrix
 
 
 class AUVGeometricTrackingController:
