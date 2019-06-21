@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import rospy
 import numpy as np
 from copy import deepcopy
 from geometry_msgs.msg import Vector3, PoseStamped, Quaternion
 import uuv_control_msgs.msg as uuv_control_msgs
 from nav_msgs.msg import Path
-from .wp_trajectory_generator import WPTrajectoryGenerator
 from uuv_waypoints import WaypointSet
+from .wp_trajectory_generator import WPTrajectoryGenerator
 from .trajectory_point import TrajectoryPoint
-from tf.transformations import euler_from_quaternion
+from tf_quaternion.transformations import euler_from_quaternion
 
 
 class TrajectoryGenerator(object):
+    """Trajectory generator based on waypoint and trajectory interpolation.
+    
+    > *Input arguments*
+    
+    * `full_dof` (*type:* `bool`, *default:* `False`): If `True`, generate 
+    the trajectory in 6 DoFs, otherwise `roll` and `pitch` are set to zero.
+    * `stamped_pose_only` (*type:* `bool`, *default:* `False`): If `True`
+    the output trajectory will set velocity and acceleration references
+    as zero.
+    """
     def __init__(self, full_dof=False, stamped_pose_only=False):
         self._points = None
         self._time = None
@@ -41,6 +50,7 @@ class TrajectoryGenerator(object):
 
     @property
     def points(self):
+        """List of `uuv_trajectory_generator.TrajectoryPoint`: List of trajectory points"""
         if self._wp_interp_on:
             return self._wp_interp.get_samples(0.001)
         else:
@@ -48,6 +58,7 @@ class TrajectoryGenerator(object):
 
     @property
     def time(self):
+        """List of `float`: List of timestamps"""
         return self._time
 
     def use_finite_diff(self, flag):
@@ -57,6 +68,17 @@ class TrajectoryGenerator(object):
         return self._wp_interp.use_finite_diff
 
     def set_stamped_pose_only(self, flag):
+        """Set flag to enable or disable computation of trajectory
+        points
+        
+        > *Input arguments*
+        
+        * `flag` (*type:* `bool`): Parameter description
+        
+        > *Returns*
+        
+        Description of return values
+        """
         self._wp_interp.stamped_pose_only = flag
 
     def is_using_stamped_pose_only(self):

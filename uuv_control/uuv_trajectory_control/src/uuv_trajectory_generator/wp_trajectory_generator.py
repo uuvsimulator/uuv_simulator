@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,28 +15,38 @@
 from rospy import get_namespace
 import numpy as np
 from copy import deepcopy
-from .trajectory_point import TrajectoryPoint
-from uuv_waypoints import Waypoint
-from uuv_waypoints import WaypointSet
-from tf.transformations import quaternion_multiply, quaternion_inverse, \
-    quaternion_conjugate, quaternion_about_axis
-from path_generator import PathGenerator
 import logging
 import sys
 import time
 
+from .trajectory_point import TrajectoryPoint
+from uuv_waypoints import Waypoint, WaypointSet
+from tf_quaternion.transformations import quaternion_multiply, quaternion_inverse, \
+    quaternion_conjugate, quaternion_about_axis
+
+from .path_generator import PathGenerator
+
 
 class WPTrajectoryGenerator(object):
-    """
-    Class that generates a trajectory from the interpolated path generated
+    """Class that generates a trajectory from the interpolated path generated
     from a set of waypoints. It uses the information given for the waypoint's
     maximum forward speed to estimate the velocity between waypoint and
     parametrize the interpolated curve.
     The velocity and acceleration profiles are the generated through finite
     discretization. These profiles are not optimized, this class is a
     simple solution for quick trajectory generation for waypoint navigation.
-    """
 
+    > *Input arguments*
+    
+    * `full_dof` (*type:* `bool`, *default:* `False`): `True` to generate 6 DoF 
+    trajectories
+    * `use_finite_diff` (*type:* `bool`, *default:* `True`): Use finite differentiation
+    if `True`, otherwise use the motion regression algorithm
+    * `interpolation_method` (*type:* `str`, *default:* `cubic`): Name of the interpolation
+    method, options are `cubic`, `dubins`, `lipb` or `linear`
+    * `stamped_pose_only` (*type:* `bool`, *default:* `False`): Generate only position 
+    and quaternion vectors, velocities and accelerations are set to zero
+    """
     def __init__(self, full_dof=False, use_finite_diff=True,
                  interpolation_method='cubic',
                  stamped_pose_only=False):
@@ -101,7 +111,7 @@ class WPTrajectoryGenerator(object):
 
     @property
     def started(self):
-        """Return true if the interpolation has started."""
+        """`bool`: Flag set to true if the interpolation has started."""
         return self._has_started
 
     @property
@@ -111,22 +121,26 @@ class WPTrajectoryGenerator(object):
 
     @property
     def closest_waypoint_idx(self):
-        """
-        Return the index of the closest waypoint to the current position on the
+        """`int`: Index of the closest waypoint to the current position on the
         path.
         """
         return self._path_generators[self._interp_method].closest_waypoint_idx
 
     @property
     def interpolator(self):
+        """`str`: Name of the interpolation method"""
         return self._path_generators[self._interp_method]
 
     @property
     def interpolator_tags(self):
+        """List of `str`: List of all interpolation method"""
         return [gen.get_label() for gen in PathGenerator.get_all_generators()]
 
     @property
     def use_finite_diff(self):
+        """`bool`: Use finite differentiation for computation of 
+        trajectory points
+        """
         return self._use_finite_diff
 
     @use_finite_diff.setter
@@ -136,6 +150,7 @@ class WPTrajectoryGenerator(object):
 
     @property
     def stamped_pose_only(self):
+        """`bool`: Flag to enable computation of stamped poses"""
         return self._stamped_pose_only
 
     @stamped_pose_only.setter
@@ -245,10 +260,12 @@ class WPTrajectoryGenerator(object):
         using a sequence of points with time stamps for one dimension. This
         is an implementation of the algorithm presented by [1].
 
-        [1] Sittel, Florian, Joerg Mueller, and Wolfram Burgard. Computing
-            velocities and accelerations from a pose time sequence in
-            three-dimensional space. Technical Report 272, University of
-            Freiburg, Department of Computer Science, 2013.
+        !!! note
+
+            [1] Sittel, Florian, Joerg Mueller, and Wolfram Burgard. Computing
+                velocities and accelerations from a pose time sequence in
+                three-dimensional space. Technical Report 272, University of
+                Freiburg, Department of Computer Science, 2013.
         """
 
         sx = 0.0
@@ -290,10 +307,12 @@ class WPTrajectoryGenerator(object):
         Compute translational and rotational velocities and accelerations in
         the inertial frame at the target time t.
 
-        [1] Sittel, Florian, Joerg Mueller, and Wolfram Burgard. Computing
-            velocities and accelerations from a pose time sequence in
-            three-dimensional space. Technical Report 272, University of
-            Freiburg, Department of Computer Science, 2013.
+        !!! note
+        
+            [1] Sittel, Florian, Joerg Mueller, and Wolfram Burgard. Computing
+                velocities and accelerations from a pose time sequence in
+                three-dimensional space. Technical Report 272, University of
+                Freiburg, Department of Computer Science, 2013.
         """
 
         lin_vel = np.zeros(3)
