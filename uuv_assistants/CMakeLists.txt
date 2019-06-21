@@ -9,6 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   topic_tools)
 
+catkin_python_setup()
+
 catkin_package(
   CATKIN_DEPENDS
     roscpp
