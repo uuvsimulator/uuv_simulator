@@ -24,6 +24,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>uuv_assistants</exec_depend>
 
   <test_depend>rosunit</test_depend>
   <test_depend>rostest</test_depend>
