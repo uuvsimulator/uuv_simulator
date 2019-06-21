@@ -17,7 +17,7 @@ import rospy
 import numpy as np
 import os
 import yaml
-from waypoint import Waypoint
+from .waypoint import Waypoint
 from uuv_control_msgs.msg import WaypointSet as WaypointSetMessage
 from visualization_msgs.msg import Marker, MarkerArray
 from nav_msgs.msg import Path
