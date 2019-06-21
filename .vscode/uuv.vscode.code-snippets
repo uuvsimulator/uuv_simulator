@@ -166,6 +166,231 @@
 			"-->"
 		]
 	},
+
+	"xml_uuv_xacro_file": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.file",
+		"description": "Xacro file (XML)",
+		"body": [
+			"<?xml version=\"1.0\"?>",
+			"<robot xmlns:xacro=\"http://www.ros.org/wiki/xacro\">",
+			"",
+			"</robot>"
+		]
+	},
+
+	"xml_uuv_xacro_include": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.include",
+		"description": "Xacro include (XML)",
+		"body": [
+			"<xacro:include filename=\"$(find pkg_name)/path/file.urdf.xacro\"/>"
+		]
+	},
+
+	"xml_uuv_xacro_property": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.property",
+		"description": "Xacro property (XML)",
+		"body": [
+			"<xacro:property name=\"param_name\" value=\"param_value\"/>"
+		]
+	},
+
+	"xml_uuv_xacro_macro": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.macro",
+		"description": "Xacro macro (XML)",
+		"body": [
+			"<xacro:macro name=\"macro_name\" params=\"param_1 param_2\">",
+			"",
+			"</xacro:macro>"
+		]
+	},
+
+	"xml_uuv_xacro_insert_block": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.insert_block",
+		"description": "Xacro insert block (XML)",
+		"body": [
+			"<xacro:insert_block name=\"block_name\"/>"
+		]
+	},
+
+	"xml_uuv_xacro_hydrodynamic_model_link": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.link",
+		"description": "Base for the hydrodynamic model description for one link",
+		"body": [
+			"<link name=\"link_name\">",
+			"\t<neutrally_buoyant>0</neutrally_buoyant>",
+			"",
+			"\t<volume>0</volume>",
+			"",
+			"\t<box>",
+			"\t\t<width>0</width>",
+			"\t\t<length>0</length>",
+			"\t\t<height>0</height>",
+			"\t</box>",
+			"",
+			"<center_of_buoyancy>0 0 0</center_of_buoyancy>",
+			"",
+			"<hydrodynamic_model>",
+			"",
+			"\t<!-- Add the desired hydrodynamic model description here -->",
+			"",
+			"</hydrodynamic_model>",
+			"</link>"
+		]
+	},
+
+	"xml_uuv_xacro_hydrodynamic_model_fossen": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.fossen",
+		"description": "Inputs for Fossen's hydrodynamic model (XML)",
+		"body": [
+			"<hydrodynamic_model>",
+			"\t<type>fossen</type>",
+			"",
+			"\t<added_mass>",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t</added_mass>",
+			"",
+			"\t<linear_damping>",
+			"\t\t0 0 0 0 0 0",
+			"\t</linear_damping>",
+			"",
+			"\t<linear_damping_forward_speed>",
+			"\t\t0 0 0 0 0 0",
+			"\t</linear_damping_forward_speed>",
+			"",
+			"\t<quadratic_damping>",
+			"\t\t0 0 0 0 0 0",
+			"\t</quadratic_damping>",
+			"</hydrodynamic_model>"
+		]
+	},
+
+	"xml_uuv_xacro_hydrodynamic_model_sphere": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.sphere",
+		"description": "Inputs for an approximated Fossen's hydrodynamic model for a sphere (XML)",
+		"body": [
+			"<hydrodynamic_model>",
+          	"\t<type>sphere</type>",
+          	"\t<radius>0</radius>",
+        	"</hydrodynamic_model>"
+		]
+	},
+
+	"xml_uuv_xacro_underwater_object_plugin_sphere": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.sphere.underwater_object_plugin",
+		"description": "Snippet for the uuv_underwater_object plugin using Fossen's model for a sphere (XML)",
+		"body": [
+			"<gazebo>",
+      		"\t<plugin name=\"uuv_plugin\" filename=\"libuuv_underwater_object_ros_plugin.so\">",
+        	"\t\t<fluid_density>1025.0</fluid_density>",
+        	"\t\t<flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>",
+			"\t\t<debug>0</debug>",
+			"",
+			"\t\t<link name=\"link_name\">",
+			"\t\t\t<neutrally_buoyant>0</neutrally_buoyant>",
+			"",
+			"\t\t\t<volume>0</volume>",
+			"",
+			"\t\t\t<box>",
+			"\t\t\t\t<width>0</width>",
+			"\t\t\t\t<length>0</length>",
+			"\t\t\t\t<height>0</height>",
+			"\t\t\t</box>",
+			"",
+			"\t\t<center_of_buoyancy>0 0 0</center_of_buoyancy>",
+			"",
+			"\t\t<hydrodynamic_model>",
+			"\t\t\t<type>sphere</type>",
+          	"\t\t\t<radius>0</radius>",
+			"\t\t</hydrodynamic_model>",
+			"</link>",
+			"\t</plugin>",
+    		"</gazebo>"
+		]
+	},
+
+	"xml_uuv_xacro_default_joint_state_publisher": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.joint_state_publisher",
+		"description": "Xacro snippet for the joint state publisher (XML)",
+		"body": [
+			"<xacro:macro name=\"default_joint_state_publisher\" params=\"namespace update_rate\">",
+    		"\t<gazebo>",
+      		"\t\t<plugin name=\"uuv_joint_state_publisher\" filename=\"libuuv_joint_state_publisher.so\">",
+        	"\t\t\t<robotNamespace>${namespace}</robotNamespace>",
+        	"\t\t\t<updateRate>${update_rate}</updateRate>",
+			"\t\t</plugin>",
+    		"\t</gazebo>",
+  			"</xacro:macro>"
+		]
+	},
+
+	"xml_uuv_xacro_underwater_object_plugin_fossen": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.fossen.underwater_object_plugin",
+		"description": "Snippet for the uuv_underwater_object plugin using Fossen's model (XML)",
+		"body": [
+			"<gazebo>",
+      		"\t<plugin name=\"uuv_plugin\" filename=\"libuuv_underwater_object_ros_plugin.so\">",
+        	"\t\t<fluid_density>1025.0</fluid_density>",
+        	"\t\t<flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>",
+			"\t\t<debug>0</debug>",
+			"",
+			"\t\t<link name=\"link_name\">",
+			"\t\t\t<neutrally_buoyant>0</neutrally_buoyant>",
+			"",
+			"\t\t\t<volume>0</volume>",
+			"",
+			"\t\t\t<box>",
+			"\t\t\t\t<width>0</width>",
+			"\t\t\t\t<length>0</length>",
+			"\t\t\t\t<height>0</height>",
+			"\t\t\t</box>",
+			"",
+			"\t\t<center_of_buoyancy>0 0 0</center_of_buoyancy>",
+			"",
+			"\t\t<hydrodynamic_model>",
+			"\t\t\t<type>fossen</type>",
+			"",
+			"\t\t\t<added_mass>",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t</added_mass>",
+			"",
+			"\t\t\t<linear_damping>",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t</linear_damping>",
+			"",
+			"\t\t\t<linear_damping_forward_speed>",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t</linear_damping_forward_speed>",
+			"",
+			"\t\t\t<quadratic_damping>",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t</quadratic_damping>",
+			"\t\t</hydrodynamic_model>",
+			"</link>",
+			"\t</plugin>",
+    		"</gazebo>"
+		]
+	},
 	
 	"cpp_uuv_license_header": {
 		"scope": "cpp",
