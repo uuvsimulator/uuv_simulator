@@ -12,8 +12,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Waypoint description for construction of 3D paths and trajectories.
-"""
+"""Waypoint description for construction of 3D paths and trajectories."""
+
 __all__ = ['waypoint', 'waypoint_set']
 
 from .waypoint import Waypoint
