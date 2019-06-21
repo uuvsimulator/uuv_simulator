@@ -8,6 +8,8 @@
 
 > Link to the [documentation page](https://uuvsimulator.github.io/packages/uuv_simulator/intro/) 
 
+> Chat on [Discord](https://discord.gg/zNauF2F)
+
 The **Unmanned Underwater Vehicle Simulator** is a set of packages that include plugins and ROS applications that allow simulation of underwater vehicles in [Gazebo](http://gazebosim.org/). 
 
 If you are using this simulator for your publication, please cite:
