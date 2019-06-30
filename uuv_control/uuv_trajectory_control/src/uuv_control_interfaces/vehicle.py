@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from __future__ import print_function
 import rospy
 import numpy as np
 from nav_msgs.msg import Odometry
 from copy import deepcopy
 from rospy.numpy_msg import numpy_msg
-import tf2_ros
-from tf.transformations import quaternion_from_euler, euler_from_quaternion, \
+from tf_quaternion.transformations import quaternion_from_euler, euler_from_quaternion, \
     quaternion_matrix, rotation_matrix, is_same_transform
-
+from ._log import get_logger
 try: 
     import casadi
     casadi_exists = True
@@ -38,12 +37,11 @@ def cross_product_operator(x):
 
 
 class Vehicle(object):
-
     """Vehicle interface to be used by model-based controllers. It receives the
     parameters necessary to compute the vehicle's motion according to Fossen's.
     """
 
-    INSTANCE = None
+    _INSTANCE = None
 
     def __init__(self, inertial_frame_id='world'):
         """Class constructor."""
@@ -53,34 +51,40 @@ class Vehicle(object):
 
         self._inertial_frame_id = inertial_frame_id
         self._body_frame_id = None
+        self._logger = get_logger()
 
         if self._inertial_frame_id == 'world':
             self._body_frame_id = 'base_link'
         else:
             self._body_frame_id = 'base_link_ned'
 
-        tf_buffer = tf2_ros.Buffer()
-        listener = tf2_ros.TransformListener(tf_buffer)
-        tf_trans_ned_to_enu = None
         try:
+            import tf2_ros
+
+            tf_buffer = tf2_ros.Buffer()
+            listener = tf2_ros.TransformListener(tf_buffer)
+
             tf_trans_ned_to_enu = tf_buffer.lookup_transform(
                 'world', 'world_ned', rospy.Time(),
-                rospy.Duration(1))
-        except Exception, e:
-            self._logger.error('No transform found between world and the '
-                               'world_ned ' + self.namespace)
-            self._logger.error(str(e))
-            self.transform_ned_to_enu = None
+                rospy.Duration(10))
+            
+            self.q_ned_to_enu = np.array(
+                [tf_trans_ned_to_enu.transform.rotation.x,
+                tf_trans_ned_to_enu.transform.rotation.y,
+                tf_trans_ned_to_enu.transform.rotation.z,
+                tf_trans_ned_to_enu.transform.rotation.w])
+        except Exception as ex:
+            self._logger.warning(
+                'Error while requesting ENU to NED transform'
+                ', message={}'.format(ex))
+            self.q_ned_to_enu = quaternion_from_euler(2 * np.pi, 0, np.pi)
+                                
+        self.transform_ned_to_enu = quaternion_matrix(
+                self.q_ned_to_enu)[0:3, 0:3]
 
-        if tf_trans_ned_to_enu is not None:
-            self.transform_ned_to_enu = quaternion_matrix(
-                (tf_trans_ned_to_enu.transform.rotation.x,
-                 tf_trans_ned_to_enu.transform.rotation.y,
-                 tf_trans_ned_to_enu.transform.rotation.z,
-                 tf_trans_ned_to_enu.transform.rotation.w))[0:3, 0:3]
-
-        print('Transform world_ned (NED) to world (ENU)=\n' +
-              str(self.transform_ned_to_enu))
+        if self.transform_ned_to_enu is not None:
+            self._logger.info('Transform world_ned (NED) to world (ENU)=\n' +
+                                str(self.transform_ned_to_enu))
 
         self._mass = 0
         if rospy.has_param('~mass'):
@@ -90,7 +94,6 @@ class Vehicle(object):
 
         self._inertial = dict(ixx=0, iyy=0, izz=0, ixy=0, ixz=0, iyz=0)
         if rospy.has_param('~inertial'):
-            print 'has inertial'
             inertial = rospy.get_param('~inertial')
             for key in self._inertial:
                 if key not in inertial:
@@ -194,12 +197,15 @@ class Vehicle(object):
         # Loading the linear damping coefficients proportional to the forward speed
         self._linear_damping_forward_speed = np.zeros(shape=(6, 6))
         if rospy.has_param('~linear_damping_forward_speed'):
-            self._linear_damping_forward_speed = np.array(rospy.get_param('~linear_damping_forward_speed'))
+            self._linear_damping_forward_speed = np.array(
+                rospy.get_param('~linear_damping_forward_speed'))
             if self._linear_damping_forward_speed.shape == (6,):
                 self._linear_damping_forward_speed = np.diag(self._linear_damping_forward_speed)
             if self._linear_damping_forward_speed.shape != (6, 6):
-                raise rospy.ROSException('Linear damping proportional to the forward speed must be given as a 6x6 '
-                                         'matrix or the diagonal coefficients')
+                raise rospy.ROSException(
+                    'Linear damping proportional to the '
+                    'forward speed must be given as a 6x6 '
+                    'matrix or the diagonal coefficients')
 
         # Initialize damping matrix
         self._D = np.zeros((6, 6))
@@ -216,6 +222,17 @@ class Vehicle(object):
 
     @staticmethod
     def q_to_matrix(q):
+        """Convert quaternion into orthogonal rotation matrix.
+        
+        > *Input arguments*
+        
+        * `q` (*type:* `numpy.array`): Quaternion vector as 
+        `(qx, qy, qz, qw)`
+        
+        > *Returns*
+        
+        `numpy.array`: Rotation matrix
+        """
         e1 = q[0]
         e2 = q[1]
         e3 = q[2]
@@ -233,89 +250,98 @@ class Vehicle(object):
 
     @property
     def namespace(self):
-        """Return robot namespace."""
+        """`str`: Return robot namespace."""
         return self._namespace
 
     @property
     def body_frame_id(self):
+        """`str`: Body frame ID"""
         return self._body_frame_id
 
     @property
     def inertial_frame_id(self):
+        """`str`: Inertial frame ID"""
         return self._inertial_frame_id
 
     @property
     def mass(self):
+        """`float`: Mass in kilograms"""
         return self._mass
 
     @property
     def volume(self):
+        """`float`: Volume of the vehicle in m^3"""
         return self._volume
 
     @property
     def gravity(self):
+        """`float`: Magnitude of acceleration of gravity m / s^2"""
         return self._gravity
 
     @property
     def density(self):
+        """`float`: Fluid density as kg / m^3"""
         return self._density
 
     @property
     def height(self):
+        """`float`: Height of the vehicle in meters"""
         return self._height
 
     @property
     def width(self):
+        """`float`: Width of the vehicle in meters"""
         return self._width
 
     @property
     def length(self):
+        """`float`: Length of the vehicle in meters"""
         return self._length
 
     @property
     def pos(self):
-        """Return the position of the vehicle."""
+        """`numpy.array`: Position of the vehicle in meters."""
         return deepcopy(self._pose['pos'])
 
     @pos.setter
     def pos(self, position):
         pos = np.array(position)
         if pos.size != 3:
-            print 'Invalid position vector'
+            self._logger.error('Invalid position vector')
         else:
             self._pose['pos'] = pos
 
     @property
     def depth(self):
-        """Return depth of the vehicle."""
+        """`numpy.array`: Depth of the vehicle in meters."""
         return deepcopy(np.abs(self._pose['pos'][2]))
 
     @property
     def heading(self):
-        """Return the heading of the vehicle."""
+        """`float`: Heading of the vehicle in radians."""
         return deepcopy(self.euler[2])
 
     @property
     def quat(self):
-        """Return orientation quaternion."""
+        """`numpy.array`: Orientation quaternion as `(qx, qy, qz, qw)`."""
         return deepcopy(self._pose['rot'])
 
     @quat.setter
     def quat(self, q):
         q_rot = np.array(q)
         if q_rot.size != 4:
-            print 'Invalid quaternion'
+            self._logger.error('Invalid quaternion')
         else:
             self._pose['rot'] = q_rot
 
     @property
     def quat_dot(self):
-        """Return the time derivative of the quaternion vector."""
+        """`numpy.array`: Time derivative of the quaternion vector."""
         return np.dot(self.TBtoIquat, self.vel[3:6])
 
     @property
     def vel(self):
-        """Return linear and angular velocity vector."""
+        """`numpy.array`: Linear and angular velocity vector."""
         return deepcopy(self._vel)
 
     @vel.setter
@@ -323,18 +349,20 @@ class Vehicle(object):
         """Set the velocity vector in the BODY frame."""
         v = np.array(velocity)
         if v.size != 6:
-            print 'Invalid velocity vector'
+            self._logger.error('Invalid velocity vector')
         else:
             self._vel = v
 
     @property
     def acc(self):
-        """Return linear and angular acceleration vector."""
+        """`numpy.array`: Linear and angular acceleration vector."""
         return deepcopy(self._acc)
 
     @property
     def euler(self):
-        """Return orientation in Euler angles as described in Fossen, 2011."""
+        """`list`: Orientation in Euler angles in radians 
+        as described in Fossen, 2011.
+        """
         # Rotation matrix from BODY to INERTIAL
         rot = self.rotBtoI
         # Roll
@@ -348,30 +376,37 @@ class Vehicle(object):
 
     @property
     def euler_dot(self):
-        """Return time derivative of the Euler angles."""
+        """`numpy.array`: Time derivative of the Euler 
+        angles in radians.
+        """
         return np.dot(self.TItoBeuler, self.vel[3:6])
 
     @property
     def restoring_forces(self):
-        """Return the restoring force vector."""
+        """`numpy.array`: Restoring force vector in N."""
         self._update_restoring()
         return deepcopy(self._g)
 
     @property
     def Mtotal(self):
+        """`numpy.array`: Combined system inertia 
+        and added-mass matrices.
+        """
         return deepcopy(self._Mtotal)
 
     @property
     def Ctotal(self):
+        """`numpy.array`: Combined Coriolis matrix"""
         return deepcopy(self._C)
 
     @property
     def Dtotal(self):
+        """`numpy.array`: Linear and non-linear damping matrix"""
         return deepcopy(self._D)
 
     @property
     def pose_euler(self):
-        """Return pose as a vector, orientation in Euler angles."""
+        """`numpy.array`: Pose as a vector, orientation in Euler angles."""
         roll, pitch, yaw = self.euler
         pose = np.zeros(6)
         pose[0:3] = self.pos
@@ -382,7 +417,7 @@ class Vehicle(object):
 
     @property
     def pose_quat(self):
-        """Return pose as a vector, orientation as quaternion."""
+        """`numpy.array`: Pose as a vector, orientation as quaternion."""
         pose = np.zeros(7)
         pose[0:3] = self.pos
         pose[3:7] = self.quat
@@ -390,13 +425,14 @@ class Vehicle(object):
 
     @property
     def rotItoB(self):
-        """Return rotation from INERTIAL to BODY frame"""
+        """`numpy.array`: Rotation matrix from INERTIAL to BODY frame"""
         return self.rotBtoI.T
 
     @property
     def rotBtoI(self):
-        """Return rotation from BODY to INERTIAL frame using the zyx convention
-           to retrieve Euler angles from the quaternion vector (Fossen, 2011).
+        """`numpy.array`: Rotation from BODY to INERTIAL 
+        frame using the zyx convention to retrieve Euler 
+        angles from the quaternion vector (Fossen, 2011).
         """
         # Using the (x, y, z, w) format to describe quaternions
         return self.q_to_matrix(self._pose['rot'])
@@ -447,7 +483,7 @@ class Vehicle(object):
             elif x.shape == (6,):
                 return np.array([x[0], -1 * x[1], -1 * x[2],
                                  x[3], -1 * x[4], -1 * x[5]])
-        except Exception, e:
+        except Exception as e:
             self._logger.error('Invalid input vector, v=' + str(x))
             self._logger.error('Message=' + str(e))
             return None
@@ -459,16 +495,16 @@ class Vehicle(object):
 
     def print_info(self):
         """Print the vehicle's parameters."""
-        print 'Namespace: {}'.format(self._namespace)
-        print 'Mass: {0:.3f} kg'.format(self._mass)
-        print 'System inertia matrix:\n', self._M
-        print 'Added-mass:\n', self._Ma
-        print 'M:\n', self._Mtotal
-        print 'Linear damping:', self._linear_damping
-        print 'Quad. damping:', self._quad_damping
-        print 'Center of gravity:', self._cog
-        print 'Center of buoyancy:', self._cob
-        print 'Inertial:\n', self._calc_inertial_tensor()
+        print('Namespace: {}'.format(self._namespace))
+        print('Mass: {0:.3f} kg'.format(self._mass))
+        print('System inertia matrix:\n{}'.format(self._M))
+        print('Added-mass:\n{}'.format(self._Ma))
+        print('M:\n{}'.format(self._Mtotal))
+        print('Linear damping: {}'.format(self._linear_damping))
+        print('Quad. damping: {}'.format(self._quad_damping))
+        print('Center of gravity: {}'.format(self._cog))
+        print('Center of buoyancy: {}'.format(self._cob))
+        print('Inertial:\n{}'.format(self._calc_inertial_tensor()))
 
     def _calc_mass_matrix(self):
         self._Mtotal = self._M + self._Ma
@@ -541,7 +577,7 @@ class Vehicle(object):
     def set_added_mass(self, Ma):
         """Set added-mass matrix coefficients."""
         if Ma.shape != (6, 6):
-            print "Added mass matrix must have dimensions 6x6"
+            self._logger.error('Added mass matrix must have dimensions 6x6')
             return False
         self._Ma = np.array(Ma, copy=True)
         self._calc_mass_matrix()
@@ -550,7 +586,7 @@ class Vehicle(object):
     def set_damping_coef(self, linear_damping, quad_damping):
         """Set linear and quadratic damping coefficients."""
         if linear_damping.size != 6 or quad_damping.size != 6:
-            print 'Invalid dimensions for damping coefficient vectors'
+            self._logger.error('Invalid dimensions for damping coefficient vectors')
             return False
         self._linear_damping = np.array(linear_damping, copy=True)
         self._quad_damping = np.array(quad_damping, copy=True)

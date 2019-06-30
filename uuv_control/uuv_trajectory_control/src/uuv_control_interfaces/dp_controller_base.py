@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,27 +12,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from copy import deepcopy
-
 import numpy as np
 import rospy
 import logging
 import sys
 import tf
+
 from rospy.numpy_msg import numpy_msg
 from geometry_msgs.msg import WrenchStamped, PoseStamped, TwistStamped, \
     Vector3, Quaternion, Pose
-from uuv_auv_control_allocator.msg import AUVCommand
 from std_msgs.msg import Time
 from nav_msgs.msg import Odometry
 from uuv_control_interfaces.vehicle import Vehicle
-from tf.transformations import euler_from_quaternion, \
+from tf_quaternion.transformations import euler_from_quaternion, \
     quaternion_multiply, quaternion_matrix, quaternion_conjugate, \
     quaternion_inverse
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint
 from uuv_control_msgs.srv import *
+from uuv_auv_control_allocator.msg import AUVCommand
+
 from .dp_controller_local_planner import DPControllerLocalPlanner as LocalPlanner
+from ._log import get_logger
 
 
 class DPControllerBase(object):
@@ -41,22 +42,64 @@ class DPControllerBase(object):
     overrides the update_controller method. If the controller is set to be
     model based (is_model_based=True), than the vehicle parameters are going
     to be read from the ROS parameter server.
+
+    > *Input arguments*
+
+    * `is_model_based` (*type:* `bool`, *default:* `False`): If `True`, the
+    controller uses a model of the vehicle, `False` if it is non-model-based.
+    * `list_odometry_callbacks` (*type:* `list`, *default:* `None`): List of 
+    function handles or `lambda` functions that will be called after each 
+    odometry update.
+    * `planner_full_dof` (*type:* `bool`, *default:* `False`): Set the local
+    planner to generate 6 DoF trajectories. Otherwise, the planner will only
+    generate 4 DoF trajectories `(x, y, z, yaw)`.
+
+    > *ROS parameters*
+
+    * `use_stamped_poses_only` (*type:* `bool`, *default:* `False`): If `True`,
+    the reference path will be generated with stamped poses only, velocity
+    and acceleration references are set to zero.
+    * `thrusters_only` (*type:* `bool`, *default:* `True`): If `True`, the
+    vehicle only has thrusters as actuators and a thruster manager node is
+    running and the control output will be published as `geometry_msgs/WrenchStamped`. 
+    If `False`, the AUV force allocation should be used to compute 
+    the control output for each actuator and the output control will be 
+    generated as a `uuv_auv_control_allocator.AUVCommand` message.
+    * `saturation` (*type:* `float`, *default:* `5000`): Absolute saturation
+    of the control signal. 
+    * `use_auv_control_allocator` (*type:* `bool`, *default:* `False`): If `True`,
+    the output control will be `AUVCommand` message.
+    * `min_thrust` (*type:* `float`, *default:* `40`): Min. thrust set-point output,
+    (parameter only valid for AUVs).
+
+    > *ROS publishers*
+
+    * `thruster_output` (*message:* `geometry_msgs/WrenchStamped`): Control set-point
+    for the thruster manager node (requirement: ROS parameters must be `thrusters_only`
+    must be set as `True` and a thruster manager from `uuv_thruster_manager` node must 
+    be running).
+    * `auv_command_output` (*message:* `uuv_auv_control_allocator.AUVCommand`): Control
+    set-point for the AUV allocation node (requirement: ROS parameters must be 
+    `thrusters_only` must be set as `False` and a AUV control allocation node from  
+    `uuv_auv_control_allocator` node must be running).
+    * `reference` (*message:* `uuv_control_msgs/TrajectoryPoint`): Current reference 
+    trajectory point.
+    * `error` (*message:* `uuv_control_msgs/TrajectoryPoint`): Current trajectory error.
+
+    > *ROS services*
+
+    * `reset_controller` (*service:* `uuv_control_msgs/ResetController`): Reset all 
+    variables, including error and reference signals.
     """
 
     _LABEL = ''
 
-    def __init__(self, is_model_based=False, list_odometry_callbacks=[],
+    def __init__(self, is_model_based=False, list_odometry_callbacks=None,
         planner_full_dof=False):
         # Flag will be set to true when all parameters are initialized correctly
         self._is_init = False
-        self._logger = logging.getLogger('dp_controller')
-        out_hdlr = logging.StreamHandler(sys.stdout)
-        out_hdlr.setFormatter(logging.Formatter(
-            rospy.get_namespace().replace('/', '').upper() + ' -- %(asctime)s | %(levelname)s | %(module)s | %(message)s'))
-        out_hdlr.setLevel(logging.INFO)
-        self._logger.addHandler(out_hdlr)
-        self._logger.setLevel(logging.INFO)
-
+        self._logger = get_logger()
+        
         # Reading current namespace
         self._namespace = rospy.get_namespace()
 
@@ -93,7 +136,8 @@ class DPControllerBase(object):
         # direct command of fins and thruster
         self.use_auv_control_allocator = False
         if not self.thrusters_only:
-            self.use_auv_control_allocator = rospy.get_param('~use_auv_control_allocator', False)
+            self.use_auv_control_allocator = rospy.get_param(
+                '~use_auv_control_allocator', False)
 
         # Remap the following topics, if needed
         # Publisher for thruster allocator
@@ -146,7 +190,8 @@ class DPControllerBase(object):
         # Instance of the vehicle model
         self._vehicle_model = None
         # If list of callbacks is empty, set the default
-        if len(list_odometry_callbacks):
+        if list_odometry_callbacks is not None and \
+            isinstance(list_odometry_callbacks, list):
             self._odometry_callbacks = list_odometry_callbacks
         else:
             self._odometry_callbacks = [self.update_errors,
@@ -174,7 +219,7 @@ class DPControllerBase(object):
         """Create instance of a specific DP controller."""
         for controller in DPControllerBase.__subclasses__():
             if name == controller.__name__:
-                print 'Creating controller=', name
+                self._logger.info('Creating controller={}'.format(name))
                 return controller(*args)
 
     @staticmethod
@@ -185,23 +230,27 @@ class DPControllerBase(object):
 
     @property
     def label(self):
+        """`str`: Identifier name of the controller"""
         return self._LABEL
 
     @property
     def odom_is_init(self):
+        """`bool`: `True` if the first odometry message was received"""
         return self._init_odom
 
     @property
     def error_pos_world(self):
+        """`numpy.array`: Position error wrt world frame"""
         return np.dot(self._vehicle_model.rotBtoI, self._errors['pos'])
 
     @property
     def error_orientation_quat(self):
+        """`numpy.array`: Orientation error"""
         return deepcopy(self._errors['rot'][0:3])
 
     @property
     def error_orientation_rpy(self):
-        """Return orientation error in Euler angles."""
+        """`numpy.array`: Orientation error in Euler angles."""
         e1 = self._errors['rot'][0]
         e2 = self._errors['rot'][1]
         e3 = self._errors['rot'][2]
@@ -226,11 +275,12 @@ class DPControllerBase(object):
 
     @property
     def error_pose_euler(self):
-        """Pose error with orientation represented in Euler angles."""
+        """`numpy.array`: Pose error with orientation represented in Euler angles."""
         return np.hstack((self._errors['pos'], self.error_orientation_rpy))
 
     @property
     def error_vel_world(self):
+        """`numpy.array`: Linear velocity error"""
         return np.dot(self._vehicle_model.rotBtoI, self._errors['vel'])
 
     def __str__(self):
@@ -241,8 +291,7 @@ class DPControllerBase(object):
         return msg
 
     def _create_vehicle_model(self):
-        """
-        Create a new instance of a vehicle model. If controller is not model
+        """Create a new instance of a vehicle model. If controller is not model
         based, this model will have its parameters set to 0 and will be used
         to receive and transform the odometry data.
         """
@@ -252,6 +301,9 @@ class DPControllerBase(object):
             inertial_frame_id=self._local_planner.inertial_frame_id)
 
     def _update_reference(self):
+        """Call the local planner interpolator to retrieve a trajectory 
+        point and publish the reference message as `uuv_control_msgs/TrajectoryPoint`.
+        """
         # Update the local planner's information about the vehicle's pose
         self._local_planner.update_vehicle_pose(
             self._vehicle_model.pos, self._vehicle_model.quat)
@@ -264,8 +316,6 @@ class DPControllerBase(object):
             self._reference['rot'] = reference.q
             self._reference['vel'] = np.hstack((reference.v, reference.w))
             self._reference['acc'] = np.hstack((reference.a, reference.alpha))
-            # print '------------------ REFERENCE\n'
-            # print reference
         if reference is not None and self._reference_pub.get_num_connections() > 0:
             # Publish current reference
             msg = TrajectoryPoint()
@@ -281,11 +331,13 @@ class DPControllerBase(object):
         return True
 
     def _update_time_step(self):
+        """Update time step."""
         t = rospy.get_time()
         self._dt = t - self._prev_time
         self._prev_time = t
 
     def _reset_controller(self):
+        """Reset reference and and error vectors."""
         self._init_reference = False
 
         # Reference with relation to the INERTIAL frame
@@ -300,14 +352,19 @@ class DPControllerBase(object):
                             vel=np.zeros(6))
 
     def reset_controller_callback(self, request):
+        """Service handler function."""
         self._reset_controller()
         return ResetControllerResponse(True)
 
     def update_controller(self):
+        """This function must be implemented by derived classes
+        with the implementation of the control algorithm.
+        """
         # Does nothing, must be overloaded
         raise NotImplementedError()
 
     def update_errors(self):
+        """Update error vectors."""
         if not self.odom_is_init:
             self._logger.warning('Odometry topic has not been update yet')
             return
@@ -348,6 +405,13 @@ class DPControllerBase(object):
             self._error_pub.publish(msg)
 
     def publish_control_wrench(self, force):
+        """Publish the thruster manager control set-point.
+        
+        > *Input arguments*
+        
+        * `force` (*type:* `numpy.array`): 6 DoF control 
+        set-point wrench vector
+        """
         if not self.odom_is_init:
             return
 
@@ -377,6 +441,13 @@ class DPControllerBase(object):
         self._thrust_pub.publish(force_msg)
 
     def publish_auv_command(self, surge_speed, wrench):
+        """Publish the AUV control command message
+        
+        > *Input arguments*
+        
+        * `surge_speed` (*type:* `float`): Reference surge speed
+        * `wrench` (*type:* `numpy.array`): 6 DoF wrench vector
+        """
         if not self.odom_is_init:
             return
 
@@ -396,7 +467,13 @@ class DPControllerBase(object):
         self._auv_command_pub.publish(msg)
 
     def _odometry_callback(self, msg):
-        """Odometry topic subscriber callback function."""
+        """Odometry topic subscriber callback function.
+        
+        > *Input arguments*
+
+        * `msg` (*type:* `nav_msgs/Odometry`): Input odometry 
+        message
+        """
         self._vehicle_model.update_odometry(msg)
 
         if not self._init_odom:

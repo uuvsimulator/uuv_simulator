@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,43 +12,94 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import rospy
+import logging
+import sys
+import time
 import numpy as np
 from copy import deepcopy
 from os.path import isfile
+from threading import Lock, Event
+
 from std_msgs.msg import Bool, Float64
 from geometry_msgs.msg import Twist
 from uuv_control_msgs.srv import *
-
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint, WaypointSet
 from visualization_msgs.msg import MarkerArray
 from geometry_msgs.msg import Point
+
 import uuv_trajectory_generator
 import uuv_waypoints
-import logging
-import sys
-import tf2_ros
-import time
-from threading import Lock, Event
-from tf.transformations import quaternion_about_axis, quaternion_multiply, \
-    quaternion_inverse, quaternion_matrix, euler_from_quaternion
+from tf_quaternion.transformations import quaternion_about_axis, quaternion_multiply, \
+    quaternion_inverse, quaternion_matrix, euler_from_quaternion, quaternion_from_euler
+
+from ._log import get_logger
 
 
 class DPControllerLocalPlanner(object):
-    """
-    Local planner for the dynamic positioning controllers to interpolate
-    trajectories and generate trajectories from interpolated waypoint paths.
+    """Local planner for the dynamic positioning controllers 
+    to interpolate trajectories and generate trajectories from 
+    interpolated waypoint paths.
+
+    > *Input parameters*
+
+    * `full_dof` (*type:* `bool`, *default:* `False`): If `True`, 
+    the reference trajectory reference will be computed for 6 DoF,
+    otherwise, 4 DoF `(x, y, z, yaw)`.
+    * `stamped_pose_only` (*type:* `bool`, *default:* `False`): If 
+    `True`, only stamped poses will be generated as a reference, with
+    velocity and acceleration reference being set to zero.
+    * `thrusters_only` (*type:* `bool`, *default:* `True`): If `False`,
+    the idle mode will be used to keep the vehicle moving. 
+
+    > *ROS parameters*
+
+    * `max_forward_speed` (*type:* `float`, *default:* `1.0`): Maximum
+    allowed forward speed.
+    * `idle_radius` (*type:* `float`, *default:* `10.0`): Radius of the circle 
+    path generated when an AUV is in idle mode.
+    * `inertial_frame_id` (*type:* `str`): Name of the inertial frame used, 
+    options are `world` or `world_ned`.
+    * `timeout_idle_mode` (*type:* `float`): Timeout at the start or after
+    a trajectory is finished where the AUV is set to start idle mode path.
+    * `look_ahead_delay` (*type:* `float`): Look ahead delay in seconds. This
+    parameters will offset the interpolation of the trajectory in the given
+    amount of seconds to compute the look-ahead target for AUVs.
+
+    !!! warning
+
+        The parameters for the path interpolators must also be provided when 
+        starting a node that includes the local planner, since the interpolators 
+        are initialized by the local planner.
+
+    > *ROS publishers*
+
+    * `trajectory` (*type:* `uuv_control_msgs.Trajectory`): Generated trajectory or
+    stamped pose path.
+    * `waypoints` (*type:* `uuv_control_msgs.WaypointSet`): Set of waypoints provided
+    as input for the interpolator
+    * `station_keeping_on` (*type:* `std_msgs.Bool`): Status of the station keeping mode
+    * `automatic_on` (*type:* `std_msgs.Bool`): Status of automatic model. If `False`
+    the vehicle can receive control inputs from a teleop node.
+    * `trajectory_tracking_on` (*type:* `std_msgs.Bool`): Sets the output flag to `True`
+    when trajectory tracking is ongoing
+    * `interpolator_visual_markers` (*type:* `visualization_msgs.MarkerArray`): Helper
+    visual markers from the interpolator class.
+    * `time_to_target` (*type:* `std_msgs.Float64`): Estimated time to target in seconds.
+
+    > *ROS services*
+
+    * `hold_vehicle` (*type:* `uuv_control_msgs.Hold`)
+    * `start_waypoint_list` (*type:* `uuv_control_msgs.InitWaypointSet`)
+    * `start_circular_trajectory` (*type:* `uuv_control_msgs.InitCircularTrajectory`)
+    * `start_helical_trajectory` (*type:* `uuv_control_msgs.InitHelicalTrajectory`)
+    * `init_waypoints_from_file` (*type:* `uuv_control_msgs.InitWaypointsFromFile`)
+    * `go_to` (*type:* `uuv_control_msgs.GoTo`)
+    * `go_to_incremental` (*type:* `uuv_control_msgs.GoToIncremental`)
     """
 
     def __init__(self, full_dof=False, stamped_pose_only=False, thrusters_only=True):
-        self._logger = logging.getLogger('dp_local_planner')
-        out_hdlr = logging.StreamHandler(sys.stdout)
-        out_hdlr.setFormatter(logging.Formatter(
-            rospy.get_namespace().replace('/', '').upper() + ' -- %(asctime)s | %(levelname)s | %(module)s | %(message)s'))
-        out_hdlr.setLevel(logging.INFO)
-        self._logger.addHandler(out_hdlr)
-        self._logger.setLevel(logging.INFO)
+        self._logger = get_logger()
 
         self._lock = Lock()
 
@@ -83,30 +134,33 @@ class DPControllerLocalPlanner(object):
 
         rospy.set_param('inertial_frame_id', self.inertial_frame_id)
 
-        tf_buffer = tf2_ros.Buffer()
-        listener = tf2_ros.TransformListener(tf_buffer)
-        tf_trans_ned_to_enu = None
         try:
+            import tf2_ros
+
+            tf_buffer = tf2_ros.Buffer()
+            listener = tf2_ros.TransformListener(tf_buffer)
+
             tf_trans_ned_to_enu = tf_buffer.lookup_transform(
                 'world', 'world_ned', rospy.Time(),
                 rospy.Duration(10))
-        except Exception, e:
-            tf_trans_ned_to_enu = None
-            self._logger.error('No transform found between world and the '
-                               'inertial_frame_id provided ' +
-                               rospy.get_namespace())
-
-        if tf_trans_ned_to_enu is not None:
+            
             self.q_ned_to_enu = np.array(
                 [tf_trans_ned_to_enu.transform.rotation.x,
-                 tf_trans_ned_to_enu.transform.rotation.y,
-                 tf_trans_ned_to_enu.transform.rotation.z,
-                 tf_trans_ned_to_enu.transform.rotation.w])
-            self.transform_ned_to_enu = quaternion_matrix(
+                tf_trans_ned_to_enu.transform.rotation.y,
+                tf_trans_ned_to_enu.transform.rotation.z,
+                tf_trans_ned_to_enu.transform.rotation.w])
+        except Exception as ex:
+            self._logger.warning(
+                'Error while requesting ENU to NED transform'
+                ', message={}'.format(ex))
+            self.q_ned_to_enu = quaternion_from_euler(2 * np.pi, 0, np.pi)
+                                
+        self.transform_ned_to_enu = quaternion_matrix(
                 self.q_ned_to_enu)[0:3, 0:3]
 
+        if self.transform_ned_to_enu is not None:
             self._logger.info('Transform world_ned (NED) to world (ENU)=\n' +
-                              str(self.transform_ned_to_enu))
+                                str(self.transform_ned_to_enu))
 
         self._logger.info('Inertial frame ID=' + self.inertial_frame_id)
         self._logger.info('Max. forward speed = ' +
@@ -223,6 +277,18 @@ class DPControllerLocalPlanner(object):
             self._logger.handlers.pop()
 
     def _transform_position(self, vec, target, source):
+        """Transform the position vector between `world` and `world_ned`.
+        
+        > *Input arguments*
+        
+        * `vec` (*type:* `numpy.array`): Position vector
+        * `target` (*type:* `str`): Target frame
+        * `source` (*type:* `str`): Source frame
+        
+        > *Returns*
+        
+        `numpy.array`: Transformed vector
+        """
         if target == source:
             return vec
         if target == 'world':
@@ -231,6 +297,17 @@ class DPControllerLocalPlanner(object):
             return np.dot(self.transform_ned_to_enu.T, vec)
 
     def _transform_waypoint(self, waypoint):
+        """Transform position vector of a waypoint between 
+        `world` and `world_ned` frames.
+        
+        > *Input arguments*
+        
+        * `waypoint` (*type:* `uuv_waypoints.Waypoint`): Input waypoint
+        
+        > *Returns*
+        
+        `uuv_waypoints.Waypoint`: Transformed waypoint
+        """
         output = deepcopy(waypoint)
         output.pos = self._transform_position(output.pos,
                                               self.inertial_frame_id,
@@ -240,6 +317,17 @@ class DPControllerLocalPlanner(object):
         return output
 
     def _transform_waypoint_set(self, waypoint_set):
+        """Apply transformation between `world` and 'world_ned` frames
+        to waypoints in a waypoint set.
+        
+        > *Input arguments*
+        
+        * `waypoint_set` (*type:* `uuv_waypoins.WaypointSet`): Set of waypoints
+        
+        > *Returns*
+        
+        `uuv_waypoins.WaypointSet`: Set of transformed waypoints
+        """
         output = uuv_waypoints.WaypointSet(
             inertial_frame_id=self.inertial_frame_id)
         for i in range(waypoint_set.num_waypoints):
@@ -248,6 +336,18 @@ class DPControllerLocalPlanner(object):
         return output
 
     def _apply_workspace_constraints(self, waypoint_set):
+        """Filter out waypoints that are positioned above
+        sea surface, namely `z > 0` if the inertial frame is
+        `world`, or `z < 0` if the inertial frame is `world_ned`.
+        
+        > *Input arguments*
+        
+        * `waypoint_set` (*type:* `uuv_waypoins.WaypointSet`): Set of waypoints
+        
+        > *Returns*
+        
+        `uuv_waypoins.WaypointSet`: Filtered set of waypoints
+        """
         wp_set = uuv_waypoints.WaypointSet(
             inertial_frame_id=self.inertial_frame_id)
         for i in range(waypoint_set.num_waypoints):
@@ -260,8 +360,8 @@ class DPControllerLocalPlanner(object):
         return wp_set
 
     def _publish_trajectory_info(self, event):
-        """
-        Publish messages for the waypoints, trajectory and internal flags.
+        """Publish messages for the waypoints, trajectory and 
+        debug flags.
         """
         if self._waypoints_msg is not None:
             self._waypoints_pub.publish(self._waypoints_msg)
@@ -278,6 +378,7 @@ class DPControllerLocalPlanner(object):
         return True
 
     def _update_trajectory_info(self):
+        """Update the trajectory message."""
         self._waypoints_msg = WaypointSet()
         if self._traj_interpolator.is_using_waypoints():
             wps = self._traj_interpolator.get_waypoints()
@@ -295,9 +396,7 @@ class DPControllerLocalPlanner(object):
             self._logger.error('Error generating trajectory message')
 
     def _update_teleop(self, msg):
-        """
-        Callback to the twist teleop subscriber.
-        """
+        """Callback to the twist teleop subscriber."""
         # Test whether the vehicle is in automatic mode (following a given
         # trajectory)
         if self._is_automatic:
@@ -324,9 +423,8 @@ class DPControllerLocalPlanner(object):
         self._last_teleop_update = rospy.get_time()
 
     def _calc_teleop_reference(self):
-        """
-        Compute pose and velocity reference using the joystick linear and
-        angular velocity input.
+        """Compute pose and velocity reference using the 
+        joystick linear and angular velocity input.
         """
         # Check if there is already a timestamp for the last received reference
         # message from the teleop node
@@ -373,9 +471,8 @@ class DPControllerLocalPlanner(object):
         return ref_pnt
 
     def _calc_smooth_approach(self):
-        """
-        Add the current vehicle position as waypoint to allow a smooth
-        approach to the given trajectory.
+        """Add the current vehicle position as waypoint 
+        to allow a smooth approach to the given trajectory.
         """
         if self._vehicle_pose is None:
             self._logger.error('Simulation not properly initialized yet, ignoring approach...')
@@ -422,13 +519,22 @@ class DPControllerLocalPlanner(object):
         self._update_trajectory_info()
 
     def is_station_keeping_on(self):
+        """Return `True`, if vehicle is holding its position."""
         return self._station_keeping_on
 
     def is_automatic_on(self):
+        """Return `True` if vehicle if following a trajectory in 
+        automatic mode.
+        """
         return self._is_automatic
 
     def set_station_keeping(self, is_on=True):
-        """Set station keeping mode flag."""
+        """Set station keeping mode flag.
+        
+        > *Input arguments* 
+
+        * `is_on` (*type:* `bool`, *default:* `True`): Station keeping flag
+        """
         self._station_keeping_on = is_on
         self._logger.info('STATION KEEPING MODE = ' + ('ON' if is_on else 'OFF'))
 
@@ -443,17 +549,24 @@ class DPControllerLocalPlanner(object):
         self._logger.info('TRAJECTORY TRACKING = ' + ('ON' if is_on else 'OFF'))
 
     def has_started(self):
-        """
-        Return if the trajectory interpolator has started generating reference
-        points.
+        """Return if the trajectory interpolator has started generating
+        reference points.
         """
 
         return self._traj_interpolator.has_started()
 
     def has_finished(self):
+        """Return `True` if the trajectory has finished."""
         return self._traj_interpolator.has_finished()
 
     def update_vehicle_pose(self, pos, quat):
+        """Update the vehicle's pose information.
+        
+        > *Input arguments*
+        
+        * `pos` (*type:* `numpy.array`): Position vector
+        * `quat` (*type:* `numpy.array`): Quaternion as `(qx, qy, qz, qw)`
+        """
         if self._vehicle_pose is None:
             self._vehicle_pose = uuv_trajectory_generator.TrajectoryPoint()
         self._vehicle_pose.pos = pos
@@ -462,6 +575,7 @@ class DPControllerLocalPlanner(object):
         self.init_odom_event.set()
 
     def get_vehicle_rot(self):
+        """Return the vehicle's rotation quaternion."""
         self.init_odom_event.wait()
         return self._vehicle_pose.rotq
 
@@ -472,6 +586,10 @@ class DPControllerLocalPlanner(object):
         self._update_trajectory_info()
 
     def start_station_keeping(self):
+        """Start station keeping mode by setting the pose
+        set-point of the vehicle as the last pose before the 
+        vehicle finished automatic mode.
+        """
         if self._vehicle_pose is not None:
             self._this_ref_pnt = deepcopy(self._vehicle_pose)
             self._this_ref_pnt.vel = np.zeros(6)
@@ -481,8 +599,8 @@ class DPControllerLocalPlanner(object):
             self._smooth_approach_on = False
 
     def hold_vehicle(self, request):
-        """
-        Service callback function to hold the vehicle's current position.
+        """Service callback function to hold the vehicle's 
+        current position.
         """
         if self._vehicle_pose is None:
             self._logger.error('Current pose of the vehicle is invalid')
@@ -491,10 +609,11 @@ class DPControllerLocalPlanner(object):
         return HoldResponse(True)
 
     def start_waypoint_list(self, request):
-        """
-        Service callback function to follow a set of waypoints
-        Args:
-            request (InitWaypointSet)
+        """Service callback function to follow a set of waypoints
+        
+        > *Input arguments*
+
+        * `request` (*type:* `uuv_control_msgs.InitWaypointSet`)
         """
         if len(request.waypoints) == 0:
             self._logger.error('Waypoint list is empty')
@@ -547,6 +666,13 @@ class DPControllerLocalPlanner(object):
             return InitWaypointSetResponse(False)
 
     def start_circle(self, request):
+        """Service callback function to initialize a parametrized 
+        circular trajectory.
+        
+        > *Input arguments*
+        
+        * `request` (*type:* `uuv_control_msgs.InitCircularTrajectory`)
+        """
         if request.max_forward_speed <= 0 or request.radius <= 0 or \
            request.n_points <= 0:
             self._logger.error('Invalid parameters to generate a circular trajectory')
@@ -607,8 +733,8 @@ class DPControllerLocalPlanner(object):
             self._logger.info('============================')
             self._lock.release()
             return InitCircularTrajectoryResponse(True)
-        except Exception, e:
-            self._logger.error('Error while setting circular trajectory, msg=' + str(e))
+        except Exception as e:
+            self._logger.error('Error while setting circular trajectory, msg={}'.format(e))
             self.set_station_keeping(True)
             self.set_automatic_mode(False)
             self.set_trajectory_running(False)
@@ -616,6 +742,13 @@ class DPControllerLocalPlanner(object):
             return InitCircularTrajectoryResponse(False)
 
     def start_helix(self, request):
+        """Service callback function to initialize a parametrized helical
+        trajectory.
+        
+        > *Input arguments*
+        
+        * `request` (*type:* `uuv_control_msgs.InitHelicalTrajectory`)
+        """
         if request.radius <= 0 or request.n_points <= 0 or \
            request.n_turns <= 0:
            self._logger.error('Invalid parameters to generate a helical trajectory')
@@ -685,8 +818,8 @@ class DPControllerLocalPlanner(object):
             self._logger.info('============================')
             self._lock.release()
             return InitHelicalTrajectoryResponse(True)
-        except Exception, e:
-            self._logger.error('Error while setting helical trajectory, msg=' + str(e))
+        except Exception as e:
+            self._logger.error('Error while setting helical trajectory, msg={}'.format(e))
             self.set_station_keeping(True)
             self.set_automatic_mode(False)
             self.set_trajectory_running(False)
@@ -694,6 +827,13 @@ class DPControllerLocalPlanner(object):
             return InitHelicalTrajectoryResponse(False)
 
     def init_waypoints_from_file(self, request):
+        """Service callback function to initialize the path interpolator
+        with a set of waypoints loaded from a YAML file.
+        
+        > *Input arguments*
+        
+        * `request` (*type:* `uuv_control_msgs.InitWaypointsFromFile`)
+        """
         if (len(request.filename.data) == 0 or
                 not isfile(request.filename.data)):
             self._logger.error('Invalid waypoint file')
@@ -742,6 +882,13 @@ class DPControllerLocalPlanner(object):
             return InitWaypointsFromFileResponse(False)
 
     def go_to(self, request):
+        """Service callback function to initialize to set one target
+        waypoint .
+        
+        > *Input arguments*
+        
+        * `request` (*type:* `uuv_control_msgs.GoTo`)
+        """
         if self._vehicle_pose is None:
             self._logger.error('Current pose has not been initialized yet')
             return GoToResponse(False)
@@ -793,9 +940,12 @@ class DPControllerLocalPlanner(object):
         return GoToResponse(True)
 
     def go_to_incremental(self, request):
-        """
-        Service callback to set the command to the vehicle to move to a
+        """Service callback to set the command to the vehicle to move to a
         relative position in the world.
+
+        > *Input arguments*
+
+        * `request` (*type:* `uuv_control_msgs.GoToIncremental`)
         """
         if self._vehicle_pose is None:
             self._logger.error('Current pose has not been initialized yet')
@@ -851,6 +1001,18 @@ class DPControllerLocalPlanner(object):
         return GoToIncrementalResponse(True)
 
     def generate_reference(self, t):
+        """Return a trajectory point computed by the interpolator for the 
+        timestamp `t`, in case the vehicle is on `automatic` mode. In case 
+        it is in station keeping, the pose is kept constant.
+        
+        > *Input arguments*
+        
+        * `t` (*type:* `float`): Timestamp
+        
+        > *Returns*
+        
+        `uuv_trajectory_generator.TrajectoryPoint`: Trajectory point
+        """
         pnt = self._traj_interpolator.generate_reference(t, self._vehicle_pose.pos, self.get_vehicle_rot())
         if pnt is None:
             return self._vehicle_pose
@@ -858,6 +1020,19 @@ class DPControllerLocalPlanner(object):
             return pnt
 
     def get_idle_circle_path(self, n_points, radius=30):
+        """Generate a waypoint set starting from the current 
+        position of the vehicle in the shape of a circle to 
+        initialize an AUVs idle mode.
+        
+        > *Input arguments*
+        
+        * `n_points` (*type:* `int`): Number of waypoints
+        * `radius` (*type:* `float`): Circle radius in meters
+        
+        > *Returns*
+        
+        `uuv_waypoints.WaypointSet`: Set of waypoints for idle mode
+        """
         pose = deepcopy(self._vehicle_pose)
         if self._idle_circle_center is None:
             frame = np.array([
@@ -888,10 +1063,17 @@ class DPControllerLocalPlanner(object):
         return wp_set
 
     def interpolate(self, t):
-        """
-        Function interface to the controller. Calls the interpolator to
+        """Function interface to the controller. Calls the interpolator to
         calculate the current trajectory sample or returns a fixed position
         based on the past odometry measurements for station keeping.
+
+        > *Input arguments*
+        
+        * `t` (*type:* `float`): Timestamp
+
+        > *Returns*
+        
+        `uuv_trajectory_generator.TrajectoryPoint`: Trajectory point
         """
 
         self._lock.acquire()

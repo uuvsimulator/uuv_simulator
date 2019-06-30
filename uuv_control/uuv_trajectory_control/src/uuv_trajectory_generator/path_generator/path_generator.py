@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import rospy
 import numpy as np
 from copy import deepcopy
-from uuv_waypoints import Waypoint, WaypointSet
-from ..trajectory_point import TrajectoryPoint
-from tf.transformations import quaternion_multiply, quaternion_about_axis, \
-    quaternion_from_euler, rotation_matrix, quaternion_from_matrix
+
 from visualization_msgs.msg import MarkerArray
+from uuv_waypoints import Waypoint, WaypointSet
+from tf_quaternion.transformations import quaternion_multiply, quaternion_about_axis, \
+    quaternion_from_euler, rotation_matrix, quaternion_from_matrix
+
+from ..trajectory_point import TrajectoryPoint
+from .._log import get_logger
 
 
 class PathGenerator(object):
-    """
-    Abstract class to be inherited by custom path generator to interpolate
-    waypoints
+    """Base class to be inherited by custom path generator 
+    to generate paths from interpolated waypoints.
+
+    > *Attributes*
+
+    * `LABEL` (*type:* `str`): Name of the path generator
+
+    > *Input arguments*
+
+    * `full_dof` (*type:* `bool`, *default:* `False`): If `True`, generate 
+    6 DoF paths, if `False`, roll and pitch are set to zero.
     """
     LABEL = ''
 
     def __init__(self, full_dof=False):
+        self._logger = get_logger()
         # Waypoint set
         self._waypoints = None
 
@@ -59,13 +70,36 @@ class PathGenerator(object):
 
     @staticmethod
     def get_generator(name, *args, **kwargs):
+        """Factory method for all derived path generators.
+        
+        > *Input arguments*
+        
+        * `name` (*type:* `str`): Name identifier of the path generator
+        * `args` (*type:* `list`): List of arguments for the path generator constructor
+        * `kwards` (*type:* `dict`): Keyword arguments for the path generator constructor 
+        
+        > *Returns*
+        
+        An instance of the desired path generator. If the `name` input
+        does not describe any of the derived path generator classes, an
+        `ValueError` will be raised.
+        """
         for gen in PathGenerator.__subclasses__():
             if name == gen.LABEL:
                 return gen(*args, **kwargs)
-        rospy.ROSException('Invalid path generator method')
+
+        msg = 'Invalid path generator method'
+        self._logger.error(msg)
+        raise ValueError(msg)
 
     @staticmethod
     def get_all_generators():
+        """Get the name identifiers of all path generator classes.
+        
+        > *Returns*
+        
+        List of `str`
+        """
         generators = list()
         for gen in PathGenerator.__subclasses__():
             generators.append(gen())
@@ -73,14 +107,17 @@ class PathGenerator(object):
 
     @property
     def waypoints(self):
+        """`uuv_waypoints.WaypointSet`: Set of waypoints"""
         return self._waypoints
 
     @property
     def max_time(self):
+        """`float`: Absolute final timestamp assigned to the path in seconds"""
         return self._duration + self._start_time
 
     @property
     def duration(self):
+        """`float`: Duration in seconds for the whole path"""
         return self._duration
 
     @duration.setter
@@ -90,6 +127,7 @@ class PathGenerator(object):
 
     @property
     def start_time(self):
+        """`float`: Start timestamp assigned to the first waypoint"""
         return self._start_time
 
     @start_time.setter
@@ -99,14 +137,15 @@ class PathGenerator(object):
 
     @property
     def closest_waypoint(self):
-        """Return the closest waypoint to the current position on the path."""
+        """`uuv_waypoints.Waypoint`: Return the closest waypoint 
+        to the current position on the path.
+        """
         return self._waypoints.get_waypoint(self.closest_waypoint_idx)
 
     @property
     def closest_waypoint_idx(self):
-        """
-        Return the index of the closest waypoint to the current position on the
-        path.
+        """Return the index of the closest waypoint to the current 
+        position on the path.
         """
 
         if self._cur_s == 0:
@@ -119,6 +158,9 @@ class PathGenerator(object):
 
     @property
     def s_step(self):
+        """`float`: Value of the step size for the path's parametric 
+        variable
+        """
         return self._s_step
 
     @s_step.setter
@@ -128,6 +170,7 @@ class PathGenerator(object):
 
     @property
     def termination_by_time(self):
+        """`data_type`: Property description"""
         return self._termination_by_time
 
     def reset(self):
@@ -158,7 +201,7 @@ class PathGenerator(object):
             wps = self._segment_to_wp_map[idx::]
             return np.unique(wps)
         except:
-            rospy.logerr('Invalid index')
+            self._logger.error('Invalid segment index')
             return None
 
     def is_full_dof(self):
@@ -193,12 +236,11 @@ class PathGenerator(object):
             self._waypoints = deepcopy(waypoints)
 
         if self._waypoints is None:
-            rospy.logerr('Waypoint list has not been initialized')
+            self._logger.error('Waypoint list has not been initialized')
             return False
 
         self._init_rot = init_rot
-        rospy.loginfo('PathGenerator::Setting initial rotation as=%s',
-                      str(init_rot))
+        self._logger.info('Setting initial rotation as={}'.format(init_rot))
         return True
 
     def interpolate(self, tag, s):

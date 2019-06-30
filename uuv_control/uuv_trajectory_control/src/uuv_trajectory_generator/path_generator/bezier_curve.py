@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,12 +19,25 @@ from scipy.misc import factorial
 
 class BezierCurve(object):
     """
-    Implementation of Bezier curves of orders 3, 4 and 5 based on [1].
-    
-    [1] Biagiotti, Luigi, and Claudio Melchiorri. Trajectory planning for 
-        automatic machines and robots. Springer Science & Business Media, 2008.
-    """
+    Implementation of [Bezier curves](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) 
+    of orders 3, 4 and 5 based on [1].
 
+    > *Input arguments*
+
+    * `pnts` (*type:* `list`): List of 3D points as a vector (example: `[[0, 0, 0], [0, 1, 2]]`)
+    * `order` (*type:* `int`): Order of the Bezier curve, options are 3, 4 or 5
+    * `tangents` (*type:* `list`, *default:* `None`): Optional input of the tangent 
+    vectors for each of the input points. In case only two points are provided, 
+    the tangents have to be provided, too. Otherwise, the tangents will be calculated.
+    * `normals` (*type:* `list`, *default:* `None`): Optional input of the normal 
+    vectors for each of the input points. In case only two points are provided, 
+    the normals have to be provided, too. Otherwise, the normals will be calculated.
+    
+    !!! note
+
+        [1] Biagiotti, Luigi, and Claudio Melchiorri. Trajectory planning for 
+            automatic machines and robots. Springer Science & Business Media, 2008.
+    """
     def __init__(self, pnts, order, tangents=None, normals=None):
         assert order in [3, 4, 5], 'Invalid Bezier curve order'
         assert type(pnts) == list and len(pnts) >= 2, 'At least two points are needed to calculate the curve'
@@ -136,14 +149,36 @@ class BezierCurve(object):
 
     @staticmethod
     def distance(p1, p2):
+        """Compute the distance between two 3D points.
+        
+        > *Input arguments*
+        
+        * `p1` (*type:* list of `float` or `numpy.array`): Point 1
+        * `p2` (*type:* list of `float` or `numpy.array`): Point 2
+        
+        > *Returns*
+        
+        Distance between points as a `float`
+        """
         p1 = np.array(p1)
         p2 = np.array(p2)
 
-        assert p1.size == 3 and p2.size == 3        
+        assert p1.size == 3 and p2.size == 3, \
+            'Both input points must be three elements'        
         return np.sqrt(np.sum((p2 - p1)**2))
 
     @staticmethod
     def generate_cubic_curve(pnts):
+        """Generate cubic Bezier curve segments from a list of points.
+        
+        > *Input arguments*
+        
+        * `pnts` (*type:* list of `float` or of `numpy.array`): List of points
+        
+        > *Returns*
+        
+        List of `BezierCurve` segments
+        """
         assert isinstance(pnts, list), 'List of points is invalid'
         tangents = [np.zeros(3) for _ in range(len(pnts))]
 
@@ -173,10 +208,20 @@ class BezierCurve(object):
         for i in range(len(tangents) - 1):
             segments.append(BezierCurve([pnts[i], pnts[i + 1]], 3, [tangents[i], tangents[i + 1]]))
 
-        return segments
+        return segments, tangents
 
     @staticmethod
     def generate_quintic_curve(pnts):
+        """Generate quintic Bezier curve segments from a list of points.
+        
+        > *Input arguments*
+        
+        * `pnts` (*type:* list of `float` or of `numpy.array`): List of points
+        
+        > *Returns*
+        
+        List of `BezierCurve` segments
+        """
         assert isinstance(pnts, list), 'List of points is invalid'
         tangents = [np.zeros(3) for _ in range(len(pnts))]
         normals = [np.zeros(3) for _ in range(len(pnts))]
@@ -217,9 +262,25 @@ class BezierCurve(object):
         return segments
 
     def control_pnts(self):
+        """Return the list of control points of the Bezier curve.
+
+        > *Returns*
+        
+        List of 3D points as `list`
+        """
         return self._control_pnts
 
     def interpolate(self, u):
+        """Interpolate the Bezier curve using the input parametric variable `u`.
+        
+        > *Input arguments*
+        
+        * `u` (*type:* `float`): Curve parametric input in the interval `[0, 1]`
+        
+        > *Returns*
+        
+        3D point from the Bezier curve as `numpy.array`
+        """
         u = max(u, 0)
         u = min(u, 1)
 
@@ -229,6 +290,18 @@ class BezierCurve(object):
         return b
 
     def get_derivative(self, u, order=1):
+        """Compute the derivative of the Bezier curve using the input parametric 
+        variable `u`.
+        
+        > *Input arguments*
+        
+        * `u` (*type:* `float`): Curve parametric input in the interval `[0, 1]`
+        * `order` (*type:* `int`, *default:* `1`): Order of the derivative
+
+        > *Returns*
+        
+        `numpy.array`: 3D derivative value from the Bezier curve
+        """
         u = max(u, 0)
         u = min(u, 1)
 
@@ -239,122 +312,41 @@ class BezierCurve(object):
         return b
 
     def get_length(self):
+        """Get length of the Bezier curve segment.
+
+        > *Returns*
+        
+        `float`: Length of the curve
+        """
         return self._order * np.linalg.norm(self._control_pnts[1] - self._control_pnts[0])
 
     def compute_polynomial(self, n, i, u):
+        """Compute the Bernstein polynomial
+
+        $$
+            \mathbf{B} = {n\choose i} (1 - u)^{(n - i)} u^{i}
+        $$
+        
+        > *Input arguments*
+        
+        * `n` (*type:* `int`): Degree of the Bezier curve
+        * `i` (*type:* `int`): Index of the control point
+        * `u` (*type:* `float`): Parametric input of the curve in interval [0, 1]
+        
+        > *Returns*
+
+        `float`: Bernstein polynomial result
+        """
         return self._get_binomial(n, i) * (1 - u)**(n - i) * u**i
 
     @staticmethod
     def _get_binomial(n, i):
-        return factorial(n) / (factorial(i) * factorial(n - i))
-
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-    from mpl_toolkits.mplot3d import Axes3D
-
-    np.set_printoptions(suppress=True, precision=2)
-
-    print 'Test - Cubic Bezier curve'
-    q_x = [0, 1, 2, 4, 5, 6]
-    q_y = [0, 2, 3, 3, 2, 0]
-    q_z = [0, 1, 0, 0, 2, 2]
-
-    q = [np.array([x, y, z]) for x, y, z in zip(q_x, q_y, q_z)]
-    
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    ax.plot(q_x, q_y, q_z, 'b--')
-    ax.plot(q_x, q_y, q_z, 'ro')
-
-    # Compute cubic Bezier curve
-
-    segments, tangents = BezierCurve.generate_cubic_curve(q)
-
-    for i in range(len(q)):
-        t = 0.8 * tangents[i]
-        ax.plot([q[i][0], q[i][0] + t[0]], [q[i][1], q[i][1] + t[1]], [q[i][2], q[i][2] + t[2]], 'b', linewidth=3)
-
-    lengths = [seg.get_length() for seg in segments]
-    lengths = [0] + lengths
-    total_length = np.sum(lengths)
-
-    u = np.cumsum(lengths) / total_length
-
-    pnts = None
-    deriv = None
-    for i in np.linspace(0, 1, 200):
-        idx = (u - i >= 0).nonzero()[0][0]
-        if idx == 0:
-            u_k = 0
-            pnts = segments[idx].interpolate(u_k)
-            deriv = segments[idx].get_derivative(u_k)
-        else:
-            u_k = (i - u[idx - 1]) / (u[idx] - u[idx - 1])
-            pnts = np.vstack((pnts, segments[idx - 1].interpolate(u_k)))
-            deriv = np.vstack((deriv, segments[idx - 1].get_derivative(u_k)))
-
-    ax.plot(pnts[:, 0], pnts[:, 1], pnts[:, 2], 'g')    
-
-    for d, p in zip(deriv, pnts):
-        d /= np.linalg.norm(d) 
-        pd = p + d 
-        # ax.plot([p[0], pd[0]], [p[1], pd[1]], [p[2], pd[2]], 'r')
-
-    ax.set_aspect('equal')
-
-    u = np.array([0, 0.22, 0.38, 0.56, 0.79, 1])
-
-    for i in u:
-        idx = (u - i >= 0).nonzero()[0][0]
-        if idx == 0:
-            u_k = 0            
-            deriv = segments[idx].get_derivative(u_k)
-        else:
-            u_k = (i - u[idx - 1]) / (u[idx] - u[idx - 1])            
-            deriv = np.vstack((deriv, segments[idx - 1].get_derivative(u_k)))
+        """Compute binomial function $\binom{n}{i}$ 
         
-    # Compute Quintic Bezier curve    
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-
-    # ax.plot(q_x, q_y, q_z, 'b--')
-    # ax.plot(q_x, q_y, q_z, 'ro')
-
-    # segments, tangents, normals = BezierCurve.generate_quintic_curve(q)
-
-    # for i in range(len(q)):
-    #     t = tangents[i]
-    #     ax.plot([q[i][0], q[i][0] + t[0]], [q[i][1], q[i][1] + t[1]], [q[i][2], q[i][2] + t[2]], 'b', linewidth=3)
-
-    #     n = normals[i]
-    #     ax.plot([q[i][0], q[i][0] + n[0]], [q[i][1], q[i][1] + n[1]], [q[i][2], q[i][2] + n[2]], 'r', linewidth=3)
-
-    # lengths = [seg.get_length() for seg in segments]
-    # lengths = [0] + lengths
-    # total_length = np.sum(lengths)
-
-    # u = np.cumsum(lengths) / total_length
-
-    # pnts = None
-    # deriv = None
-    # for i in np.linspace(0, 1, 100):
-    #     idx = (u - i >= 0).nonzero()[0][0]
-    #     if idx == 0:
-    #         u_k = 0
-    #         pnts = segments[idx].interpolate(u_k)
-    #         deriv = segments[idx].get_derivative(u_k)
-    #     else:
-    #         u_k = (i - u[idx - 1]) / (u[idx] - u[idx - 1])
-    #         pnts = np.vstack((pnts, segments[idx - 1].interpolate(u_k)))
-    #         deriv = np.vstack((deriv, segments[idx - 1].get_derivative(u_k)))        
-
-    # for d, p in zip(deriv, pnts):
-    #     d /= np.linalg.norm(d) 
-    #     pd = p + d 
-        # ax.plot([p[0], pd[0]], [p[1], pd[1]], [p[2], pd[2]], 'r')
-
-    # ax.plot(pnts[:, 0], pnts[:, 1], pnts[:, 2], 'c')
-    
-    plt.show()
+        > *Input arguments*
+        
+        * `n` (*type:* `int`)
+        * `i` (*type:* `int`)
+        """
+        return factorial(n) / (factorial(i) * factorial(n - i))
 

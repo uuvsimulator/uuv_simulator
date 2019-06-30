@@ -12,9 +12,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Waypoint description for construction of 3D paths and trajectories."""
 
-__all__ = ['waypoint', 'waypoint_set']
+LOGGER = None
 
-from .waypoint import Waypoint
-from .waypoint_set import WaypointSet
+def get_logger():
+    global LOGGER
+    if LOGGER is None:
+        import logging
+        import sys
+        
+        LOGGER = logging.getLogger('uuv_trajectory_generator')
+        out_hdlr = logging.StreamHandler(sys.stdout)
+        out_hdlr.setFormatter(logging.Formatter(' %(asctime)s | %(levelname)s | %(module)s | %(message)s'))
+        out_hdlr.setLevel(logging.INFO)
+        LOGGER.addHandler(out_hdlr)
+        LOGGER.setLevel(logging.INFO)
+
+    return LOGGER

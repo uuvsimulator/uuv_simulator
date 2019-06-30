@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import rospy
 import numpy as np
 from copy import deepcopy
 from geometry_msgs.msg import Vector3, PoseStamped, Quaternion
 import uuv_control_msgs.msg as uuv_control_msgs
 from nav_msgs.msg import Path
-from .wp_trajectory_generator import WPTrajectoryGenerator
 from uuv_waypoints import WaypointSet
+from .wp_trajectory_generator import WPTrajectoryGenerator
 from .trajectory_point import TrajectoryPoint
-from tf.transformations import euler_from_quaternion
+from tf_quaternion.transformations import euler_from_quaternion
+from ._log import get_logger
 
 
 class TrajectoryGenerator(object):
+    """Trajectory generator based on waypoint and trajectory interpolation.
+    
+    > *Input arguments*
+    
+    * `full_dof` (*type:* `bool`, *default:* `False`): If `True`, generate 
+    the trajectory in 6 DoFs, otherwise `roll` and `pitch` are set to zero.
+    * `stamped_pose_only` (*type:* `bool`, *default:* `False`): If `True`
+    the output trajectory will set velocity and acceleration references
+    as zero.
+    """
     def __init__(self, full_dof=False, stamped_pose_only=False):
+        self._logger = get_logger()
         self._points = None
         self._time = None
         self._this_pnt = None
@@ -41,6 +52,7 @@ class TrajectoryGenerator(object):
 
     @property
     def points(self):
+        """List of `uuv_trajectory_generator.TrajectoryPoint`: List of trajectory points"""
         if self._wp_interp_on:
             return self._wp_interp.get_samples(0.001)
         else:
@@ -48,6 +60,7 @@ class TrajectoryGenerator(object):
 
     @property
     def time(self):
+        """List of `float`: List of timestamps"""
         return self._time
 
     def use_finite_diff(self, flag):
@@ -57,6 +70,17 @@ class TrajectoryGenerator(object):
         return self._wp_interp.use_finite_diff
 
     def set_stamped_pose_only(self, flag):
+        """Set flag to enable or disable computation of trajectory
+        points
+        
+        > *Input arguments*
+        
+        * `flag` (*type:* `bool`): Parameter description
+        
+        > *Returns*
+        
+        Description of return values
+        """
         self._wp_interp.stamped_pose_only = flag
 
     def is_using_stamped_pose_only(self):
@@ -94,28 +118,29 @@ class TrajectoryGenerator(object):
         poses only.
         """
 
-        # try:
         if self.points is None:
             return None
         msg = uuv_control_msgs.Trajectory()
-        msg.header.stamp = rospy.Time.now()
+        try:
+            msg.header.stamp = rospy.Time.now()
+        except:
+            self._logger.warning(
+                'A ROS node was not initialized, no '
+                'timestamp can be set to Trajectory message')
         msg.header.frame_id = 'world'
         for pnt in self.points:
             # FIXME Sometimes the time stamp of the point is NaN
             msg.points.append(pnt.to_message())
         return msg
-        # except Exception, e:
-        #     print 'Error during creation of trajectory message, msg=' + str(e)
-        #     return None
-
+        
     def is_using_waypoints(self):
         """Return true if the waypoint interpolation is being used."""
         return self._wp_interp_on
 
     def set_waypoints(self, waypoints, init_rot=(0, 0, 0, 1)):
         """Initializes the waypoint interpolator with a set of waypoints."""
-        rospy.loginfo('Initial rotation vector (quat)=%s', str(init_rot))
-        rospy.loginfo('Initial rotation vector (rpy)=%s',
+        self._logger.info('Initial rotation vector (quat)=%s', str(init_rot))
+        self._logger.info('Initial rotation vector (rpy)=%s',
                       str(euler_from_quaternion(init_rot)))
         if self._wp_interp.init_waypoints(waypoints, init_rot):
             self._wp_interp_on = True
@@ -130,7 +155,7 @@ class TrajectoryGenerator(object):
         """
 
         if not self.is_using_waypoints():
-            rospy.loginfo('NOT USING WAYPOINTS')
+            self._logger.info('NOT USING WAYPOINTS')
             return None
         return self._wp_interp.get_waypoints()
 
@@ -160,7 +185,7 @@ class TrajectoryGenerator(object):
             self._time.append(pnt.t)
             return True
         else:
-            rospy.logerr('Cannot add trajectory point! Generator is in '
+            self._logger.error('Cannot add trajectory point! Generator is in '
                          'waypoint interpolation mode!')
             return False
 
@@ -171,16 +196,16 @@ class TrajectoryGenerator(object):
                 self.add_trajectory_point(pnt)
                 return True
             else:
-                rospy.logerr('Error converting message to trajectory point')
+                self._logger.error('Error converting message to trajectory point')
                 return False
         else:
-            rospy.logerr('Cannot add trajectory point! Generator is in '
+            self._logger.error('Cannot add trajectory point! Generator is in '
                          'waypoint interpolation mode!')
             return False
 
     def set_duration(self, t):
         if not self._wp_interp_on:
-            rospy.logerr('Waypoint interpolation is not activated')
+            self._logger.error('Waypoint interpolation is not activated')
             return False
         else:
             return self._wp_interp.set_duration(t)
@@ -221,7 +246,7 @@ class TrajectoryGenerator(object):
                 last_t = t
             else:
                 if t <= last_t:
-                    rospy.logerr('Trajectory should be given a growing value '
+                    self._logger.error('Trajectory should be given a growing value '
                                  'of time')
                     self._reset()
                     return False
@@ -246,43 +271,60 @@ class TrajectoryGenerator(object):
         if self._points is None:
             return None
         msg = uuv_control_msgs.Trajectory()
-        msg.header.stamp = rospy.Time.now()
+        try:
+            msg.header.stamp = rospy.Time.now()
+            set_timestamps = True
+        except:
+            set_timestamps = False
+            self._logger.warning(
+                'ROS node was not initialized, no timestamp '
+                'can be assigned to trajectory message')
         msg.header.frame_id = 'world'
         if not self.is_using_waypoints:
             for p in self._points:
                 p_msg = uuv_control_msgs.TrajectoryPoint()
-                p_msg.header.stamp = rospy.Time(p.t)
+                if set_timestamps:
+                    p_msg.header.stamp = rospy.Time(p.t)
                 p_msg.pose.position = Vector3(*p.p)
                 p_msg.pose.orientation = Quaternion(*p.q)
                 p_msg.velocity.linear = Vector3(*p.v)
                 p_msg.velocity.angular = Vector3(*p.w)
                 p_msg.acceleration.linear = Vector3(*p.a)
                 p_msg.acceleration.angular = Vector3(*p.alpha)
-                msg.point.append(p_msg)
+                msg.points.append(p_msg)
         else:
             dt = 0.05 * self._wp_interp.get_max_time()
             for ti in np.arange(0, self._wp_interp.get_max_time(), dt):
                 pnt = self._wp_interp.interpolate(ti)
                 p_msg = uuv_control_msgs.TrajectoryPoint()
-                p_msg.header.stamp = rospy.Time(pnt.t)
+                if set_timestamps:
+                    p_msg.header.stamp = rospy.Time(pnt.t)
                 p_msg.pose.position = Vector3(*pnt.p)
                 p_msg.pose.orientation = Quaternion(*pnt.q)
                 p_msg.velocity.linear = Vector3(*pnt.v)
                 p_msg.velocity.angular = Vector3(*pnt.w)
                 p_msg.acceleration.linear = Vector3(*pnt.a)
                 p_msg.acceleration.angular = Vector3(*pnt.alpha)
-                msg.point.append(p_msg)
+                msg.points.append(p_msg)
         return msg
 
     def get_path_message(self):
         path_msg = Path()
-        path_msg.header.stamp = rospy.Time.now()
+        try:
+            path_msg.header.stamp = rospy.Time.now()
+            set_timestamps = True
+        except:
+            set_timestamps = False
+            self._logger.warning(
+                'ROS node was not initialized, no timestamp '
+                'can be assigned to path message')
         path_msg.header.frame_id = 'world'
         path_msg.poses = list()
 
         for point in self._local_planner.points:
             pose = PoseStamped()
-            pose.header.stamp = rospy.Time(point.t)
+            if set_timestamps:
+                pose.header.stamp = rospy.Time(point.t)
             pose.pose.position = Vector3(*point.p)
             pose.pose.orientation = Quaternion(*point.q)
             path_msg.poses.append(pose)

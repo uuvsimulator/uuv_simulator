@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,23 +14,45 @@
 # limitations under the License.
 
 import numpy as np
-from uuv_waypoints import Waypoint, WaypointSet
-from helical_segment import HelicalSegment
-from bezier_curve import BezierCurve
-from path_generator import PathGenerator
 from copy import deepcopy
-from ..trajectory_point import TrajectoryPoint
-from tf.transformations import quaternion_multiply, quaternion_about_axis, quaternion_conjugate, quaternion_from_matrix, euler_from_matrix
-from line_segment import LineSegment
 
+from tf_quaternion.transformations import quaternion_multiply, \
+    quaternion_about_axis, quaternion_conjugate, \
+        quaternion_from_matrix, euler_from_matrix
 from visualization_msgs.msg import MarkerArray, Marker
 from geometry_msgs.msg import Point
-import rospy
+from uuv_waypoints import Waypoint, WaypointSet
+
+from ..trajectory_point import TrajectoryPoint
+from .._log import get_logger
+from .helical_segment import HelicalSegment
+from .bezier_curve import BezierCurve
+from .line_segment import LineSegment
+from .path_generator import PathGenerator
 
 class DubinsInterpolator(PathGenerator):
-    """
-    3D Dubins path interpolator
-    """
+    """3D Dubins path interpolator implemented based on the sources 
+    below.
+
+    !!! note
+
+        Owen, Mark, Randal W. Beard, and Timothy W. McLain. 
+        "Implementing Dubins Airplane Paths on Fixed-Wing UAVs."
+        Handbook of Unmanned Aerial Vehicles (2014): 1677-1701.
+
+        Cai, Wenyu, Meiyan Zhang, and Yahong Zheng. "Task Assignment
+        and Path Planning for Multiple Autonomous Underwater Vehicles
+        Using 3D Dubins Curves." Sensors 17.7 (2017):1607.
+
+        Hansen, Karl D., and Anders La Cour-Harbo. "Waypoint Planning
+        with Dubins Curves Using Genetic Algorithms." 2016 European
+        Control Conference (ECC) (2016).
+
+        Lin, Yucong, and Srikanth Saripalli. "Path Planning Using
+        3D Dubins Curve for Unmanned Aerial Vehicles." 2014 
+        International Conference on Unmanned Aircraft Systems (ICUAS)
+        (2014).
+    """ 
     LABEL = 'dubins'
 
     def __init__(self):
@@ -39,13 +61,23 @@ class DubinsInterpolator(PathGenerator):
         self._radius = 5
         self._max_pitch_angle = 5.0 * np.pi / 180
         self._interp_fcns = list()
+        self._logger = get_logger()
 
     def init_interpolator(self):
+        """Initialize the interpolator. To have the path segments generated,
+        `init_waypoints()` must be called beforehand by providing a set of 
+        waypoints as `uuv_waypoints.WaypointSet` type. 
+        
+        > *Returns*
+        
+        `bool`: `True` if the path segments were successfully generated.
+        """
         if self._waypoints is None:
+            self._logger.error('List of waypoints is empty')
             return False
 
         if self._waypoints.num_waypoints < 2:
-            print 'At least 2 waypoints are necessary'
+            self._logger.error('At least 2 waypoints are necessary')
             return False
 
         self._markers_msg = MarkerArray()
@@ -94,7 +126,7 @@ class DubinsInterpolator(PathGenerator):
         if not np.isclose(np.sqrt(np.sum((path[-1] - path[-2])**2)), 0):
             inter_pnts += [path[-1]]
 
-        self._interp_fcns = BezierCurve.generate_cubic_curve(inter_pnts)
+        self._interp_fcns, tangent = BezierCurve.generate_cubic_curve(inter_pnts)
 
         # Reparametrizing the curves
         lengths = [seg.get_length() for seg in self._interp_fcns]
@@ -111,15 +143,54 @@ class DubinsInterpolator(PathGenerator):
         return True
 
     def _get_frame(self, heading):
+        """Return the 2D rotation matrix for a desired heading. 
+        
+        > *Input arguments*
+        
+        * `heading` (*type:* `float`): Heading angle in radians 
+        
+        > *Returns*
+        
+        `numpy.array`: 2D rotation matrix
+        """
         return np.array([[np.cos(heading), -np.sin(heading)],[np.sin(heading), np.cos(heading)]])
 
     def _get_distance(self, pnt_1, pnt_2):
+        """Compute the distance between two points.
+        
+        > *Input arguments*
+        
+        * `pnt_1` (*type:* `numpy.array`): Point 1
+        * `pnt_2` (*type:* `numpy.array`): Point 2
+        
+        > *Returns*
+        
+        `float`: Distance between points
+        """
         return np.sqrt(np.sum((pnt_1 - pnt_2)**2))
 
     def _get_circles_center_pos(self, waypoint, heading, radius=None):
+        """Return the centers of the circles on the left and right of the 
+        waypoint with respect to the direction described the desired heading.
+        
+        > *Input arguments*
+        
+        * `waypoint` (*type:* `uuv_wapoints.Waypoint`): Waypoint
+        * `heading` (*type:* `float`): Desired heading in radians
+        * `radius` (*type:* `float`, *default:* `None`): Desired radius for the
+        circles. If `None` is provided, then the internal radius will be used.
+        
+        > *Returns*
+        
+        `dict` with the left `L` and right `R` center of the circles as `numpy.array`
+        """
         # Use the default radius if none is provided
         r = self._radius if radius is None else radius
-        assert r > 0
+
+        if r <= 0:
+            msg = 'Radius must be greater than zero'
+            self._logger.error(msg)
+            raise ValueError('Radius must be greater than zero')
         # Get the 2D frame using the heading angle information
         frame = self._get_frame(heading)
         # Compute the position of the center of right and left circles wrt
@@ -133,26 +204,93 @@ class DubinsInterpolator(PathGenerator):
         return 2 * np.pi * u * delta + heading - delta * np.pi / 2
 
     def _compute_u(self, angle, delta, heading):
+        """Compute the parametric input for the circle path.
+        
+        > *Input arguments*
+        
+        * `angle` (*type:* `float`): Angle in the circle's path
+        in radians
+        * `delta` (*type:* `int`): Generate the points in counter-clockwise
+        direction if `delta` is -1 and clockwise if `delta` is 1
+        * `heading` (*type:* `float`): Heading offset angle in radians
+
+        > *Returns*
+        
+        `float`: Circle's parametric variable
+        """
         u = (angle - heading + delta * np.pi / 2) / (delta * 2 * np.pi)
         if u < 0:
             u += 1
         return u
 
     def _get_tangent(self, u, delta, radius, heading):
+        """Function description
+        
+        > *Input arguments*
+        
+        * `param` (*type:* `data_type`, *default:* `data`): Parameter description
+        
+        > *Returns*
+        
+        Description of return values
+        """
         return np.cross(np.array([0, 0, 1]),
                         np.array([delta * radius * np.cos(self._get_phi(u, delta, heading)),
                                   delta * radius * np.sin(self._get_phi(u, delta, heading)),
                                   0]))[0:2]
 
     def _get_circle(self, u, center, radius, delta, heading):
+        """Compute the 2D coordinates for a circle.
+        
+        > *Input arguments*
+        
+        * `u` (*type:* `float`): Parametric variable in interval [0, 1]
+        * `center` (*type:* `numpy.array`): Center of the circle in meters
+        * `radius` (*type:* `float`): Radius of the circle in meters
+        * `delta` (*type:* `int`): Generate the points in counter-clockwise
+        direction if `delta` is -1 and clockwise if `delta` is 1
+        * `heading` (*type:* `float`): Heading associated to the waypoint
+        
+        > *Returns*
+        
+        Circle coordinates as `numpy.array`.
+        """
         return center + radius * np.array([np.cos(self._get_phi(u, delta, heading)),
                                            np.sin(self._get_phi(u, delta, heading))])
 
     def _get_2d_dubins_path(self, center_1, radius_1, heading_1, delta_1, center_2, radius_2, heading_2, delta_2):
+        """Compute the 2D Dubins path algorithm. It computes the shortest curve
+        that connects two points. Given two circles which are tangent to the
+        origin and target waypoints, with a chosen heading to depart the first
+        and reach the second, find the path that will be first tangent
+        on circle tangent to the first waypoint, travel to towards the
+        second in a straight line and reach the closest tangent on the
+        circle around the second waypoint.
+        
+        > *Input arguments*
+        
+        * `center_1` (*type:* `numpy.array`): 2D center of the circle tangent to 
+        the origin waypoint.
+        * `radius_1` (*type:* `float`): Radius of the circle related to the origin
+        waypoint in meters
+        * `heading_1` (*type:* `float`): Desired heading associated to the origin 
+        waypoint
+        * `delta_1` (*type:* `int`): Direction to travel around the circle, -1 for
+        counter-clockwise and 1 for clockwise
+        * `center_2` (*type:* `numpy.array`): 2D center of the circle tangent to 
+        the target waypoint.
+        * `radius_2` (*type:* `float`): Radius of the circle related to the target
+        waypoint in meters
+        * `heading_2` (*type:* `float`): Desired heading associated to the target 
+        waypoint
+        * `delta_2` (*type:* `int`): Direction to travel around the circle, -1 for
+        counter-clockwise and 1 for clockwise
+        
+        > *Returns*
+        
+        Description of return values
+        """
         output = list()
-
-        phi_1 = lambda u: self._get_phi(u, delta_1, heading_1)
-        phi_2 = lambda u: self._get_phi(u, delta_2, heading_2)
 
         u1_func = lambda angle: self._compute_u(angle, delta_1, heading_1)
         u2_func = lambda angle: self._compute_u(angle, delta_2, heading_2)
@@ -380,10 +518,16 @@ class DubinsInterpolator(PathGenerator):
         else:
             return wp.pos + self._radius * y_vec
 
-    def _get_circle_marker(self, center, radius, heading, delta, frame_id, circle_color=[0, 1, 0]):
+    def _get_circle_marker(self, center, radius, heading, delta, frame_id, 
+        circle_color=[0, 1, 0]):
+        import rospy
         marker = Marker()
         marker.header.frame_id = frame_id
-        marker.header.stamp = rospy.Time.now()
+        try:
+            if not rospy.is_shutdown():
+                marker.header.stamp = rospy.Time.now()
+        except:
+            pass
         marker.ns = 'dubins'
         marker.id = self._marker_id
         self._marker_id += 1
@@ -405,7 +549,11 @@ class DubinsInterpolator(PathGenerator):
         self._marker_id += 1
         marker_pnt = Marker()
         marker_pnt.header.frame_id = frame_id
-        marker_pnt.header.stamp = rospy.Time.now()
+        try:
+            if not rospy.is_shutdown():
+                marker_pnt.header.stamp = rospy.Time.now()
+        except:
+            pass
         marker_pnt.ns = 'dubins'
         marker_pnt.id = self._marker_id
         self._marker_id += 1
@@ -551,6 +699,26 @@ class DubinsInterpolator(PathGenerator):
         return pnts
 
     def set_parameters(self, params):
+        """Set interpolator's parameters. All the options
+        for the `params` input can be seen below:
+
+        ```python
+        params=dict(
+            radius=0.0,
+            max_pitch=0.0
+            ) 
+        ```
+
+        * `radius` (*type:* `float`): Turning radius
+        * `max_pitch` (*type:* `float`): Max. pitch angle allowed 
+        between two waypoints. If the pitch exceeds `max_pitch`, a
+        helical path is computed to perform steep climbs or dives.
+
+        > *Input arguments*
+        
+        * `params` (*type:* `dict`): `dict` containing interpolator's
+        configurable elements.
+        """
         if 'radius' in params:
             assert params['radius'] > 0, 'Radius must be greater than zero'
             self._radius = params['radius']
@@ -560,6 +728,17 @@ class DubinsInterpolator(PathGenerator):
         return True
 
     def get_samples(self, max_time, step=0.001):
+        """Sample the full path for position and quaternion vectors.
+        `step` is represented in the path's parametric space.
+        
+        > *Input arguments*
+        
+        * `step` (*type:* `float`, *default:* `0.001`): Parameter description
+        
+        > *Returns*
+        
+        List of `uuv_trajectory_generator.TrajectoryPoint`.
+        """
         if self._waypoints is None:
             return None
         if len(self._interp_fcns) == 0:
@@ -575,6 +754,19 @@ class DubinsInterpolator(PathGenerator):
         return pnts
 
     def generate_pos(self, s):
+        """Generate a position vector for the path sampled point
+        interpolated on the position related to `s`, `s` being  
+        represented in the curve's parametric space.
+        
+        > *Input arguments*
+        
+        * `s` (*type:* `float`): Curve's parametric input expressed in the 
+        interval of [0, 1]
+        
+        > *Returns*
+        
+        3D position vector as a `numpy.array`.
+        """
         if len(self._interp_fcns) == 0:
             return None
         idx = self.get_segment_idx(s)
@@ -587,6 +779,21 @@ class DubinsInterpolator(PathGenerator):
         return pos
 
     def generate_pnt(self, s, t, *args):
+        """Compute a point that belongs to the path on the 
+        interpolated space related to `s`, `s` being represented 
+        in the curve's parametric space.
+        
+        > *Input arguments*
+        
+        * `s` (*type:* `float`): Curve's parametric input expressed in the 
+        interval of [0, 1]
+        * `t` (*type:* `float`): Trajectory point's timestamp
+        
+        > *Returns*
+        
+        `uuv_trajectory_generator.TrajectoryPoint` including position
+        and quaternion vectors.
+        """
         pnt = TrajectoryPoint()
         # Trajectory time stamp
         pnt.t = t
@@ -597,6 +804,22 @@ class DubinsInterpolator(PathGenerator):
         return pnt
 
     def generate_quat(self, s):
+        """Compute the quaternion of the path reference for a interpolated
+        point related to `s`, `s` being represented in the curve's parametric 
+        space.
+        The quaternion is computed assuming the heading follows the direction
+        of the path towards the target. Roll and pitch can also be computed 
+        in case the `full_dof` is set to `True`.
+        
+        > *Input arguments*
+        
+        * `s` (*type:* `float`): Curve's parametric input expressed in the 
+        interval of [0, 1]
+        
+        > *Returns*
+        
+        Rotation quaternion as a `numpy.array` as `(x, y, z, w)`
+        """
         s = max(0, s)
         s = min(s, 1)
 

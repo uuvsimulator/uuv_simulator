@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
 # limitations under the License.
 
 __all__ = ['PathGenerator', 'CSInterpolator', 'BezierCurve', 'LineSegment', 
-           'LIPBInterpolator', 'DubinsInterpolator', 'LinearInterpolator']
+           'LIPBInterpolator', 'DubinsInterpolator', 'LinearInterpolator', 'HelicalSegment']
 
 from .path_generator import PathGenerator
 from .cs_interpolator import CSInterpolator
@@ -23,3 +23,4 @@ from .dubins_interpolator import DubinsInterpolator
 from .linear_interpolator import LinearInterpolator
 from .bezier_curve import BezierCurve
 from .line_segment import LineSegment
+from .helical_segment import HelicalSegment

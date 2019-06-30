@@ -1,0 +1,461 @@
+{
+	"py_class_md_docstring": {
+		"prefix": "uuv.py.doc.class",
+		"scope": "python",
+		"description": "Python Class Docstring (Markdown)",
+		"body": [
+			"\"\"\"Class description",
+			"",
+			"> *Attributes*",
+			"",
+			"* `param` (*type:* `data_type`, *value:* `data`): Parameter description",
+			"",
+			"> *Input arguments*",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description",
+			"",
+			"\"\"\""
+		]
+	},
+
+	"py_func_md_docstring": {
+		"prefix": "uuv.py.doc.func",
+		"scope": "python",
+		"description": "Python Function Docstring (Markdown)",
+		"body": [
+			"\"\"\"Function description",
+			"",
+			"> *Input arguments*",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description",
+			"",
+			"> *Returns*",
+			"",
+			"Description of return values",
+			"\"\"\""
+		]
+	},
+
+	"py_module_md_docstring": {
+		"prefix": "uuv.py.doc.module",
+		"scope": "python",
+		"description": "Python Module Docstring (Markdown)",
+		"body": [
+			"\"\"\"Module description",
+			"\"\"\""
+		]
+	},
+
+	"py_param_md_docstring_snippet": {
+		"prefix": "uuv.py.doc.param",
+		"scope": "python",
+		"description": "Python Parameter Docstring Snippet (Markdown)",
+		"body": [
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description"
+		]
+	},
+
+	"py_ros_publisher_md_docstring_snippet": {
+		"prefix": "uuv.py.doc.publisher",
+		"scope": "python",
+		"description": "Python ROS Publisher Docstring Snippet (Markdown)",
+		"body": [
+			"* `topic_name` (*message:* `data_type`): Topic description"
+		]
+	},
+
+	"py_property_md_docstring": {
+		"prefix": "uuv.py.doc.property",
+		"scope": "python",
+		"description": "Python Property Docstring (Markdown)",
+		"body": [
+			"\"\"\"`data_type`: Property description\"\"\""
+		]
+	},
+
+	"py_script_md_docstring": {
+		"prefix": "uuv.py.doc.script",
+		"scope": "python",
+		"description": "Python Script Docstring (Markdown)",
+		"body": [
+			"\"\"\"**Description**",
+			"",
+			"Script description, with some formulas",
+			"",
+			"$$",
+			"\t\\dot{v_c}(t) + \\mu_c v_c(t) = w_c",
+			"$$",
+			"",
+			"**Input ROS parameters**",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `value`): Parameter description",
+			"",
+			"**Input parameters**",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `value`): Parameter description",
+			"",
+			"**Usage**",
+			"",
+			"Examples of usage",
+			"",
+			"```bash",
+			"rosrun pkg_name node_name --param value",
+			"```",
+			"",
+			"**Launch file snippet**",
+			"",
+			"```xml",
+			"<node name=\"name\" pkg=\"pkg_name\" type=\"name\" output=\"screen\">",
+			"\t<rosparam subst_value=\"true\">",
+			"\t\tparam: value",
+			"\t</rosparam>",
+			"</node>",
+			"```",
+			"**ROS services**",
+			"",
+			"> **`service_name`**",
+			"",
+			"*Service description file*",
+			"",
+			"[`service.file`](link_to_service_file)",
+			"",
+			"*Service call*",
+			"",
+			"```bash",
+			"rosservice call service_name",
+			"```",
+			"",
+			"Description of input parameters and return values",
+			"",
+			"\"\"\""
+		]
+	},
+
+	"py_uuv_ros_test": {
+		"scope": "python",
+		"prefix": "uuv.py.ros.test",
+		"description": "ROS Unit Test Script (Python)",
+		"body": [
+			"#!/usr/bin/env python",
+			"# Copyright (c) 2016-$CURRENT_YEAR The UUV Simulator Authors.",
+			"# All rights reserved.",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License.",
+			"import roslib",
+			"import unittest",
+			"# Other imports",
+			"",
+			"PKG = 'package_name'",
+			"roslib.load_manifest(PKG)",
+			"",
+			"class TestModule(unittest.TestCase):",
+			"\tpass",
+			"",
+			"if __name__ == '__main__':",
+			"\timport rosunit",
+			"\trosunit.unitrun(PKG, 'test_module', TestModule)"
+		]
+	},
+
+	"py_uuv_license_header": {
+		"scope": "python",
+		"prefix": "uuv.py.license",
+		"description": "UUV Simulator License Header (Python)",
+		"body": [
+			"# Copyright (c) 2016-$CURRENT_YEAR The UUV Simulator Authors.",
+			"# All rights reserved.",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License."
+		]
+	},
+
+	"xml_uuv_license_header": {
+		"scope": "xml",
+		"prefix": "uuv.xml.license",
+		"description": "UUV Simulator License Header (XML)",
+		"body": [
+			"<!-- Copyright (c) 2016-$CURRENT_YEAR The UUV Simulator Authors.",
+			"\tAll rights reserved.",
+			"",
+			"\tLicensed under the Apache License, Version 2.0 (the \"License\");",
+			"\tyou may not use this file except in compliance with the License.",
+			"\tYou may obtain a copy of the License at",
+			"",
+			"\thttp://www.apache.org/licenses/LICENSE-2.0",
+			"",
+			"\tUnless required by applicable law or agreed to in writing, software",
+			"\tdistributed under the License is distributed on an \"AS IS\" BASIS,",
+			"\tWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"\tSee the License for the specific language governing permissions and",
+			"\tlimitations under the License.",
+			"-->"
+		]
+	},
+
+	"xml_uuv_xacro_file": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.file",
+		"description": "Xacro file (XML)",
+		"body": [
+			"<?xml version=\"1.0\"?>",
+			"<robot xmlns:xacro=\"http://www.ros.org/wiki/xacro\">",
+			"",
+			"</robot>"
+		]
+	},
+
+	"xml_uuv_xacro_include": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.include",
+		"description": "Xacro include (XML)",
+		"body": [
+			"<xacro:include filename=\"$(find pkg_name)/path/file.urdf.xacro\"/>"
+		]
+	},
+
+	"xml_uuv_xacro_property": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.property",
+		"description": "Xacro property (XML)",
+		"body": [
+			"<xacro:property name=\"param_name\" value=\"param_value\"/>"
+		]
+	},
+
+	"xml_uuv_xacro_macro": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.macro",
+		"description": "Xacro macro (XML)",
+		"body": [
+			"<xacro:macro name=\"macro_name\" params=\"param_1 param_2\">",
+			"",
+			"</xacro:macro>"
+		]
+	},
+
+	"xml_uuv_xacro_insert_block": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.insert_block",
+		"description": "Xacro insert block (XML)",
+		"body": [
+			"<xacro:insert_block name=\"block_name\"/>"
+		]
+	},
+
+	"xml_uuv_xacro_hydrodynamic_model_link": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.link",
+		"description": "Base for the hydrodynamic model description for one link",
+		"body": [
+			"<link name=\"link_name\">",
+			"\t<neutrally_buoyant>0</neutrally_buoyant>",
+			"",
+			"\t<volume>0</volume>",
+			"",
+			"\t<box>",
+			"\t\t<width>0</width>",
+			"\t\t<length>0</length>",
+			"\t\t<height>0</height>",
+			"\t</box>",
+			"",
+			"<center_of_buoyancy>0 0 0</center_of_buoyancy>",
+			"",
+			"<hydrodynamic_model>",
+			"",
+			"\t<!-- Add the desired hydrodynamic model description here -->",
+			"",
+			"</hydrodynamic_model>",
+			"</link>"
+		]
+	},
+
+	"xml_uuv_xacro_hydrodynamic_model_fossen": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.fossen",
+		"description": "Inputs for Fossen's hydrodynamic model (XML)",
+		"body": [
+			"<hydrodynamic_model>",
+			"\t<type>fossen</type>",
+			"",
+			"\t<added_mass>",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t\t0 0 0 0 0 0",
+			"\t</added_mass>",
+			"",
+			"\t<linear_damping>",
+			"\t\t0 0 0 0 0 0",
+			"\t</linear_damping>",
+			"",
+			"\t<linear_damping_forward_speed>",
+			"\t\t0 0 0 0 0 0",
+			"\t</linear_damping_forward_speed>",
+			"",
+			"\t<quadratic_damping>",
+			"\t\t0 0 0 0 0 0",
+			"\t</quadratic_damping>",
+			"</hydrodynamic_model>"
+		]
+	},
+
+	"xml_uuv_xacro_hydrodynamic_model_sphere": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.sphere",
+		"description": "Inputs for an approximated Fossen's hydrodynamic model for a sphere (XML)",
+		"body": [
+			"<hydrodynamic_model>",
+          	"\t<type>sphere</type>",
+          	"\t<radius>0</radius>",
+        	"</hydrodynamic_model>"
+		]
+	},
+
+	"xml_uuv_xacro_underwater_object_plugin_sphere": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.sphere.underwater_object_plugin",
+		"description": "Snippet for the uuv_underwater_object plugin using Fossen's model for a sphere (XML)",
+		"body": [
+			"<gazebo>",
+      		"\t<plugin name=\"uuv_plugin\" filename=\"libuuv_underwater_object_ros_plugin.so\">",
+        	"\t\t<fluid_density>1025.0</fluid_density>",
+        	"\t\t<flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>",
+			"\t\t<debug>0</debug>",
+			"",
+			"\t\t<link name=\"link_name\">",
+			"\t\t\t<neutrally_buoyant>0</neutrally_buoyant>",
+			"",
+			"\t\t\t<volume>0</volume>",
+			"",
+			"\t\t\t<box>",
+			"\t\t\t\t<width>0</width>",
+			"\t\t\t\t<length>0</length>",
+			"\t\t\t\t<height>0</height>",
+			"\t\t\t</box>",
+			"",
+			"\t\t<center_of_buoyancy>0 0 0</center_of_buoyancy>",
+			"",
+			"\t\t<hydrodynamic_model>",
+			"\t\t\t<type>sphere</type>",
+          	"\t\t\t<radius>0</radius>",
+			"\t\t</hydrodynamic_model>",
+			"</link>",
+			"\t</plugin>",
+    		"</gazebo>"
+		]
+	},
+
+	"xml_uuv_xacro_default_joint_state_publisher": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.joint_state_publisher",
+		"description": "Xacro snippet for the joint state publisher (XML)",
+		"body": [
+			"<xacro:macro name=\"default_joint_state_publisher\" params=\"namespace update_rate\">",
+    		"\t<gazebo>",
+      		"\t\t<plugin name=\"uuv_joint_state_publisher\" filename=\"libuuv_joint_state_publisher.so\">",
+        	"\t\t\t<robotNamespace>${namespace}</robotNamespace>",
+        	"\t\t\t<updateRate>${update_rate}</updateRate>",
+			"\t\t</plugin>",
+    		"\t</gazebo>",
+  			"</xacro:macro>"
+		]
+	},
+
+	"xml_uuv_xacro_underwater_object_plugin_fossen": {
+		"scope": "xml",
+		"prefix": "uuv.xml.xacro.hydro.fossen.underwater_object_plugin",
+		"description": "Snippet for the uuv_underwater_object plugin using Fossen's model (XML)",
+		"body": [
+			"<gazebo>",
+      		"\t<plugin name=\"uuv_plugin\" filename=\"libuuv_underwater_object_ros_plugin.so\">",
+        	"\t\t<fluid_density>1025.0</fluid_density>",
+        	"\t\t<flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>",
+			"\t\t<debug>0</debug>",
+			"",
+			"\t\t<link name=\"link_name\">",
+			"\t\t\t<neutrally_buoyant>0</neutrally_buoyant>",
+			"",
+			"\t\t\t<volume>0</volume>",
+			"",
+			"\t\t\t<box>",
+			"\t\t\t\t<width>0</width>",
+			"\t\t\t\t<length>0</length>",
+			"\t\t\t\t<height>0</height>",
+			"\t\t\t</box>",
+			"",
+			"\t\t<center_of_buoyancy>0 0 0</center_of_buoyancy>",
+			"",
+			"\t\t<hydrodynamic_model>",
+			"\t\t\t<type>fossen</type>",
+			"",
+			"\t\t\t<added_mass>",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t</added_mass>",
+			"",
+			"\t\t\t<linear_damping>",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t</linear_damping>",
+			"",
+			"\t\t\t<linear_damping_forward_speed>",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t</linear_damping_forward_speed>",
+			"",
+			"\t\t\t<quadratic_damping>",
+			"\t\t\t\t0 0 0 0 0 0",
+			"\t\t\t</quadratic_damping>",
+			"\t\t</hydrodynamic_model>",
+			"</link>",
+			"\t</plugin>",
+    		"</gazebo>"
+		]
+	},
+	
+	"cpp_uuv_license_header": {
+		"scope": "cpp",
+		"prefix": "uuv.cpp.license",
+		"description": "UUV Simulator License Header (C++)",
+		"body": [
+			"// Copyright (c) 2016-$CURRENT_YEAR The UUV Simulator Authors.",
+			"// All rights reserved.",
+			"//",
+			"// Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"// you may not use this file except in compliance with the License.",
+			"// You may obtain a copy of the License at",
+			"//",
+			"//     http://www.apache.org/licenses/LICENSE-2.0",
+			"//",
+			"// Unless required by applicable law or agreed to in writing, software",
+			"// distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"// See the License for the specific language governing permissions and",
+			"// limitations under the License."
+		]	
+	}
+}

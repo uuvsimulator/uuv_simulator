@@ -3,7 +3,8 @@
 *.swp
 
 # IDEs
-.vscode
+.vscode/c_cpp_properties.json
+.vscode/settings.json
 .idea
 .ropeproject
 .imdone
@@ -15,6 +16,7 @@ results
 comparative_analysis
 best_results
 scenario_*.txt
+__pycache__
 
 # Documentation
 docs/build
