@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import numpy as np
 import rospy
 from uuv_control_msgs.srv import *
-from uuv_control_interfaces.dp_controller_base import DPControllerBase
+from .dp_controller_base import DPControllerBase
 
 
 class DPPIDControllerBase(DPControllerBase):
-    """
-    This is an abstract class for PID-based controllers. The base class method
-    update_controller must be overridden in other for a controller to work.
+    """Abstract class for PID-based controllers. The base 
+    class method `update_controller` must be overridden 
+    in other for a controller to work.
     """
 
     def __init__(self, *args):
@@ -82,11 +81,15 @@ class DPPIDControllerBase(DPControllerBase):
         self._logger.info('PID controller ready!')
 
     def _reset_controller(self):
+        """Reset reference and and error vectors."""
         super(DPPIDControllerBase, self)._reset_controller()
         self._error_pose = np.zeros(6)
         self._int = np.zeros(6)
 
     def set_pid_params_callback(self, request):
+        """Service callback function to set the 
+        PID's parameters
+        """
         kp = request.Kp
         kd = request.Kd
         ki = request.Ki
@@ -98,12 +101,25 @@ class DPPIDControllerBase(DPControllerBase):
         return SetPIDParamsResponse(True)
 
     def get_pid_params_callback(self, request):
+        """Service callback function to return 
+        the PID's parameters
+        """
         return GetPIDParamsResponse(
             [self._Kp[i, i] for i in range(6)],
             [self._Kd[i, i] for i in range(6)],
             [self._Ki[i, i] for i in range(6)])
 
     def update_pid(self):
+        """Return the control signal computed from the PID 
+        algorithm. To implement a PID-based controller that
+        inherits this class, call this function in the
+        derived class' `update` method to obtain the control
+        vector.
+
+        > *Returns*
+
+        `numpy.array`: Control signal
+        """
         if not self.odom_is_init:
             return
         # Update integrator
