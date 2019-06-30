@@ -55,6 +55,15 @@
 		]
 	},
 
+	"py_ros_publisher_md_docstring_snippet": {
+		"prefix": "uuv.py.doc.publisher",
+		"scope": "python",
+		"description": "Python ROS Publisher Docstring Snippet (Markdown)",
+		"body": [
+			"* `topic_name` (*message:* `data_type`): Topic description"
+		]
+	},
+
 	"py_property_md_docstring": {
 		"prefix": "uuv.py.doc.property",
 		"scope": "python",
@@ -74,7 +83,7 @@
 			"Script description, with some formulas",
 			"",
 			"$$",
-			"	\\dot{v_c}(t) + \\mu_c v_c(t) = w_c",
+			"\t\\dot{v_c}(t) + \\mu_c v_c(t) = w_c",
 			"$$",
 			"",
 			"**Input ROS parameters**",
@@ -97,9 +106,9 @@
 			"",
 			"```xml",
 			"<node name=\"name\" pkg=\"pkg_name\" type=\"name\" output=\"screen\">",
-			"	<rosparam subst_value=\"true\">",
-			"		param: value",
-			"	</rosparam>",
+			"\t<rosparam subst_value=\"true\">",
+			"\t\tparam: value",
+			"\t</rosparam>",
 			"</node>",
 			"```",
 			"**ROS services**",
@@ -119,6 +128,42 @@
 			"Description of input parameters and return values",
 			"",
 			"\"\"\""
+		]
+	},
+
+	"py_uuv_ros_test": {
+		"scope": "python",
+		"prefix": "uuv.py.ros.test",
+		"description": "ROS Unit Test Script (Python)",
+		"body": [
+			"#!/usr/bin/env python",
+			"# Copyright (c) 2016-$CURRENT_YEAR The UUV Simulator Authors.",
+			"# All rights reserved.",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License.",
+			"import roslib",
+			"import unittest",
+			"# Other imports",
+			"",
+			"PKG = 'package_name'",
+			"roslib.load_manifest(PKG)",
+			"",
+			"class TestModule(unittest.TestCase):",
+			"\tpass",
+			"",
+			"if __name__ == '__main__':",
+			"\timport rosunit",
+			"\trosunit.unitrun(PKG, 'test_module', TestModule)"
 		]
 	},
 
@@ -150,19 +195,19 @@
 		"description": "UUV Simulator License Header (XML)",
 		"body": [
 			"<!-- Copyright (c) 2016-$CURRENT_YEAR The UUV Simulator Authors.",
-			"	All rights reserved.",
+			"\tAll rights reserved.",
 			"",
-			"	Licensed under the Apache License, Version 2.0 (the \"License\");",
-			"	you may not use this file except in compliance with the License.",
-			"	You may obtain a copy of the License at",
+			"\tLicensed under the Apache License, Version 2.0 (the \"License\");",
+			"\tyou may not use this file except in compliance with the License.",
+			"\tYou may obtain a copy of the License at",
 			"",
-			"	http://www.apache.org/licenses/LICENSE-2.0",
+			"\thttp://www.apache.org/licenses/LICENSE-2.0",
 			"",
-			"	Unless required by applicable law or agreed to in writing, software",
-			"	distributed under the License is distributed on an \"AS IS\" BASIS,",
-			"	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
-			"	See the License for the specific language governing permissions and",
-			"	limitations under the License.",
+			"\tUnless required by applicable law or agreed to in writing, software",
+			"\tdistributed under the License is distributed on an \"AS IS\" BASIS,",
+			"\tWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"\tSee the License for the specific language governing permissions and",
+			"\tlimitations under the License.",
 			"-->"
 		]
 	},
