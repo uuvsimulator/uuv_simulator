@@ -16,6 +16,7 @@ results
 comparative_analysis
 best_results
 scenario_*.txt
+__pycache__
 
 # Documentation
 docs/build
