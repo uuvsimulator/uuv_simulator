@@ -24,7 +24,7 @@ from geometry_msgs.msg import Point
 from uuv_waypoints import Waypoint, WaypointSet
 
 from ..trajectory_point import TrajectoryPoint
-from ..log import get_logger
+from .._log import get_logger
 from .helical_segment import HelicalSegment
 from .bezier_curve import BezierCurve
 from .line_segment import LineSegment

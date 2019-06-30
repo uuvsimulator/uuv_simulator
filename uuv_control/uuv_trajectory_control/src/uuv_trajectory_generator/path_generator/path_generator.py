@@ -22,7 +22,7 @@ from tf_quaternion.transformations import quaternion_multiply, quaternion_about_
     quaternion_from_euler, rotation_matrix, quaternion_from_matrix
 
 from ..trajectory_point import TrajectoryPoint
-from ..log import get_logger
+from .._log import get_logger
 
 
 class PathGenerator(object):
