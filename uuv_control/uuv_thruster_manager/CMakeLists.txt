@@ -33,3 +33,16 @@ catkin_install_python(PROGRAMS scripts/thruster_allocator.py
 install(DIRECTORY launch config
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
+
+if (CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  foreach(T
+      test/test_thrusters.test
+      test/test_thruster_allocator_x_axis.test
+      test/test_thruster_allocator_y_axis.test
+      test/test_thruster_allocator_z_axis.test
+      test/test_thruster_manager_proportional_correct.test
+      )
+     add_rostest(${T})
+  endforeach()
+endif()
