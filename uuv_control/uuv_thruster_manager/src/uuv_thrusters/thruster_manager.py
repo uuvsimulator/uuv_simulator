@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +16,16 @@
 import numpy
 import rospy
 import tf
-import tf.transformations as trans
+from tf_quaternion import transformations
 import tf2_ros
 from os.path import isdir, join
 import yaml
 from time import sleep
-from models import Thruster
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from geometry_msgs.msg import Wrench
 import xml.etree.ElementTree as etree
+
+from .models import Thruster
 
 
 class ThrusterManager:
@@ -51,11 +51,12 @@ class ThrusterManager:
 
         # Acquiring the namespace of the vehicle
         self.namespace = rospy.get_namespace()
-        if self.namespace[-1] != '/':
-            self.namespace += '/'
+        if self.namespace != '':
+            if self.namespace[-1] != '/':
+                self.namespace += '/'
 
-        if self.namespace[0] != '/':
-            self.namespace = '/' + self.namespace
+            if self.namespace[0] != '/':
+                self.namespace = '/' + self.namespace
 
         if not rospy.has_param('thruster_manager'):
             raise rospy.ROSException('Thruster manager parameters not '
@@ -65,7 +66,7 @@ class ThrusterManager:
         # Load all parameters
         self.config = rospy.get_param('thruster_manager')
 
-        robot_description_param = self.namespace+'robot_description'
+        robot_description_param = self.namespace + 'robot_description'
         self.use_robot_descr = False
         self.axes = {}
         if rospy.has_param(robot_description_param):
@@ -82,20 +83,23 @@ class ThrusterManager:
         tf_trans_ned_to_enu = None
 
         try:
-            target = '%sbase_link' % self.namespace
-            target = target[1::]
-            source = '%sbase_link_ned' % self.namespace
+            if self.namespace != '':
+                target = '{}base_link'.format(self.namespace)
+                target = target[1::]
+                source = '{}base_link_ned'.format(self.namespace)
+            else:
+                target = 'base_link'
+                source = 'base_link_ned'
             source = source[1::]
             tf_trans_ned_to_enu = tf_buffer.lookup_transform(
                 target, source, rospy.Time(), rospy.Duration(1))
-        except Exception, e:
+        except Exception as e:
             rospy.loginfo('No transform found between base_link and base_link_ned'
-                  ' for vehicle ' + self.namespace)
-            rospy.loginfo(str(e))
+                  ' for vehicle {}, message={}'.format(self.namespace, e))
             self.base_link_ned_to_enu = None
 
         if tf_trans_ned_to_enu is not None:
-            self.base_link_ned_to_enu = trans.quaternion_matrix(
+            self.base_link_ned_to_enu = transformations.quaternion_matrix(
                 (tf_trans_ned_to_enu.transform.rotation.x,
                  tf_trans_ned_to_enu.transform.rotation.y,
                  tf_trans_ned_to_enu.transform.rotation.z,
@@ -213,7 +217,7 @@ class ThrusterManager:
         self.ready = False
         rospy.loginfo('ThrusterManager: updating thruster poses')
         # Small margin to make sure we get thruster frames via tf
-        now = rospy.Time.now() + rospy.Duration(1.0)
+        now = rospy.Time.now() + rospy.Duration(0.2)
 
         base = self.namespace + self.config['base_link']
 
@@ -235,7 +239,7 @@ class ThrusterManager:
         rospy.loginfo('conversion_fcn_params=' + str(self.config['conversion_fcn_params']))
 
         listener = tf.TransformListener()
-        sleep(5)
+        sleep(0.1)
 
         for i in range(self.MAX_THRUSTERS):
             frame = self.namespace + \
@@ -243,9 +247,9 @@ class ThrusterManager:
             try:
                 # try to get thruster pose with respect to base frame via tf
                 rospy.loginfo('transform: ' + base + ' -> ' + frame)
-                now = rospy.Time.now() + rospy.Duration(1.0)
+                now = rospy.Time.now() + rospy.Duration(0.2)
                 listener.waitForTransform(base, frame,
-                                               now, rospy.Duration(30.0))
+                                               now, rospy.Duration(1.0))
                 [pos, quat] = listener.lookupTransform(base, frame, now)
 
                 topic = self.config['thruster_topic_prefix'] + str(i) + \
@@ -314,14 +318,15 @@ class ThrusterManager:
                 yaml_file.write(
                     yaml.safe_dump(
                         dict(tam=self.configuration_matrix.tolist())))
-            print 'TAM saved in <%s>' % join(self.output_dir, 'TAM.yaml')
+            rospy.loginfo('TAM saved in <{}>'.format(join(self.output_dir, 'TAM.yaml')))
         elif recalculate:
-            print 'Recalculate flag on, matrix will not be stored in TAM.yaml'
+            rospy.loginfo('Recalculate flag on, matrix will not be stored in TAM.yaml')
         else:
-            print 'Invalid output directory for the TAM matrix, dir=', self.output_dir
+            rospy.logerr('Invalid output directory for the TAM matrix, dir='.format(
+                self.output_dir))
 
         self.ready = True
-        print ('ThrusterManager: ready')
+        rospy.loginfo('ThrusterManager: ready')
         return True
 
     def command_thrusters(self):
