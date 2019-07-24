@@ -1,5 +1,6 @@
+<?xml version="1.0"?>
 <launch>
-  <arg name="uuv_name" />
+  <arg name="uuv_name"/>
   <arg name="joy_id" default="0"/>
   <!-- Joystick mapping - default: XBox 360 controller -->
   <!-- To activate the vehicle teleop, the deadman button has to remain pressed -->
@@ -20,13 +21,11 @@
   <arg name="output_topic" default="cmd_vel"/>
   <!-- The type of message can also be geometry_msgs/Accel -->
   <arg name="message_type" default="twist"/>
-
   <group ns="$(arg uuv_name)">
     <node pkg="joy" type="joy_node" name="joystick">
-      <param name="autorepeat_rate" value="10" />
+      <param name="autorepeat_rate" value="10"/>
       <param name="dev" value="/dev/input/js$(arg joy_id)"/>
     </node>
-
     <node pkg="uuv_teleop" type="vehicle_teleop.py" name="joy_uuv_velocity_teleop">
       <remap from="output" to="/$(arg uuv_name)/$(arg output_topic)"/>
       <remap from="joy" to="/$(arg uuv_name)/joy"/>
@@ -55,6 +54,5 @@
             gain: $(arg gain_yaw)
       </rosparam>
     </node>
-
   </group>
 </launch>
