@@ -25,5 +25,16 @@
   <exec_depend>python-yaml</exec_depend>
   <exec_depend>uuv_gazebo_ros_plugins_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>uuv_assistants</exec_depend>
+
+  <test_depend>rosunit</test_depend>
+  <test_depend>rostest</test_depend>
+  <test_depend>python-numpy</test_depend>
+  <test_depend>uuv_assistants</test_depend>
+  <test_depend>geometry_msgs</test_depend>
+  <test_depend>joint_state_publisher</test_depend>
+  <test_depend>robot_state_publisher</test_depend>
+  <test_depend>xacro</test_depend>
 
 </package>
+
