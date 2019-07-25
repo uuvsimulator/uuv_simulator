@@ -1,0 +1,30 @@
+<launch>
+    <rosparam param="axis">"x"</rosparam>
+
+    <group ns="test_vehicle">
+        <param name="robot_description"
+            command="$(find xacro)/xacro '$(find uuv_thruster_manager)/test/test_vehicle_x_axis.urdf.xacro' --inorder"/>
+
+        <rosparam 
+            command="load"
+            file="$(find uuv_thruster_manager)/test/test_vehicle_thruster_manager_proportional.yaml"/>                
+    </group>    
+    
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ns="test_vehicle"/>
+
+    <node name="robot_state_publisher" 
+        pkg="robot_state_publisher" 
+        type="robot_state_publisher" 
+        respawn="true" 
+        output="screen"
+        ns="test_vehicle">
+        <param name="robot_description" value="/test_vehicle/robot_description" />
+        <param name="publish_frequency" value="5" />
+    </node>
+
+    <group ns="test_vehicle">        
+        <test test-name="test_thruster_manager_proportional_correct"
+        pkg="uuv_thruster_manager"
+        type="test_thruster_manager_proportional_correct.py"/>
+    </group>
+</launch>

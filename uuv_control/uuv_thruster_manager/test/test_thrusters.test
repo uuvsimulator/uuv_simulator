@@ -1,0 +1,5 @@
+<launch>
+    <test test-name="test_thrusters"
+      pkg="uuv_thruster_manager"
+      type="test_thrusters.py"/>
+</launch>

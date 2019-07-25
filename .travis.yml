@@ -25,9 +25,10 @@ matrix:
     - env: AFTER_SCRIPT='sh .uuv_ci_config/run_tests.sh' USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
     - env: PRERELEASE=true USE_DEB=true ROS_DISTRO=melodic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
     - env: AFTER_SCRIPT='sh .uuv_ci_config/run_tests.sh' USE_DEB=true ROS_DISTRO=melodic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
-#  allow_failures:
-#    - env: USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
-#    - env: USE_DEB=true ROS_DISTRO=melodic ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+  allow_failures:
+    - env: PRERELEASE=true USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+    - env: AFTER_SCRIPT='sh .uuv_ci_config/run_tests.sh' USE_DEB=true ROS_DISTRO=lunar ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu NOT_TEST_BUILD=true NOT_TEST_INSTALL=true BEFORE_SCRIPT='sh .uuv_ci_config/ros_$ROS_DISTRO.sh'
+    
 install:
   - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config
 script:

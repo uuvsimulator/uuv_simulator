@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #

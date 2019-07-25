@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,8 +28,8 @@ from uuv_thruster_manager.srv import *
 
 
 class ThrusterAllocatorNode(ThrusterManager):
-    """
-    The thruster allocator node allows a client node to command the thrusters.
+    """The thruster allocator node allows a client node 
+    to command the thrusters.
     """
 
     def __init__(self):

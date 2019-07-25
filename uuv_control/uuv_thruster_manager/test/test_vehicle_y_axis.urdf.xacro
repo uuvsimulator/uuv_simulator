@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="test_vehicle">
+    <xacro:macro name="thruster_macro" params="
+        namespace             
+        thruster_id             
+        *origin">
+        <joint name="${namespace}/thruster_${thruster_id}_joint" type="continuous">
+            <xacro:insert_block name="origin"/>
+            <axis xyz="0 1 0"/>
+            <parent link="${namespace}/base_link"/>
+            <child link="${namespace}/thruster_${thruster_id}"/>
+        </joint>
+        <link name="${namespace}/thruster_${thruster_id}"/>
+    </xacro:macro>
+
+    <link name="test_vehicle/base_link"/>
+
+    <xacro:thruster_macro 
+        namespace="test_vehicle"
+        thruster_id="0">
+        <origin xyz="-1 0 0" rpy="0.5 0 0"/>
+    </xacro:thruster_macro>
+
+    <xacro:thruster_macro 
+        namespace="test_vehicle"
+        thruster_id="1">
+        <origin xyz="1 -1 0" rpy="0 0.5 0"/>
+    </xacro:thruster_macro>
+
+    <xacro:thruster_macro 
+        namespace="test_vehicle"
+        thruster_id="2">
+        <origin xyz="0 1 1" rpy="0 0 0.5"/>
+    </xacro:thruster_macro>
+
+</robot>

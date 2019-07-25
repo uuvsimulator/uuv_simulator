@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import rospy
 import numpy
-from thruster import Thruster
+from .thruster import Thruster
 
 
 class ThrusterCustom(Thruster):
@@ -28,6 +27,22 @@ class ThrusterCustom(Thruster):
     thrust forces.
     This information is usually available in the datasheet of the thruster's
     manufacturer.
+
+    > *Input arguments*
+    
+    * `index` (*type:* `int`): Thruster's ID.
+    * `topic` (*type:* `str`): Thruster's command topic.
+    * `pos` (*type:* `numpy.array` or `list`): Position vector 
+    of the thruster with respect to the vehicle's frame.
+    * `orientation` (*type:* `numpy.array` or `list`): Quaternion 
+    with the orientation of the thruster with respect to the vehicle's
+    frame as `(qx, qy, qz, qw)`.
+    * `axis` (*type:* `numpy.array`): Axis of rotation of the thruster.
+    * `input` (*type:* `list` or `numpy.array`): Vector samples of 
+    angular velocities to be interpolated with the vector samples
+    of thrust force output.
+    * `output` (*type:* `list` or `numpy.array`): Vector samples
+    of thrust force output.
     """
     LABEL = 'custom'
 
@@ -43,9 +58,30 @@ class ThrusterCustom(Thruster):
         self._output = kwargs['output']
 
     def get_command_value(self, thrust):
-        # Compute the angular velocity necessary for the desired thrust force
+        """Compute the angular velocity necessary 
+        for the desired thrust force.
+        
+        > *Input arguments*
+        
+        * `thrust` (*type:* `float`): Thrust force magnitude in N
+        
+        > *Returns*
+        
+        `float`: Angular velocity set-point for the thruster in rad/s 
+        """
         return numpy.interp(thrust, self._output, self._input)
 
     def get_thrust_value(self, command):
-        """Computes the thrust force for the given command."""
+        """Computes the thrust force for the given angular velocity
+        set-point.
+        
+        > *Input arguments*
+        
+        * `command` (*type:* `float`): Angular velocity set-point for 
+        the thruster in rad/s 
+        
+        > *Returns*
+
+        `thrust` (*type:* `float`): Thrust force magnitude in N
+        """
         return numpy.interp(command, self._input, self._output)

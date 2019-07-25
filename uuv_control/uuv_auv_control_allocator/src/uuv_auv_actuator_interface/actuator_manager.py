@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The UUV Simulator Authors.
+# Copyright (c) 2016-2019 The UUV Simulator Authors.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from fin_model import FinModel
+from .fin_model import FinModel
 import rospy
 import numpy as np
 import tf2_ros
@@ -40,15 +39,18 @@ class ActuatorManager(object):
         tf_trans_ned_to_enu = None
 
         try:
-            target = '%s/base_link' % self.namespace
-            source = '%s/base_link_ned' % self.namespace
+            if self.namespace != '':
+                target = '{}/base_link'.format(self.namespace)
+                source = '{}/base_link_ned'.format(self.namespace)
+            else:
+                target = 'base_link'
+                source = 'base_link_ned'
             rospy.loginfo('Lookup transfrom from %s to %s' % (source, target))
             tf_trans_ned_to_enu = self.tf_buffer.lookup_transform(
                 target, source, rospy.Time(), rospy.Duration(1))
-        except Exception, e:
-            print('No transform found between base_link and base_link_ned'
-                  ' for vehicle ' + self.namespace)
-            print(str(e))
+        except Exception as e:
+            rospy.logwarn('No transform found between base_link and base_link_ned'
+                  ' for vehicle {}, message={}'.format(self.namespace, e))
             self.base_link_ned_to_enu = None
 
         if tf_trans_ned_to_enu is not None:
@@ -58,7 +60,8 @@ class ActuatorManager(object):
                  tf_trans_ned_to_enu.transform.rotation.z,
                  tf_trans_ned_to_enu.transform.rotation.w))[0:3, 0:3]
 
-            print 'base_link transform NED to ENU=\n', self.base_link_ned_to_enu
+            rospy.logwarn('base_link transform NED to ENU=\n{}'.format(
+                self.base_link_ned_to_enu))
 
         self.base_link = rospy.get_param('~base_link', 'base_link')
 
