@@ -2,8 +2,8 @@
 Changelog for package uuv_teleop
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.13 (2019-08-12)
+-------------------
 * Apply xmllint
   Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
 * Implementation of rov keyboard teleop control

@@ -2,8 +2,8 @@
 Changelog for package uuv_control_cascaded_pid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.13 (2019-08-12)
+-------------------
 * Implementation of rov keyboard teleop control
   Signed-off-by: Tom Oliver Watsham <tom.watsham@outlook.com>
 * Fixing Python 3 compatibility issues for scripts

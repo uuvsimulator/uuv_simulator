@@ -2,8 +2,8 @@
 Changelog for package uuv_control_utils
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.13 (2019-08-12)
+-------------------
 * Fixing Python 3 compatibility issues for scripts
   Related to issue `#268 <https://github.com/uuvsimulator/uuv_simulator/issues/268>`_
   Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
