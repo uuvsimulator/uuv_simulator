@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_tutorial_dp_controller</name>
-  <version>0.6.12</version>
+  <version>0.6.13</version>
   <description>
     Tutorial that shows how to inherit the controller interface modules from the uuv_trajectory_control package to
     develop a custom controlller.
