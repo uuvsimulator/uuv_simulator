@@ -2,6 +2,9 @@
 Changelog for package uuv_descriptions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.13 (2019-08-12)
+-------------------
+
 0.6.12 (2019-05-23)
 -------------------
 * uuv_descriptions: add xacro as a runtime dependency

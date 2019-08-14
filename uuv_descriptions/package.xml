@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>uuv_descriptions</name>
-  <version>0.6.12</version>
+  <version>0.6.13</version>
   <description>The uuv_descriptions package</description>
 
   <maintainer email="musa.marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>

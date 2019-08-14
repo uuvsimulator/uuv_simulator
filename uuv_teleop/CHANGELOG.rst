@@ -2,6 +2,17 @@
 Changelog for package uuv_teleop
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.13 (2019-08-12)
+-------------------
+* Apply xmllint
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Implementation of rov keyboard teleop control
+  Signed-off-by: Tom Oliver Watsham <tom.watsham@outlook.com>
+* Fixing Python 3 compatibility issues for scripts
+  Related to issue `#268 <https://github.com/uuvsimulator/uuv_simulator/issues/268>`_
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães, tomwat
+
 0.6.12 (2019-05-23)
 -------------------
 

@@ -2,6 +2,19 @@
 Changelog for package uuv_assistants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.6.13 (2019-08-12)
+-------------------
+* Create tf_quaternion Python package
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Replace geometry.tf.transformations by local transformations package
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Add tf.transformations from geometry package due to geometry not being ported for Python 3
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Fixing Python 3 compatibility issues for scripts
+  Related to issue `#268 <https://github.com/uuvsimulator/uuv_simulator/issues/268>`_
+  Signed-off-by: Musa Morena Marcusso Manhães <musa.marcusso@de.bosch.com>
+* Contributors: Musa Morena Marcusso Manhães
+
 0.6.12 (2019-05-23)
 -------------------
 
