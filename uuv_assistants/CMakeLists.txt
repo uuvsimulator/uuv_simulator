@@ -40,7 +40,7 @@ catkin_install_python(PROGRAMS scripts/publish_footprints.py
                                scripts/create_thruster_manager_configuration
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-install(DIRECTORY launch
+install(DIRECTORY launch templates
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         PATTERN "*~" EXCLUDE)
 
