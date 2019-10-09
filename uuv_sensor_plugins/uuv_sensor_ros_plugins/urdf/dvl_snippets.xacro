@@ -75,7 +75,7 @@
     </xacro:dvl_plugin_macro>
   </xacro:macro>
 
-  <xacro:macro name="dvl_single_sonar" params="namespace suffix index pitch yaw">
+  <xacro:macro name="dvl_single_sonar" params="namespace suffix index pitch yaw update_rate">
     <link name="${namespace}/dvl${suffix}_sonar${index}_link">
       <inertial>
         <mass value="0.001" />  <!-- [kg] -->
@@ -96,7 +96,7 @@
     <gazebo reference="${namespace}/dvl${suffix}_sonar${index}_link">
       <sensor type="ray" name="dvl${suffix}_sonar${index}">
         <pose>0 0 0 0 0 0</pose>
-        <update_rate>1</update_rate>
+        <update_rate>${update_rate}</update_rate>
         <visualize>false</visualize>
         <ray>
           <scan>
@@ -123,7 +123,7 @@
         <plugin filename="libgazebo_ros_range.so" name="dvl${suffix}_sonar${index}">
           <gaussianNoise>0.005</gaussianNoise>
           <alwaysOn>true</alwaysOn>
-          <updateRate>1</updateRate>
+          <updateRate>${update_rate}</updateRate>
           <topicName>${topic}_sonar${index}</topicName>
           <frameName>${namespace}/dvl${suffix}_sonar${index}_link</frameName>
           <fov>0.06</fov>
@@ -160,22 +160,22 @@
 
     <xacro:dvl_single_sonar
       namespace="${namespace}" suffix=""
-      index="0" pitch="-0.52" yaw="0.0">
+      index="0" pitch="-0.52" yaw="0.0" update_rate="${update_rate}">
     </xacro:dvl_single_sonar>
 
     <xacro:dvl_single_sonar
       namespace="${namespace}" suffix=""
-      index="1" pitch="0" yaw="0.52">
+      index="1" pitch="0" yaw="0.52" update_rate="${update_rate}">
     </xacro:dvl_single_sonar>
 
     <xacro:dvl_single_sonar
       namespace="${namespace}" suffix=""
-      index="2" pitch="0.52" yaw="0.0">
+      index="2" pitch="0.52" yaw="0.0" update_rate="${update_rate}">
     </xacro:dvl_single_sonar>
 
     <xacro:dvl_single_sonar
       namespace="${namespace}" suffix=""
-      index="3" pitch="0.0" yaw="-0.52">
+      index="3" pitch="0.0" yaw="-0.52" update_rate="${update_rate}">
     </xacro:dvl_single_sonar>
 
     <gazebo>
