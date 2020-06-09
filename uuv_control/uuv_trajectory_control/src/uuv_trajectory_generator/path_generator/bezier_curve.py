@@ -14,7 +14,12 @@
 # limitations under the License.
 
 import numpy as np
-from scipy.misc import factorial
+try:
+    from scipy.misc import factorial
+except ImportError as error:
+    # factorial has been removed from scipy.misc in version 1.3.0.
+    from scipy.special import factorial
+
 
 
 class BezierCurve(object):
