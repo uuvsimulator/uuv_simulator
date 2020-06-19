@@ -1,0 +1,29 @@
+# This config uses industrial_ci (https://github.com/ros-industrial/industrial_ci.git).
+# For troubleshooting, see readme (https://github.com/ros-industrial/industrial_ci/blob/master/README.rst)
+
+name: build
+
+on: [push, pull_request] # on all pushes and PRs
+
+jobs:
+  industrial_ci:
+    strategy:
+      matrix:
+        env:
+          - {ROS_DISTRO: kinetic, ROS_REPO: main, CATKIN_LINT: true}
+          - {ROS_DISTRO: kinetic, ROS_REPO: main, PRERELEASE: true}
+          - {ROS_DISTRO: melodic, ROS_REPO: main, CATKIN_LINT: true}
+          - {ROS_DISTRO: melodic, ROS_REPO: main, PRERELEASE: true}
+    env:
+      CCACHE_DIR: /github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # This step will fetch/store the directory used by ccache before/after the ci run
+      - uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
+      # Run industrial_ci
+      - uses: 'ros-industrial/industrial_ci@master'
+        env: ${{ matrix.env }}
