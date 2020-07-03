@@ -66,7 +66,7 @@ class ThrusterAllocatorNode(ThrusterManager):
             if self.config['timeout'] > 0:
                 # If a timeout is set, zero the outputs to the thrusters if
                 # there is no command signal for the length of timeout
-                if rospy.Time.now() - self.last_update > self.config['timeout']:
+                if (rospy.Time.now() - self.last_update).to_sec() > self.config['timeout']:
                     print('Turning thrusters off - inactive for too long')
                     if self.thrust is not None:
                         self.thrust.fill(0)
