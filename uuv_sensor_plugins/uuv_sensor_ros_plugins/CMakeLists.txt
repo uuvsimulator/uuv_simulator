@@ -19,7 +19,8 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
   tf2_ros
   tf2
-  laser_geometry)
+  laser_geometry
+  cv_bridge)
 
 find_package(Eigen3 REQUIRED)
 find_package(OGRE REQUIRED)
