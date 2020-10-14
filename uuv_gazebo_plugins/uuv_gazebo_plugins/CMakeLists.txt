@@ -1,8 +1,13 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(uuv_gazebo_plugins)
 
 # Specify C++11 standard
-add_definitions(-std=c++11)
+if(NOT "${CMAKE_VERSION}" VERSION_LESS "3.16")
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+else()
+    set(LOCAL_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
 
 find_package(catkin REQUIRED COMPONENTS
     gazebo_dev)
@@ -72,6 +77,11 @@ add_library(uuv_dynamics
     src/Dynamics.cc
 )
 list(APPEND UUV_GAZEBO_PLUGINS_LIST uuv_dynamics)
+set_target_properties(uuv_dynamics
+    PROPERTIES
+    COMPILE_FLAGS
+    "${LOCAL_CXX_FLAGS}"
+)
 
 add_library(uuv_fin_plugin
     src/LiftDragModel.cc
@@ -97,6 +107,11 @@ target_link_libraries(uuv_underwater_object_plugin
     ${EIGEN3_LIBRARIES}
 )
 list(APPEND UUV_GAZEBO_PLUGINS_LIST uuv_underwater_object_plugin)
+set_target_properties(uuv_underwater_object_plugin
+    PROPERTIES
+    COMPILE_FLAGS
+    "${LOCAL_CXX_FLAGS}"
+)
 
 add_library(uuv_thruster_plugin
     src/ThrusterConversionFcn.cc
@@ -136,8 +151,8 @@ install(DIRECTORY include/${PROJECT_NAME}/
 )
 
 install(DIRECTORY include/
-   DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
-   FILES_MATCHING PATTERN ".hh"
+  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN ".hh"
 )
 
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/
