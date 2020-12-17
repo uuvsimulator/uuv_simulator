@@ -246,7 +246,7 @@ ignition::math::Vector3d LiftDragTwoLines::compute(const ignition::math::Vector3
     // stall
     double sumAlpha = alpha + this->alphaStall;
     cl = -this->cla * this->alphaStall +
-        this->cdaStall * sumAlpha;
+        this->claStall * sumAlpha;
     cd = -this->cda * this->alphaStall +
         this->cdaStall * sumAlpha;
   }
