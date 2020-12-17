@@ -247,14 +247,24 @@ ignition::math::Vector3d LiftDragTwoLines::compute(const ignition::math::Vector3
     double sumAlpha = alpha + this->alphaStall;
     cl = -this->cla * this->alphaStall +
         this->claStall * sumAlpha;
-    cd = -this->cda * this->alphaStall +
-        this->cdaStall * sumAlpha;
+    cd = this->cda * this->alphaStall +
+        -this->cdaStall * sumAlpha;
   }
   else
   {
     // no stall
-    cd = this->cda * alpha;
-    cl = this->cla * alpha;
+    // angle of attack > -a0
+    if (alpha > 0)
+    {
+        cd = this->cda * alpha;
+        cl = this->cla * alpha;
+    }
+    // angle of attack <= -a0
+    else
+    {
+        cd = -this->cda * alpha;
+        cl = this->cla * alpha;
+    }
   }
 
   double lift = cl*q*this->area;
