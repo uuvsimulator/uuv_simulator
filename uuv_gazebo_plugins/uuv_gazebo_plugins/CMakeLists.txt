@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(uuv_gazebo_plugins)
 
-# Specify C++11 standard
-add_definitions(-std=c++11)
+# Specify C++17 standard
+add_definitions(-std=c++17)
 
 find_package(catkin REQUIRED COMPONENTS
     gazebo_dev)
