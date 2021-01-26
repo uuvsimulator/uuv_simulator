@@ -75,10 +75,19 @@ HydrodynamicModel::HydrodynamicModel(sdf::ElementPtr _sdf,
       double width = sdfModel->Get<double>("width");
       double length = sdfModel->Get<double>("length");
       double height = sdfModel->Get<double>("height");
-        ignition::math::AxisAlignedBox boundingBox = ignition::math::AxisAlignedBox(
+#if GAZEBO_MAJOR_VERSION >= 11
+      ignition::math::AxisAlignedBox boundingBox = ignition::math::AxisAlignedBox(
         ignition::math::Vector3d(-width / 2, -length / 2, -height / 2),
         ignition::math::Vector3d(width / 2, length / 2, height / 2));
-        this->SetBoundingBox(boundingBox);
+      this->SetBoundingBox(boundingBox);
+
+#else
+      ignition::math::Box boundingBox = ignition::math::Box(
+        ignition::math::Vector3d(-width / 2, -length / 2, -height / 2),
+        ignition::math::Vector3d(width / 2, length / 2, height / 2));
+      // Setting the the bounding box from the given dimensions
+      this->SetBoundingBox(boundingBox);
+#endif
     }
   }
 
