@@ -35,6 +35,15 @@ namespace gazebo
 /// representations of underwater structures
 class BuoyantObject
 {
+  /// \brief Sets bounding box
+#if GAZEBO_MAJOR_VERSION >= 11
+    public: void SetBoundingBox(const ignition::math::AxisAlignedBox &_bBox);
+    protected: ignition::math::AxisAlignedBox boundingBox;
+#else
+    public: void SetBoundingBox(const ignition::math::Box &_bBox);
+    protected: ignition::math::Box boundingBox;
+#endif
+
   /// \brief Constructor
   public: BuoyantObject(physics::LinkPtr _link);
 
@@ -72,9 +81,6 @@ class BuoyantObject
 
   /// \brief Get stored acceleration of gravity
   public: double GetGravity();
-
-  /// \brief Sets bounding box
-  public: void SetBoundingBox(const ignition::math::Box &_bBox);
 
   /// \brief Adds a field in the hydroWrench map
   public: void SetStoreVector(std::string _tag);
@@ -117,10 +123,6 @@ class BuoyantObject
 
   /// \brief Center of buoyancy in the body frame
   protected: ignition::math::Vector3d centerOfBuoyancy;
-
-  /// \brief TEMP for calculation of the buoyancy
-  /// force close to the surface
-  protected: ignition::math::Box boundingBox;
 
   /// \brief Storage for hydrodynamic and hydrostatic forces and torques
   /// for debugging purposes

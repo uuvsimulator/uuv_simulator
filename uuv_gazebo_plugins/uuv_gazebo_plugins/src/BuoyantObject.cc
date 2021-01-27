@@ -205,14 +205,23 @@ void BuoyantObject::ApplyBuoyancyForce()
 }
 
 /////////////////////////////////////////////////
-void BuoyantObject::SetBoundingBox(const ignition::math::Box &_bBox)
-{
-  this->boundingBox = ignition::math::Box(_bBox);
+#if GAZEBO_MAJOR_VERSION >= 11
+  void BuoyantObject::SetBoundingBox(const ignition::math::AxisAlignedBox &_bBox)
+  {
+    this->boundingBox = ignition::math::AxisAlignedBox(_bBox);
 
-  gzmsg << "New bounding box for " << this->link->GetName() << "::"
-    << this->boundingBox << std::endl;
-}
+    gzmsg << "New bounding box for " << this->link->GetName() << "::"
+      << this->boundingBox << std::endl;
+  }
+#else
+  void BuoyantObject::SetBoundingBox(const ignition::math::Box &_bBox)
+  {
+    this->boundingBox = ignition::math::Box(_bBox);
 
+    gzmsg << "New bounding box for " << this->link->GetName() << "::"
+          << this->boundingBox << std::endl;
+  }
+#endif
 /////////////////////////////////////////////////
 void BuoyantObject::SetVolume(double _volume)
 {
