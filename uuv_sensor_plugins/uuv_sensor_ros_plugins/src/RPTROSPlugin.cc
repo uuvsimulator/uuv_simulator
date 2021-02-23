@@ -116,6 +116,7 @@ bool RPTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
     gazeboMessage.set_allocated_position(p);
     this->gazeboSensorOutputPub->Publish(gazeboMessage);
   }
+  return true;
 }
 
 /////////////////////////////////////////////////

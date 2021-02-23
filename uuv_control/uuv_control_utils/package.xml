@@ -21,10 +21,10 @@
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>uuv_world_ros_plugins_msgs</exec_depend>
   <exec_depend>uuv_gazebo_ros_plugins_msgs</exec_depend>
-  <exec_depend>python-numpy</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
   <exec_depend>uuv_control_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
-  <exec_depend>python-yaml</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
   <exec_depend>visualization_msgs</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>uuv_trajectory_control</exec_depend>

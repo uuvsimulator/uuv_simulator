@@ -351,7 +351,7 @@ class WPTrajectoryGenerator(object):
             pos,
             rot)
 
-        if self.get_interpolation_method() is not 'los':
+        if self.get_interpolation_method() != 'los':
             if self._use_finite_diff:
                 # Set linear velocity
                 pnt.vel = self._generate_vel(cur_s)

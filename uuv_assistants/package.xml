@@ -28,6 +28,6 @@
   <exec_depend>rosgraph</exec_depend>
   <exec_depend>gazebo_msgs</exec_depend>
   <exec_depend>visualization_msgs</exec_depend>
-  <exec_depend>python-numpy</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
   
 </package>

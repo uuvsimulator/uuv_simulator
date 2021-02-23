@@ -149,6 +149,7 @@ bool MagnetometerROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   this->rosMsg.magnetic_field.z = this->measMagneticField.Z();
 
   this->rosSensorOutputPub.publish(this->rosMsg);
+  return true;
 }
 
 /////////////////////////////////////////////////
