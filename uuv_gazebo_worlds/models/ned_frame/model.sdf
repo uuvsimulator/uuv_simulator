@@ -22,7 +22,7 @@
 
       <link name="world_ned">
         <gravity>0</gravity>
-        <pose>0 0 0 3.14159265359 0 1.5707963267948966</pose>
+        <pose>0 0 0 3.14159265359 0 0</pose>
 
         <visual name="N_visual">
           <pose>0.25 0 0 1.5707963267948966 0 1.5707963267948966</pose>
@@ -41,7 +41,7 @@
         </visual>
 
         <visual name="E_visual">
-          <pose>0 0.25 0 1.5707963267948966 0 0</pose>
+          <pose>0 0.25 0 -1.5707963267948966 0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.01</radius>
