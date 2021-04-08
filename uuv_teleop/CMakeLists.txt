@@ -10,5 +10,6 @@ install(DIRECTORY launch
         PATTERN "*~" EXCLUDE)
 
 catkin_install_python(PROGRAMS scripts/vehicle_teleop.py
+                               scripts/vehicle_keyboard_teleop.py
                                scripts/finned_uuv_teleop.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
