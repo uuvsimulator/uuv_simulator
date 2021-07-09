@@ -49,6 +49,7 @@
 #include <sensor_msgs/image_encodings.h>
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc_c.h>
 
 namespace gazebo
 {
