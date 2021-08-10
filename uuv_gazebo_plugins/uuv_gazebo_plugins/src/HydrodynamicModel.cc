@@ -114,7 +114,7 @@ void HydrodynamicModel::ComputeAcc(Eigen::Vector6d _velRel, double _time,
   // Gazebo reports angular accelerations that are off by orders of magnitude.
   double dt = _time - lastTime;
 
-  if (dt <= 0.0)  // Extra caution to prevent division by zero
+  if (dt <= 0.0 || this->lastVelRel(0) == 0.0)  // Extra caution to prevent division by zero
     return;
 
   Eigen::Vector6d acc = (_velRel - this->lastVelRel) / dt;
