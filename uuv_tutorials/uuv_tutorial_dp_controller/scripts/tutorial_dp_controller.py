@@ -90,7 +90,7 @@ class TutorialDPController(DPControllerBase):
             diag = rospy.get_param('~Kd')
             if len(diag) == 6:
                 self._Kd = np.diag(diag)
-                print 'Kd=\n', self._Kd
+                print('Kd=\n', self._Kd)
             else:
                 # If the vector provided has the wrong dimension, raise an exception
                 raise rospy.ROSException('For the Kd diagonal matrix, 6 coefficients are needed')
@@ -99,7 +99,7 @@ class TutorialDPController(DPControllerBase):
             diag = rospy.get_param('~Ki')
             if len(diag) == 6:
                 self._Ki = np.diag(diag)
-                print 'Ki=\n', self._Ki
+                print('Ki=\n', self._Ki)
             else:
                 # If the vector provided has the wrong dimension, raise an exception
                 raise rospy.ROSException('For the Ki diagonal matrix, 6 coefficients are needed')
