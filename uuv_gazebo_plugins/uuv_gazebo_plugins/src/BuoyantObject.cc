@@ -52,7 +52,7 @@ BuoyantObject::BuoyantObject(physics::LinkPtr _link)
   this->boundingBox = link->BoundingBox();
 #else
   math::Box bBox = link->GetBoundingBox();
-  this->boundingBox = ignition::math::Box(bBox.min.x, bBox.min.y, bBox.min.z,
+  this->boundingBox = ignition::math::AxisAlignedBox(bBox.min.x, bBox.min.y, bBox.min.z,
       bBox.max.x, bBox.max.y, bBox.max.z);
 #endif
   // Set neutrally buoyant flag to false
@@ -205,9 +205,9 @@ void BuoyantObject::ApplyBuoyancyForce()
 }
 
 /////////////////////////////////////////////////
-void BuoyantObject::SetBoundingBox(const ignition::math::Box &_bBox)
+void BuoyantObject::SetBoundingBox(const ignition::math::AxisAlignedBox &_bBox)
 {
-  this->boundingBox = ignition::math::Box(_bBox);
+  this->boundingBox = ignition::math::AxisAlignedBox(_bBox);
 
   gzmsg << "New bounding box for " << this->link->GetName() << "::"
     << this->boundingBox << std::endl;
