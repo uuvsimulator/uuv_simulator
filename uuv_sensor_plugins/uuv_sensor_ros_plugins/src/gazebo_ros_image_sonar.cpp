@@ -942,9 +942,9 @@ cv::Mat GazeboRosImageSonar::ConstructVisualScanImage(cv::Mat& raw_scan)
   cv::Scalar white(255, 255, 255);
   cv::Size axes1(2./3.*scan.rows, 2./3.*scan.rows);
   cv::Size axes2(1./3.*scan.rows, 1./3.*scan.rows);
-  cv::ellipse(scan, center, axes, -90, -fov/2.-0.5, fov/2., white, 1, CV_AA); //, int lineType=LINE_8, 0);
-  cv::ellipse(scan, center, axes1, -90, -fov/2., fov/2., white, 1, CV_AA); //, int lineType=LINE_8, 0);
-  cv::ellipse(scan, center, axes2, -90, -fov/2., fov/2., white, 1, CV_AA); //, int lineType=LINE_8, 0);
+  cv::ellipse(scan, center, axes, -90, -fov/2.-0.5, fov/2., white, 1, cv::LINE_AA); //, int lineType=LINE_8, 0);
+  cv::ellipse(scan, center, axes1, -90, -fov/2., fov/2., white, 1, cv::LINE_AA); //, int lineType=LINE_8, 0);
+  cv::ellipse(scan, center, axes2, -90, -fov/2., fov/2., white, 1, cv::LINE_AA); //, int lineType=LINE_8, 0);
 
   for (int i = 0; i < 5; ++i) {
     float angle = -fov/2.-0.5 + (fov+0.5)*i/float(5-1);
@@ -955,7 +955,7 @@ cv::Mat GazeboRosImageSonar::ConstructVisualScanImage(cv::Mat& raw_scan)
     cv::Point corner(scan.cols/2+cornerx, scan.rows-cornery); 
     //cv::line(scan, center, left_corner, white, 2);
     //cv::line(scan, center, right_corner, white, 2);
-    cv::line(scan, center, corner, white, 1, CV_AA);
+    cv::line(scan, center, corner, white, 1, cv::LINE_AA);
   }
   
   cv_bridge::CvImage img_bridge;

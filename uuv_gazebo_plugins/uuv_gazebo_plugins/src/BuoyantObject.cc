@@ -205,9 +205,9 @@ void BuoyantObject::ApplyBuoyancyForce()
 }
 
 /////////////////////////////////////////////////
-void BuoyantObject::SetBoundingBox(const ignition::math::Box &_bBox)
+void BuoyantObject::SetBoundingBox(const ignition::math::AxisAlignedBox &_bBox)
 {
-  this->boundingBox = ignition::math::Box(_bBox);
+  this->boundingBox = ignition::math::AxisAlignedBox(_bBox);
 
   gzmsg << "New bounding box for " << this->link->GetName() << "::"
     << this->boundingBox << std::endl;

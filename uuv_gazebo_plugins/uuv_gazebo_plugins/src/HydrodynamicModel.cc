@@ -75,7 +75,7 @@ HydrodynamicModel::HydrodynamicModel(sdf::ElementPtr _sdf,
       double width = sdfModel->Get<double>("width");
       double length = sdfModel->Get<double>("length");
       double height = sdfModel->Get<double>("height");
-      ignition::math::Box boundingBox = ignition::math::Box(
+      ignition::math::AxisAlignedBox boundingBox = ignition::math::AxisAlignedBox(
         ignition::math::Vector3d(-width / 2, -length / 2, -height / 2),
         ignition::math::Vector3d(width / 2, length / 2, height / 2));
       // Setting the the bounding box from the given dimensions
