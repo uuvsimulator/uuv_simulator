@@ -49,12 +49,12 @@
     </xacro:default_chemical_concentration_sensor_macro>
   </xacro:macro>
 
-  <xacro:macro name="default_chemical_concentration_sensor_ned"
+  <xacro:macro name="default_chemical_concentration_sensor_aaa"
     params="namespace parent_link *origin">
     <xacro:default_chemical_concentration_sensor_macro
       namespace="${namespace}"
       parent_link="${parent_link}"
-      inertial_reference_frame="world_ned">
+      inertial_reference_frame="world_aaa">
       <xacro:insert_block name="origin" />
     </xacro:default_chemical_concentration_sensor_macro>
   </xacro:macro>
@@ -115,7 +115,7 @@
        <gamma>${gamma}</gamma>
        <radius>${radius}</radius>
        <enable_gazebo_messages>false</enable_gazebo_messages>
-       <enable_local_ned_frame>false</enable_local_ned_frame>
+       <enable_local_aaa_frame>false</enable_local_aaa_frame>
        <static_reference_frame>${reference_frame}</static_reference_frame>
        <water_salinity_value>${water_salinity_value}</water_salinity_value>
        <plume_salinity_value>${plume_salinity_value}</plume_salinity_value>

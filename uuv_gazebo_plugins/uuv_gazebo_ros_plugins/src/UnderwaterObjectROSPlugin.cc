@@ -203,9 +203,13 @@ void UnderwaterObjectROSPlugin::Reset()
 void UnderwaterObjectROSPlugin::Update(const gazebo::common::UpdateInfo &_info)
 {
   UnderwaterObjectPlugin::Update(_info);
+  
+  if (ros::Time::now() != this->nedTransform.header.stamp)
+  {
+    this->tfBroadcaster.sendTransform(this->nedTransform);
+    this->nedTransform.header.stamp = ros::Time::now();
 
-  this->nedTransform.header.stamp = ros::Time::now();
-  this->tfBroadcaster.sendTransform(this->nedTransform);
+  }
 }
 
 /////////////////////////////////////////////////

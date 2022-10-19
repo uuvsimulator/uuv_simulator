@@ -272,10 +272,10 @@ class AUVGeometricTrackingController:
 
         rpy = np.array([roll_control, pitch_control, yaw_control])
 
-        # In case the world_ned reference frame is used, the convert it back
+        # In case the world_aaa reference frame is used, the convert it back
         # to the ENU convention to generate the reference fin angles
         rtf = deepcopy(self.rpy_to_fins)
-        if self.local_planner.inertial_frame_id == 'world_ned':
+        if self.local_planner.inertial_frame_id == 'world_aaa':
             rtf[:, 1] *= -1
             rtf[:, 2] *= -1
         # Transform orientation command into fin angle set points

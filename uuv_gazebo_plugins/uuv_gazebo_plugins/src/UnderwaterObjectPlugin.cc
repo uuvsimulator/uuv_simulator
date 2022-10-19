@@ -116,7 +116,7 @@ void UnderwaterObjectPlugin::Load(physics::ModelPtr _model,
         if (found != std::string::npos)
         {
           this->baseLinkName = linkName;
-          gzmsg << "Name of the BASE_LINK: " << this->baseLinkName << std::endl;
+          gzmsg << "Name of the base_link: " << this->baseLinkName << std::endl;
         }
 
         link = this->model->GetLink(linkName);

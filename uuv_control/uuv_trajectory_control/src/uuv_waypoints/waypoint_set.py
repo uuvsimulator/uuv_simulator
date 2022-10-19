@@ -36,7 +36,7 @@ class WaypointSet(object):
     > *Input arguments*
     
     * `scale` (*type:* `float`, *default:* `0.1`): Scale of the spherical marker for waypoints
-    * `inertial_frame_id` (*type:* `str`, *default:* `'world'`): Name of the inertial reference frame, options are `world` and `world_ned` for `ENU` and `NED` inertial reference frames, respectively
+    * `inertial_frame_id` (*type:* `str`, *default:* `'world'`): Name of the inertial reference frame, options are `world` and `world_aaa` for `ENU` and `NED` inertial reference frames, respectively
     * `max_surge_speed` (*type:* `float`, *default:* `None`): Max. surge speed in m/s associated with each waypoint
     
     """
@@ -45,7 +45,7 @@ class WaypointSet(object):
     FAILED_WAYPOINT = [1.0, 0.0, 0.0]
 
     def __init__(self, scale=0.1, inertial_frame_id='world', max_surge_speed=None):
-        assert inertial_frame_id in ['world', 'world_ned']
+        assert inertial_frame_id in ['world', 'world_aaa']
         self._waypoints = list()
         self._violates_constraint = False
         self._scale = scale
@@ -99,8 +99,8 @@ class WaypointSet(object):
 
     @inertial_frame_id.setter
     def inertial_frame_id(self, frame_id):
-        assert frame_id in ['world', 'world_ned'], \
-            'Inertial reference frame can only be either world or world_ned'
+        assert frame_id in ['world', 'world_aaa'], \
+            'Inertial reference frame can only be either world or world_aaa'
         self._inertial_frame_id = frame_id
 
     def clear_waypoints(self):
@@ -252,7 +252,7 @@ class WaypointSet(object):
                 else:
                     assert 'inertial_frame_id' in wps, 'Waypoint input has no inertial_frame_id key'
                     assert 'waypoints' in wps
-                    assert wps['inertial_frame_id'] in ['world', 'world_ned']
+                    assert wps['inertial_frame_id'] in ['world', 'world_aaa']
                     self._inertial_frame_id = wps['inertial_frame_id']
                     for wp_data in wps['waypoints']:
                         wp = Waypoint(

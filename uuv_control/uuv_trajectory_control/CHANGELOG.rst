@@ -138,7 +138,7 @@ Changelog for package uuv_trajectory_control
 
 0.5.9 (2018-07-09)
 ------------------
-* FIX Transform fin angle conversion matrix for inertial frame_id=world_ned
+* FIX Transform fin angle conversion matrix for inertial frame_id=world_aaa
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * FIX Export waypoint set to file with frame_id information
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
@@ -289,9 +289,9 @@ Changelog for package uuv_trajectory_control
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * RM Old waypoint classes
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
-* ADD Trajectory generation in both world and world_ned frame
+* ADD Trajectory generation in both world and world_aaa frame
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
-* CHANGE Consider odometry for both world and world_ned frames
+* CHANGE Consider odometry for both world and world_aaa frames
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * ADD Option to use either world or world_end frame for local planner
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
@@ -299,7 +299,7 @@ Changelog for package uuv_trajectory_control
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * CHANGE Log file label for each controller script
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
-* ADD Input for use_ned_frame and subscribe to input_stamped in thruster manager
+* ADD Input for use_aaa_frame and subscribe to input_stamped in thruster manager
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 * CHANGE Package versions
   Signed-off-by: Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>

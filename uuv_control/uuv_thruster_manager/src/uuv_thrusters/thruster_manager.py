@@ -80,7 +80,7 @@ class ThrusterManager:
 
         tf_buffer = tf2_ros.Buffer()
         listener = tf2_ros.TransformListener(tf_buffer)
-        tf_trans_ned_to_enu = None
+        tf_trans_aaa_to_enu = None
 
         try:
             if self.namespace != '':
@@ -91,19 +91,19 @@ class ThrusterManager:
                 target = 'base_link'
                 source = 'base_link_ned'
             source = source[1::]
-            tf_trans_ned_to_enu = tf_buffer.lookup_transform(
+            tf_trans_aaa_to_enu = tf_buffer.lookup_transform(
                 target, source, rospy.Time(), rospy.Duration(1))
         except Exception as e:
             rospy.loginfo('No transform found between base_link and base_link_ned'
                   ' for vehicle {}, message={}'.format(self.namespace, e))
             self.base_link_ned_to_enu = None
 
-        if tf_trans_ned_to_enu is not None:
+        if tf_trans_aaa_to_enu is not None:
             self.base_link_ned_to_enu = transformations.quaternion_matrix(
-                (tf_trans_ned_to_enu.transform.rotation.x,
-                 tf_trans_ned_to_enu.transform.rotation.y,
-                 tf_trans_ned_to_enu.transform.rotation.z,
-                 tf_trans_ned_to_enu.transform.rotation.w))[0:3, 0:3]
+                (tf_trans_aaa_to_enu.transform.rotation.x,
+                 tf_trans_aaa_to_enu.transform.rotation.y,
+                 tf_trans_aaa_to_enu.transform.rotation.z,
+                 tf_trans_aaa_to_enu.transform.rotation.w))[0:3, 0:3]
 
             rospy.loginfo('base_link transform NED to ENU=\n' + str(self.base_link_ned_to_enu))
 

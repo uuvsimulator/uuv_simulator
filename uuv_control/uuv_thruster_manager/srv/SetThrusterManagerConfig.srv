@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # Definitions
-string DEFAULT_BASE_LINK            = /base_link
+string DEFAULT_base_link            = /base_link
 string DEFAULT_THRUSTER_FRAME_BASE  = /thruster_
 string DEFAULT_PREFIX               = thrusters/
 string DEFAULT_SUFFIX               = /input

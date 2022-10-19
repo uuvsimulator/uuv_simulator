@@ -15,12 +15,12 @@
      limitations under the License.
 -->
 <sdf version='1.5'>
-    <model name="world_ned">
+    <model name="world_aaa">
 
       <pose>0 0 0 0 0 0</pose>
       <static>true</static>
 
-      <link name="world_ned">
+      <link name="world_aaa">
         <gravity>0</gravity>
         <pose>0 0 0 3.14159265359 0 1.5707963267948966</pose>
 

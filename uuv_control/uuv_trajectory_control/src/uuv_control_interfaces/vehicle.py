@@ -45,7 +45,7 @@ class Vehicle(object):
 
     def __init__(self, inertial_frame_id='world'):
         """Class constructor."""
-        assert inertial_frame_id in ['world', 'world_ned']
+        assert inertial_frame_id in ['world', 'world_aaa']
         # Reading current namespace
         self._namespace = rospy.get_namespace()
 
@@ -64,27 +64,27 @@ class Vehicle(object):
             tf_buffer = tf2_ros.Buffer()
             listener = tf2_ros.TransformListener(tf_buffer)
 
-            tf_trans_ned_to_enu = tf_buffer.lookup_transform(
-                'world', 'world_ned', rospy.Time(),
+            tf_trans_aaa_to_enu = tf_buffer.lookup_transform(
+                'world', 'world_aaa', rospy.Time(),
                 rospy.Duration(10))
             
-            self.q_ned_to_enu = np.array(
-                [tf_trans_ned_to_enu.transform.rotation.x,
-                tf_trans_ned_to_enu.transform.rotation.y,
-                tf_trans_ned_to_enu.transform.rotation.z,
-                tf_trans_ned_to_enu.transform.rotation.w])
+            self.q_aaa_to_enu = np.array(
+                [tf_trans_aaa_to_enu.transform.rotation.x,
+                tf_trans_aaa_to_enu.transform.rotation.y,
+                tf_trans_aaa_to_enu.transform.rotation.z,
+                tf_trans_aaa_to_enu.transform.rotation.w])
         except Exception as ex:
             self._logger.warning(
                 'Error while requesting ENU to NED transform'
                 ', message={}'.format(ex))
-            self.q_ned_to_enu = quaternion_from_euler(2 * np.pi, 0, np.pi)
+            self.q_aaa_to_enu = quaternion_from_euler(2 * np.pi, 0, np.pi)
                                 
-        self.transform_ned_to_enu = quaternion_matrix(
-                self.q_ned_to_enu)[0:3, 0:3]
+        self.transform_aaa_to_enu = quaternion_matrix(
+                self.q_aaa_to_enu)[0:3, 0:3]
 
-        if self.transform_ned_to_enu is not None:
-            self._logger.info('Transform world_ned (NED) to world (ENU)=\n' +
-                                str(self.transform_ned_to_enu))
+        if self.transform_aaa_to_enu is not None:
+            self._logger.info('Transform world_aaa (NED) to world (ENU)=\n' +
+                                str(self.transform_aaa_to_enu))
 
         self._mass = 0
         if rospy.has_param('~mass'):

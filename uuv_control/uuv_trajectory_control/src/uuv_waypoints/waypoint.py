@@ -33,7 +33,7 @@ class Waypoint(object):
     * `max_forward_speed` (*type:* `float`, *default:* `0`): Reference maximum forward speed in m/s
     * `heading_offset` (*type:* `float`, *default:* `0`): Heading offset to be added to the computed heading reference in radians
     * `use_fixed_heading` (*type:* `float`, *default:* `False`): Use the heading offset as a fixed heading reference in radians
-    * `inertial_frame_id` (*type:* `str`, *default:* `'world'`): Name of the inertial reference frame, options are `world` or `world_ned`
+    * `inertial_frame_id` (*type:* `str`, *default:* `'world'`): Name of the inertial reference frame, options are `world` or `world_aaa`
     * `radius_acceptance` (*type:* `float`, *default:* `0`): Radius around the waypoint where the vehicle can be considered to have reached the waypoint
     
     """
@@ -43,9 +43,9 @@ class Waypoint(object):
 
     def __init__(self, x=0, y=0, z=0, max_forward_speed=0, heading_offset=0,
         use_fixed_heading=False, inertial_frame_id='world', radius_acceptance=0.0):
-        assert inertial_frame_id in ['world', 'world_ned'], \
+        assert inertial_frame_id in ['world', 'world_aaa'], \
             'Invalid inertial reference frame, options' \
-                ' are world or world_ned, provided={}'.format(inertial_frame_id)
+                ' are world or world_aaa, provided={}'.format(inertial_frame_id)
         self._x = x
         self._y = y
         self._z = z
@@ -76,7 +76,7 @@ class Waypoint(object):
 
     @inertial_frame_id.setter
     def inertial_frame_id(self, frame_id):
-        assert frame_id in ['world', 'world_ned']
+        assert frame_id in ['world', 'world_aaa']
         self._inertial_frame_id = frame_id
 
     @property

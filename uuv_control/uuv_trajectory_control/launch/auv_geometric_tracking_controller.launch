@@ -7,9 +7,9 @@
   <arg name="gui_on" default="true"/>
   <!--
     Set this flag to true to compute both reference and error vectors wrt
-    world_ned frame
+    world_aaa frame
   -->
-  <arg name="use_ned_frame" default="false"/>
+  <arg name="use_aaa_frame" default="false"/>
 
   <arg name="max_forward_speed" default="2"/>
   <arg name="dubins_radius" default="10"/>
@@ -61,7 +61,7 @@
             type="auv_geometric_tracking_controller.py"
             name="auv_geometric_tracking_controller"
             output="screen"
-            unless="$(arg use_ned_frame)">
+            unless="$(arg use_aaa_frame)">
         <remap from="odom" to="pose_gt"/>
         <rosparam subst_value="true">
           max_forward_speed: $(arg max_forward_speed)
@@ -107,13 +107,13 @@
             type="auv_geometric_tracking_controller.py"
             name="auv_geometric_tracking_controller"
             output="screen"
-            if="$(arg use_ned_frame)">
-        <remap from="odom" to="pose_gt_ned"/>
+            if="$(arg use_aaa_frame)">
+        <remap from="odom" to="pose_gt_aaa"/>
         <rosparam subst_value="true">
           max_forward_speed: $(arg max_forward_speed)
           base_link: base_link_ned
           is_underactuated: true
-          inertial_frame_id: world_ned
+          inertial_frame_id: world_aaa
           min_thrust: $(arg min_thrust)
           max_thrust: $(arg max_thrust)
           thruster_topic: $(arg thruster_topic)

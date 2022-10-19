@@ -11,9 +11,9 @@
   <arg name="use_params_file" default="false"/>
   <!--
     Set this flag to true to compute both reference and error vectors wrt
-    world_ned frame
+    world_aaa frame
   -->
-  <arg name="use_ned_frame" default="false"/>
+  <arg name="use_aaa_frame" default="false"/>
 
   <!-- If the file is not used, read the parameters from the user input -->
   <!-- Caution: no spaces between the parameter values -->
@@ -61,9 +61,9 @@
             type="rov_sf_controller.py"
             name="rov_sf_controller"
             output="screen"
-            if="$(arg use_ned_frame)">
+            if="$(arg use_aaa_frame)">
         <!-- Remap necessary topics -->
-        <remap from="odom" to="pose_gt_ned"/>
+        <remap from="odom" to="pose_gt_aaa"/>
         <remap from="trajectory" to="dp_controller/trajectory"/>
         <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
         <remap from="waypoints" to="dp_controller/waypoints"/>
@@ -73,7 +73,7 @@
         <rosparam file="$(arg controller_config_file)" command="load"/>
         <rosparam file="$(arg model_params_file)" command="load"/>
         <rosparam subst_value="true">
-          inertial_frame_id: world_ned
+          inertial_frame_id: world_aaa
         </rosparam>
       </node>
 
@@ -81,7 +81,7 @@
             type="rov_sf_controller.py"
             name="rov_sf_controller"
             output="screen"
-            unless="$(arg use_ned_frame)">
+            unless="$(arg use_aaa_frame)">
         <!-- Remap necessary topics -->
         <remap from="odom" to="pose_gt"/>
         <remap from="trajectory" to="dp_controller/trajectory"/>
@@ -105,9 +105,9 @@
             type="rov_sf_controller.py"
             name="rov_sf_controller"
             output="screen"
-            if="$(arg use_ned_frame)">
+            if="$(arg use_aaa_frame)">
         <!-- Remap necessary topics -->
-        <remap from="odom" to="pose_gt_ned"/>
+        <remap from="odom" to="pose_gt_aaa"/>
         <remap from="trajectory" to="dp_controller/trajectory"/>
         <remap from="input_trajectory" to="dp_controller/input_trajectory"/>
         <remap from="waypoints" to="dp_controller/waypoints"/>
@@ -121,7 +121,7 @@
           Kd: [$(arg Kd)]
           lambda: [$(arg lambda)]
           c: [$(arg c)]
-          inertial_frame_id: world_ned
+          inertial_frame_id: world_aaa
         </rosparam>
       </node>
 
@@ -129,7 +129,7 @@
             type="rov_sf_controller.py"
             name="rov_sf_controller"
             output="screen"
-            unless="$(arg use_ned_frame)">
+            unless="$(arg use_aaa_frame)">
         <!-- Remap necessary topics -->
         <remap from="odom" to="pose_gt"/>
         <remap from="trajectory" to="dp_controller/trajectory"/>

@@ -36,7 +36,7 @@ class ActuatorManager(object):
 
         self.tf_buffer = tf2_ros.Buffer()
         self.listener = tf2_ros.TransformListener(self.tf_buffer)
-        tf_trans_ned_to_enu = None
+        tf_trans_aaa_to_enu = None
 
         try:
             if self.namespace != '':
@@ -46,19 +46,19 @@ class ActuatorManager(object):
                 target = 'base_link'
                 source = 'base_link_ned'
             rospy.loginfo('Lookup transfrom from %s to %s' % (source, target))
-            tf_trans_ned_to_enu = self.tf_buffer.lookup_transform(
+            tf_trans_aaa_to_enu = self.tf_buffer.lookup_transform(
                 target, source, rospy.Time(), rospy.Duration(1))
         except Exception as e:
             rospy.logwarn('No transform found between base_link and base_link_ned'
                   ' for vehicle {}, message={}'.format(self.namespace, e))
             self.base_link_ned_to_enu = None
 
-        if tf_trans_ned_to_enu is not None:
+        if tf_trans_aaa_to_enu is not None:
             self.base_link_ned_to_enu = quaternion_matrix(
-                (tf_trans_ned_to_enu.transform.rotation.x,
-                 tf_trans_ned_to_enu.transform.rotation.y,
-                 tf_trans_ned_to_enu.transform.rotation.z,
-                 tf_trans_ned_to_enu.transform.rotation.w))[0:3, 0:3]
+                (tf_trans_aaa_to_enu.transform.rotation.x,
+                 tf_trans_aaa_to_enu.transform.rotation.y,
+                 tf_trans_aaa_to_enu.transform.rotation.z,
+                 tf_trans_aaa_to_enu.transform.rotation.w))[0:3, 0:3]
 
             rospy.logwarn('base_link transform NED to ENU=\n{}'.format(
                 self.base_link_ned_to_enu))
@@ -119,6 +119,7 @@ class ActuatorManager(object):
 
         if not self.find_actuators():
             raise rospy.ROSException('No thruster and/or fins found')
+        self.last_published_timestamp = rospy.Time(0)
 
     def find_actuators(self):
         """Calculate the control allocation matrix, if one is not given."""
@@ -205,7 +206,11 @@ class ActuatorManager(object):
         return actuator_model
 
     def publish_commands(self, command):
-        self.thruster.publish_command(command[0])
+        if self.last_published_timestamp != rospy.Time.now():
+            self.thruster.publish_command(command[0])
 
-        for i in range(self.n_fins):
-            self.fins[i].publish_command(command[i + 1])
+            for i in range(self.n_fins):
+                if self.last_published_timestamp != rospy.Time.now():
+                    self.fins[i].publish_command(command[i + 1])
+                    self.last_published_timestamp = rospy.Time.now()
+        self.last_published_timestamp = rospy.Time.now()

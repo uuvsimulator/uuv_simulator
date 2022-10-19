@@ -66,7 +66,7 @@ class SymVehicle(Vehicle):
 
             R_n_to_b = casadi.transpose(casadi.mtimes(Rz, casadi.mtimes(Ry, Rx)))
 
-            if inertial_frame_id == 'world_ned':
+            if inertial_frame_id == 'world_aaa':
                 Fg = casadi.SX([0, 0, -self.mass * self.gravity])
                 Fb = casadi.SX([0, 0, self.volume * self.gravity * self.density])
             else:

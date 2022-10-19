@@ -130,7 +130,7 @@ class AUVControlAllocator(ActuatorManager):
                                    msg.command.torque.y,
                                    msg.command.torque.z])  
 
-        if 'ned' in msg.header.frame_id:
+        if 'aaa' in msg.header.frame_id:
             self.input_tau[0:3] = np.dot(self.base_link_ned_to_enu, self.input_tau[0:3])
             self.input_tau[4::] = np.dot(self.base_link_ned_to_enu, self.input_tau[4::])
         

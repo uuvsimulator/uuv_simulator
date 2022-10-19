@@ -15,7 +15,7 @@
         <arg name="verbose" value="true"/>
     </include>
 
-    <include file="$(find uuv_assistants)/launch/publish_world_ned_frame.launch"/>
+    <include file="$(find uuv_assistants)/launch/publish_world_aaa_frame.launch"/>
 
     <node name="publish_world_models"
         pkg="uuv_assistants"

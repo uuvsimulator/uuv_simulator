@@ -17,7 +17,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:macro name="pose_3d_macro" params="namespace suffix parent_link topic
-    update_rate *origin noise_sigma reference_frame publish_ned_odom noise_amplitude">
+    update_rate *origin noise_sigma reference_frame publish_aaa_odom noise_amplitude">
     <!-- Mount a 3D pose sensor -->
     <link name="${namespace}/pose_sensor_link_${suffix}">
       <inertial>
@@ -45,7 +45,7 @@
         <noise_amplitude>${noise_amplitude}</noise_amplitude>
         <update_rate>${update_rate}</update_rate>
         <enable_gazebo_messages>false</enable_gazebo_messages>
-        <publish_ned_odom>${publish_ned_odom}</publish_ned_odom>
+        <publish_aaa_odom>${publish_aaa_odom}</publish_aaa_odom>
       </plugin>
     </gazebo>
   </xacro:macro>
@@ -61,7 +61,7 @@
       noise_amplitude="${gaussian_noise_amplitude}"
       suffix="${suffix}"
       reference_frame="world"
-      publish_ned_odom="false">
+      publish_aaa_odom="false">
       <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:pose_3d_macro>
   </xacro:macro>
@@ -76,7 +76,7 @@
       noise_amplitude="0.0"
       suffix="default"
       reference_frame="world"
-      publish_ned_odom="false">
+      publish_aaa_odom="false">
       <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:pose_3d_macro>
   </xacro:macro>
@@ -91,12 +91,12 @@
       noise_amplitude="0.0"
       suffix="default"
       reference_frame="world"
-      publish_ned_odom="false">
+      publish_aaa_odom="false">
       <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:pose_3d_macro>
   </xacro:macro>
 
-  <xacro:macro name="default_pose_3d_ned" params="namespace parent_link">
+  <xacro:macro name="default_pose_3d_aaa" params="namespace parent_link">
     <xacro:pose_3d_macro
       namespace="${namespace}"
       parent_link="${parent_link}"
@@ -105,8 +105,8 @@
       noise_sigma="0.0"
       noise_amplitude="0.0"
       suffix="default"
-      reference_frame="world_ned"
-      publish_ned_odom="true">
+      reference_frame="world_aaa"
+      publish_aaa_odom="true">
       <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:pose_3d_macro>
   </xacro:macro>
@@ -119,11 +119,11 @@
       </xacro:default_pose_3d_enu>
     </xacro:if>
 
-    <xacro:if value="${inertial_reference_frame == 'world_ned'}">
-      <xacro:default_pose_3d_ned
+    <xacro:if value="${inertial_reference_frame == 'world_aaa'}">
+      <xacro:default_pose_3d_aaa
         namespace="${namespace}"
         parent_link="${parent_link}">
-      </xacro:default_pose_3d_ned>
+      </xacro:default_pose_3d_aaa>
     </xacro:if>
   </xacro:macro>
 

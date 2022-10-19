@@ -42,7 +42,7 @@
       accelerometer_bias_correlation_time="300.0"
       accelerometer_turn_on_bias_sigma="0.1960"
       orientation_noise="0.01"
-      enable_local_ned_frame="false"
+      enable_local_aaa_frame="false"
       reference_frame="world"
       update_rate="50">
       <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
@@ -60,12 +60,12 @@
       </xacro:default_imu_enu>
     </xacro:if>
 
-    <xacro:if value="${inertial_reference_frame == 'world_ned'}">
-      <xacro:default_imu_ned
+    <xacro:if value="${inertial_reference_frame == 'world_aaa'}">
+      <xacro:default_imu_aaa
         namespace="${namespace}"
         parent_link="${parent_link}">
         <xacro:insert_block name="origin" />
-      </xacro:default_imu_ned>
+      </xacro:default_imu_aaa>
     </xacro:if>
   </xacro:macro>
 
@@ -86,7 +86,7 @@
       accelerometer_bias_correlation_time="300.0"
       accelerometer_turn_on_bias_sigma="0.1960"
       orientation_noise="0.01"
-      enable_local_ned_frame="false"
+      enable_local_aaa_frame="false"
       reference_frame="world"
       update_rate="50">
       <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
@@ -94,7 +94,7 @@
     </xacro:imu_plugin_macro>
   </xacro:macro>
 
-  <xacro:macro name="default_imu_ned" params="namespace parent_link *origin">
+  <xacro:macro name="default_imu_aaa" params="namespace parent_link *origin">
     <!-- ADIS16448 IMU. -->
     <xacro:imu_plugin_macro
       namespace="${namespace}"
@@ -111,8 +111,8 @@
       accelerometer_bias_correlation_time="300.0"
       accelerometer_turn_on_bias_sigma="0.1960"
       orientation_noise="0.01"
-      enable_local_ned_frame="true"
-      reference_frame="world_ned"
+      enable_local_aaa_frame="true"
+      reference_frame="world_aaa"
       update_rate="50">
       <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
       <xacro:insert_block name="origin" />
@@ -128,7 +128,7 @@
       accelerometer_bias_correlation_time accelerometer_turn_on_bias_sigma
       orientation_noise
       update_rate reference_frame
-      enable_local_ned_frame
+      enable_local_aaa_frame
       *inertia *origin">
     <!-- IMU link -->
     <link name="${namespace}/imu${imu_suffix}_link">
@@ -169,7 +169,7 @@
 
         <update_rate>${update_rate}</update_rate> <!-- Update period of accelerometer and gyroscope [s] -->
         <enable_gazebo_messages>false</enable_gazebo_messages>
-        <enable_local_ned_frame>${enable_local_ned_frame}</enable_local_ned_frame>
+        <enable_local_aaa_frame>${enable_local_aaa_frame}</enable_local_aaa_frame>
         <static_reference_frame>${reference_frame}</static_reference_frame>
       </plugin>
     </gazebo>

@@ -59,13 +59,13 @@ void PoseGTROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     ignition::math::Vector3d::Zero);
   this->offset.Rot() = ignition::math::Quaterniond(vec);
 
-  GetSDFParam<bool>(_sdf, "publish_ned_odom", this->publishNEDOdom, false);
+  GetSDFParam<bool>(_sdf, "publish_aaa_odom", this->publishNEDOdom, false);
 
   if (this->publishNEDOdom)
   {
-    this->nedFrameID = this->link->GetName() + "_ned";
+    this->nedFrameID = this->link->GetName() + "_aaa";
     this->nedOdomPub = this->rosNode->advertise<nav_msgs::Odometry>(
-      this->sensorOutputTopic + "_ned", 1);
+      this->sensorOutputTopic + "_aaa", 1);
     this->nedTransformIsInit = false;
   }
 
@@ -174,9 +174,9 @@ bool PoseGTROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   // Publish the odometry message of the base_link wrt Gazebo's ENU
   // inertial reference frame
   this->PublishOdomMessage(curTime, linkPose, linkLinVel, linkAngVel);
-  // If the world_ned frame exists (North-East-Down reference frame),
+  // If the world_aaa frame exists (North-East-Down reference frame),
   // the odometry is also published from the robot's base_link_ned wrt
-  // world_ned
+  // world_aaa
   this->PublishNEDOdomMessage(curTime, linkPose, linkLinVel, linkAngVel);
 
   // Store the time stamp for this measurement
@@ -242,7 +242,7 @@ void PoseGTROSPlugin::PublishNEDOdomMessage(common::Time _time,
   ignition::math::Pose3d _pose, ignition::math::Vector3d _linVel,
   ignition::math::Vector3d _angVel)
 {
-  // Generates the odometry message of the robot's base_link_ned frame
+  // Generates the odometry message of the robot's base_link_aa frame
   // wrt generated NED inertial reference frame
   if (!this->publishNEDOdom)
     return;

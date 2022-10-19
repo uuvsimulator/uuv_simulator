@@ -91,7 +91,7 @@
         <turn_on_bias>${turn_on_bias}</turn_on_bias> <!-- Std. dev. of turn-on-bias [muT] -->
         <noise_amplitude>${noise_amplitude}</noise_amplitude>
         <enable_gazebo_messages>false</enable_gazebo_messages>
-        <enable_local_ned_frame>false</enable_local_ned_frame>
+        <enable_local_aaa_frame>false</enable_local_aaa_frame>
       </plugin>
     </gazebo>
   </xacro:macro>

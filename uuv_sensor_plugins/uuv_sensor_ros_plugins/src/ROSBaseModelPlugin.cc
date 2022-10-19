@@ -55,7 +55,7 @@ void ROSBaseModelPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   GZ_ASSERT(!linkName.empty(), "Link name string is empty");
 
   // Get flag to enable generation of Gazebo messages
-  GetSDFParam<bool>(_sdf, "enable_local_ned_frame", this->enableLocalNEDFrame,
+  GetSDFParam<bool>(_sdf, "enable_local_aaa_frame", this->enableLocalNEDFrame,
     true);
 
   if (_sdf->HasElement("reference_link_name"))
@@ -76,7 +76,7 @@ void ROSBaseModelPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   // Set the frame IDs for the local NED frame
   this->tfLocalNEDFrame.frame_id_ = this->link->GetName();
-  this->tfLocalNEDFrame.child_frame_id_ = this->link->GetName() + "_ned";
+  this->tfLocalNEDFrame.child_frame_id_ = this->link->GetName() + "_aaa";
 
   this->InitBasePlugin(_sdf);
 

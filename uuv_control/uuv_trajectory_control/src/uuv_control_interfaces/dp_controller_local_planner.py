@@ -59,7 +59,7 @@ class DPControllerLocalPlanner(object):
     * `idle_radius` (*type:* `float`, *default:* `10.0`): Radius of the circle 
     path generated when an AUV is in idle mode.
     * `inertial_frame_id` (*type:* `str`): Name of the inertial frame used, 
-    options are `world` or `world_ned`.
+    options are `world` or `world_aaa`.
     * `timeout_idle_mode` (*type:* `float`): Timeout at the start or after
     a trajectory is finished where the AUV is set to start idle mode path.
     * `look_ahead_delay` (*type:* `float`): Look ahead delay in seconds. This
@@ -123,12 +123,12 @@ class DPControllerLocalPlanner(object):
         self._is_underactuated = rospy.get_param('~is_underactuated', False)
 
         self.inertial_frame_id = 'world'
-        self.transform_ned_to_enu = None
-        self.q_ned_to_enu = None
+        self.transform_aaa_to_enu = None
+        self.q_aaa_to_enu = None
         if rospy.has_param('~inertial_frame_id'):
             self.inertial_frame_id = rospy.get_param('~inertial_frame_id')
             assert len(self.inertial_frame_id) > 0
-            assert self.inertial_frame_id in ['world', 'world_ned']
+            assert self.inertial_frame_id in ['world', 'world_aaa']
 
         self._logger.info('Inertial frame ID=' + self.inertial_frame_id)
 
@@ -140,27 +140,27 @@ class DPControllerLocalPlanner(object):
             tf_buffer = tf2_ros.Buffer()
             listener = tf2_ros.TransformListener(tf_buffer)
 
-            tf_trans_ned_to_enu = tf_buffer.lookup_transform(
-                'world', 'world_ned', rospy.Time(),
+            tf_trans_aaa_to_enu = tf_buffer.lookup_transform(
+                'world', 'world_aaa', rospy.Time(),
                 rospy.Duration(10))
             
-            self.q_ned_to_enu = np.array(
-                [tf_trans_ned_to_enu.transform.rotation.x,
-                tf_trans_ned_to_enu.transform.rotation.y,
-                tf_trans_ned_to_enu.transform.rotation.z,
-                tf_trans_ned_to_enu.transform.rotation.w])
+            self.q_aaa_to_enu = np.array(
+                [tf_trans_aaa_to_enu.transform.rotation.x,
+                tf_trans_aaa_to_enu.transform.rotation.y,
+                tf_trans_aaa_to_enu.transform.rotation.z,
+                tf_trans_aaa_to_enu.transform.rotation.w])
         except Exception as ex:
             self._logger.warning(
                 'Error while requesting ENU to NED transform'
                 ', message={}'.format(ex))
-            self.q_ned_to_enu = quaternion_from_euler(2 * np.pi, 0, np.pi)
+            self.q_aaa_to_enu = quaternion_from_euler(2 * np.pi, 0, np.pi)
                                 
-        self.transform_ned_to_enu = quaternion_matrix(
-                self.q_ned_to_enu)[0:3, 0:3]
+        self.transform_aaa_to_enu = quaternion_matrix(
+                self.q_aaa_to_enu)[0:3, 0:3]
 
-        if self.transform_ned_to_enu is not None:
-            self._logger.info('Transform world_ned (NED) to world (ENU)=\n' +
-                                str(self.transform_ned_to_enu))
+        if self.transform_aaa_to_enu is not None:
+            self._logger.info('Transform world_aaa (NED) to world (ENU)=\n' +
+                                str(self.transform_aaa_to_enu))
 
         self._logger.info('Inertial frame ID=' + self.inertial_frame_id)
         self._logger.info('Max. forward speed = ' +
@@ -277,7 +277,7 @@ class DPControllerLocalPlanner(object):
             self._logger.handlers.pop()
 
     def _transform_position(self, vec, target, source):
-        """Transform the position vector between `world` and `world_ned`.
+        """Transform the position vector between `world` and `world_aaa`.
         
         > *Input arguments*
         
@@ -292,13 +292,13 @@ class DPControllerLocalPlanner(object):
         if target == source:
             return vec
         if target == 'world':
-            return np.dot(self.transform_ned_to_enu, vec)
-        if target == 'world_ned':
-            return np.dot(self.transform_ned_to_enu.T, vec)
+            return np.dot(self.transform_aaa_to_enu, vec)
+        if target == 'world_aaa':
+            return np.dot(self.transform_aaa_to_enu.T, vec)
 
     def _transform_waypoint(self, waypoint):
         """Transform position vector of a waypoint between 
-        `world` and `world_ned` frames.
+        `world` and `world_aaa` frames.
         
         > *Input arguments*
         
@@ -317,7 +317,7 @@ class DPControllerLocalPlanner(object):
         return output
 
     def _transform_waypoint_set(self, waypoint_set):
-        """Apply transformation between `world` and 'world_ned` frames
+        """Apply transformation between `world` and 'world_aaa` frames
         to waypoints in a waypoint set.
         
         > *Input arguments*
@@ -338,7 +338,7 @@ class DPControllerLocalPlanner(object):
     def _apply_workspace_constraints(self, waypoint_set):
         """Filter out waypoints that are positioned above
         sea surface, namely `z > 0` if the inertial frame is
-        `world`, or `z < 0` if the inertial frame is `world_ned`.
+        `world`, or `z < 0` if the inertial frame is `world_aaa`.
         
         > *Input arguments*
         
@@ -354,7 +354,7 @@ class DPControllerLocalPlanner(object):
             wp = waypoint_set.get_waypoint(i)
             if wp.z > 0 and self.inertial_frame_id == 'world':
                 continue
-            if wp.z < 0 and self.inertial_frame_id == 'world_ned':
+            if wp.z < 0 and self.inertial_frame_id == 'world_aaa':
                 continue
             wp_set.add_waypoint(wp)
         return wp_set
@@ -695,7 +695,7 @@ class DPControllerLocalPlanner(object):
                 return InitCircularTrajectoryResponse(False)
             wp_set = self._apply_workspace_constraints(wp_set)
             if wp_set.is_empty:
-                self._logger.error('Waypoints violate workspace constraints, are you using world or world_ned as reference?')
+                self._logger.error('Waypoints violate workspace constraints, are you using world or world_aaa as reference?')
                 return InitCircularTrajectoryResponse(False)
 
             self._lock.acquire()
@@ -776,7 +776,7 @@ class DPControllerLocalPlanner(object):
                 return InitHelicalTrajectoryResponse(False)
             wp_set = self._apply_workspace_constraints(wp_set)
             if wp_set.is_empty:
-                self._logger.error('Waypoints violate workspace constraints, are you using world or world_ned as reference?')
+                self._logger.error('Waypoints violate workspace constraints, are you using world or world_aaa as reference?')
                 return InitHelicalTrajectoryResponse(False)
 
             self._lock.acquire()
@@ -1137,7 +1137,7 @@ class DPControllerLocalPlanner(object):
                 wp_set = self.get_idle_circle_path(20, self._idle_radius)
                 wp_set = self._apply_workspace_constraints(wp_set)
                 if wp_set.is_empty:
-                    raise rospy.ROSException('Waypoints violate workspace constraints, are you using world or world_ned as reference?')
+                    raise rospy.ROSException('Waypoints violate workspace constraints, are you using world or world_aaa as reference?')
 
                 # Activates station keeping
                 self.set_station_keeping(True)
