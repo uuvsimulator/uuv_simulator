@@ -141,6 +141,7 @@ bool ROSBasePlugin::InitBasePlugin(sdf::ElementPtr _sdf)
 
   // Add a default Gaussian noise model
   this->AddNoiseModel("default", this->noiseSigma);
+  return true;
 }
 
 /////////////////////////////////////////////////
