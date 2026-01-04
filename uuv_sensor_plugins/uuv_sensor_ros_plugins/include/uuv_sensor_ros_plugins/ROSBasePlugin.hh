@@ -23,6 +23,7 @@
 #include <std_msgs/Bool.h>
 #include <uuv_sensor_ros_plugins_msgs/ChangeSensorState.h>
 #include <geometry_msgs/TransformStamped.h>
+#include <geometry_msgs/Vector.h>
 #include <gazebo/sensors/Noise.hh>
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
@@ -100,6 +101,9 @@ namespace gazebo
 
     /// \brief Gazebo's publisher for transporting measurement messages.
     protected: ros::Publisher rosSensorOutputPub;
+
+	/// \brief ROS message for orientation in yaw-pitch-roll
+	protected: ros::publisher orientationPub;
 
     /// \brief Gazebo's publisher for transporting measurement messages.
     protected: transport::PublisherPtr gazeboSensorOutputPub;
