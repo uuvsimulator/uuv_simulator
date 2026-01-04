@@ -137,6 +137,9 @@ void IMUROSPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   this->rosSensorOutputPub =
     this->rosNode->advertise<sensor_msgs::Imu>(this->sensorOutputTopic, 1);
+	
+  this->orientationPub = 
+	this->rosNode->advertise<geometry_msgs::Vector3>("/orientation_rpy", 1);
 
   if (this->gazeboMsgEnabled)
   {
@@ -228,6 +231,18 @@ bool IMUROSPlugin::OnUpdate(const common::UpdateInfo& _info)
   this->imuROSMessage.orientation.y = this->measOrientation.Y();
   this->imuROSMessage.orientation.z = this->measOrientation.Z();
   this->imuROSMessage.orientation.w = this->measOrientation.W();
+
+  // orientation from quaternion to yaw-pitch-roll
+  tf::Quaternion q(this->measOrientation.X(), this->measOrientation.Y(),
+				   this->measOrientation.Z(), this->measOrientation.W());
+  tf::Matrix3x3 m(q);
+  double roll, pitch, yaw;
+  m.getRPY(roll, pitch, yaw);
+  imuOrientationROSMessage.x = roll;
+  imuOrientationROSMessage.y = pitch;
+  imuOrientationROSMessage.z = yaw;
+  this->orientationPub.publish(this->imuOrientationROSMessage);
+  // orientation from quaternion to yaw-pitch-roll
 
   this->imuROSMessage.linear_acceleration.x = this->measLinearAcc.X();
   this->imuROSMessage.linear_acceleration.y = this->measLinearAcc.Y();
