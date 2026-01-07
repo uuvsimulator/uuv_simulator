@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(uuv_world_plugins)
 
 # Specify C++11 standard
-add_definitions(-std=c++11)
+add_definitions(-std=c++17)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)

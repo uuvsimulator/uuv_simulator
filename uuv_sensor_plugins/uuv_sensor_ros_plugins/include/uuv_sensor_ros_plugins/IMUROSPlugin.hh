@@ -152,6 +152,9 @@ namespace gazebo
 
     /// \brief ROS IMU message
     protected: sensor_msgs::Imu imuROSMessage;
+
+	/// \brief ROS message for orientation in yaw-pitch-roll
+	protected: geometry_msgs::Vector3 imuOrientationROSMessage;
   };
 }
 

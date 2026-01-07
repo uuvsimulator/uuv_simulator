@@ -74,7 +74,7 @@ class BuoyantObject
   public: double GetGravity();
 
   /// \brief Sets bounding box
-  public: void SetBoundingBox(const ignition::math::Box &_bBox);
+  public: void SetBoundingBox(const ignition::math::AxisAlignedBox &_bBox);
 
   /// \brief Adds a field in the hydroWrench map
   public: void SetStoreVector(std::string _tag);
@@ -120,7 +120,7 @@ class BuoyantObject
 
   /// \brief TEMP for calculation of the buoyancy
   /// force close to the surface
-  protected: ignition::math::Box boundingBox;
+  protected: ignition::math::AxisAlignedBox boundingBox;
 
   /// \brief Storage for hydrodynamic and hydrostatic forces and torques
   /// for debugging purposes
